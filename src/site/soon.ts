@@ -117,11 +117,6 @@ const DESTINATIONS: SoonDestination[] = [
       { key: 'ia.story.chapters.label', to: to('story', {}, { hash: '#chapters' }) },
     ],
   },
-  {
-    id: 'bgg',
-    kind: 'link',
-    also: [{ key: 'ia.community.press.label', to: to('community', {}, { hash: '#press' }) }],
-  },
 ];
 
 const FALLBACK_ALSO: SoonAlso[] = [
