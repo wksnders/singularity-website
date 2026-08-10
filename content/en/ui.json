@@ -302,10 +302,6 @@
       "buy": {
         "title": "The store is not open yet",
         "body": "The core box, the expansion and Incursions all go on sale the same day. Print & play is free in the meantime."
-      },
-      "bgg": {
-        "title": "The BoardGameGeek page is not linked yet",
-        "body": "Octothorpe is listed as publisher; the game page goes up with launch."
       }
     }
   },
