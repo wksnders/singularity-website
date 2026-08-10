@@ -1,0 +1,205 @@
+<script setup lang="ts">
+/**
+ * CHARACTERS — the full cast index. Faction filter (in the URL), name/epithet
+ * search, live count, and the canon rule made visible: characters who belong to
+ * no faction appear under every faction filter, because that is where they can
+ * be played.
+ */
+import { computed, ref } from 'vue';
+import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import BandFoot from '@/components/molecules/BandFoot.vue';
+import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
+import ContentCard from '@/components/molecules/ContentCard.vue';
+import EmptyState from '@/components/molecules/EmptyState.vue';
+import EntityTile from '@/components/molecules/EntityTile.vue';
+import FilterBar from '@/components/molecules/FilterBar.vue';
+import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
+import SectionIndex from '@/components/molecules/SectionIndex.vue';
+import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import { t } from '@/content';
+import { characters, factionById, factions, rogueAIs } from '@/data/universe';
+import { useQueryFilter } from '@/composables/useQueryFilter';
+import { to } from '@/site/links';
+import type { Character } from '@/data/types';
+import type { FilterOption } from '@/site/filters';
+import type { SectionEntry } from '@/site/sections';
+
+const sections = computed<SectionEntry[]>(() => [
+  { id: 'cast', label: t('characters.sections.cast') },
+  { id: 'reveals', label: t('characters.sections.reveals') },
+]);
+
+const faction = useQueryFilter('faction');
+const search = ref('');
+
+const filterOptions = computed<FilterOption[]>(() => [
+  ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
+  { id: 'unaligned', label: t('ia.universe.unaligned.label'), showDot: true, color: null },
+]);
+
+const tags = (character: Character) =>
+  character.factionIds === 'any'
+    ? [{ label: t('universe.anyFaction'), color: null }]
+    : character.factionIds
+        .map((id) => factionById(id))
+        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
+        .map((f) => ({ label: f.name, color: f.color }));
+
+/** Sealed unlocks are editorial content — a badge, never tracked state. */
+function badge(character: Character): string | undefined {
+  if (character.unlockedVia === 'incursions') {
+    const index = rogueAIs.findIndex((ai) => ai.id === character.fromRogueAIId);
+    return `${t('characters.sealed')} · ${t('characters.incursion')} ${String(index + 1).padStart(2, '0')}`;
+  }
+  if (character.factionIds === 'any') return t('characters.anyFactionBadge');
+  return undefined;
+}
+
+function matches(character: Character): boolean {
+  const active = faction.value.value;
+  const factionOk =
+    !active ||
+    (active === 'unaligned'
+      ? character.factionIds === 'any'
+      : character.factionIds === 'any' || character.factionIds.includes(active));
+  const query = search.value.trim().toLowerCase();
+  const searchOk = !query || `${character.name} ${character.epithet}`.toLowerCase().includes(query);
+  return factionOk && searchOk;
+}
+
+const shown = computed(() => characters.filter(matches));
+
+function clearAll(): void {
+  faction.set(null);
+  search.value = '';
+}
+</script>
+
+<template>
+  <SecondaryHero glow="70% 60% at 20% 0%" :note="t('characters.hero.pending')">
+    <Breadcrumbs
+      :crumbs="[
+        { label: t('ia.universe.label'), to: to('universe') },
+        { label: t('characters.hero.crumb') },
+      ]"
+    />
+    <h1 class="cast__title">{{ t('characters.hero.title') }}</h1>
+    <p class="cast__lede">{{ t('characters.hero.lede') }}</p>
+    <SectionIndex :sections="sections" />
+  </SecondaryHero>
+
+  <ScrollSpyRail :sections="sections" />
+
+  <section id="cast" tabindex="-1" class="l-band">
+    <div class="l-wrap">
+      <SectionMarker id="cast" :index="1" :total="2" :heading="t('characters.sections.cast')" />
+      <MonoLabel tone="faint">{{ t('characters.note') }}</MonoLabel>
+
+      <FilterBar
+        class="cast__gap"
+        :options="filterOptions"
+        :active="faction.value.value"
+        :count="shown.length"
+        :count-label="t('universe.characters.count')"
+        :all-label="t('characters.everyone')"
+        :search="search"
+        :search-label="t('characters.searchLabel')"
+        :search-placeholder="t('characters.searchPlaceholder')"
+        @toggle="faction.toggle($event)"
+        @clear="faction.set(null)"
+        @update:search="search = $event"
+      />
+
+      <p class="cast__canon">{{ t('characters.canonNote') }}</p>
+
+      <div v-if="shown.length" class="l-grid l-grid--tiles cast__gap">
+        <EntityTile
+          v-for="character in shown"
+          :key="character.id"
+          :to="to('character', { characterId: character.id })"
+          :art="character.art"
+          :badge="badge(character)"
+          :epithet="character.epithet"
+          :name="character.name"
+          :tags="tags(character)"
+          :placeholder="t('universe.artPlaceholder')"
+        />
+      </div>
+
+      <EmptyState
+        v-else
+        class="cast__gap"
+        variant="noResults"
+        :kicker="t('filters.noResults')"
+        :title="t('characters.emptyTitle')"
+        :body="t('characters.emptyBody')"
+        :action-label="t('filters.clear')"
+        @action="clearAll()"
+      />
+
+      <BandFoot :to="to('unaligned')" :label="t('characters.exitUnaligned')" />
+    </div>
+  </section>
+
+  <section id="reveals" tabindex="-1" class="l-band l-band--alt l-band--line-top">
+    <div class="l-wrap">
+      <SectionMarker
+        id="reveals"
+        :index="2"
+        :total="2"
+        :heading="t('characters.sections.reveals')"
+      />
+      <MonoLabel tone="faint">{{ t('characters.hiddenLabel') }}</MonoLabel>
+      <p class="cast__body">{{ t('characters.revealsBody') }}</p>
+
+      <div class="l-grid l-grid--wide cast__gap">
+        <ContentCard
+          :to="to('news')"
+          :title="t('ia.news.label')"
+          :body="t('characters.reveals.news')"
+        />
+        <ContentCard
+          :to="to('story', {}, { hash: '#chapters' })"
+          :title="t('ia.story.label')"
+          :body="t('characters.reveals.story')"
+        />
+        <ContentCard
+          :to="to('community', {}, { hash: '#discord' })"
+          :title="t('ia.community.label')"
+          :body="t('characters.reveals.community')"
+        />
+      </div>
+
+      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
+    </div>
+  </section>
+</template>
+
+<style>
+.cast__title {
+  margin-top: var(--space-5);
+  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
+}
+
+.cast__lede,
+.cast__body {
+  margin-top: var(--space-5);
+  max-width: 60ch;
+  font-size: var(--size-body-l);
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.cast__canon {
+  margin-top: var(--space-4);
+  max-width: 68ch;
+  font-size: var(--size-m);
+  line-height: 1.6;
+  color: var(--color-ink-faint);
+}
+
+.cast__gap {
+  margin-top: var(--space-6);
+}
+</style>

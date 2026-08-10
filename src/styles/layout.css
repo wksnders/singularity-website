@@ -1,0 +1,97 @@
+/* ============================================================================
+   LAYOUT OBJECTS — structure only, no skin. Prefixed `l-`.
+   ========================================================================== */
+
+.l-wrap {
+  width: 100%;
+  max-width: var(--width-content);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.l-wrap--reading {
+  max-width: var(--width-reading);
+}
+
+/* A band is one full-width horizontal slab of the page. */
+.l-band {
+  padding-block: var(--band-y);
+}
+
+.l-band--tight {
+  padding-block: var(--band-y-tight);
+}
+
+.l-band--alt {
+  background: var(--color-bg-alt);
+}
+
+.l-band--line-top {
+  border-top: 1px solid var(--color-line);
+}
+
+.l-band--line-bottom {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.l-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.l-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Auto-fitting card grids. min-width is the knob, never a column count. */
+.l-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.l-grid--narrow {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.l-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.l-grid--tiles {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+/* Split: copy beside a second column, collapsing to one on small screens. */
+.l-split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 5vw, 64px);
+}
+
+.l-split__main,
+.l-split__aside {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.l-hidden {
+  display: none !important;
+}
+
+/* Visually hidden but available to screen readers. */
+.l-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
