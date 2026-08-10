@@ -50,7 +50,11 @@ const channels = ['rules-desk', 'incursion-logs', 'deck-lab', 'convergence'];
 
 /** The press fact sheet renders from game{} — one source for every fact. */
 const factSheet = computed(() => [
-  { label: t('community.facts.players'), value: `${game.players} (Incursions: ${game.incursionsPlayers})`, reserved: false },
+  /* One range, not two. The line as a whole plays 1–4, and printing
+     "1–4 (Incursions: 1–4)" only made a journalist wonder which was which.
+     Which box gets you solo is a purchase question, and it belongs in the
+     Incursions bands and the box facts, not in the headline player count. */
+  { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: game.playTime, reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
   { label: t('community.facts.price'), value: game.price, reserved: true },

@@ -118,39 +118,6 @@ const DESTINATIONS: SoonDestination[] = [
     ],
   },
   {
-    id: 'print-and-play',
-    kind: 'link',
-    also: [
-      { key: 'ia.learn.paths.label', to: to('learn', {}, { hash: '#paths' }) },
-      { key: 'ia.universe.cards.label', to: to('cards') },
-    ],
-  },
-  {
-    id: 'tts',
-    kind: 'link',
-    also: [{ key: 'ia.learn.videos.label', to: to('learn', {}, { hash: '#videos' }) }],
-  },
-  {
-    id: 'rulebook',
-    kind: 'link',
-    also: [{ key: 'ia.learn.paths.label', to: to('learn', {}, { hash: '#paths' }) }],
-  },
-  {
-    id: 'discord',
-    kind: 'link',
-    also: [{ key: 'ia.community.label', to: to('community', {}, { hash: '#discord' }) }],
-  },
-  {
-    id: 'youtube',
-    kind: 'link',
-    also: [{ key: 'ia.learn.videos.label', to: to('learn', {}, { hash: '#videos' }) }],
-  },
-  {
-    id: 'instagram',
-    kind: 'link',
-    also: [{ key: 'ia.community.label', to: to('community') }],
-  },
-  {
     id: 'bgg',
     kind: 'link',
     also: [{ key: 'ia.community.press.label', to: to('community', {}, { hash: '#press' }) }],
