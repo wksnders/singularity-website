@@ -1,0 +1,236 @@
+/* ============================================================================
+   THE information architecture — one array.
+
+   Header nav, mega panels, mobile sheet, footer sitemap and breadcrumbs all
+   render from this. Adding a page means adding an entry here and a route;
+   nothing else in the codebase lists site sections.
+
+   Labels are i18n keys (`ia.<key>.label` / `.note` in content/<locale>/ui.json).
+
+   This array is the site's PUBLIC surface, and it is curated, not automatic:
+   a route existing is not a reason to list it. Adding an entry here is an
+   editorial decision, not a mechanical one — ask first.
+   ========================================================================== */
+
+import type { RouteLocationRaw } from 'vue-router';
+import { to } from '@/site/links';
+
+export interface IaItem {
+  /** i18n key root — resolves to ia.<key>.label and ia.<key>.note. */
+  key: string;
+  to: RouteLocationRaw;
+  /** Show the second line in mega panels. */
+  note?: boolean;
+}
+
+export interface IaGroup {
+  key: string;
+  items: IaItem[];
+  /** Generated from data instead of listed: the faction column. */
+  source?: 'factions';
+}
+
+export interface IaSection {
+  key: string;
+  to: RouteLocationRaw;
+  /** Desktop dropdown columns. Absent = a flat link (News). */
+  mega?: IaGroup[];
+  /** Right-hand art column in the mega panel. */
+  featuredCharacter?: boolean;
+  /** Mono jump chips under the entry in the mobile sheet. */
+  jumps?: IaItem[];
+}
+
+const universe: IaSection = {
+  key: 'universe',
+  to: to('universe'),
+  featuredCharacter: true,
+  mega: [
+    { key: 'universe.factions', items: [], source: 'factions' },
+    {
+      key: 'universe.explore',
+      items: [
+        { key: 'universe.characters', to: to('characters') },
+        { key: 'universe.cards', to: to('cards') },
+        { key: 'universe.incursions', to: to('incursions') },
+        { key: 'universe.unaligned', to: to('unaligned') },
+      ],
+    },
+  ],
+  jumps: [
+    { key: 'universe.characters', to: to('characters') },
+    { key: 'universe.cards', to: to('cards') },
+    { key: 'universe.incursions', to: to('incursions') },
+    { key: 'universe.unaligned', to: to('unaligned') },
+  ],
+};
+
+const story: IaSection = {
+  key: 'story',
+  to: to('story'),
+  mega: [
+    {
+      key: 'story.onThePage',
+      items: [
+        { key: 'story.chapters', to: to('story', {}, { hash: '#chapters' }), note: true },
+        { key: 'story.soFar', to: to('story', {}, { hash: '#story-so-far' }), note: true },
+        { key: 'story.graph', to: to('story', {}, { hash: '#story-graph' }), note: true },
+        { key: 'story.convergence', to: to('story', {}, { hash: '#convergence' }), note: true },
+      ],
+    },
+    {
+      key: 'story.chaptersGroup',
+      items: [
+        { key: 'story.ch01', to: to('story', {}, { hash: '#ch-01' }), note: true },
+        { key: 'story.ch02', to: to('story', {}, { hash: '#ch-02' }), note: true },
+        { key: 'story.ch03', to: to('soon', {}, { hash: '#story-chapter' }), note: true },
+      ],
+    },
+    {
+      key: 'story.also',
+      items: [
+        { key: 'story.buy', to: to('soon', {}, { hash: '#buy' }), note: true },
+        { key: 'story.pastVotes', to: to('soon', {}, { hash: '#vote' }), note: true },
+      ],
+    },
+  ],
+  jumps: [
+    { key: 'story.chapters', to: to('story', {}, { hash: '#chapters' }) },
+    { key: 'story.soFar', to: to('story', {}, { hash: '#story-so-far' }) },
+    { key: 'story.graph', to: to('story', {}, { hash: '#story-graph' }) },
+    { key: 'story.convergence', to: to('story', {}, { hash: '#convergence' }) },
+  ],
+};
+
+const learn: IaSection = {
+  key: 'learn',
+  to: to('learn'),
+  mega: [
+    {
+      key: 'learn.tracks',
+      items: [
+        { key: 'learn.new', to: to('learn', {}, { hash: '#paths' }), note: true },
+        { key: 'learn.veteran', to: to('learn', {}, { hash: '#paths' }), note: true },
+        { key: 'learn.coop', to: to('learn', {}, { hash: '#paths' }), note: true },
+      ],
+    },
+    {
+      key: 'learn.rulesHub',
+      items: [
+        { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }), note: true },
+        { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }), note: true },
+        { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }), note: true },
+        { key: 'learn.faq', to: to('soon', {}, { hash: '#faq' }), note: true },
+      ],
+    },
+    {
+      key: 'learn.also',
+      items: [
+        { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }), note: true },
+        { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }), note: true },
+        { key: 'learn.printAndPlay', to: to('soon', {}, { hash: '#print-and-play' }), note: true },
+      ],
+    },
+  ],
+  jumps: [
+    { key: 'learn.paths', to: to('learn', {}, { hash: '#paths' }) },
+    { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }) },
+    { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }) },
+    { key: 'learn.rules', to: to('learn', {}, { hash: '#rules' }) },
+  ],
+};
+
+const news: IaSection = { key: 'news', to: to('news') };
+
+const community: IaSection = {
+  key: 'community',
+  to: to('community'),
+  mega: [
+    {
+      key: 'community.group',
+      items: [
+        { key: 'community.discord', to: to('community', {}, { hash: '#discord' }), note: true },
+        { key: 'community.wallpapers', to: to('community', {}, { hash: '#wallpapers' }), note: true },
+      ],
+    },
+    {
+      key: 'community.help',
+      items: [
+        { key: 'community.support', to: to('community', {}, { hash: '#support' }), note: true },
+        { key: 'community.faq', to: to('soon', {}, { hash: '#faq' }), note: true },
+      ],
+    },
+    {
+      key: 'community.pressTeam',
+      items: [
+        { key: 'community.press', to: to('community', {}, { hash: '#press' }), note: true },
+        { key: 'community.team', to: to('community', {}, { hash: '#team' }), note: true },
+      ],
+    },
+  ],
+  jumps: [
+    { key: 'community.discord', to: to('community', {}, { hash: '#discord' }) },
+    { key: 'community.wallpapers', to: to('community', {}, { hash: '#wallpapers' }) },
+    { key: 'community.press', to: to('community', {}, { hash: '#press' }) },
+    { key: 'community.support', to: to('community', {}, { hash: '#support' }) },
+    { key: 'community.team', to: to('community', {}, { hash: '#team' }) },
+  ],
+};
+
+export const primaryNav: IaSection[] = [universe, story, learn, news, community];
+
+export const footerColumns: IaGroup[] = [
+  {
+    key: 'footer.universe',
+    items: [
+      { key: 'universe.factions', to: to('universe', {}, { hash: '#factions' }) },
+      { key: 'universe.brands', to: to('brand', { brandId: 'endless-chain' }) },
+      { key: 'universe.characters', to: to('characters') },
+      { key: 'universe.cards', to: to('cards') },
+      { key: 'universe.incursions', to: to('incursions') },
+      { key: 'universe.unaligned', to: to('unaligned') },
+    ],
+  },
+  {
+    key: 'footer.story',
+    items: [
+      { key: 'story.chapters', to: to('story', {}, { hash: '#chapters' }) },
+      { key: 'story.soFar', to: to('story', {}, { hash: '#story-so-far' }) },
+      { key: 'story.graph', to: to('story', {}, { hash: '#story-graph' }) },
+      { key: 'story.convergence', to: to('story', {}, { hash: '#convergence' }) },
+    ],
+  },
+  {
+    key: 'footer.learn',
+    items: [
+      { key: 'learn.paths', to: to('learn', {}, { hash: '#paths' }) },
+      { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }) },
+      { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }) },
+      { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }) },
+      { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }) },
+      { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }) },
+      { key: 'learn.faq', to: to('soon', {}, { hash: '#faq' }) },
+    ],
+  },
+  {
+    key: 'footer.news',
+    items: [
+      { key: 'news.announcements', to: to('news', {}, { query: { category: 'announcement' } }) },
+      { key: 'news.upcoming', to: to('news', {}, { query: { category: 'upcoming' } }) },
+      { key: 'news.events', to: to('news', {}, { query: { category: 'events' } }) },
+    ],
+  },
+  {
+    key: 'footer.community',
+    items: [
+      { key: 'community.discord', to: to('community', {}, { hash: '#discord' }) },
+      { key: 'community.press', to: to('community', {}, { hash: '#press' }) },
+      { key: 'community.wallpapers', to: to('community', {}, { hash: '#wallpapers' }) },
+      { key: 'community.support', to: to('community', {}, { hash: '#support' }) },
+      { key: 'community.team', to: to('community', {}, { hash: '#team' }) },
+    ],
+  },
+];
+
+/** Socials render from data URLs, not from the IA (they are outbound). */
+export const socialKeys = ['discord', 'youtube', 'instagram', 'boardgamegeek'] as const;

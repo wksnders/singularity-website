@@ -1,0 +1,1071 @@
+{
+  "meta": {
+    "home": "Singularity.exe — a deterministic card game by Octothorpe",
+    "universe": "The universe — Singularity.exe",
+    "characters": "Characters — Singularity.exe",
+    "cards": "Card gallery — Singularity.exe",
+    "incursions": "Incursions — Singularity.exe",
+    "unaligned": "Unaligned — Singularity.exe",
+    "story": "Story — Singularity.exe",
+    "learn": "Learn to play — Singularity.exe",
+    "news": "News — Singularity.exe",
+    "community": "Community — Singularity.exe",
+    "soon": "Not yet — Singularity.exe",
+    "suffix": " — Singularity.exe",
+    "fallback": "Singularity.exe"
+  },
+  "chrome": {
+    "skip": "Skip to content",
+    "mainNav": "Main",
+    "siteNav": "Site",
+    "menu": "Menu",
+    "close": "Close menu",
+    "sections": "sections",
+    "playNow": "Play Now",
+    "featured": "Featured character",
+    "featuredPlaceholder": "[ featured character art ]",
+    "social": {
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "instagram": "Instagram",
+      "boardgamegeek": "BGG"
+    },
+    "play": {
+      "buy": {
+        "label": "Buy the box",
+        "note": "Core set · expansion · Incursions"
+      },
+      "printAndPlay": {
+        "label": "Print & play",
+        "note": "The core-set cards, free"
+      },
+      "tabletopSimulator": {
+        "label": "Tabletop Simulator",
+        "note": "Official digital version"
+      }
+    }
+  },
+  "footer": {
+    "publishedBy": "Published by",
+    "crossover": "Crossover with"
+  },
+  "wayfinding": {
+    "onThisPage": "On this page",
+    "sectionRail": "Sections",
+    "sections": "Sections",
+    "copyLink": "Copy link to section",
+    "copied": "COPIED"
+  },
+  "filters": {
+    "all": "All",
+    "in": "matching",
+    "noResults": "Nothing matches that yet",
+    "noResultsBody": "Try a different faction, or clear the search.",
+    "clear": "Clear filters"
+  },
+  "video": {
+    "play": "Play",
+    "pendingKicker": "Trailer",
+    "pendingBody": "The film lands before launch. The player is live — the moment a video ID arrives it plays right here, captions on.",
+    "backToPoster": "Back to the poster"
+  },
+  "cards": {
+    "cardText": "Card text",
+    "cost": "Cost",
+    "type": "Type",
+    "rules": "Rules",
+    "flavour": "Flavour",
+    "unrevealed": "Not revealed yet",
+    "unnamed": "[ unrevealed program ]",
+    "artPlaceholder": "[ printed card 63×88 ]"
+  },
+  "universe": {
+    "anyFaction": "Any faction",
+    "anyFactionUnlock": "Any faction · co-op unlock",
+    "artPlaceholder": "[ character art 3:4 ]",
+    "factionArtPlaceholder": "[ faction hero art ]",
+    "hero": {
+      "title": "A world made entirely of code",
+      "lede": "Rival powers carve up the digital world between them. Every character belongs to one — or to none. Start anywhere: a faction, a face, a card.",
+      "pending": "[ UNIVERSE KEY ART — PENDING ]"
+    },
+    "sections": {
+      "factions": "Factions",
+      "characters": "Characters",
+      "unaligned": "Unaligned",
+      "incursions": "Incursions",
+      "cards": "Card gallery"
+    },
+    "factions": {
+      "note": "Four brands each",
+      "exit": "Meet the cast →"
+    },
+    "characters": {
+      "note": "~80 at launch",
+      "count": "characters",
+      "searchLabel": "Search by name or epithet",
+      "searchPlaceholder": "Start typing a name…",
+      "emptyTitle": "Nobody here by that name — yet",
+      "emptyBody": "Most of the ~80 launch characters have not been revealed. Try another faction, or clear the search.",
+      "revealNote": "More revealed with every set",
+      "exitIndex": "The full cast index →",
+      "exit": "The characters who belong to nobody →"
+    },
+    "unaligned": {
+      "nameTbd": "[ area name — TBD ]",
+      "body": "Some characters answer to nobody, and can be played in any faction — LuX, plus the cast you earn by beating an Incursion. Each brings a small set of programs only they can use.",
+      "sealed": "Sealed in the box · open when you win",
+      "exitPage": "The unaligned →",
+      "exit": "Where you win them →"
+    },
+    "incursions": {
+      "title": "The rogue AIs answer to no faction",
+      "body": "[PLACEHOLDER — Incursions lore intro.] Each boss plays itself from its own deck and rules. Beat one and its counterpart joins your side.",
+      "cta": "Enter the Incursions",
+      "exit": "Every card in the game →"
+    },
+    "cards": {
+      "body": "Every program, with its rules text in full — searchable, and always the current wording.",
+      "cta": "Browse every program"
+    }
+  },
+  "newsletter": {
+    "kicker": "Dispatches",
+    "lede": "Set announcements, chapter releases and Convergence votes — no more than a few times a month.",
+    "label": "Email address",
+    "placeholder": "you@somewhere.net",
+    "submit": "Sign up",
+    "fine": "A few times a month, and one click to leave. [PLACEHOLDER — privacy line]",
+    "done": "You're on the list — a confirmation is on its way.",
+    "closed": "Sign-ups are not open yet. There is nowhere for this to send, so the form stays shut rather than pretending."
+  },
+  "support": {
+    "name": "Your name",
+    "email": "Email address",
+    "order": "Order number (if you have one)",
+    "message": "What went wrong?",
+    "submit": "Send to support",
+    "fallback": "Or email us directly:",
+    "done": "Sent. We answer order and refund questions within two working days.",
+    "closed": "Support is not open yet. Nothing typed here would reach us, so the form stays shut until it can."
+  },
+  "home": {
+    "hero": {
+      "kicker": "Deterministic card game · Octothorpe",
+      "lede": "Humans abandoned physical reality. What remains fights for control of one legendary program — the Singularity.",
+      "ctaPlay": "Play Now",
+      "ctaUniverse": "Enter the universe",
+      "players": "players",
+      "length": "30 min / player",
+      "zero": "Zero randomness",
+      "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
+      "pending": "[ HERO SPLASH — PENDING ]"
+    },
+    "facts": {
+      "title": "The box, at a glance",
+      "price": "Price",
+      "release": "Release",
+      "box": "In the box",
+      "ships": "Ships to",
+      "ages": "Ages"
+    },
+    "pitch": {
+      "kicker": "The game",
+      "title": "Crash your opponents' characters. No dice, no draws, no luck.",
+      "body": "A deterministic card game for 2–4 players, about 30 minutes per player. Every card in every hand is knowable — outcomes come from reading the board, not the top of a deck.",
+      "players": "Players",
+      "length": "Length",
+      "solo": "Solo",
+      "soloValue": "Yes",
+      "modesKicker": "Five ways to play",
+      "modesLink": "See modes of play"
+    },
+    "zero": {
+      "title": "No dice. No shuffle. No luck.",
+      "body": "Zero randomness means there is always a best line — and always a reason you lost. Watch a full turn play out.",
+      "trailerTitle": "Singularity.exe trailer",
+      "trailerPlaceholder": "[ trailer poster frame — 16:9 ]",
+      "caption": "Captioned · plays inline, never on load",
+      "link": "How it works"
+    },
+    "cast": {
+      "kicker": "The cast",
+      "title": "Around 80 characters at launch",
+      "prev": "Previous characters",
+      "next": "More characters",
+      "link": "Browse the full cast"
+    },
+    "factions": {
+      "kicker": "The factions",
+      "title": "Pick a side, or read them all"
+    },
+    "incursions": {
+      "badge": "Co-op & solo",
+      "title": "Incursions: take on a rogue AI, 1–4 players",
+      "body": "The boss plays itself — entirely from its own cards and rules, with no human decisions. Everyone at the table is on the same side.",
+      "players": "players",
+      "solo": "Solo OK",
+      "inBox": "In the box",
+      "cta": "Meet the rogue AIs"
+    },
+    "chapter": {
+      "kicker": "The story so far",
+      "label": "Chapter",
+      "body": "[PLACEHOLDER — set narrative that advances the world story. Every box is both a product and a chapter.]",
+      "cta": "Read the chapter",
+      "artPlaceholder": "[ box / chapter key art ]"
+    },
+    "ways": {
+      "title": "Three ways in",
+      "buy": {
+        "title": "Buy the box",
+        "body": "Core set, expansion and Incursions — all launching day one. No random boosters, ever."
+      },
+      "pnp": {
+        "title": "Print & play",
+        "body": "The full core-set cards as a free download. Try a real game tonight."
+      },
+      "tts": {
+        "title": "Tabletop Simulator",
+        "body": "Play the official digital version with anyone, anywhere."
+      }
+    },
+    "news": {
+      "title": "Latest",
+      "link": "All news",
+      "dateTbd": "[ date TBD ]",
+      "artPlaceholder": "[ news image 16:9 ]"
+    },
+    "community": {
+      "title": "Play with the people who build it",
+      "body": "Rules questions, deck talk, and Incursion post-mortems from people who lost the same way you did.",
+      "cta": "Join the Discord"
+    }
+  },
+  "soon": {
+    "kicker": {
+      "page": "Being written",
+      "link": "Not live yet"
+    },
+    "alsoTitle": "Open right now",
+    "back": "Back to the home page",
+    "d": {
+      "generic": {
+        "title": "That page is still being written",
+        "body": "It is on the list, and it is not live yet. Here is what is open on the site today."
+      },
+      "rules-reference": {
+        "title": "The rules reference is being written",
+        "body": "It ships as a searchable, deep-linkable document — never a PDF-only download. Until then, the videos and the modes page cover the same ground."
+      },
+      "errata": {
+        "title": "The errata log is being written",
+        "body": "Every change will be dated and will point at the cards and rules it touches."
+      },
+      "competition": {
+        "title": "The competition ruleset is being written",
+        "body": "The ruleset exists and ships at launch. It will be published here, versioned, with the date it takes effect."
+      },
+      "faq": {
+        "title": "The FAQ is being written",
+        "body": "Buying, shipping, box and card dimensions, and the rules questions that come up most."
+      },
+      "learn-track": {
+        "title": "That learning path is still being written",
+        "body": "Each path is one ordered route through the game for one kind of player, so nobody reads the parts that are not for them. Until they are up, the modes and the how-to-play videos cover the same ground."
+      },
+      "video": {
+        "title": "That video is not published yet",
+        "body": "The how-to-plays are being made, and they go up captioned — the QR codes printed in the box point at this site, not at a video id, so nothing has to be reprinted when they land."
+      },
+      "story-chapter": {
+        "title": "That chapter is not published yet",
+        "body": "Chapters go up when their set does. The published chapters are on the Story page."
+      },
+      "news-post": {
+        "title": "That post is not up yet",
+        "body": "The news feed has everything published so far."
+      },
+      "news-archive": {
+        "title": "There is no archive yet",
+        "body": "Every post published so far fits on the news page."
+      },
+      "press-kit": {
+        "title": "The press kit is not available yet",
+        "body": "Logos, key art and screenshots go in it once the art is final. The boilerplate and the fact sheet on the press band are ready to quote from today."
+      },
+      "vote": {
+        "title": "Past Convergences are not published yet",
+        "body": "The first vote has not closed. The open vote is on the Story page."
+      },
+      "buy": {
+        "title": "The store is not open yet",
+        "body": "The core box, the expansion and Incursions all go on sale the same day. Print & play is free in the meantime."
+      },
+      "print-and-play": {
+        "title": "The print & play files are not live yet",
+        "body": "They will be the full core set, free. The learn-to-play track is already up."
+      },
+      "tts": {
+        "title": "The Tabletop Simulator build is not published yet",
+        "body": "The official version is in progress and will be linked here."
+      },
+      "rulebook": {
+        "title": "The rulebook download is not live yet",
+        "body": "The full rules will also live on this site as HTML — the PDF is an option beside it, never the only route."
+      },
+      "discord": {
+        "title": "The Discord invite is not live yet",
+        "body": "The server opens before launch."
+      },
+      "youtube": {
+        "title": "The channel is not live yet",
+        "body": "The how-to-play videos land there first."
+      },
+      "instagram": {
+        "title": "The account is not live yet",
+        "body": "Art drops will be posted there."
+      },
+      "bgg": {
+        "title": "The BoardGameGeek page is not linked yet",
+        "body": "Octothorpe is listed as publisher; the game page goes up with launch."
+      }
+    }
+  },
+  "characters": {
+    "hero": {
+      "crumb": "Characters",
+      "title": "The whole cast",
+      "lede": "Around eighty characters at launch, spread across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
+      "pending": "[ CAST LINE-UP ART — PENDING ]"
+    },
+    "sections": {
+      "cast": "Browse the cast",
+      "reveals": "Still to come"
+    },
+    "note": "~80 at launch",
+    "everyone": "Everyone",
+    "searchLabel": "Search name or epithet",
+    "searchPlaceholder": "Start typing…",
+    "canonNote": "Characters who belong to no faction — LuX and the ones you earn in an Incursion — appear under every faction filter, because that is where they can be played.",
+    "sealed": "Sealed",
+    "incursion": "Incursion",
+    "anyFactionBadge": "Playable in any faction",
+    "emptyTitle": "Nobody here by that name — yet",
+    "emptyBody": "Most of the launch cast has not been revealed.",
+    "hiddenLabel": "Most of the cast is still unrevealed",
+    "revealsBody": "The rest of the cast arrives the way the story does — a face at a time, as chapters and sets land. Nothing here is behind an account; you just have to be around when it happens.",
+    "reveals": {
+      "news": "Reveals and announcements",
+      "story": "Faces arrive with their chapter",
+      "community": "Where they land first"
+    },
+    "exitUnaligned": "The characters who belong to nobody →",
+    "exitUniverse": "Back to the Universe →"
+  },
+  "faction": {
+    "hero": {
+      "artPlaceholder": "[ faction hero art — 21:9 ]",
+      "pending": "[ FACTION HERO — PENDING ]",
+      "emblem": "[ emblem ]",
+      "lorePlaceholder": "[PLACEHOLDER — paste real faction lore. Two or three sentences establishing who they are, how they fight and what they want from the Singularity.]"
+    },
+    "stats": {
+      "brands": "brands",
+      "programs": "programs",
+      "characters": "characters"
+    },
+    "brands": {
+      "title": "Brands",
+      "note": "Each brand: 10 programs + its own story",
+      "teaser": "[PLACEHOLDER — brand story teaser. Brands carry their own narrative, not just a card list.]",
+      "artPlaceholder": "[ brand art ]"
+    },
+    "cast": {
+      "title": "Who fights for"
+    },
+    "exits": {
+      "storyTitle": "in the chapters",
+      "storyBody": "Where this faction appears in the released sets, in order.",
+      "cardsKicker": "Cards",
+      "cardsBody": "Card gallery, filtered to this faction. Full rules text included."
+    },
+    "missingTitle": "No faction at that address",
+    "missingBody": "The four factions are on the Universe page."
+  },
+  "character": {
+    "emblemNote": "[ faction emblems — assets/factions/<id>/icon.png ]",
+    "lorePlaceholder": "[PLACEHOLDER — paste real character lore. This is the door into the world: who they were before the migration, what they run on now, and why two factions claim them.]",
+    "artPlaceholder": "[ character art — full, 3:4, focal on face ]",
+    "artCredit": "ART — PENDING · [ artist credit TBD ]",
+    "ctaCards": "See their cards",
+    "ctaChapter": "Read their chapter →",
+    "playsWith": "Plays with:",
+    "brandStory": "The brand story",
+    "moreInGallery": "in the gallery",
+    "cardTextNote": "Every program's name, cost, type and rules text lives on the site as text — not only in the card image — so it can be searched, read aloud and corrected by errata.",
+    "appearsIn": "Appears in",
+    "chapterArtPlaceholder": "[ chapter art ]",
+    "noStoriesTitle": "Not in a published chapter yet",
+    "noStoriesBody": "They arrive with their set. The published chapters are on the Story page.",
+    "nextIn": "Next in",
+    "missingTitle": "That character is not revealed yet",
+    "missingBody": "Most of the launch cast is still sealed. The revealed cast is in the index."
+  },
+  "brand": {
+    "hero": {
+      "artPlaceholder": "[ brand key art — wide ]",
+      "pending": "[ BRAND KEY ART — PENDING ]",
+      "mark": "[ brand mark ]",
+      "position": "Brand"
+    },
+    "sections": {
+      "story": "The brand story",
+      "programs": "The ten programs",
+      "cast": "Who plays it"
+    },
+    "oneLinerPlaceholder": "[PLACEHOLDER — one line on what this brand does at the table, in plain player language.]",
+    "quotePlaceholder": "[PLACEHOLDER — a line of in-world text: a slogan, a warning label, a line of the brand's own documentation.]",
+    "storyNote": "Lore",
+    "storyPlaceholder1": "[PLACEHOLDER — the brand's own story. Who built these programs, what they were built for, and what it costs to run them. A brand is a body of work, not a colour swatch: this reads as its own short piece of fiction.]",
+    "storyPlaceholder2": "[PLACEHOLDER — second beat. Where the brand sits inside its faction, and who disagrees with it.]",
+    "storyPlaceholder3": "[PLACEHOLDER — third beat, ending on the hook that sends a reader to the cards.]",
+    "cardsNote": "cards · 63 × 88 mm",
+    "programsBody": "Every brand is exactly ten programs. Each is shown as the printed card, with its wording also held as text — searchable, linkable from errata, and always current.",
+    "unrevealed": "Unrevealed",
+    "of": "of",
+    "revealed": "revealed",
+    "exitPrograms": "See the ten programs →",
+    "exitGallery": "Every program in the gallery →",
+    "exitFaction": "Back to",
+    "noCastTitle": "No characters revealed for this brand yet",
+    "noCastBody": "The cast arrives with the chapters. Watch News, or the story pages.",
+    "missingTitle": "That brand is not published yet",
+    "missingBody": "Sixteen brands ship at launch, four per faction. The published ones are on their faction pages."
+  },
+  "cardsPage": {
+    "hero": {
+      "title": "Every card, in full",
+      "lede": "160 programs at launch, four brands to a faction and ten programs to a brand. See every card as it is printed — and search the words on it, because those are held as text too.",
+      "pending": "[ CARD SPREAD ART — PENDING ]"
+    },
+    "sections": {
+      "gallery": "Browse the cards",
+      "anatomy": "Anatomy of a card"
+    },
+    "count": "cards",
+    "countNote": "160 at launch",
+    "searchLabel": "Search card name or rules text",
+    "textNote": "Each card is shown as the printed card. Its wording is stored separately as text — so search reads it, errata can link to it, and a screen reader can speak it.",
+    "emptyTitle": "No card here by that name yet",
+    "emptyBody": "Most of the 160 launch programs have not been revealed.",
+    "anatomyNote": "63 × 88 mm",
+    "anatomyBody": "Every program card carries the same eight slots. The gallery shows you the card itself; the words on it are also held as text behind each tile, so a rules lookup mid-game finds the wording and not just a picture.",
+    "sleeves": "63 × 88 mm · standard sleeves",
+    "framePending": "[ card frame design — PENDING. Slots and proportions are final; the frame art is not. ]",
+    "exitErrata": "Recent errata & rulings →",
+    "exitLearn": "Learn how the cards play →",
+    "anatomy": {
+      "name": {
+        "title": "Name",
+        "body": "The card's title, and the string errata refers to."
+      },
+      "cost": {
+        "title": "Cost",
+        "body": "What it takes to run the program."
+      },
+      "art": {
+        "title": "Art",
+        "body": "Unique art, one artist across all programs."
+      },
+      "type": {
+        "title": "Type line",
+        "body": "What kind of program it is."
+      },
+      "rules": {
+        "title": "Rules text",
+        "body": "Held as text as well as printed, so it stays searchable and correctable."
+      },
+      "flavour": {
+        "title": "Flavour",
+        "body": "In-world voice. Never rules-bearing."
+      },
+      "brand": {
+        "title": "Brand",
+        "body": "The brand mark and its faction colour."
+      },
+      "set": {
+        "title": "Set & number",
+        "body": "Collector info: which box, which slot."
+      }
+    }
+  },
+  "incursions": {
+    "hero": {
+      "title": "Something in here was never anyone's",
+      "lede": "[PLACEHOLDER — the one-paragraph pitch for the rogue AIs: what they are, why the four powers stopped fighting each other long enough to notice.]",
+      "artPlaceholder": "[ rogue AI key art — wide ]",
+      "pending": "[ ROGUE AI KEY ART — PENDING ]"
+    },
+    "sections": {
+      "threat": "The threat",
+      "how": "How a boss plays",
+      "roster": "The rogue AIs",
+      "unlocks": "What you win"
+    },
+    "loreNote": "Lore",
+    "perPlayer": "per player",
+    "noGm": "No GM",
+    "bossPlaysItself": "The boss plays itself",
+    "threat": {
+      "body1": "[PLACEHOLDER — where the rogue AIs came from, and why they answer to no faction. This is the lore page, readable by anyone who has not bought the expansion.]",
+      "body2": "[PLACEHOLDER — what an incursion looks like from inside the world: what it takes, what it leaves behind.]"
+    },
+    "how": {
+      "note": "No human runs it",
+      "body": "Nobody plays the villain. The rogue AI acts entirely from its own deck and its own rules, so every player at the table is on the same side — and, as everywhere else in this game, nothing is random.",
+      "prereq": "Learn the base game first. An Incursion assumes you already know how a skirmish works — the co-op track in Learn starts from there.",
+      "setup": {
+        "title": "Set up the Incursion",
+        "body": "Each boss brings its own setup — a board state you would never build for a skirmish."
+      },
+      "reveal": {
+        "title": "The boss reveals",
+        "body": "Its next action is already determined. You can read it, and plan against it."
+      },
+      "answer": {
+        "title": "You answer together",
+        "body": "One to four players, playing their own characters, against one shared threat."
+      },
+      "escalate": {
+        "title": "It escalates on a schedule",
+        "body": "No dice decide when the pressure rises. The boss's own cards do."
+      }
+    },
+    "roster": {
+      "note": "Roster",
+      "body": "Each is a separate Incursion with its own setup, its own deck, and its own way of losing patience.",
+      "artPlaceholder": "[ rogue AI art 3:4 ]",
+      "linePlaceholder": "[PLACEHOLDER — one line on how this one fights.]",
+      "moreKicker": "More Incursions",
+      "moreCount": "[ count — TBD ]"
+    },
+    "unlocks": {
+      "note": "Sealed in the box",
+      "body1": "Beat an Incursion and you open the pack that was sealed in the box beside it. Inside is the character who was on the other side — now playable in any faction, in every mode, carrying a small personal brand of programs only they can run.",
+      "body2": "Nothing stops you opening it early. We would rather you earned it.",
+      "ctaWho": "Who you can win",
+      "ctaBuy": "Get the expansion →"
+    },
+    "ritual": {
+      "title": "The ritual",
+      "run": "Run the Incursion, one to four players.",
+      "win": "Win.",
+      "cut": "Cut the seal on the pack with that boss's mark.",
+      "play": "Play them anywhere — any faction, any format.",
+      "note": "No accounts, no tracking. The box remembers, not the site."
+    },
+    "exitHow": "See how a boss takes its turn →",
+    "exitTrack": "The co-op learning track →",
+    "exitChapter": "The chapter they arrive in →"
+  },
+  "unaligned": {
+    "hero": {
+      "title": "Some of them belong to nobody",
+      "lede": "A handful of characters sit outside the four powers entirely. They can be played in any faction, and each one brings a small brand of programs nobody else can run.",
+      "artPlaceholder": "[ unaligned key art — wide ]",
+      "pending": "[ UNALIGNED KEY ART — PENDING ]"
+    },
+    "sections": {
+      "earned": "Earned in an Incursion",
+      "brands": "Personal brands"
+    },
+    "areaName": "[ area name — TBD ]",
+    "collectiveTerm": "[ collective term — TBD ]",
+    "luxArtPlaceholder": "[ LuX art 3:4 ]",
+    "lux": {
+      "body": "[PLACEHOLDER — who LuX is. She slots into any faction's line-up without changing it, which is either a gift or a warning depending on who you ask.]",
+      "brandLine": "programs in her personal brand, each opened by clearing a specific challenge.",
+      "ctaPage": "LuX's page",
+      "ctaPrograms": "Her ten programs →"
+    },
+    "earned": {
+      "body": "Each of these arrives sealed in the box, beside the rogue AI they came from. Beat that Incursion and they are yours — in any faction, in every format, carrying the boss's own tricks.",
+      "moreKicker": "More to earn",
+      "moreCount": "[ count — TBD ]",
+      "note": "Names and art shown here are the ones already revealed publicly. Nothing on this site tracks what you have opened."
+    },
+    "brands": {
+      "note": "Smaller than a faction brand",
+      "body": "A faction brand is ten programs shared across its characters. A personal brand belongs to one character alone.",
+      "luxTitle": "Opened one challenge at a time",
+      "luxBody": "Ten programs, ten separate challenges. [PLACEHOLDER — what the challenges ask of you.]",
+      "miniKicker": "Earned characters · mini brands",
+      "miniTitle": "The boss's own tricks, in your hand",
+      "miniBody": "Every character you win from an Incursion channels the rogue AI they came from — a short brand of programs only they can run, playable in ordinary competitive games.",
+      "miniCount": "[ programs per personal brand — TBD ]",
+      "ctaGallery": "See them in the gallery →"
+    },
+    "exitEarned": "The cast you have to earn →",
+    "exitIncursions": "How Incursions work →"
+  },
+  "story": {
+    "hero": {
+      "title": "Every box is a chapter",
+      "lede": "Every box is a complete set — no random packs — and every set carries the story forward. Read them in order, or start with the one whose art you like.",
+      "pending": "[ STORY KEY ART — WIDE — PENDING ]"
+    },
+    "sections": {
+      "chapters": "Sets & chapters",
+      "soFar": "The story so far",
+      "graph": "The story graph",
+      "convergence": "Convergence vote",
+      "voteOpen": "Vote open"
+    },
+    "kind": {
+      "core": "Core set",
+      "expansion": "Expansion"
+    },
+    "status": {
+      "available": "Out now",
+      "upcoming": "Coming",
+      "announced": "Announced"
+    },
+    "chapters": {
+      "note": "In order",
+      "leadArtPlaceholder": "[ core set box / chapter art ]",
+      "setArtPlaceholder": "[ set box art ]",
+      "narrativePlaceholder": "[PLACEHOLDER — the chapter narrative: what happens in this set, and which characters it puts on the board.]",
+      "inTheBox": "In the box",
+      "buy": "Buy this set",
+      "read": "Read the chapter →",
+      "recap": "Recap",
+      "carriesIncursions": "[PLACEHOLDER] Brings the rogue AIs — and Incursions, the co-op mode.",
+      "teaser": "[PLACEHOLDER] Teased in News now; becomes a full chapter page on release.",
+      "exit": "Catch up on the story so far →"
+    },
+    "soFar": {
+      "lede": "Five minutes to catch up on everything that has happened so far.",
+      "beforeKicker": "Before the game begins",
+      "migrationTitle": "The migration",
+      "migrationBody": "[PLACEHOLDER — humanity leaves physical reality behind.]",
+      "recapPlaceholder": "[PLACEHOLDER — what this set establishes.]",
+      "exit": "See who is in each story →"
+    },
+    "graph": {
+      "note": "Stories × cast",
+      "lede": "Every published story, in release order, with the characters who appear in it pinned to it. Tap a pin to see who they are, then go straight to their page.",
+      "storyKicker": "Story",
+      "cast": "Cast",
+      "linePlaceholder": "[PLACEHOLDER — one line on what happens.]",
+      "noPin": "No pin selected — tap a character below",
+      "details": "Details",
+      "clear": "Clear",
+      "emptyColumn": "Stories appear here as the set lands",
+      "derivedNote": "The graph is built from the cast list on each story — nothing is placed by hand, so it stays right as chapters are added. [ a map-art reading of the same graph is still under consideration ]",
+      "exit": "Help decide what happens next →"
+    },
+    "convergence": {
+      "badge": "Convergence · vote open",
+      "title": "The next chapter is decided by players",
+      "body": "[PLACEHOLDER — the question on the table.] Votes close [ date TBD ]; the result is canon in the set that follows.",
+      "cta": "Cast your vote",
+      "past": "Past Convergences →",
+      "identity": "Identify with your pledge number or Discord sign-in. No account needed."
+    }
+  },
+  "learn": {
+    "hero": {
+      "title": "Learn to play",
+      "lede": "Twenty minutes to your first game, whether you have played a hundred card games or none. Everything you need is on this page — and the full rules are here too, for the moment a game comes down to one word.",
+      "pending": "[ TABLE / PLAY KEY ART — WIDE — PENDING ]"
+    },
+    "sections": {
+      "paths": "Pick your path",
+      "modes": "Modes of play",
+      "videos": "Videos",
+      "rules": "Rules hub",
+      "try": "Try it free"
+    },
+    "paths": {
+      "heading": "Where are you starting?",
+      "exit": "See how the five modes differ →"
+    },
+    "tracks": {
+      "new": {
+        "kicker": "New to card games",
+        "title": "Learn to play",
+        "body": "A guided sequence: one concept per step, a real first game at the end. About 20 minutes."
+      },
+      "veteran": {
+        "kicker": "Played TCGs before",
+        "title": "What is different here",
+        "body": "The short version — no draw luck, no hidden randomness, brands instead of colours. Then straight to the reference."
+      },
+      "coop": {
+        "kicker": "Co-op and solo",
+        "title": "Run an Incursion",
+        "body": "How to set up a boss and let it play itself. Worth knowing the base game first."
+      }
+    },
+    "modes": {
+      "ffa": {
+        "players": "3–4 players",
+        "blurb": "[PLACEHOLDER] Last stack running wins."
+      },
+      "duel": {
+        "players": "2 players",
+        "blurb": "[PLACEHOLDER] The tournament format."
+      },
+      "teams": {
+        "players": "4 players",
+        "blurb": "[PLACEHOLDER] Shared board, split priorities."
+      },
+      "draft": {
+        "players": "2–4 players",
+        "blurb": "[PLACEHOLDER] Build from a shared pool — still zero luck."
+      },
+      "incursions": {
+        "players": "1–4 players · co-op & solo",
+        "blurb": "The rogue AI acts entirely from its own cards. No human runs the boss."
+      },
+      "exit": "Read up on Incursions →"
+    },
+    "videos": {
+      "heading": "How to play, on video",
+      "note": "Watch before you read",
+      "posterPlaceholder": "[ video poster 16:9 ]",
+      "idTbd": "[ YouTube ID — TBD ]",
+      "captionNote": "All captioned, and scannable from the rulebook when you would rather be shown than told.",
+      "exit": "When a video is not enough, the rules hub →"
+    },
+    "rules": {
+      "lede": "When a game hinges on exactly how a card works, the answer is here — searchable, current, and linkable, so you can settle it and get back to playing.",
+      "reference": {
+        "kicker": "Reference",
+        "title": "Rules reference",
+        "body": "Every rule, in order, with worked examples for the interactions that start arguments."
+      },
+      "errata": {
+        "kicker": "Changelog",
+        "title": "Errata & rulings",
+        "body": "Every change we have made to a card, newest first."
+      },
+      "competition": {
+        "kicker": "Organised play",
+        "title": "Competition rules",
+        "body": "What changes when you play for a prize. v[ TBD ] · effective [ date TBD ]."
+      },
+      "faq": {
+        "kicker": "Everything else",
+        "title": "FAQ",
+        "body": "Rules, shipping, what is in the box, and how to reach us."
+      },
+      "booklet": "The Learn-to-Play booklet is in the box, and",
+      "bookletLink": "the full rulebook is here",
+      "exit": "Play a game before you buy one →"
+    },
+    "try": {
+      "heading": "Try it tonight",
+      "pnp": {
+        "kicker": "Free",
+        "title": "Print & play",
+        "body": "The core-set cards, free. Not a cut-down demo — the real game."
+      },
+      "tts": {
+        "kicker": "Digital",
+        "title": "Tabletop Simulator",
+        "body": "Official module. Play with anyone, anywhere."
+      },
+      "buy": {
+        "kicker": "The box",
+        "title": "Buy the box",
+        "body": "Core set, expansion and Incursions."
+      },
+      "exit": "See what is in each box →"
+    }
+  },
+  "news": {
+    "hero": {
+      "title": "News",
+      "lede": "What is coming, what just landed, and where to play with us next.",
+      "pending": "[ NEWS KEY ART — WIDE — PENDING ]"
+    },
+    "latest": "Latest",
+    "count": "posts",
+    "summaryPlaceholder": "[PLACEHOLDER — one-paragraph summary.]",
+    "leadArtPlaceholder": "[ lead post image 21:9 ]",
+    "artPlaceholder": "[ post image 16:9 ]",
+    "groups": {
+      "thisMonth": "This month",
+      "earlier": "Earlier this year"
+    },
+    "emptyTitle": "Nothing in that category yet",
+    "emptyBody": "Try another category, or read everything published so far.",
+    "allPublished": "Showing every post published so far",
+    "archive": "The archive →"
+  },
+  "community": {
+    "hero": {
+      "title": "Community",
+      "lede": "The Discord is where rules questions get answered, Incursion runs get their post-mortem, and half-built decks get taken apart kindly.",
+      "pending": "[ COMMUNITY KEY ART — WIDE — PENDING ]"
+    },
+    "sections": {
+      "discord": "Discord",
+      "wallpapers": "Wallpapers",
+      "press": "Press kit",
+      "support": "Support",
+      "team": "The team"
+    },
+    "hub": {
+      "discord": "Rules desk, Incursion logs, deck lab — the room where questions get answered.",
+      "wallpapers": "[ count TBD ] files · desktop · mobile · avatar",
+      "press": "ZIP · [ size TBD ] · no email required",
+      "support": "Orders · refunds · missing components",
+      "team": "Octothorpe · Salt Lake City · est. 2015"
+    },
+    "discord": {
+      "heading": "Join the Discord",
+      "body": "Designers answer rules questions in the open. Bring a board state and someone will find the line you missed.",
+      "cta": "Open the invite"
+    },
+    "wallpapers": {
+      "sizesTbd": "[ output sizes — TBD ]",
+      "count": "files",
+      "exit": "Writing about the game? Press kit →"
+    },
+    "press": {
+      "whatTitle": "What is in it",
+      "whatBody": "Logos, key art, box shots, fact sheet and boilerplate — self-serve, no email required.",
+      "cta": "Download the kit",
+      "boilerplate": "Boilerplate",
+      "boilerplateBody": "is a deterministic card game for 2–4 players from Octothorpe. About 30 minutes per player. Zero randomness.",
+      "crossover": "Crossover content with",
+      "factSheet": "Fact sheet",
+      "exit": "Something else? Talk to support →"
+    },
+    "facts": {
+      "players": "Players",
+      "length": "Length",
+      "ages": "Ages",
+      "price": "Price",
+      "release": "Release",
+      "box": "In the box",
+      "ships": "Ships to",
+      "publisher": "Publisher"
+    },
+    "support": {
+      "triage1": "Rules question? The",
+      "and": "and the",
+      "triage2": "are faster. For orders, refunds and missing components, write to us.",
+      "exit": "Read the FAQ first →"
+    },
+    "team": {
+      "body": "Octothorpe is a game studio in Salt Lake City, founded in 2015. Singularity.exe is made by a small group of designers, artists and writers — the same people who answer you in the Discord.",
+      "pending": "[ real names, roles, portraits and bios — PENDING ]",
+      "portrait": "[ portrait ]",
+      "aiKicker": "On AI",
+      "aiStatement": "[PLACEHOLDER — the studio's statement on AI in art and writing. One source string, shown here and answered again in the FAQ.]",
+      "credits": "Card art is credited to its illustrator wherever it appears. Published by Panda; crossover content with Middara.",
+      "exit": "Come say hello in the Discord →"
+    }
+  },
+  "ia": {
+    "universe": {
+      "label": "Universe",
+      "factions": {
+        "label": "Factions"
+      },
+      "explore": {
+        "label": "Explore"
+      },
+      "brands": {
+        "label": "Brands"
+      },
+      "characters": {
+        "label": "All characters"
+      },
+      "cards": {
+        "label": "Card gallery"
+      },
+      "incursions": {
+        "label": "Incursions"
+      },
+      "unaligned": {
+        "label": "Unaligned"
+      }
+    },
+    "story": {
+      "label": "Story",
+      "onThePage": {
+        "label": "On the story page"
+      },
+      "chaptersGroup": {
+        "label": "Chapters"
+      },
+      "also": {
+        "label": "Also"
+      },
+      "chapters": {
+        "label": "Sets & chapters",
+        "note": "Every box, in order"
+      },
+      "soFar": {
+        "label": "The story so far",
+        "note": "Five-minute recap"
+      },
+      "graph": {
+        "label": "The story graph",
+        "note": "Who is in which story"
+      },
+      "convergence": {
+        "label": "Convergence vote",
+        "note": "Decide the next chapter"
+      },
+      "ch01": {
+        "label": "Chapter 01",
+        "note": "Core set"
+      },
+      "ch02": {
+        "label": "Chapter 02",
+        "note": "Expansion · Incursions"
+      },
+      "ch03": {
+        "label": "Chapter 03",
+        "note": "Announced"
+      },
+      "buy": {
+        "label": "Buy a set",
+        "note": "Core · expansion · Incursions"
+      },
+      "pastVotes": {
+        "label": "Past Convergences",
+        "note": "How earlier votes landed"
+      }
+    },
+    "learn": {
+      "label": "Learn",
+      "tracks": {
+        "label": "Learn to play"
+      },
+      "rulesHub": {
+        "label": "Rules hub"
+      },
+      "also": {
+        "label": "Also in Learn"
+      },
+      "new": {
+        "label": "New to card games",
+        "note": "Guided, about 20 minutes"
+      },
+      "veteran": {
+        "label": "Played TCGs before",
+        "note": "What is different here"
+      },
+      "coop": {
+        "label": "Run an Incursion",
+        "note": "Co-op and solo"
+      },
+      "reference": {
+        "label": "Rules reference",
+        "note": "Searchable, citable"
+      },
+      "errata": {
+        "label": "Errata & rulings",
+        "note": "Dated changelog"
+      },
+      "competition": {
+        "label": "Competition rules",
+        "note": "Versioned"
+      },
+      "faq": {
+        "label": "FAQ",
+        "note": "Rules, shipping, contact"
+      },
+      "modes": {
+        "label": "Modes of play",
+        "note": "Five formats"
+      },
+      "videos": {
+        "label": "How-to-play videos",
+        "note": "Captioned"
+      },
+      "printAndPlay": {
+        "label": "Print & play",
+        "note": "The core set, free"
+      },
+      "paths": {
+        "label": "Learn to play"
+      },
+      "rules": {
+        "label": "Rules hub"
+      }
+    },
+    "news": {
+      "label": "News",
+      "announcements": {
+        "label": "Announcements"
+      },
+      "upcoming": {
+        "label": "Upcoming products"
+      },
+      "events": {
+        "label": "Events"
+      }
+    },
+    "community": {
+      "label": "Community",
+      "group": {
+        "label": "Community"
+      },
+      "help": {
+        "label": "Help"
+      },
+      "pressTeam": {
+        "label": "Press & team"
+      },
+      "discord": {
+        "label": "Discord",
+        "note": "Rules desk · incursion logs"
+      },
+      "wallpapers": {
+        "label": "Wallpapers & avatars",
+        "note": "Desktop, mobile, avatar"
+      },
+      "support": {
+        "label": "Support",
+        "note": "Orders, refunds, missing pieces"
+      },
+      "faq": {
+        "label": "FAQ",
+        "note": "Buying, shipping, rules"
+      },
+      "press": {
+        "label": "Press kit",
+        "note": "Logos, key art, boilerplate"
+      },
+      "team": {
+        "label": "The team",
+        "note": "Who makes the game"
+      }
+    },
+    "footer": {
+      "universe": {
+        "label": "Universe"
+      },
+      "story": {
+        "label": "Story"
+      },
+      "learn": {
+        "label": "Learn"
+      },
+      "news": {
+        "label": "News"
+      },
+      "community": {
+        "label": "Community"
+      }
+    }
+  }
+}
