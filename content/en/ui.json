@@ -37,11 +37,11 @@
       },
       "printAndPlay": {
         "label": "Print & play",
-        "note": "The core-set cards, free"
+        "note": "Core set + expansion, print-ready"
       },
       "tabletopSimulator": {
         "label": "Tabletop Simulator",
-        "note": "Official digital version"
+        "note": "Free 2-player preview build"
       }
     }
   },
@@ -156,6 +156,7 @@
       "ctaPlay": "Play Now",
       "ctaUniverse": "Enter the universe",
       "players": "players",
+      "modes": "Solo · co-op · versus",
       "length": "30 min / player",
       "zero": "Zero randomness",
       "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
@@ -172,17 +173,17 @@
     "pitch": {
       "kicker": "The game",
       "title": "Crash your opponents' characters. No dice, no draws, no luck.",
-      "body": "A deterministic card game for 2–4 players, about 30 minutes per player. Every card in every hand is knowable — outcomes come from reading the board, not the top of a deck.",
+      "body": "A deterministic card game for 1–4 players — head-to-head, in teams, or solo against a rogue AI. About 30 minutes per player, and every card in every hand is knowable: outcomes come from reading the board, not the top of a deck.",
       "players": "Players",
       "length": "Length",
       "solo": "Solo",
-      "soloValue": "Yes",
+      "soloValue": "Yes · Incursions",
       "modesKicker": "Five ways to play",
       "modesLink": "See modes of play"
     },
     "zero": {
       "title": "No dice. No shuffle. No luck.",
-      "body": "Zero randomness means there is always a best line — and always a reason you lost. Watch a full turn play out.",
+      "body": "Zero randomness means there is always a best line — and always a reason you lost. See it in the trailer.",
       "trailerTitle": "Singularity.exe trailer",
       "trailerPlaceholder": "[ trailer poster frame — 16:9 ]",
       "caption": "Captioned · plays inline, never on load",
@@ -205,7 +206,7 @@
       "body": "The boss plays itself — entirely from its own cards and rules, with no human decisions. Everyone at the table is on the same side.",
       "players": "players",
       "solo": "Solo OK",
-      "inBox": "In the box",
+      "inBox": "Its own box · same launch day",
       "cta": "Meet the rogue AIs"
     },
     "chapter": {
@@ -223,11 +224,11 @@
       },
       "pnp": {
         "title": "Print & play",
-        "body": "The full core-set cards as a free download. Try a real game tonight."
+        "body": "Print-ready sheets for the core set and the first expansion, free. Try a real game tonight."
       },
       "tts": {
         "title": "Tabletop Simulator",
-        "body": "Play the official digital version with anyone, anywhere."
+        "body": "The free two-player preview build, on the Steam Workshop. Play with anyone, anywhere — Tabletop Simulator required."
       }
     },
     "news": {
@@ -256,7 +257,7 @@
       },
       "rules-reference": {
         "title": "The rules reference is being written",
-        "body": "It ships as a searchable, deep-linkable document — never a PDF-only download. Until then, the videos and the modes page cover the same ground."
+        "body": "It ships as a searchable, deep-linkable document — never a PDF-only download. The current reference is already available as a PDF from the rules band on the Learn page, and the videos and modes cover the same ground."
       },
       "errata": {
         "title": "The errata log is being written",
@@ -301,30 +302,6 @@
       "buy": {
         "title": "The store is not open yet",
         "body": "The core box, the expansion and Incursions all go on sale the same day. Print & play is free in the meantime."
-      },
-      "print-and-play": {
-        "title": "The print & play files are not live yet",
-        "body": "They will be the full core set, free. The learn-to-play track is already up."
-      },
-      "tts": {
-        "title": "The Tabletop Simulator build is not published yet",
-        "body": "The official version is in progress and will be linked here."
-      },
-      "rulebook": {
-        "title": "The rulebook download is not live yet",
-        "body": "The full rules will also live on this site as HTML — the PDF is an option beside it, never the only route."
-      },
-      "discord": {
-        "title": "The Discord invite is not live yet",
-        "body": "The server opens before launch."
-      },
-      "youtube": {
-        "title": "The channel is not live yet",
-        "body": "The how-to-play videos land there first."
-      },
-      "instagram": {
-        "title": "The account is not live yet",
-        "body": "Art drops will be posted there."
       },
       "bgg": {
         "title": "The BoardGameGeek page is not linked yet",
@@ -761,8 +738,9 @@
         "title": "FAQ",
         "body": "Rules, shipping, what is in the box, and how to reach us."
       },
-      "booklet": "The Learn-to-Play booklet is in the box, and",
-      "bookletLink": "the full rulebook is here",
+      "booklet": "Both are free downloads: the rulebook teaches the game from scratch, the reference settles it mid-game.",
+      "bookletLink": "Rulebook (PDF)",
+      "referenceLink": "Rules reference (PDF)",
       "exit": "Play a game before you buy one →"
     },
     "try": {
@@ -770,12 +748,12 @@
       "pnp": {
         "kicker": "Free",
         "title": "Print & play",
-        "body": "The core-set cards, free. Not a cut-down demo — the real game."
+        "body": "Print-ready sheets for the core set and the first expansion — the competitive cards, free. Not a cut-down demo, the real game."
       },
       "tts": {
         "kicker": "Digital",
         "title": "Tabletop Simulator",
-        "body": "Official module. Play with anyone, anywhere."
+        "body": "The official preview build: two players, core and expansion cards, rules reference in-game. Free on the Steam Workshop; Tabletop Simulator required."
       },
       "buy": {
         "kicker": "The box",
@@ -840,7 +818,7 @@
       "whatBody": "Logos, key art, box shots, fact sheet and boilerplate — self-serve, no email required.",
       "cta": "Download the kit",
       "boilerplate": "Boilerplate",
-      "boilerplateBody": "is a deterministic card game for 2–4 players from Octothorpe. About 30 minutes per player. Zero randomness.",
+      "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. About 30 minutes per player. Zero randomness. Solo and co-op play ship in the Incursions box.",
       "crossover": "Crossover content with",
       "factSheet": "Fact sheet",
       "exit": "Something else? Talk to support →"

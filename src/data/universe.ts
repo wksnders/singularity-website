@@ -30,8 +30,22 @@ export const game = {
   studioCity: 'Salt Lake City',
   publisher: 'Panda',
   crossoverGame: 'Middara',
-  players: '2\u20134',
-  /** Co-op/solo range — state it wherever co-op is sold. */
+  /* 1–4, not 2–4. This is the player count for the GAME — every mode across the
+     line — and solo is one of the modes, so the range starts at 1.
+
+     It is not a claim about any single box: solo and co-op are Incursions, and
+     Incursions is its own product, sold separately (it launches the same day as
+     the core box and expansion 1). So never render this count as "what is in the
+     core box" — the box facts are `boxContents`, and which box gets you solo is
+     a purchase question that belongs in the Incursions bands.
+
+     Per-mode counts (2 for the duel, 3–4 for free-for-all) live beside each mode
+     in ui.json. */
+  players: '1\u20134',
+  /** Co-op/solo range — state it wherever co-op is sold. Same span as the game
+      as a whole, and still its own field: the Incursions bands quote it alone,
+      and Incursions is a separate box, so the two numbers are not the same
+      claim even when they read the same. */
   incursionsPlayers: '1\u20134',
   playTime: '30 min per player',
   /** Commercial facts. Reserved slots — the layout exists, the values do not. */
@@ -42,7 +56,7 @@ export const game = {
   ageRating: null as string | null,
   ratingMarks: null as string | null,
   supportEmail: null as string | null,
-  trailerYouTubeId: null as string | null,
+  trailerYouTubeId: '_eyxoFI4F-8',
   copyrightYear: 2026,
 };
 
@@ -66,12 +80,34 @@ export const formEndpoints = {
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
   buy: null,
-  printAndPlay: null,
-  tabletopSimulator: null,
-  rulebook: null,
-  discord: null,
-  youtube: null,
-  instagram: null,
+  /* Root-relative, NOT absolute: these three are files this site serves from
+     `public/downloads/`, and `outbound()` joins them to the deploy base. Hosting
+     them here rather than linking a Dropbox share is deliberate — no expiring
+     share token, no third party disabling the link on a traffic spike, and the
+     filenames carry no version number, so updating a document means overwriting
+     the file and every link ever printed or posted still resolves. Keep it that
+     way: the QR codes in the box point at this site. */
+  printAndPlay: '/downloads/singularity-competitive-print-and-play.zip',
+  /* Steam Workshop: "Singularity.exe Preview 2-Player" (Octothorpe Games).
+     Free, but today a PREVIEW build — two players, core + expansion cards and
+     the in-game rules reference; the assets are not final.
+
+     THIS URL WILL NOT CHANGE. The plan is to update this same workshop item to
+     the full game around ship, so the ID stays put and only the copy goes
+     stale. When that update lands, the three strings that currently say
+     "preview" have to be rewritten: nav.play.tabletopSimulator, home.ways.tts
+     and learn.try.tts in content/en/ui.json. It is on the launch-day list. */
+  tabletopSimulator: 'https://steamcommunity.com/sharedfiles/filedetails/?id=2968522499',
+  rulebook: '/downloads/singularity-core-rulebook.pdf',
+  /* The lookup document, offered BESIDE the rules page — never instead of it.
+     The searchable HTML reference is still priority 1; when it ships, this PDF
+     stays as the download next to it. */
+  rulesReference: '/downloads/singularity-core-reference.pdf',
+  discord: 'https://discord.com/invite/XBRfaufKsk',
+  /* Channel, not a video: the trailer and the how-to-plays embed by id from
+     game.trailerYouTubeId and videos[]. This is the "more from us" link. */
+  youtube: 'https://www.youtube.com/@octothorpegames',
+  instagram: 'https://www.instagram.com/octothorpegames/',
   boardgamegeek: null,
 };
 

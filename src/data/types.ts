@@ -138,6 +138,10 @@ export interface OutboundUrls {
   printAndPlay: string | null;
   tabletopSimulator: string | null;
   rulebook: string | null;
+  /** The rules reference PDF. Separate from `rulebook`: the rulebook teaches the
+      game (it is the learn-to-play guide), the reference is the lookup document
+      the HTML rules page will eventually replace. */
+  rulesReference: string | null;
   discord: string | null;
   youtube: string | null;
   instagram: string | null;

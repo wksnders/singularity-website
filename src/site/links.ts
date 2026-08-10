@@ -47,6 +47,7 @@ const SOON_HASH: Record<OutboundKey, string> = {
   printAndPlay: '#print-and-play',
   tabletopSimulator: '#tts',
   rulebook: '#rulebook',
+  rulesReference: '#rules-reference',
   discord: '#discord',
   youtube: '#youtube',
   instagram: '#instagram',
@@ -61,8 +62,23 @@ export interface ResolvedLink {
 
 export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
-  if (href) return { href, external: true };
-  return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
+  if (!href) return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
+
+  /* Two kinds of live destination now. Anything absolute (Steam, YouTube) is
+     used as given; anything root-relative is a file this site serves out of
+     `public/` — the rulebook PDF, the print & play zip — and has to be joined to
+     the deploy base, because the site sits at /singularity-website/ today and at
+     a domain root once the custom domain lands. Writing them base-relative in
+     `universe.ts` keeps the data file free of build config and keeps the base
+     path in the one place it already lives. BASE_URL always ends in a slash.
+
+     They still resolve as `external`, which is right for a 26MB PDF and a 61MB
+     zip: BaseLink gives them target="_blank" + rel="noopener", so a download
+     never navigates the page away from whatever the reader was reading. */
+  if (href.startsWith('/')) {
+    return { href: `${import.meta.env.BASE_URL}${href.slice(1)}`, external: true };
+  }
+  return { href, external: true };
 }
 
 /** A page that is written but not built yet. */
