@@ -94,8 +94,13 @@ function scrollCast(direction: 1 | -1): void {
       <UiButton variant="primary" :link="outbound('buy')">{{ t('home.hero.ctaPlay') }}</UiButton>
       <UiButton :to="to('universe')">{{ t('home.hero.ctaUniverse') }}</UiButton>
     </div>
+    <!-- The player count reads "1–4", which on its own does not tell anyone
+         solo is a real, supported way to play — so the modes are named right
+         next to it. Four items is the ceiling here; anything more and the row
+         wraps into a wall on a phone. -->
     <p class="home__hero-stats">
       <span>{{ game.players }} {{ t('home.hero.players') }}</span>
+      <span>{{ t('home.hero.modes') }}</span>
       <span>{{ t('home.hero.length') }}</span>
       <span class="home__hero-claim">{{ t('home.hero.zero') }}</span>
     </p>
