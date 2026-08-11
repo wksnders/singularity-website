@@ -18,11 +18,11 @@ import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandById,
+  chapters,
   characterById,
   characters,
   factionById,
   programsOfBrand,
-  sets,
   stories,
 } from '@/data/universe';
 import { to } from '@/site/links';
@@ -78,8 +78,8 @@ const appearsIn = computed(() =>
   stories
     .filter((story) => story.castIds.includes(props.characterId))
     .map((story) => {
-      const set = sets.find((s) => s.id === story.setId) ?? null;
-      return { story, set };
+      const chapter = chapters.find((c) => c.id === story.chapterId) ?? null;
+      return { story, chapter };
     }),
 );
 
@@ -208,8 +208,8 @@ const cardsQuery = computed(() =>
           <ContentCard
             v-for="entry in appearsIn"
             :key="entry.story.id"
-            :to="to('story', {}, { hash: `#ch-${String(entry.set?.chapter ?? 1).padStart(2, '0')}` })"
-            :kicker="`${t('home.chapter.label')} ${String(entry.set?.chapter ?? 1).padStart(2, '0')}`"
+            :to="to('story', {}, { hash: `#ch-${String(entry.chapter?.number ?? 1).padStart(2, '0')}` })"
+            :kicker="`${t('home.chapter.label')} ${String(entry.chapter?.number ?? 1).padStart(2, '0')}`"
             :title="entry.story.title"
             :placeholder="t('character.chapterArtPlaceholder')"
           />

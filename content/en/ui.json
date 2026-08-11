@@ -97,16 +97,16 @@
       "cards": "Card gallery"
     },
     "factions": {
-      "note": "Four brands each",
+      "note": "Brands and programs per faction",
       "exit": "Meet the cast →"
     },
     "characters": {
-      "note": "~80 at launch",
+      "note": "The full cast",
       "count": "characters",
       "searchLabel": "Search by name or epithet",
       "searchPlaceholder": "Start typing a name…",
       "emptyTitle": "Nobody here by that name — yet",
-      "emptyBody": "Most of the ~80 launch characters have not been revealed. Try another faction, or clear the search.",
+      "emptyBody": "Most of the cast has not been revealed yet. Try another faction, or clear the search.",
       "revealNote": "More revealed with every set",
       "exitIndex": "The full cast index →",
       "exit": "The characters who belong to nobody →"
@@ -191,7 +191,7 @@
     },
     "cast": {
       "kicker": "The cast",
-      "title": "Around 80 characters at launch",
+      "title": "The cast",
       "prev": "Previous characters",
       "next": "More characters",
       "link": "Browse the full cast"
@@ -212,9 +212,9 @@
     "chapter": {
       "kicker": "The story so far",
       "label": "Chapter",
-      "body": "[PLACEHOLDER — set narrative that advances the world story. Every box is both a product and a chapter.]",
+      "body": "[PLACEHOLDER — the narrative this chapter advances.]",
       "cta": "Read the chapter",
-      "artPlaceholder": "[ box / chapter key art ]"
+      "artPlaceholder": "[ chapter key art ]"
     },
     "ways": {
       "title": "Three ways in",
@@ -281,7 +281,7 @@
       },
       "story-chapter": {
         "title": "That chapter is not published yet",
-        "body": "Chapters go up when their set does. The published chapters are on the Story page."
+        "body": "Chapters go up when they are published. The published ones are on the Story page."
       },
       "news-post": {
         "title": "That post is not up yet",
@@ -309,14 +309,14 @@
     "hero": {
       "crumb": "Characters",
       "title": "The whole cast",
-      "lede": "Around eighty characters at launch, spread across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
+      "lede": "The cast spreads across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
       "pending": "[ CAST LINE-UP ART — PENDING ]"
     },
     "sections": {
       "cast": "Browse the cast",
       "reveals": "Still to come"
     },
-    "note": "~80 at launch",
+    "note": "The full cast",
     "everyone": "Everyone",
     "searchLabel": "Search name or epithet",
     "searchPlaceholder": "Start typing…",
@@ -327,7 +327,7 @@
     "emptyTitle": "Nobody here by that name — yet",
     "emptyBody": "Most of the launch cast has not been revealed.",
     "hiddenLabel": "Most of the cast is still unrevealed",
-    "revealsBody": "The rest of the cast arrives the way the story does — a face at a time, as chapters and sets land. Nothing here is behind an account; you just have to be around when it happens.",
+    "revealsBody": "The rest of the cast arrives the way the story does — a face at a time, as chapters and boxes land. Nothing here is behind an account; you just have to be around when it happens.",
     "reveals": {
       "news": "Reveals and announcements",
       "story": "Faces arrive with their chapter",
@@ -359,7 +359,7 @@
     },
     "exits": {
       "storyTitle": "in the chapters",
-      "storyBody": "Where this faction appears in the released sets, in order.",
+      "storyBody": "Where this faction appears in the story, in order.",
       "cardsKicker": "Cards",
       "cardsBody": "Card gallery, filtered to this faction. Full rules text included."
     },
@@ -394,7 +394,7 @@
     },
     "sections": {
       "story": "The brand story",
-      "programs": "The ten programs",
+      "programs": "The programs",
       "cast": "Who plays it"
     },
     "oneLinerPlaceholder": "[PLACEHOLDER — one line on what this brand does at the table, in plain player language.]",
@@ -404,22 +404,22 @@
     "storyPlaceholder2": "[PLACEHOLDER — second beat. Where the brand sits inside its faction, and who disagrees with it.]",
     "storyPlaceholder3": "[PLACEHOLDER — third beat, ending on the hook that sends a reader to the cards.]",
     "cardsNote": "cards · 63 × 88 mm",
-    "programsBody": "Every brand is exactly ten programs. Each is shown as the printed card, with its wording also held as text — searchable, linkable from errata, and always current.",
+    "programsBody": "A brand is a set of programs. Each is shown as the printed card, with its wording also held as text — searchable, linkable from errata, and always current.",
     "unrevealed": "Unrevealed",
     "of": "of",
     "revealed": "revealed",
-    "exitPrograms": "See the ten programs →",
+    "exitPrograms": "See the programs →",
     "exitGallery": "Every program in the gallery →",
     "exitFaction": "Back to",
     "noCastTitle": "No characters revealed for this brand yet",
     "noCastBody": "The cast arrives with the chapters. Watch News, or the story pages.",
     "missingTitle": "That brand is not published yet",
-    "missingBody": "Sixteen brands ship at launch, four per faction. The published ones are on their faction pages."
+    "missingBody": "Every faction has its own brands. The published ones are on their faction pages."
   },
   "cardsPage": {
     "hero": {
       "title": "Every card, in full",
-      "lede": "160 programs at launch, four brands to a faction and ten programs to a brand. See every card as it is printed — and search the words on it, because those are held as text too.",
+      "lede": "See every card as it is printed — and search the words on it, because those are held as text too.",
       "pending": "[ CARD SPREAD ART — PENDING ]"
     },
     "sections": {
@@ -427,11 +427,11 @@
       "anatomy": "Anatomy of a card"
     },
     "count": "cards",
-    "countNote": "160 at launch",
+    "countNote": "Revealed so far",
     "searchLabel": "Search card name or rules text",
     "textNote": "Each card is shown as the printed card. Its wording is stored separately as text — so search reads it, errata can link to it, and a screen reader can speak it.",
     "emptyTitle": "No card here by that name yet",
-    "emptyBody": "Most of the 160 launch programs have not been revealed.",
+    "emptyBody": "Most programs have not been revealed yet.",
     "anatomyNote": "63 × 88 mm",
     "anatomyBody": "Every program card carries the same eight slots. The gallery shows you the card itself; the words on it are also held as text behind each tile, so a rules lookup mid-game finds the wording and not just a picture.",
     "sleeves": "63 × 88 mm · standard sleeves",
@@ -570,7 +570,7 @@
     },
     "brands": {
       "note": "Smaller than a faction brand",
-      "body": "A faction brand is ten programs shared across its characters. A personal brand belongs to one character alone.",
+      "body": "A faction brand is shared across its characters. A personal brand belongs to one character alone.",
       "luxTitle": "Opened one challenge at a time",
       "luxBody": "Ten programs, ten separate challenges. [PLACEHOLDER — what the challenges ask of you.]",
       "miniKicker": "Earned characters · mini brands",
@@ -585,35 +585,28 @@
   "story": {
     "hero": {
       "title": "Every box is a chapter",
-      "lede": "Every box is a complete set — no random packs — and every set carries the story forward. Read them in order, or start with the one whose art you like.",
+      "lede": "Boxes move the story forward, and some story arrives with no box at all. Read the chapters in order, or start with the one whose art you like.",
       "pending": "[ STORY KEY ART — WIDE — PENDING ]"
     },
     "sections": {
-      "chapters": "Sets & chapters",
+      "chapters": "Chapters",
       "soFar": "The story so far",
       "graph": "The story graph",
       "convergence": "Convergence vote",
       "voteOpen": "Vote open"
     },
-    "kind": {
-      "core": "Core set",
-      "expansion": "Expansion"
-    },
     "status": {
-      "available": "Out now",
+      "published": "Published",
       "upcoming": "Coming",
       "announced": "Announced"
     },
     "chapters": {
       "note": "In order",
-      "leadArtPlaceholder": "[ core set box / chapter art ]",
-      "setArtPlaceholder": "[ set box art ]",
+      "leadArtPlaceholder": "[ chapter key art ]",
+      "setArtPlaceholder": "[ chapter art ]",
       "narrativePlaceholder": "[PLACEHOLDER — the chapter narrative: what happens in this set, and which characters it puts on the board.]",
-      "inTheBox": "In the box",
-      "buy": "Buy this set",
       "read": "Read the chapter →",
       "recap": "Recap",
-      "carriesIncursions": "[PLACEHOLDER] Brings the rogue AIs — and Incursions, the co-op mode.",
       "teaser": "[PLACEHOLDER] Teased in News now; becomes a full chapter page on release.",
       "exit": "Catch up on the story so far →"
     },
@@ -882,8 +875,8 @@
         "label": "Also"
       },
       "chapters": {
-        "label": "Sets & chapters",
-        "note": "Every box, in order"
+        "label": "Chapters",
+        "note": "In order"
       },
       "soFar": {
         "label": "The story so far",

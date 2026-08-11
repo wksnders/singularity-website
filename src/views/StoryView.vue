@@ -1,9 +1,16 @@
 <script setup lang="ts">
 /**
- * STORY — sets as chapters. Four bands: the chapter shelf, the five-minute
- * recap with per-chapter anchors (#ch-01, #ch-02 — public URLs), the story
- * graph (nodes are published stories, pins are derived from each story's cast
- * list, so it stays correct as chapters are added), and the Convergence vote.
+ * STORY — chapters, and only chapters. Four bands: the chapter shelf, the
+ * five-minute recap with per-chapter anchors (#ch-01, #ch-02 — public URLs),
+ * the story graph (nodes are published stories, pins are derived from each
+ * story's cast list, so it stays correct as chapters are added), and the
+ * Convergence vote.
+ *
+ * This page does NOT sell anything. It used to print an "In the box" list and a
+ * Buy button on the lead chapter, back when one array was both product and
+ * chapter. It cannot any more, and should not: a chapter may have no product
+ * behind it at all, and the editions differ by content, not by story. Box
+ * contents belong wherever `products[]` gets rendered.
  */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -18,9 +25,9 @@ import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
-import { docHtml, getDoc, metaList, metaString, t } from '@/content';
-import { characterById, factionById, sets, stories } from '@/data/universe';
-import { outbound, soon, to } from '@/site/links';
+import { docHtml, getDoc, metaString, t } from '@/content';
+import { chapters, characterById, factionById, stories } from '@/data/universe';
+import { soon, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
 /** Move to data when the first vote is scheduled. */
@@ -39,27 +46,22 @@ const sections = computed<SectionEntry[]>(() => [
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-const chapterDoc = (setId: string) => getDoc(`story/${setId}`);
-const chapterTitle = (setId: string, fallback: string) =>
-  metaString(chapterDoc(setId), 'title', fallback);
+const chapterDoc = (chapterId: string) => getDoc(`story/${chapterId}`);
+const chapterTitle = (chapterId: string, fallback: string) =>
+  metaString(chapterDoc(chapterId), 'title', fallback);
 
-const lead = computed(() => sets[0]);
-const rest = computed(() => sets.slice(1));
-
-const boxContents = computed(() => {
-  const listed = metaList(chapterDoc(lead.value.id), 'contents');
-  return listed.length ? listed : lead.value.contents;
-});
+const lead = computed(() => chapters[0]);
+const rest = computed(() => chapters.slice(1));
 
 const leadHasNarrative = computed(() => Boolean(docHtml(chapterDoc(lead.value.id))));
 
 const statusLabel = (status: string) => t(`story.status.${status}`);
 
-/** Graph columns follow the release timeline: one column per set. */
+/** Graph columns follow the story, one column per chapter. */
 const graph = computed(() =>
-  sets.map((set) => ({
-    set,
-    stories: stories.filter((story) => story.setId === set.id),
+  chapters.map((chapter) => ({
+    chapter,
+    stories: stories.filter((story) => story.chapterId === chapter.id),
   })),
 );
 
@@ -108,27 +110,16 @@ function pinColor(characterId: string): string | null {
         </div>
         <div class="story__lead-body">
           <MonoLabel tone="muted">
-            {{ t('home.chapter.label') }} {{ pad(lead.chapter) }} ·
-            {{ t(`story.kind.${lead.kind}`) }} · {{ statusLabel(lead.status) }}
+            {{ t('home.chapter.label') }} {{ pad(lead.number) }} · {{ statusLabel(lead.status) }}
           </MonoLabel>
-          <h3 class="story__lead-title">{{ chapterTitle(lead.id, lead.chapterTitle) }}</h3>
+          <h3 class="story__lead-title">{{ chapterTitle(lead.id, lead.title) }}</h3>
 
           <MarkdownBlock v-if="leadHasNarrative" :slug="`story/${lead.id}`" measure class="story__gap" />
           <p v-else class="story__body">{{ t('story.chapters.narrativePlaceholder') }}</p>
 
-          <div class="story__box">
-            <MonoLabel tone="faint">{{ t('story.chapters.inTheBox') }}</MonoLabel>
-            <ul class="story__box-list">
-              <li v-for="(item, i) in boxContents" :key="i">{{ item }}</li>
-            </ul>
-          </div>
-
           <div class="l-row story__gap">
-            <UiButton :link="outbound('buy')">{{ t('story.chapters.buy') }}</UiButton>
-            <UiButton variant="quiet" :to="soon('#story-chapter')">
-              {{ t('story.chapters.read') }}
-            </UiButton>
-            <a class="story__recap" :href="`#ch-${pad(lead.chapter)}`">
+            <UiButton :to="soon('#story-chapter')">{{ t('story.chapters.read') }}</UiButton>
+            <a class="story__recap" :href="`#ch-${pad(lead.number)}`">
               {{ t('story.chapters.recap') }} ↓
             </a>
           </div>
@@ -137,12 +128,12 @@ function pinColor(characterId: string): string | null {
 
       <div class="l-grid l-grid--wide story__gap">
         <ContentCard
-          v-for="set in rest"
-          :key="set.id"
+          v-for="chapter in rest"
+          :key="chapter.id"
           :to="soon('#story-chapter')"
-          :kicker="`${t('home.chapter.label')} ${pad(set.chapter)} · ${statusLabel(set.status)}`"
-          :title="chapterTitle(set.id, set.chapterTitle)"
-          :body="set.carriesIncursions ? t('story.chapters.carriesIncursions') : t('story.chapters.teaser')"
+          :kicker="`${t('home.chapter.label')} ${pad(chapter.number)} · ${statusLabel(chapter.status)}`"
+          :title="chapterTitle(chapter.id, chapter.title)"
+          :body="t('story.chapters.teaser')"
           :placeholder="t('story.chapters.setArtPlaceholder')"
         />
       </div>
@@ -171,18 +162,18 @@ function pinColor(characterId: string): string | null {
           </div>
         </li>
         <li
-          v-for="set in sets.filter((s) => s.status !== 'announced')"
-          :key="set.id"
+          v-for="chapter in chapters.filter((c) => c.status === 'published')"
+          :key="chapter.id"
           class="story__beat"
         >
           <span class="story__beat-rail" aria-hidden="true" />
-          <div :id="`ch-${pad(set.chapter)}`" tabindex="-1">
-            <a class="story__beat-anchor" :href="`#ch-${pad(set.chapter)}`">
-              {{ t('home.chapter.label') }} {{ pad(set.chapter) }} <span>#</span>
+          <div :id="`ch-${pad(chapter.number)}`" tabindex="-1">
+            <a class="story__beat-anchor" :href="`#ch-${pad(chapter.number)}`">
+              {{ t('home.chapter.label') }} {{ pad(chapter.number) }} <span>#</span>
             </a>
-            <h3 class="story__beat-title">{{ chapterTitle(set.id, set.chapterTitle) }}</h3>
+            <h3 class="story__beat-title">{{ chapterTitle(chapter.id, chapter.title) }}</h3>
             <p class="story__beat-body">
-              {{ metaString(chapterDoc(set.id), 'recap', t('story.soFar.recapPlaceholder')) }}
+              {{ metaString(chapterDoc(chapter.id), 'recap', t('story.soFar.recapPlaceholder')) }}
             </p>
           </div>
         </li>
@@ -221,18 +212,18 @@ function pinColor(characterId: string): string | null {
       </div>
 
       <div class="story__graph">
-        <div v-for="column in graph" :key="column.set.id" class="story__column">
+        <div v-for="column in graph" :key="column.chapter.id" class="story__column">
           <div class="story__column-head">
-            <a :href="`#ch-${pad(column.set.chapter)}`">
-              {{ t('home.chapter.label') }} {{ pad(column.set.chapter) }} ·
-              {{ t(`story.kind.${column.set.kind}`) }}
+            <a :href="`#ch-${pad(column.chapter.number)}`">
+              {{ t('home.chapter.label') }} {{ pad(column.chapter.number) }} ·
+              {{ statusLabel(column.chapter.status) }}
             </a>
           </div>
 
           <article v-for="story in column.stories" :key="story.id" class="story__node">
             <MonoLabel tone="faint">
               {{ t('story.graph.storyKicker') }} · {{ t('home.chapter.label') }}
-              {{ pad(column.set.chapter) }}
+              {{ pad(column.chapter.number) }}
             </MonoLabel>
             <h3 class="story__node-title">{{ story.title }}</h3>
             <p class="story__beat-body">{{ t('story.graph.linePlaceholder') }}</p>
@@ -327,22 +318,6 @@ function pinColor(characterId: string): string | null {
 .story__lead-title {
   margin-top: var(--space-3);
   font-size: clamp(1.375rem, 3.4vw, 2rem);
-}
-
-.story__box {
-  margin-top: var(--space-6);
-  padding: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-m);
-}
-
-.story__box-list {
-  margin-top: var(--space-3);
-  padding-left: 1.2em;
-  display: grid;
-  gap: var(--space-2);
-  font-size: var(--size-m);
-  color: var(--color-ink-soft);
 }
 
 .story__recap {

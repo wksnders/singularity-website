@@ -19,7 +19,7 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
-import { game, team, wallpaperKinds, wallpapers } from '@/data/universe';
+import { coreBox, coreProduct, game, team, wallpaperKinds, wallpapers } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { outbound, soon, to } from '@/site/links';
 import type { FilterOption } from '@/site/filters';
@@ -57,9 +57,9 @@ const factSheet = computed(() => [
   { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: game.playTime, reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
-  { label: t('community.facts.price'), value: game.price, reserved: true },
+  { label: t('community.facts.price'), value: coreProduct.price, reserved: true },
   { label: t('community.facts.release'), value: game.releaseDate, reserved: true },
-  { label: t('community.facts.box'), value: game.boxContents, reserved: true },
+  { label: t('community.facts.box'), value: coreBox.summary, reserved: true },
   { label: t('community.facts.ships'), value: game.shipsTo, reserved: true },
   {
     label: t('community.facts.publisher'),

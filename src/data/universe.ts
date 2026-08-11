@@ -1,20 +1,28 @@
 /* ============================================================================
-   THE data file. Adding a character, brand, faction or set = adding an entry
-   here. Pages never hard-code any of this — the faction count in particular is
-   data, and the roster is expected to grow, so nothing may assume it is fixed.
+   THE data file. Adding a character, brand, faction, box, product or chapter =
+   adding an entry here. Pages never hard-code any of this — the faction count
+   in particular is data, and the roster is expected to grow, so nothing may
+   assume it is fixed.
+
+   `boxes`, `products` and `chapters` are three SEPARATE arrays and must stay
+   that way. A box holds components, a product is a way to pay for one or more
+   boxes, a chapter is story that rides in boxes. See the long note above `Box`
+   in types.ts before merging any two of them.
 
    [PLACEHOLDER] marks invented text awaiting real copy. Anything user-visible
    here is a FALLBACK: content/<locale>/**.md of the matching slug overrides it.
    ========================================================================== */
 
 import type {
+  Box,
   Brand,
+  Chapter,
   Character,
   Faction,
-  GameSet,
   NewsCategory,
   OutboundUrls,
   PlayMode,
+  Product,
   Program,
   RogueAI,
   Story,
@@ -36,8 +44,8 @@ export const game = {
      It is not a claim about any single box: solo and co-op are Incursions, and
      Incursions is its own product, sold separately (it launches the same day as
      the core box and expansion 1). So never render this count as "what is in the
-     core box" — the box facts are `boxContents`, and which box gets you solo is
-     a purchase question that belongs in the Incursions bands.
+     core box" — the box facts are `boxes[].contents`, and which box gets you
+     solo is a purchase question that belongs in the Incursions bands.
 
      Per-mode counts (2 for the duel, 3–4 for free-for-all) live beside each mode
      in ui.json. */
@@ -48,12 +56,19 @@ export const game = {
       claim even when they read the same. */
   incursionsPlayers: '1\u20134',
   playTime: '30 min per player',
-  /** Commercial facts. Reserved slots — the layout exists, the values do not. */
-  price: null as string | null,
+  /* Commercial facts that belong to the GAME rather than to one box.
+
+     Price and box contents are deliberately NOT here any more: there are three
+     editions at three prices, so a single `game.price` could only ever be one
+     of them, and whichever one it was would silently become the site's answer
+     for all of them. Price lives on `products[]`, contents on `boxes[]`; fact
+     strips read the core edition and the core box, and say so. */
   releaseDate: null as string | null,
-  boxContents: null as string | null,
+  /* The store is the authority on shipping — regions, dates and surcharges all
+     change there without warning. Keep this null and link out; do not mirror a
+     region list the site cannot keep true. */
   shipsTo: null as string | null,
-  ageRating: null as string | null,
+  ageRating: '14+',
   ratingMarks: null as string | null,
   supportEmail: null as string | null,
   trailerYouTubeId: '_eyxoFI4F-8',
@@ -326,49 +341,174 @@ export const rogueAIs: RogueAI[] = [
 ];
 
 /** Core box + expansion 1 + Incursions all launch the same day. */
-export const sets: GameSet[] = [
+/* ---------------------------------------------------------------------------
+   WHAT IS IN A BOX. Boxes hold components and carry story. They do NOT hold a
+   price — see the three-level note above `Box` in types.ts.
+
+   Only the core box is described today. The other boxes exist (Gameplay
+   Complete is six of them) but have not been named to the site, and inventing
+   names here would put fictional products in front of buyers.
+   -------------------------------------------------------------------------- */
+export const boxes: Box[] = [
   {
-    id: 'core-set',
-    name: '[PLACEHOLDER core set name]',
-    kind: 'core',
-    status: 'available',
-    chapter: 1,
-    chapterTitle: '[PLACEHOLDER chapter title]',
-    contents: ['[PLACEHOLDER box contents]'],
-    buyUrl: null,
+    id: 'core-box',
+    name: 'Core box',
+    summary: '40 characters + LuX · 140 programs · 6 environment shards',
+    contents: [
+      '40 unique characters',
+      /* 130 printed for the cast above, plus LuX's own ten — quoted as one
+         number because a buyer counts cards, not authorship. */
+      '140 unique gameplay programs',
+      'LuX, and the ten programs of her personal brand',
+      '6 environment shards — legendary locations that rewrite the battlefield',
+      '20 fragment cards',
+      'A sealed bonus pack: more characters, lore and content, opened once you have collected the fragments',
+      '158 tokens',
+      '12 alternate-art characters',
+      '4 oversized starter-deck strategy cards',
+      '40 premium card sleeves — two decks, colour-coded by team and numbered 1–5',
+      '10 duplicate common cards',
+    ],
     relatedBrandIds: ['endless-chain'],
   },
+];
+
+/* ---------------------------------------------------------------------------
+   WHAT YOU BUY. A SKU is a way to pay, and it bundles boxes.
+
+   Every price here is CAMPAIGN pricing on the storefront, not an MSRP, and the
+   storefront is the authority on both price and shipping. When those diverge,
+   fix them here — never in a template.
+
+   When a box that currently ships only inside an edition starts selling on its
+   own, add a PRODUCT for it whose `boxIds` is that one box. Do not add a flag
+   to the box.
+   -------------------------------------------------------------------------- */
+export const products: Product[] = [
   {
-    id: 'expansion-1',
-    name: '[PLACEHOLDER expansion name]',
-    kind: 'expansion',
+    id: 'core-edition',
+    name: 'Core Edition',
+    kind: 'edition',
     status: 'available',
-    chapter: 2,
-    chapterTitle: '[PLACEHOLDER chapter title]',
-    contents: ['[PLACEHOLDER box contents]'],
-    carriesIncursions: true,
+    price: '$65',
+    boxCount: 1,
+    boxIds: ['core-box'],
+    extras: [],
+    note: null,
     buyUrl: null,
-    relatedBrandIds: [],
   },
   {
-    id: 'expansion-2',
-    name: '[PLACEHOLDER announced set]',
-    kind: 'expansion',
-    status: 'announced',
-    chapter: 3,
-    chapterTitle: '[PLACEHOLDER chapter title]',
-    contents: [],
+    id: 'gameplay-complete-edition',
+    name: 'Gameplay Complete Edition',
+    kind: 'edition',
+    status: 'available',
+    price: '$170',
+    /* Six boxes, and each of them may be sold separately in future. One of the
+       six is the SAME core box the Core Edition ships — confirmed, which is why
+       it is one `Box` entry referenced by two SKUs rather than two near-identical
+       entries. The other five are not named to the site yet, so this list is a
+       partial enumeration: `boxCount` is the fact, `boxIds` is how much of it we
+       can spell. Do not synthesise the missing five from other editions. */
+    boxCount: 6,
+    boxIds: ['core-box'],
+    extras: [],
+    note: null,
     buyUrl: null,
-    relatedBrandIds: [],
+  },
+  {
+    id: 'architects-edition',
+    name: "Architect's Edition",
+    kind: 'edition',
+    status: 'sold-out',
+    price: null,
+    boxCount: null,
+    boxIds: [],
+    extras: [],
+    /* Sold out and genuinely undecided. This wording commits to nothing on
+       purpose: "may not be reprinted" is the fact, and anything warmer than it
+       reads as a promise. Do not soften it to "not currently available". */
+    note: 'Sold out. It may not be reprinted.',
+    buyUrl: null,
+  },
+];
+
+/**
+ * Dev-only shape check.
+ *
+ * `boxCount` is the claim, `boxIds` is how much of that claim we can currently
+ * spell. UNDER-listing is legal and is the state today — Gameplay Complete says
+ * six and names one, because only the core box has been identified to the site.
+ * OVER-listing and dangling ids are always bugs, so those are what this catches.
+ *
+ * When the six are named (see the research notes), tighten the first check to
+ * strict equality — an edition that claims six and lists five renders a
+ * perfectly plausible wrong page, and nothing else would notice.
+ */
+function assertProductShape(): void {
+  if (import.meta.env.PROD) return;
+  for (const { boxCount, boxIds, id } of products) {
+    if (boxCount !== null && boxIds.length > boxCount) {
+      console.warn(
+        `[universe] product "${id}" claims ${boxCount} boxes but lists ${boxIds.length}.`,
+      );
+    }
+    if (boxCount === null && boxIds.length) {
+      console.warn(`[universe] product "${id}" lists boxes but declares no boxCount.`);
+    }
+    for (const boxId of boxIds) {
+      if (!boxes.some((b) => b.id === boxId)) {
+        console.warn(`[universe] product "${id}" points at unknown box "${boxId}".`);
+      }
+    }
+  }
+}
+assertProductShape();
+
+/** The edition fact strips quote. Never index products[] by position. */
+export const coreProduct = products.find((p) => p.id === 'core-edition') ?? products[0];
+/** The box those fact strips actually describe. */
+export const coreBox = boxes.find((b) => b.id === 'core-box') ?? boxes[0];
+
+/* ---------------------------------------------------------------------------
+   WHAT YOU READ. Chapters are numbered, and the number drives the `#ch-01`
+   anchors, which are public URL contracts.
+
+   `boxIds` is empty on all three today: which box carries which chapter is an
+   OPEN QUESTION, and an empty array renders "no box attached", which is also
+   what a story-only release looks like. Guessing here would print a purchase
+   claim. Note these are BOXES — bundling boxes into an edition does not create
+   or move a chapter.
+   -------------------------------------------------------------------------- */
+export const chapters: Chapter[] = [
+  {
+    id: 'chapter-01',
+    number: 1,
+    title: '[PLACEHOLDER chapter title]',
+    status: 'published',
+    boxIds: [],
+  },
+  {
+    id: 'chapter-02',
+    number: 2,
+    title: '[PLACEHOLDER chapter title]',
+    status: 'published',
+    boxIds: [],
+  },
+  {
+    id: 'chapter-03',
+    number: 3,
+    title: '[PLACEHOLDER chapter title]',
+    status: 'announced',
+    boxIds: [],
   },
 ];
 
 /** Story-graph nodes. Pins come from castIds — no separate map data. */
 export const stories: Story[] = [
-  { id: 'story-01', setId: 'core-set', title: '[PLACEHOLDER story 01]', castIds: ['character-01', 'character-05'] },
-  { id: 'story-02', setId: 'core-set', title: '[PLACEHOLDER story 02]', castIds: ['character-09', 'character-13'] },
-  { id: 'story-03', setId: 'expansion-1', title: '[PLACEHOLDER story 03]', castIds: ['character-04', 'lux'] },
-  { id: 'story-04', setId: 'expansion-1', title: '[PLACEHOLDER story 04]', castIds: ['character-12', 'character-16'] },
+  { id: 'story-01', chapterId: 'chapter-01', title: '[PLACEHOLDER story 01]', castIds: ['character-01', 'character-05'] },
+  { id: 'story-02', chapterId: 'chapter-01', title: '[PLACEHOLDER story 02]', castIds: ['character-09', 'character-13'] },
+  { id: 'story-03', chapterId: 'chapter-02', title: '[PLACEHOLDER story 03]', castIds: ['character-04', 'lux'] },
+  { id: 'story-04', chapterId: 'chapter-02', title: '[PLACEHOLDER story 04]', castIds: ['character-12', 'character-16'] },
 ];
 
 export const videos: Video[] = [
@@ -440,7 +580,14 @@ export const team = [
 export const factionById = (id: string) => factions.find((f) => f.id === id) ?? null;
 export const brandById = (id: string) => brands.find((b) => b.id === id) ?? null;
 export const characterById = (id: string) => characters.find((c) => c.id === id) ?? null;
-export const setById = (id: string) => sets.find((s) => s.id === id) ?? null;
+export const boxById = (id: string) => boxes.find((b) => b.id === id) ?? null;
+export const productById = (id: string) => products.find((p) => p.id === id) ?? null;
+/** The boxes a SKU ships, in listed order. Empty while a SKU is unenumerated. */
+export const boxesOfProduct = (productId: string) =>
+  (productById(productId)?.boxIds ?? [])
+    .map(boxById)
+    .filter((b): b is Box => Boolean(b));
+export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? null;
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
 
