@@ -5,7 +5,7 @@
  * as text, and the characters who play it.
  */
 import { computed } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -119,7 +119,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
       <div class="brand__identity">
         <div class="brand__mark">
-          <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('brand.hero.mark')" />
+          <BrandMark
+            :icon="brand.icon"
+            :name="name"
+            :color="faction?.color"
+            :size="112"
+            eager
+          />
         </div>
         <div>
           <MonoLabel tone="faint">
@@ -169,6 +175,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
             <ProgramCard
               :program="program"
               :brand-label="name"
+              :brand-icon="brand.icon"
               :color="faction?.color"
               :sealed-label="t('brand.unrevealed')"
             />
@@ -236,10 +243,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
   align-items: center;
 }
 
+/* No frame and no faction underline any more: the mark carries its own
+   faction-coloured ring, and a 2px edge under a circle only fought it. */
 .brand__mark {
-  width: 72px;
+  display: flex;
   flex: 0 0 auto;
-  border-bottom: 2px solid var(--faction);
 }
 
 .brand__name {

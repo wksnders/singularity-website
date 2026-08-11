@@ -35,6 +35,15 @@ export interface Brand {
   id: string;
   factionId: string | null;
   name: string;
+  /**
+   * The brand mark: `/brands/<id>.png`, built by scripts/brand-icons.py from
+   * the masters in assets/brand-icons/. null while a brand does not exist
+   *
+   * The mark is a SHAPE, not a colour swatch: each carries a unique glyph
+   * inside a faction-coloured ring, which is why it may stand in for the
+   * faction dot. Several are deliberately not circular — never clip to one.
+   */
+  icon: string | null;
   /** Personal brands (LuX, Incursion unlocks) sit outside the faction maths. */
   kind: 'faction' | 'personal';
   /** How a personal brand's programs are earned. */

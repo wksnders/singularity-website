@@ -122,6 +122,7 @@ function clearAll(): void {
           <ProgramCard
             :program="program"
             :brand-label="brandOf(program)?.name"
+            :brand-icon="brandOf(program)?.icon"
             :color="factionOf(program)?.color"
           />
         </li>

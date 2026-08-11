@@ -7,6 +7,7 @@
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -173,7 +174,15 @@ const cardsQuery = computed(() =>
     <section v-if="brand" class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
         <div class="char__band-head">
-          <h2 class="char__h2">{{ t('character.playsWith') }} {{ brand.name }}</h2>
+          <h2 class="char__h2">
+            <BrandMark
+              :icon="brand.icon"
+              :name="brand.name"
+              :color="memberships[0]?.color"
+              :size="44"
+            />
+            {{ t('character.playsWith') }} {{ brand.name }}
+          </h2>
           <UiButton variant="quiet" :to="to('brand', { brandId: brand.id })">
             {{ t('character.brandStory') }}
           </UiButton>
@@ -340,6 +349,15 @@ const cardsQuery = computed(() =>
 
 .char__h2 {
   font-size: clamp(1.375rem, 3.4vw, 2rem);
+}
+
+/* The brand mark sits INSIDE this heading, so the row aligns on the text
+   baseline and the mark centres against the cap height rather than dropping
+   the whole flex row to accommodate it. */
+.char__band-head .char__h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .char__programs {

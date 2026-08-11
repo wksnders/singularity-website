@@ -60,25 +60,33 @@ export interface ResolvedLink {
   external: boolean;
 }
 
+/**
+ * Join a root-relative `public/` path to the deploy base.
+ *
+ * The site sits at /singularity-website/ today and at a domain root once the
+ * custom domain lands, so a bare "/brands/x.png" written in a data file is a
+ * 404 on the live site and correct on localhost — the worst kind of bug, since
+ * dev never sees it. Data files write the path as it sits inside public/ and
+ * this joins it, which keeps universe.ts free of build config and keeps the
+ * base path in the one place it already lives. BASE_URL always ends in a slash.
+ *
+ * Absolute URLs (Steam, YouTube) pass through untouched.
+ */
+export function asset(path: string): string {
+  return path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path;
+}
+
 export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
   if (!href) return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
 
-  /* Two kinds of live destination now. Anything absolute (Steam, YouTube) is
-     used as given; anything root-relative is a file this site serves out of
-     `public/` — the rulebook PDF, the print & play zip — and has to be joined to
-     the deploy base, because the site sits at /singularity-website/ today and at
-     a domain root once the custom domain lands. Writing them base-relative in
-     `universe.ts` keeps the data file free of build config and keeps the base
-     path in the one place it already lives. BASE_URL always ends in a slash.
+  /* Root-relative means a file this site serves out of `public/` — the rulebook
+     PDF, the print & play zip — so it goes through `asset()`.
 
      They still resolve as `external`, which is right for a 26MB PDF and a 61MB
      zip: BaseLink gives them target="_blank" + rel="noopener", so a download
      never navigates the page away from whatever the reader was reading. */
-  if (href.startsWith('/')) {
-    return { href: `${import.meta.env.BASE_URL}${href.slice(1)}`, external: true };
-  }
-  return { href, external: true };
+  return { href: asset(href), external: true };
 }
 
 /** A page that is written but not built yet. */
