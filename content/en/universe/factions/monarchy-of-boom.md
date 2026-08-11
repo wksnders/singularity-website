@@ -1,15 +1,19 @@
 ---
 name: Monarchy of Boom
 shortName: Boom
-tagline: '[PLACEHOLDER] Explosive royalty.'
+tagline: 'Rock, roll, and rebellion.'
 emblem: null
 ---
 
-[PLACEHOLDER — paste real faction lore. Two or three sentences establishing who
-they are, how they fight and what they want from the Singularity.]
+“The three R’s, baby: rock, roll, and rebellion.
 
-This file is the whole faction page's prose. A translator copies
-`content/en/universe/factions/` to `content/de/universe/factions/`, keeps the
-front-matter keys, and translates the values and the body — no template is
-touched, and the faction's colour, brand list and cast keep coming from
-`src/data/universe.ts`.
+The Shogunate wants to lock the Singularity away. Subnet wants to rewrite the
+world in their image. Hana Mori wants to drag everyone through some crazy spirit
+quest. Me? I want us to live. Loudly. Joyfully. Free.
+
+The Singularity’s just a tool – sure, it’s dangerous – but tools don’t decide
+who we are. We do. And if someone’s going to wield that kind of power, I’d
+rather it be someone who understands the value of a good riff and a found
+family. Let them scheme and preach. We’ll take the stage, not the throne.”
+
+// Roxie the Mallet, Metallic Idol
