@@ -17,23 +17,29 @@ import StatRow from '@/components/molecules/StatRow.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
-import { getDocs, metaString, t } from '@/content';
+import { getDoc, getDocs, metaString, t } from '@/content';
 import {
+  chapters,
   characters,
+  coreBox,
+  coreProduct,
   factionById,
   factions,
   game,
   modes,
-  sets,
 } from '@/data/universe';
 import { outbound, to } from '@/site/links';
 import type { Stat } from '@/site/stats';
 
-/* Commercial facts have reserved slots even while the values are unknown. */
+/* Commercial facts have reserved slots even while the values are unknown.
+
+   Price and contents are the CORE EDITION's, not the game's — there are three
+   editions at three prices. The strip is titled to say so; if this ever renders
+   without that title, it is lying by omission. */
 const boxFacts = computed<Stat[]>(() => [
-  { label: t('home.facts.price'), value: game.price, reserved: true },
+  { label: t('home.facts.price'), value: coreProduct.price, reserved: true },
   { label: t('home.facts.release'), value: game.releaseDate, reserved: true },
-  { label: t('home.facts.box'), value: game.boxContents, reserved: true },
+  { label: t('home.facts.box'), value: coreBox.summary, reserved: true },
   { label: t('home.facts.ships'), value: game.shipsTo, reserved: true },
   { label: t('home.facts.ages'), value: game.ageRating, reserved: true },
 ]);
@@ -63,7 +69,14 @@ const factionTags = (character: (typeof characters)[number]) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
-const currentChapter = computed(() => sets.find((s) => s.status === 'available') ?? sets[0]);
+/* The newest PUBLISHED chapter, which is not necessarily the newest product —
+   that is the whole point of keeping the two arrays apart. */
+const currentChapter = computed(
+  () => [...chapters].reverse().find((c) => c.status === 'published') ?? chapters[0],
+);
+const currentChapterTitle = computed(() =>
+  metaString(getDoc(`story/${currentChapter.value.id}`), 'title', currentChapter.value.title),
+);
 
 /** News is a conditional module: it only earns space while it is fresh. */
 const latestNews = computed(() =>
@@ -233,11 +246,14 @@ function scrollCast(direction: 1 | -1): void {
         </div>
         <div class="home__chapter-body">
           <MonoLabel tone="muted">
-            {{ t('home.chapter.label') }} {{ String(currentChapter.chapter).padStart(2, '0') }}
+            {{ t('home.chapter.label') }} {{ String(currentChapter.number).padStart(2, '0') }}
           </MonoLabel>
-          <h2 class="home__h3">{{ currentChapter.chapterTitle }}</h2>
+          <h2 class="home__h3">{{ currentChapterTitle }}</h2>
           <p class="home__body">{{ t('home.chapter.body') }}</p>
-          <UiButton :to="to('story', {}, { hash: '#ch-01' })" class="home__spacer">
+          <UiButton
+            :to="to('story', {}, { hash: `#ch-${String(currentChapter.number).padStart(2, '0')}` })"
+            class="home__spacer"
+          >
             {{ t('home.chapter.cta') }}
           </UiButton>
         </div>

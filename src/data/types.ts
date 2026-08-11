@@ -82,23 +82,95 @@ export interface RogueAI {
   art: Art;
 }
 
-/** A set is both a product and a story chapter. */
-export interface GameSet {
+/* ---------------------------------------------------------------------------
+   THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE.
+
+   An earlier model had one `GameSet` that was a product AND a box AND a
+   chapter. All three collapses were wrong, and the type propagated each of
+   them into every view that read it.
+
+     · A BOX is a physical thing with components in it. It is the unit the
+       contents list describes, and the unit the story ships inside.
+     · A PRODUCT (SKU) is a way to pay. It bundles one or more boxes. Core
+       Edition is one box; Gameplay Complete Edition is six. A box that is sold
+       on its own later simply gains a product of its own containing only it —
+       which is why `Box` has no `price` and no "sold separately" flag. The
+       existence of a product pointing at one box IS that fact, and keeping it
+       in one place stops the two from disagreeing.
+     · A CHAPTER is story. It rides in boxes, not in SKUs: bundling six boxes
+       into an edition does not create a chapter, and story also ships with no
+       box at all.
+
+   The invariants, in order of how easy they are to break:
+
+     1. Contents live on `Box`, never on `Product`. A SKU-only extra (a pledge
+        exclusive, a promo) goes in `Product.extras`, which is for things that
+        arrive OUTSIDE any box — not a convenient second contents list.
+     2. `Chapter.boxIds` points at boxes, never at products.
+     3. `Product.boxCount` is the claim; `Product.boxIds` is the enumeration.
+        When both are present they must agree — `assertProductShape()` in
+        universe.ts checks this in dev, because "six boxes" listing five is the
+        exact error nobody notices.
+   -------------------------------------------------------------------------- */
+
+/** A physical box. Has contents. Has no price — a box is not a SKU. */
+export interface Box {
   id: string;
   name: string;
-  kind: 'core' | 'expansion';
-  status: 'available' | 'upcoming' | 'announced';
-  chapter: number;
-  chapterTitle: string;
+  /** Component list, in box order. One line item per entry. */
   contents: string[];
-  carriesIncursions?: boolean;
-  buyUrl: string | null;
+  /** One line for fact strips. The full list is `contents`. */
+  summary: string | null;
   relatedBrandIds: string[];
+}
+
+/** Something you can buy. Bundles boxes; never holds components itself. */
+export interface Product {
+  id: string;
+  name: string;
+  /** edition = a way to buy the game. expansion = content added to a line. */
+  kind: 'edition' | 'expansion' | 'accessory';
+  /**
+   * `sold-out` is a real, renderable state, not an absence: people search for
+   * a discontinued edition and deserve an answer. It never implies a reprint —
+   * say what is true in `note` and promise nothing.
+   */
+  status: 'available' | 'sold-out' | 'announced' | 'upcoming';
+  /** Display string including currency; the store is the source of truth. */
+  price: string | null;
+  /**
+   * How many boxes ship in this SKU. Known before the boxes themselves are, so
+   * it is its own field rather than `boxIds.length` — "six boxes" is sayable
+   * and true while the six are still unnamed.
+   */
+  boxCount: number | null;
+  /** The boxes, once they are known. May be shorter than `boxCount`. */
+  boxIds: string[];
+  /** Things that arrive outside any box. NOT a second contents list. */
+  extras: string[];
+  /** Qualifier rendered under the contents. Reprint status, caveats. */
+  note: string | null;
+  /** null falls back to `urls.buy`, so a single storefront is one edit. */
+  buyUrl: string | null;
+}
+
+/** A beat of the story. May ride in boxes, may ship alone. */
+export interface Chapter {
+  id: string;
+  /** Drives the `#ch-01` anchors, which are public URL contracts. */
+  number: number;
+  title: string;
+  status: 'published' | 'upcoming' | 'announced';
+  /**
+   * Boxes whose release carries this chapter — BOXES, not products. EMPTY IS
+   * VALID: a story release with no box is the case this split exists to allow.
+   */
+  boxIds: string[];
 }
 
 export interface Story {
   id: string;
-  setId: string;
+  chapterId: string;
   title: string;
   /** Pins on the story graph are derived from this — zero editorial cost. */
   castIds: string[];
