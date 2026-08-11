@@ -142,7 +142,7 @@ export const factions: Faction[] = [
     colorText: '#D08FCF',
     name: 'Monarchy of Boom',
     tagline: 'Rock, roll, and rebellion.',
-    brandIds: ['scrap-brigade', 'benobasas-fist', 'chaos-verve', 'mob-brand-5'],
+    brandIds: ['scrap-brigade', 'benobasas-fist', 'chaos-verve', 'mega-byte'],
   },
   {
     id: 'hana-mori',
@@ -150,7 +150,7 @@ export const factions: Faction[] = [
     colorText: '#6FDD9B',
     name: 'Hana Mori',
     tagline: 'The real world is out there, somewhere.',
-    brandIds: ['bloom-and-never', 'ark-totem', 'feralesque', 'hm-brand-4'],
+    brandIds: ['bloom-and-never', 'ark-totem', 'feralesque', 'de-crypt'],
   },
   {
     id: 'celestial-shogunate',
@@ -158,7 +158,7 @@ export const factions: Faction[] = [
     colorText: '#F7B265',
     name: 'Celestial Shogunate',
     tagline: 'Let others chase power. We chase preservation.',
-    brandIds: ['infinite-divine', 'onryoki-nox', 'zodiac-reliquary', 'cs-brand-4'],
+    brandIds: ['infinite-divine', 'onryoki-noh', 'zodiac-reliquary', 'forbidden-archives'],
   },
   {
     id: 'subnet-86',
@@ -166,14 +166,25 @@ export const factions: Faction[] = [
     colorText: '#5FD9F2',
     name: 'Subnet 86',
     tagline: 'Prisons have patterns. And patterns crack.',
-    brandIds: ['data-nation', 'hostile-rewrite', 'endless-chain', 's86-brand-3'],
+    brandIds: ['data-nation', 'hostile-rewrite', 'endless-chain', 'masquerade'],
   },
 ];
 
-const factionBrand = (id: string, factionId: string, name: string): Brand => ({
+/**
+ * A brand's mark lives at `/brands/<id>.png` and is generated from the master
+ * art by scripts/brand-icons.py. Deriving the path from the id rather than
+ * storing a string means a mark can never point at the wrong brand, and an
+ * unbuilt mark is a 404 rather than a silently wrong picture — which is why
+ * `mark()` is opt-in per brand instead of a default on every one. A brand with
+ * no recognized mark passes null and renders the faction dot placeholder, as before.
+ */
+const mark = (id: string) => `/brands/${id}.png`;
+
+const factionBrand = (id: string, factionId: string, name: string, icon = true): Brand => ({
   id,
   factionId,
   name,
+  icon: icon ? mark(id) : null,
   kind: 'faction',
   programCount: 10,
 });
@@ -182,50 +193,27 @@ export const brands: Brand[] = [
   factionBrand('scrap-brigade', 'monarchy-of-boom', 'Scrap Brigade'),
   factionBrand('benobasas-fist', 'monarchy-of-boom', "Benobasa's Fist"),
   factionBrand('chaos-verve', 'monarchy-of-boom', 'Chaos Verve'),
-  factionBrand('mob-brand-5', 'monarchy-of-boom', '[PLACEHOLDER brand 01]'),
+  factionBrand('mega-byte', 'monarchy-of-boom', 'Mega Byte'),
   factionBrand('bloom-and-never', 'hana-mori', 'Bloom & Never'),
   factionBrand('ark-totem', 'hana-mori', 'Ark Totem'),
   factionBrand('feralesque', 'hana-mori', 'Feralesque'),
-  factionBrand('hm-brand-4', 'hana-mori', '[PLACEHOLDER brand 02]'),
+  factionBrand('de-crypt', 'hana-mori', 'De-Crypt'),
   factionBrand('infinite-divine', 'celestial-shogunate', 'Infinite Divine'),
-  factionBrand('onryoki-nox', 'celestial-shogunate', 'Onryoki Nox'),
+  factionBrand('onryoki-noh', 'celestial-shogunate', 'Onryoki Noh'),
   factionBrand('zodiac-reliquary', 'celestial-shogunate', 'Zodiac Reliquary'),
-  factionBrand('cs-brand-4', 'celestial-shogunate', '[PLACEHOLDER brand 03]'),
+  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives'),
   factionBrand('data-nation', 'subnet-86', 'Data Nation'),
   factionBrand('hostile-rewrite', 'subnet-86', 'Hostile Rewrite'),
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),
-  factionBrand('s86-brand-3', 'subnet-86', '[PLACEHOLDER brand 04]'),
+  factionBrand('masquerade', 'subnet-86', 'Masquerade'),
   {
     id: 'lux-brand',
     factionId: null,
     name: '[PLACEHOLDER — LuX personal brand]',
+    icon: mark('lux-brand'),
     kind: 'personal',
     unlock: 'challenges',
     programCount: 10,
-  },
-  {
-    id: 'unlock-brand-1',
-    factionId: null,
-    name: '[PLACEHOLDER mini brand 01]',
-    kind: 'personal',
-    unlock: 'beat-incursion',
-    programCount: 4,
-  },
-  {
-    id: 'unlock-brand-2',
-    factionId: null,
-    name: '[PLACEHOLDER mini brand 02]',
-    kind: 'personal',
-    unlock: 'beat-incursion',
-    programCount: 4,
-  },
-  {
-    id: 'unlock-brand-3',
-    factionId: null,
-    name: '[PLACEHOLDER mini brand 03]',
-    kind: 'personal',
-    unlock: 'beat-incursion',
-    programCount: 4,
   },
 ];
 
@@ -269,23 +257,22 @@ const placeholderCharacter = (
 };
 
 export const characters: Character[] = [
-  placeholderCharacter(1, ['monarchy-of-boom'], 'mob-brand-5'),
+  placeholderCharacter(1, ['monarchy-of-boom'], 'mega-byte'),
   placeholderCharacter(2, ['monarchy-of-boom'], 'scrap-brigade'),
   placeholderCharacter(3, ['monarchy-of-boom'], 'benobasas-fist'),
   placeholderCharacter(4, ['monarchy-of-boom', 'subnet-86'], 'chaos-verve'),
   placeholderCharacter(5, ['hana-mori'], 'bloom-and-never'),
   placeholderCharacter(6, ['hana-mori'], 'ark-totem'),
   placeholderCharacter(7, ['hana-mori'], 'feralesque'),
-  placeholderCharacter(8, ['hana-mori'], 'hm-brand-4'),
+  placeholderCharacter(8, ['hana-mori'], 'de-crypt'),
   placeholderCharacter(9, ['celestial-shogunate'], 'infinite-divine'),
-  placeholderCharacter(10, ['celestial-shogunate'], 'onryoki-nox'),
+  placeholderCharacter(10, ['celestial-shogunate'], 'onryoki-noh'),
   placeholderCharacter(11, ['celestial-shogunate'], 'zodiac-reliquary'),
-  placeholderCharacter(12, ['celestial-shogunate', 'hana-mori'], 'cs-brand-4'),
+  placeholderCharacter(12, ['celestial-shogunate', 'hana-mori'], 'forbidden-archives'),
   placeholderCharacter(13, ['subnet-86'], 'data-nation'),
   placeholderCharacter(14, ['subnet-86'], 'hostile-rewrite'),
+  placeholderCharacter(15, ['subnet-86'], 'masquerade'),
   placeholderCharacter(16, ['subnet-86'], 'endless-chain'),
-  
-  placeholderCharacter(15, ['subnet-86'], 's86-brand-4'),
   {
     id: 'lux',
     name: 'LuX',
@@ -567,13 +554,36 @@ export const wallpapers = [
  * Studio credit lives in one band on Community. Per-artwork artist credit is a
  * post-launch job — `art.artist` is in the schema and stays unfilled for now.
  */
+/* Source: .ai/gamefound-copy.md, Image 06 — the printed campaign credits.
+   Fifteen credit lines, fifteen people. Matt Anderson and Alex Johnstone each
+   appear TWICE in the printed list (blocks 1 and 2) under different titles;
+   here they are one person each with the two titles joined by " · ", so the
+   grid shows fifteen faces rather than seventeen cards with two repeats.
+
+   Order follows the printed blocks: direction/design, art, senior design, then
+   the Panda GM and associate block. Names are set as printed — Héctor Sevilla
+   Luján and João Guisado carry diacritics that are part of the spelling. Never
+   ASCII-fold them.
+
+   "Box Server Illustration" and "Singularity Logo" are credits for artefacts
+   rather than job titles. Kept verbatim; they read slightly oddly in a field
+   phrased for people, and that is the credits' wording, not a typo to fix. */
 export const team = [
-  { id: 'team-01', name: '[PLACEHOLDER name 01]', role: 'Game design' },
-  { id: 'team-02', name: '[PLACEHOLDER name 02]', role: 'Art direction' },
-  { id: 'team-03', name: '[PLACEHOLDER name 03]', role: 'Illustration' },
-  { id: 'team-04', name: '[PLACEHOLDER name 04]', role: 'Narrative' },
-  { id: 'team-05', name: '[PLACEHOLDER name 05]', role: 'Production' },
-  { id: 'team-06', name: '[PLACEHOLDER name 06]', role: 'Community' },
+  { id: 'team-matt-anderson', name: 'Matt Anderson', role: 'Game and Creative Director · Design Director, Art Director, and Narrative Lead' },
+  { id: 'team-alex-johnstone', name: 'Alex Johnstone', role: 'Product Developer and Production Manager · Visual Identity Lead and Graphic Designer' },
+  { id: 'team-logan-erickson', name: 'Logan Erickson', role: 'Lead Game Designer and Publishing Manager' },
+  { id: 'team-lance-tallman', name: 'Lance Tallman', role: 'Narrative Designer and Game Designer' },
+  { id: 'team-hector-sevilla-lujan', name: 'Héctor Sevilla Luján', role: 'Character, Environment, and Rulebook Illustrator' },
+  { id: 'team-josh-bruce', name: 'Josh Bruce', role: 'Program & Token Illustrator' },
+  { id: 'team-wyatt-sanders', name: 'Wyatt Sanders', role: 'Senior Game Designer and Software Engineer' },
+  { id: 'team-mahonri-white', name: 'Mahonri White', role: 'Senior Game Designer' },
+  { id: 'team-joao-guisado', name: 'João Guisado', role: 'Panda GM Project Manager' },
+  { id: 'team-kimball-brooksby', name: 'Kimball Brooksby', role: 'Associate Game Designer' },
+  { id: 'team-alexander-falk', name: 'Alexander Falk', role: 'Associate Game Designer' },
+  { id: 'team-parker-hoot', name: 'Parker Hoot', role: 'Associate Game Designer' },
+  { id: 'team-dylan-shaffer-murphy', name: 'Dylan Shaffer Murphy', role: 'Assistant Producer' },
+  { id: 'team-cameron-brotzman', name: 'Cameron Brotzman', role: 'Box Server Illustration' },
+  { id: 'team-casey-blandford', name: 'Casey Blandford', role: 'Singularity Logo' },
 ];
 
 /* ---------------------------------------------------------------- lookups */

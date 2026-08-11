@@ -6,6 +6,7 @@
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
@@ -141,7 +142,14 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
             <MonoLabel tone="faint">
               LuX · {{ luxBrand?.programCount ?? 10 }} {{ t('faction.stats.programs') }}
             </MonoLabel>
-            <h3 class="una__brand-title">{{ t('unaligned.brands.luxTitle') }}</h3>
+            <h3 class="una__brand-title">
+              <BrandMark
+                :icon="luxBrand?.icon"
+                :name="t('unaligned.brands.luxTitle')"
+                :size="52"
+              />
+              {{ t('unaligned.brands.luxTitle') }}
+            </h3>
             <p class="una__body">{{ t('unaligned.brands.luxBody') }}</p>
             <ul class="una__slots">
               <li v-for="n in luxBrand?.programCount ?? 10" :key="n">
@@ -251,6 +259,9 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
 }
 
 .una__brand-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin-top: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);

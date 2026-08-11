@@ -8,7 +8,7 @@
  */
 import { ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
-import FactionDot from '@/components/atoms/FactionDot.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import type { Program } from '@/data/types';
@@ -16,6 +16,8 @@ import type { Program } from '@/data/types';
 const props = defineProps<{
   program: Program;
   brandLabel?: string;
+  /** `brand.icon`. Falls back to the faction dot when the mark has not shipped. */
+  brandIcon?: string | null;
   color?: string | null;
   /** Sealed-in-the-box programs: locks are editorial, never tracked state. */
   sealedLabel?: string;
@@ -41,7 +43,7 @@ const cardId = `card-${props.program.id}`;
     <div class="c-prog__caption">
       <h3 class="c-prog__name">{{ program.revealed ? program.name : t('cards.unnamed') }}</h3>
       <p v-if="brandLabel" class="c-prog__brand">
-        <FactionDot :color="color" />
+        <BrandMark :icon="brandIcon" :name="brandLabel" :color="color" :size="20" />
         {{ brandLabel }}
       </p>
     </div>

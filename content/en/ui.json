@@ -350,9 +350,7 @@
     },
     "brands": {
       "title": "Brands",
-      "note": "Each brand: 10 programs + its own story",
-      "teaser": "[PLACEHOLDER — brand story teaser. Brands carry their own narrative, not just a card list.]",
-      "artPlaceholder": "[ brand art ]"
+      "note": "Each brand: 10 programs + its own story"
     },
     "cast": {
       "title": "Who fights for"
@@ -389,7 +387,6 @@
     "hero": {
       "artPlaceholder": "[ brand key art — wide ]",
       "pending": "[ BRAND KEY ART — PENDING ]",
-      "mark": "[ brand mark ]",
       "position": "Brand"
     },
     "sections": {
@@ -830,7 +827,7 @@
     },
     "team": {
       "body": "Octothorpe is a game studio in Salt Lake City, founded in 2015. Singularity.exe is made by a small group of designers, artists and writers — the same people who answer you in the Discord.",
-      "pending": "[ real names, roles, portraits and bios — PENDING ]",
+      "pending": "[ portraits and bios — PENDING ]",
       "portrait": "[ portrait ]",
       "aiKicker": "On AI",
       "aiStatement": "[PLACEHOLDER — the studio's statement on AI in art and writing. One source string, shown here and answered again in the FAQ.]",

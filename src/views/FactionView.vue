@@ -8,6 +8,7 @@ import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
+import BrandTile from '@/components/molecules/BrandTile.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
@@ -108,20 +109,14 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
       <div class="l-wrap">
         <h2 class="faction__h2">{{ t('faction.brands.title') }}</h2>
         <MonoLabel tone="faint">{{ t('faction.brands.note') }}</MonoLabel>
-        <div class="l-grid faction__gap">
-          <ContentCard
+        <div class="l-grid l-grid--wide faction__gap">
+          <BrandTile
             v-for="brand in brands"
             :key="brand.id"
-            :to="to('brand', { brandId: brand.id })"
-            :title="brand.name"
-            :body="t('faction.brands.teaser')"
-            :placeholder="t('faction.brands.artPlaceholder')"
-            ratio="4 / 3"
-          >
-            <MonoLabel tone="faint" class="faction__card-note">
-              {{ brandPrograms(brand.id) || brand.programCount }} {{ t('faction.stats.programs') }}
-            </MonoLabel>
-          </ContentCard>
+            :brand="brand"
+            :faction="faction"
+            :note="`${brandPrograms(brand.id) || brand.programCount} ${t('faction.stats.programs')}`"
+          />
         </div>
       </div>
     </section>
@@ -232,10 +227,5 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
 
 .faction__gap {
   margin-top: var(--space-6);
-}
-
-.faction__card-note {
-  display: block;
-  margin-top: var(--space-3);
 }
 </style>
