@@ -67,6 +67,9 @@ export interface Program {
 /** "any" is the wildcard: LuX is any-faction. */
 export type FactionMembership = string[] | 'any';
 
+/** Printed set code. Widen as releases are announced. */
+export type SetCode = 'CORE' | 'EX1';
+
 export interface Character {
   id: string;
   name: string;
@@ -86,6 +89,12 @@ export interface Character {
    * but there isnt a set limit to number of brands.
    */
   brandIds: string[];
+  /**
+   * Which release the character is printed in. Required, not optional: array
+   * position does not carry this, the cast is ordered by faction and name
+   * 
+   */
+  set: SetCode;
   personalBrandId?: string | null;
   art: Art;
   /** Stories this character appears in — drives the story graph's pins. */

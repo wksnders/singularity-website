@@ -241,11 +241,12 @@ export const programs: Program[] = [...endlessChain];
    THE CAST.
 
    Field order is on purpose. we store characters
-   Name · HP · Faction · Sub Faction · Brand 1-3 · Card Text · Ability Name ·
-   Flavor Title · Flavor Text, and these entries read in that same order so a
-   record can be checked against other sources by eye without translating between
-   two shapes. 
-   
+   Name · HP · Faction · Sub Faction · Brand 1-3 · Set · Card Text ·
+   Ability Name · Flavor Title · Flavor Text, and these entries read in that
+   same order so a record can be checked against other sources by eye without
+   translating between two shapes.
+
+   Row order is faction block, then name. It carries no other meaning
    -------------------------------------------------------------------------- */
 
 const character = (input: Omit<Character, 'art' | 'storyIds'>): Character => ({
@@ -256,11 +257,26 @@ const character = (input: Omit<Character, 'art' | 'storyIds'>): Character => ({
 
 export const characters: Character[] = [
   character({
+    id: 'gargaunaut-prime',
+    name: 'Gargaunaut Prime',
+    hp: 11,
+    factionIds: ['celestial-shogunate', 'monarchy-of-boom'],
+    brandIds: ['forbidden-archives', 'zodiac-reliquary', 'scrap-brigade'],
+    set: 'EX1',
+    abilityText:
+      'Archivist\nDuring Update, if active characters in this squad have a total of 2 or more armor, gain an ink token.',
+    abilityName: 'Kinstugi',
+    epithet: 'Broken Elegist',
+    flavour:
+      'Every crack is a progression to perfection.',
+  }),
+  character({
     id: 'hanbei',
     name: 'Hanbei',
     hp: 11,
     factionIds: ['celestial-shogunate', 'subnet-86'],
     brandIds: ['zodiac-reliquary', 'data-nation', 'endless-chain'],
+    set: 'CORE',
     abilityText:
       'You may swap one additional time each turn. You cannot activate an [AMB] after your first swap.',
     abilityName: 'Casual Tactics',
@@ -274,6 +290,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['celestial-shogunate'],
     brandIds: ['infinite-divine', 'zodiac-reliquary'],
+    set: 'CORE',
     abilityText:
       'You may have friendly characters not be suspended when they activate.',
     abilityName: 'Reality Bender',
@@ -287,6 +304,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['celestial-shogunate', 'subnet-86'],
     brandIds: ['zodiac-reliquary', 'endless-chain'],
+    set: 'CORE',
     abilityText:
       'While the total cost of patches attached to Kagemusha is 3 or more, Kagemusha has stealth.',
     abilityName: 'Sinister Shadow',
@@ -300,6 +318,7 @@ export const characters: Character[] = [
     hp: 10,
     factionIds: ['celestial-shogunate'],
     brandIds: ['zodiac-reliquary', 'infinite-divine'],
+    set: 'CORE',
     abilityText:
       '[AMB] Magus may immediately activate any cost 1 patch in his stack at cost 0.',
     abilityName: 'Ancient Spark',
@@ -313,6 +332,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['celestial-shogunate', 'hana-mori'],
     brandIds: ['infinite-divine', 'bloom-and-never'],
+    set: 'CORE',
     abilityText:
       'When a patch activated by Mi-KO attaches, she may have the attach target heal itself by 1 [H] or lose 1 [H].',
     abilityName: 'Binary Devotion',
@@ -326,6 +346,7 @@ export const characters: Character[] = [
     hp: 10,
     factionIds: ['celestial-shogunate', 'monarchy-of-boom'],
     brandIds: ['onryoki-noh', 'scrap-brigade'],
+    set: 'CORE',
     abilityText:
       'While Onibaba has 4 or more armor, you may give any commands she activates +2 [P].',
     abilityName: 'Forge the Dragon-Jaw',
@@ -334,11 +355,54 @@ export const characters: Character[] = [
       'Face your demons. No one loves you more.',
   }),
   character({
+    id: 'piiko',
+    name: 'Piiko',
+    hp: 9,
+    factionIds: ['celestial-shogunate', 'hana-mori'],
+    brandIds: ['forbidden-archives', 'ark-totem'],
+    set: 'EX1',
+    abilityText:
+      'Archivist\nDuring Update, if Piiko has exactly 1 program in her stack, gain an ink token.',
+    abilityName: 'Nature\'s Lore',
+    epithet: 'Primal Scribe',
+    flavour:
+      'The network\'s wilderness is a story written in code.',
+  }),
+  character({
+    id: 'ral-kaid',
+    name: 'Ral Kaid',
+    hp: 10,
+    factionIds: ['celestial-shogunate', 'subnet-86'],
+    brandIds: ['forbidden-archives', 'hostile-rewrite'],
+    set: 'EX1',
+    abilityText:
+      'Archivist\nOnce per turn, when a character in this squad resolves a non-scroll program with cost 3 or more, gain an ink token.',
+    abilityName: 'Underworld Register',
+    epithet: 'The Antiquarian',
+    flavour:
+      '"The most important texts are on subjects nobody knows, written with words never meant to be read."',
+  }),
+  character({
+    id: 'ri-se',
+    name: 'Ri • Se',
+    hp: 10,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['forbidden-archives', 'onryoki-noh'],
+    set: 'EX1',
+    abilityText:
+      'Archivist\n[AMB] Gain an ink token, then you may spend 2 [RAM] to gain another ink token.',
+    abilityName: 'Inspired Calligraphy',
+    epithet: 'Animated Brush',
+    flavour:
+      'The effortlessness of the art is the mark of its beauty.',
+  }),
+  character({
     id: 'satellite-137',
     name: 'Satellite 137',
     hp: 13,
     factionIds: ['celestial-shogunate'],
     brandIds: ['zodiac-reliquary', 'onryoki-noh'],
+    set: 'CORE',
     abilityText:
       '[AMB] Target squad takes 1 [P], then Satellite 137 takes 2 [P].',
     abilityName: 'Orbital Crash',
@@ -352,6 +416,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['celestial-shogunate'],
     brandIds: ['onryoki-noh', 'infinite-divine'],
+    set: 'CORE',
     abilityText:
       'You may give commands that target Shiho Zenji -1 [P], -1 [A], -1 [C], and +1 [H].',
     abilityName: 'Surreality',
@@ -365,6 +430,7 @@ export const characters: Character[] = [
     hp: 10,
     factionIds: ['celestial-shogunate'],
     brandIds: ['onryoki-noh', 'infinite-divine'],
+    set: 'CORE',
     abilityText:
       'While Toshiro has an attached patch, you may give any command he activates with cost 2 or more +1 [P].',
     abilityName: 'Soul Code',
@@ -378,6 +444,7 @@ export const characters: Character[] = [
     hp: 7,
     factionIds: ['celestial-shogunate', 'hana-mori'],
     brandIds: ['zodiac-reliquary', 'ark-totem'],
+    set: 'CORE',
     abilityText:
       'Once per turn, when Yama Uba is dealt damage, you may place a relic token on target patch.',
     abilityName: 'Rip in the Bag',
@@ -386,11 +453,26 @@ export const characters: Character[] = [
       'The pain you deal others is the bag you\'ll always carry.',
   }),
   character({
+    id: 'bronwyn',
+    name: 'Bronwyn',
+    hp: 10,
+    factionIds: ['hana-mori'],
+    brandIds: ['de-crypt', 'bloom-and-never'],
+    set: 'EX1',
+    abilityText:
+      'When Bronwyn activates a program, you may deal 1 [C] to target character in this squad or heal 1 [H] to target undead character.',
+    abilityName: 'Naturalistic Polarity',
+    epithet: 'Mire Witch',
+    flavour:
+      'The living can only subsist off the dead. Do you truly believe the converse isn\'t true?',
+  }),
+  character({
     id: 'calamity',
     name: 'Calamity',
     hp: 12,
     factionIds: ['hana-mori'],
     brandIds: ['feralesque', 'ark-totem'],
+    set: 'CORE',
     abilityText:
       'While Calamity has an attached Totem, you may give commands that target her -1 [P] or +1 [H].',
     abilityName: 'Runic Infusion',
@@ -404,6 +486,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['hana-mori'],
     brandIds: ['feralesque', 'bloom-and-never', 'ark-totem'],
+    set: 'CORE',
     abilityText:
       'During Initialize, Dugu Squad may heal itself by 1 [H].',
     abilityName: 'Reinforcements',
@@ -412,11 +495,26 @@ export const characters: Character[] = [
       'Koata! Ma poto! Dugu dugu dugu dugu.',
   }),
   character({
+    id: 'he4p',
+    name: 'He4p',
+    hp: 7,
+    factionIds: ['hana-mori', 'monarchy-of-boom'],
+    brandIds: ['de-crypt', 'scrap-brigade'],
+    set: 'EX1',
+    abilityText:
+      'When a character in this squad activates a program with reclamation, that character gains 1 armor.',
+    abilityName: 'Necrotic Retrofit',
+    epithet: 'Pile of Bones',
+    flavour:
+      '"Get it through that thick skull. Those bones are brittle! They won\'t stop a patch!" -Vasquez, Bounty Hunter',
+  }),
+  character({
     id: 'j-kuma',
     name: 'J-Kuma',
     hp: 12,
     factionIds: ['hana-mori', 'celestial-shogunate'],
     brandIds: ['ark-totem', 'zodiac-reliquary'],
+    set: 'CORE',
     abilityText:
       '[AMB] Gain 1 virtual [RAM].',
     abilityName: 'Token Pittance',
@@ -425,11 +523,26 @@ export const characters: Character[] = [
       'Ah, the legendary indulgences of physical space... now that I\'d like to taste.',
   }),
   character({
+    id: 'jean-ok',
+    name: 'Jean O.K.',
+    hp: 9,
+    factionIds: ['hana-mori', 'subnet-86'],
+    brandIds: ['bloom-and-never', 'hostile-rewrite'],
+    set: 'CORE',
+    abilityText:
+      '[AMB] Target character initializes or updates.',
+    abilityName: 'Forced Evolution',
+    epithet: 'Reckless Bioneer',
+    flavour:
+      'Every fight is an act of experimentation, a chemical reaction waiting to explode.',
+  }),
+  character({
     id: 'kodama',
     name: 'Kodama',
     hp: 9,
     factionIds: ['hana-mori'],
     brandIds: ['bloom-and-never', 'ark-totem'],
+    set: 'CORE',
     abilityText:
       'You may give any commands Kodama activates +1 [H].',
     abilityName: 'Spirit Weave',
@@ -443,6 +556,7 @@ export const characters: Character[] = [
     hp: 11,
     factionIds: ['hana-mori'],
     brandIds: ['ark-totem', 'feralesque'],
+    set: 'CORE',
     abilityText:
       'Moka counts as a Totem.',
     abilityName: 'Lore Bearer',
@@ -451,17 +565,18 @@ export const characters: Character[] = [
       'They seek to remain. We seek to return. I seek to renew.',
   }),
   character({
-    id: 'jean-ok',
-    name: 'Jean O.K.',
+    id: 'o-mori',
+    name: 'O-mori',
     hp: 9,
-    factionIds: ['hana-mori', 'subnet-86'],
-    brandIds: ['bloom-and-never', 'hostile-rewrite'],
+    factionIds: ['hana-mori', 'celestial-shogunate'],
+    brandIds: ['de-crypt', 'infinite-divine'],
+    set: 'EX1',
     abilityText:
-      '[AMB] Target character initializes or updates.',
-    abilityName: 'Forced Evolution',
-    epithet: 'Reckless Bioneer',
+      '[AMB] If Shisha Sosei is in O-mori\'s stack, she may immediately activate it for cost 1.',
+    abilityName: 'Grave Beckon',
+    epithet: 'Stitched Jiangshi',
     flavour:
-      'Every fight is an act of experimentation, a chemical reaction waiting to explode.',
+      'All you thought forever lost still dances at my fingertips.',
   }),
   character({
     id: 'rekka',
@@ -469,6 +584,7 @@ export const characters: Character[] = [
     hp: 16,
     factionIds: ['hana-mori', 'monarchy-of-boom'],
     brandIds: ['feralesque', 'scrap-brigade'],
+    set: 'CORE',
     abilityText:
       'Rekka cannot activate more than one program from his stack each Activation phase.',
     abilityName: 'Restrained',
@@ -482,6 +598,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['hana-mori', 'celestial-shogunate'],
     brandIds: ['feralesque', 'onryoki-noh'],
+    set: 'CORE',
     abilityText:
       'When Shred resolves a command on target character, you may unattach a patch with cost 2 or less from that character.',
     abilityName: 'Rend',
@@ -495,6 +612,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['hana-mori'],
     brandIds: ['bloom-and-never', 'feralesque'],
+    set: 'CORE',
     abilityText:
       'Your opponents must spend 1 [RAM] to swap out a damaged character.',
     abilityName: 'Ensnare',
@@ -503,11 +621,26 @@ export const characters: Character[] = [
       'Consume to grow. That\'s the law beneath all programmatic biology.',
   }),
   character({
+    id: 'voss',
+    name: 'Voss',
+    hp: 8,
+    factionIds: ['hana-mori', 'subnet-86'],
+    brandIds: ['de-crypt', 'hostile-rewrite'],
+    set: 'EX1',
+    abilityText:
+      'If Voss has 8 or more damage, he is undead.',
+    abilityName: 'Beyond Mortality',
+    epithet: 'Death\'s Edge',
+    flavour:
+      'You\'ve never truly lived nor died until you\'ve tasted both at once, friend.',
+  }),
+  character({
     id: 'yvelette',
     name: 'Yvelette',
     hp: 8,
     factionIds: ['hana-mori', 'monarchy-of-boom'],
     brandIds: ['ark-totem', 'bloom-and-never', 'chaos-verve'],
+    set: 'CORE',
     abilityText:
       '[AMB] Heal 5 [H].',
     abilityName: 'Rainbow Cascade',
@@ -521,6 +654,7 @@ export const characters: Character[] = [
     hp: 13,
     factionIds: ['monarchy-of-boom', 'celestial-shogunate'],
     brandIds: ['benobasas-fist', 'onryoki-noh'],
+    set: 'CORE',
     abilityText:
       'While Benobasa would have stealth, he instead has taunt.',
     abilityName: 'Legendary',
@@ -534,6 +668,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['monarchy-of-boom'],
     brandIds: ['benobasas-fist', 'chaos-verve'],
+    set: 'CORE',
     abilityText:
       '[AMB] Suspend target character. That character cannot be targeted for the remainder of this phase.',
     abilityName: 'Shock and Awe',
@@ -542,11 +677,26 @@ export const characters: Character[] = [
       'If you wheel and deal in shock value, get inline.',
   }),
   character({
+    id: 'burger-808',
+    name: 'Burger 808',
+    hp: 15,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['mega-byte', 'scrap-brigade'],
+    set: 'EX1',
+    abilityText:
+      'Programs Burger 808 activates get cost +1. Burger 808 may swap out and activate programs from his stack while suspended.',
+    abilityName: 'Tortoise & the Hare',
+    epithet: 'Cereal Killer',
+    flavour:
+      '"We\'ve awoken a monster. It\'s only a matter of time before h-" -Leonard, Cereal Enthusiast',
+  }),
+  character({
     id: 'ezplosio',
     name: 'Ezplosio',
     hp: 7,
     factionIds: ['monarchy-of-boom', 'subnet-86'],
     brandIds: ['scrap-brigade', 'hostile-rewrite'],
+    set: 'CORE',
     abilityText:
       'When Ezplosio crashes, target squad takes 3 [P].',
     abilityName: 'Dangerous Toys',
@@ -555,11 +705,26 @@ export const characters: Character[] = [
       'Unstable in every single way.',
   }),
   character({
+    id: 'hungry-and-hounds',
+    name: 'Hungry & Hounds',
+    hp: 8,
+    factionIds: ['monarchy-of-boom', 'hana-mori'],
+    brandIds: ['mega-byte', 'feralesque'],
+    set: 'EX1',
+    abilityText:
+      '[AMB] Hungry and Hounds cannot be suspended this turn. Consume target Food patch.',
+    abilityName: 'Rolling Ravenous',
+    epithet: 'Rocket Derby',
+    flavour:
+      'We deliver food professionally and we eat food professionally! We don\'t decide which until we\'ve seen it though.',
+  }),
+  character({
     id: 'overtoad',
     name: 'Overtoad',
     hp: 13,
     factionIds: ['monarchy-of-boom', 'hana-mori'],
     brandIds: ['benobasas-fist', 'ark-totem'],
+    set: 'CORE',
     abilityText:
       'When a friendly character would take [P] damage, Overtoad may lose 1 [H] to reduce that damage by 1.',
     abilityName: 'Rock the Block',
@@ -568,11 +733,26 @@ export const characters: Character[] = [
       'Puts the hop in hip hop.',
   }),
   character({
+    id: 'ritz',
+    name: 'Ritz',
+    hp: 10,
+    factionIds: ['monarchy-of-boom', 'subnet-86'],
+    brandIds: ['mega-byte', 'endless-chain'],
+    set: 'EX1',
+    abilityText:
+      'While Ritz is suspended and has an attached patch, he has taunt.',
+    abilityName: 'Savory Temptation',
+    epithet: 'Rolling Dispenser',
+    flavour:
+      'If you smell the food, Ritz rolling away is all that will save you from your appetite.',
+  }),
+  character({
     id: 'roxie-the-mallet',
     name: 'Roxie the Mallet',
     hp: 11,
     factionIds: ['monarchy-of-boom'],
     brandIds: ['chaos-verve', 'scrap-brigade', 'benobasas-fist'],
+    set: 'CORE',
     abilityText:
       'You may give commands that Roxie activates +1 [P] or +1 [A] if at least one of their targets has more health than Roxie.',
     abilityName: 'Rise Against',
@@ -581,11 +761,26 @@ export const characters: Character[] = [
       'Submit to my surge of sound and metal.',
   }),
   character({
+    id: 'sansho',
+    name: 'Sansho',
+    hp: 9,
+    factionIds: ['monarchy-of-boom', 'celestial-shogunate'],
+    brandIds: ['mega-byte', 'onryoki-noh'],
+    set: 'EX1',
+    abilityText:
+      'When Sansho consumes, deal 1 [P] to target character.',
+    abilityName: 'Dragon Diner',
+    epithet: 'Gastro-Caretaker',
+    flavour:
+      'Everything those dogs eat comes back as fire.',
+  }),
+  character({
     id: 'scrapper',
     name: 'Scrapper',
     hp: 9,
     factionIds: ['monarchy-of-boom'],
     brandIds: ['scrap-brigade', 'chaos-verve'],
+    set: 'CORE',
     abilityText:
       'When Scrapper resolves her first command each turn, you may add 1 armor to any target character.',
     abilityName: 'Gifted Welder',
@@ -599,6 +794,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['monarchy-of-boom'],
     brandIds: ['scrap-brigade', 'benobasas-fist'],
+    set: 'CORE',
     abilityText:
       'When Tonk0r activates a command, you may remove 1 armor from Tonk0r to give that command +1 [P].',
     abilityName: 'Magnetic Crush',
@@ -612,6 +808,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['monarchy-of-boom', 'hana-mori'],
     brandIds: ['chaos-verve', 'feralesque'],
+    set: 'CORE',
     abilityText:
       'You may give patches attached to Twisted-6, and [EXE] or [RCT] effects she uses, +1 [P] or -1 [P].',
     abilityName: 'Savage Graffiti',
@@ -625,6 +822,7 @@ export const characters: Character[] = [
     hp: 13,
     factionIds: ['monarchy-of-boom', 'subnet-86'],
     brandIds: ['benobasas-fist', 'endless-chain'],
+    set: 'CORE',
     abilityText:
       'When White Noise resolves a program on target character, White Noise may spend 2 [H] to cycle that character.',
     abilityName: 'Sonic Resonator',
@@ -638,6 +836,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['monarchy-of-boom'],
     brandIds: ['scrap-brigade', 'benobasas-fist'],
+    set: 'CORE',
     abilityText:
       'Once during each Activation phase, when Zaximus Defender becomes suspended, you may give him 2 armor.',
     abilityName: 'Reactive Scrap',
@@ -651,6 +850,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['subnet-86', 'celestial-shogunate'],
     brandIds: ['data-nation', 'infinite-divine'],
+    set: 'CORE',
     abilityText:
       'The first time 101 crashes, gain 3 battery tokens.',
     abilityName: 'Energy Heart',
@@ -664,6 +864,7 @@ export const characters: Character[] = [
     hp: 8,
     factionIds: ['subnet-86'],
     brandIds: ['endless-chain', 'data-nation'],
+    set: 'CORE',
     abilityText:
       '[AMB] Unattach target patch.',
     abilityName: 'Handy Trick',
@@ -677,6 +878,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: ['subnet-86'],
     brandIds: ['data-nation', 'endless-chain'],
+    set: 'CORE',
     abilityText:
       'Archidex may activate programs from the top or bottom of her stack.',
     abilityName: 'Infinite Index',
@@ -685,11 +887,26 @@ export const characters: Character[] = [
       'It\'s not what you know, it\'s how fast you know.',
   }),
   character({
+    id: 'broker',
+    name: 'Broker',
+    hp: 8,
+    factionIds: ['subnet-86', 'celestial-shogunate'],
+    brandIds: ['masquerade', 'zodiac-reliquary'],
+    set: 'EX1',
+    abilityText:
+      '[AMB] Activate up to X cost 1 masks in Broker\'s stack at cost 0. X is your spent [RAM].',
+    abilityName: 'Occult Boutique',
+    epithet: 'Six-tail Merchant',
+    flavour:
+      'A lantern\'s glow emerges from the midnight fog, whispers inviting you to buy.',
+  }),
+  character({
     id: 'cosma',
     name: 'Cosma',
     hp: 13,
     factionIds: ['subnet-86', 'hana-mori'],
     brandIds: ['endless-chain', 'bloom-and-never'],
+    set: 'CORE',
     abilityText:
       'Cosma may reset for 1 [RAM].',
     abilityName: 'Immaculate Design',
@@ -698,24 +915,12 @@ export const characters: Character[] = [
       'One day is one loop, one cycle, one infinity.',
   }),
   character({
-    id: 'tori-daiyu',
-    name: 'Tori-Daiyu',
-    hp: 10,
-    factionIds: ['subnet-86'],
-    brandIds: ['endless-chain', 'hostile-rewrite', 'data-nation'],
-    abilityText:
-      '[AMB] You may reorder the stacks of all active friendly characters.',
-    abilityName: 'Prime Edict',
-    epithet: 'Analytical Puppeteer',
-    flavour:
-      'With order, precision, and my oversight, every task is trivial.',
-  }),
-  character({
     id: 'grandmaster-hash',
     name: 'Grandmaster Hash',
     hp: 10,
     factionIds: ['subnet-86', 'monarchy-of-boom'],
     brandIds: ['data-nation', 'chaos-verve'],
+    set: 'CORE',
     abilityText:
       'The first time Grandmaster Hash targets a suspended character with a command each turn, you may give that command +1 [A].',
     abilityName: 'Calculated Frequency',
@@ -729,6 +934,7 @@ export const characters: Character[] = [
     hp: 10,
     factionIds: ['subnet-86', 'monarchy-of-boom'],
     brandIds: ['hostile-rewrite', 'chaos-verve'],
+    set: 'CORE',
     abilityText:
       'You may give the first patch that targets Joi each turn cost -1 to a minimum cost of 1. If you do, target enemy player gains a battery.',
     abilityName: 'Malleable',
@@ -737,11 +943,26 @@ export const characters: Character[] = [
       'Innocence and corruption only reach their fullest potentials together.',
   }),
   character({
+    id: 'mastermind',
+    name: 'Mastermind',
+    hp: 13,
+    factionIds: ['subnet-86', 'hana-mori'],
+    brandIds: ['masquerade', 'feralesque'],
+    set: 'EX1',
+    abilityText:
+      'Friendly characters may activate Masks from the top of any stack.',
+    abilityName: 'Spirit of One',
+    epithet: 'Faceless Forest',
+    flavour:
+      'You can leave the forest, but the forest will never leave you.',
+  }),
+  character({
     id: 'null-constructor',
     name: 'Null Constructor',
     hp: 10,
     factionIds: ['subnet-86'],
     brandIds: ['hostile-rewrite', 'data-nation'],
+    set: 'CORE',
     abilityText:
       '[AMB] Cycle target enemy character, then you may cycle that character again.',
     abilityName: 'Brainstorm',
@@ -750,11 +971,26 @@ export const characters: Character[] = [
       'To reflect on the server is to be the server, reflecting itself.',
   }),
   character({
+    id: 'que3n',
+    name: 'Que3n',
+    hp: 9,
+    factionIds: ['subnet-86', 'monarchy-of-boom'],
+    brandIds: ['masquerade', 'benobasas-fist'],
+    set: 'EX1',
+    abilityText:
+      'When an enemy character resolves a program that targets Que3n, she may cycle any target enemy character.',
+    abilityName: 'Programmatic Deterrent',
+    epithet: 'Blade Warden',
+    flavour:
+      '"Strength earns obedience. Cunning commands fear."',
+  }),
+  character({
     id: 'sector-probe',
     name: 'Sector Probe',
     hp: 10,
     factionIds: ['subnet-86'],
     brandIds: ['data-nation', 'hostile-rewrite'],
+    set: 'CORE',
     abilityText:
       'When a tag is unattached, Sector Probe may lose 1 [H] to cycle target character.',
     abilityName: 'Interference',
@@ -763,11 +999,40 @@ export const characters: Character[] = [
       'Reality is a toy just begging to be broken.',
   }),
   character({
+    id: 'the-host',
+    name: 'The Host',
+    hp: 11,
+    factionIds: ['subnet-86'],
+    brandIds: ['masquerade', 'data-nation'],
+    set: 'EX1',
+    abilityText:
+      'The first time each enemy character resolves a [MSK] effect each turn, you may deal 1 [A] to that character.',
+    abilityName: 'Coercive Induction',
+    epithet: 'Dramatis Personae',
+    flavour:
+      'Welcome to the neotheater. We can\'t wait to see what you do next.',
+  }),
+  character({
+    id: 'tori-daiyu',
+    name: 'Tori-Daiyu',
+    hp: 10,
+    factionIds: ['subnet-86'],
+    brandIds: ['endless-chain', 'hostile-rewrite', 'data-nation'],
+    set: 'CORE',
+    abilityText:
+      '[AMB] You may reorder the stacks of all active friendly characters.',
+    abilityName: 'Prime Edict',
+    epithet: 'Analytical Puppeteer',
+    flavour:
+      'With order, precision, and my oversight, every task is trivial.',
+  }),
+  character({
     id: 'zakhi',
     name: 'Zakhi',
     hp: 10,
     factionIds: ['subnet-86', 'celestial-shogunate'],
     brandIds: ['endless-chain', 'infinite-divine', 'onryoki-noh'],
+    set: 'CORE',
     abilityText:
       '[AMB] Deal X [A] or X [P]. X is the number of patches attached to the target.',
     abilityName: 'Judgment',
@@ -781,6 +1046,7 @@ export const characters: Character[] = [
     hp: 9,
     factionIds: 'any',
     brandIds: [],
+    set: 'CORE',
     personalBrandId: 'lux-vault',
     abilityText:
       'When LuX resolves the first program from her stack each turn, you may heal 1 [H]. LuX may activate Common programs from the top of any stack.',
