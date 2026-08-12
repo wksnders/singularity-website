@@ -211,7 +211,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <EmptyState
           v-else
           class="brand__gap"
-          variant="unrevealed"
           :title="t('brand.noCastTitle')"
           :body="t('brand.noCastBody')"
         />
@@ -226,7 +225,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <section v-else class="l-band">
     <div class="l-wrap l-wrap--reading">
       <EmptyState
-        variant="notYet"
         :title="t('brand.missingTitle')"
         :body="t('brand.missingBody')"
       />
