@@ -1,21 +1,25 @@
 <script setup lang="ts">
 /**
- * ONE empty state, three variants:
- * - unrevealed: content exists but is deliberately sealed
- * - notYet:     content is coming (an announced chapter)
- * - noResults:  the reader's filter or search found nothing
+ * ONE empty state, two variants:
+ * - default:   nothing here at this address — a bad URL, or a slot with no
+ *              published content behind it. Left-aligned, sits in the flow.
+ * - noResults: the reader's filter or search found nothing. Centred, and
+ *              carries a clear-filters action.
  * Never a shrug: each variant says what to do next.
  */
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 
-defineProps<{
-  variant: 'unrevealed' | 'notYet' | 'noResults';
-  kicker?: string;
-  title: string;
-  body?: string;
-  actionLabel?: string;
-}>();
+withDefaults(
+  defineProps<{
+    variant?: 'default' | 'noResults';
+    kicker?: string;
+    title: string;
+    body?: string;
+    actionLabel?: string;
+  }>(),
+  { variant: 'default' },
+);
 
 defineEmits<{ action: [] }>();
 </script>

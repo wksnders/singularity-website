@@ -160,7 +160,6 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
   <section v-else class="l-band">
     <div class="l-wrap l-wrap--reading">
       <EmptyState
-        variant="notYet"
         :title="t('faction.missingTitle')"
         :body="t('faction.missingBody')"
       />
