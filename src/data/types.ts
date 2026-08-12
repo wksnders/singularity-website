@@ -44,16 +44,9 @@ export interface Brand {
    * faction dot. Several are deliberately not circular — never clip to one.
    */
   icon: string | null;
-  /**
-   * A faction brand is shared across its characters; a personal brand belongs
-   * to one. Says nothing about the brand's faction — read `factionId` for that,
-   * which a personal brand may also have.
-   */
+  /** Personal brands belong to one character and sit outside the faction maths. */
   kind: 'faction' | 'personal';
-  /**
-   * How THIS brand's programs are gated, if they are. Absent is the normal
-   * case, not an unfilled blank — most brands gate nothing.
-   */
+  /** How a personal brand's programs are earned. if they are earned. */
   unlock?: 'challenges';
   programCount: number;
 }
@@ -71,7 +64,7 @@ export interface Program {
   art: Art;
 }
 
-/** "any" is the wildcard: the character can be played in any faction. */
+/** "any" is the wildcard: LuX is any-faction. */
 export type FactionMembership = string[] | 'any';
 
 export interface Character {
@@ -110,7 +103,9 @@ export interface Character {
   flavour: string;
 }
 
-/** An Incursion boss. */
+/**
+ * An Incursion boss.
+ */
 export interface RogueAI {
   id: string;
   name: string;
@@ -118,8 +113,11 @@ export interface RogueAI {
 }
 
 /* ---------------------------------------------------------------------------
-   THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE. Never merge any two of them
-   into one type — each collapse propagates into every view that reads it.
+   THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE.
+
+   An earlier model had one `GameSet` that was a product AND a box AND a
+   chapter. All three collapses were wrong, and the type propagated each of
+   them into every view that read it.
 
      · A BOX is a physical thing with components in it. It is the unit the
        contents list describes, and the unit the story ships inside.

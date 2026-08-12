@@ -793,7 +793,7 @@ export const characters: Character[] = [
 
 /**
  * Dev-only. Catches a typo'd brand id and a `factionIds` that disagrees with
- * the character's brands — both of which render a plausible wrong page.
+ * the character's brands both of which render a plausible wrong page.
  */
 function assertCharacterShape(): void {
   if (import.meta.env.PROD) return;
@@ -802,7 +802,7 @@ function assertCharacterShape(): void {
     if (seen.has(c.id)) console.warn(`[universe] duplicate character id "${c.id}".`);
     seen.add(c.id);
 
-    /* Personal brands included: one may belong to a faction. */
+    /* all brands included */
     const fromBrands: string[] = [];
     for (const brandId of [...c.brandIds, ...(c.personalBrandId ? [c.personalBrandId] : [])]) {
       const brand = brands.find((b) => b.id === brandId);
@@ -1118,7 +1118,7 @@ export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? 
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
 
-/** Any-faction characters are exempt from the faction filter, not excluded. */
+/** Any-faction characters are exempt from the faction filter, not excluded. (for now may change later) */
 export const charactersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds === 'any' || c.factionIds.includes(factionId));
 
