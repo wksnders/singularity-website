@@ -273,7 +273,6 @@ const cardsQuery = computed(() =>
           />
           <EmptyState
             v-if="!appearsIn.length"
-            variant="notYet"
             :title="t('character.noStoriesTitle')"
             :body="t('character.noStoriesBody')"
           />
@@ -294,7 +293,6 @@ const cardsQuery = computed(() =>
   <section v-else class="l-band">
     <div class="l-wrap l-wrap--reading">
       <EmptyState
-        variant="notYet"
         :title="t('character.missingTitle')"
         :body="t('character.missingBody')"
       />
