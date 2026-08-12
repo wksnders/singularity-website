@@ -44,20 +44,13 @@ const filterOptions = computed<FilterOption[]>(() => [
 
 const factionTags = (character: Character) =>
   character.factionIds === 'any'
-    ? [
-        {
-          label: character.unlockedVia
-            ? t('universe.anyFactionUnlock')
-            : t('universe.anyFaction'),
-          color: null,
-        },
-      ]
+    ? [{ label: t('universe.anyFaction'), color: null }]
     : character.factionIds
         .map((id) => factionById(id))
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
-/** Any-faction characters survive every faction filter — canon, not a bug. */
+/** Any-faction characters are exempt from the faction filter, not excluded. */
 function matchesFaction(character: Character): boolean {
   const active = faction.value.value;
   if (!active) return true;
@@ -197,7 +190,6 @@ function clearAll(): void {
       </div>
 
       <div class="universe__reveal">
-        <MonoLabel tone="faint">{{ t('universe.unaligned.sealed') }}</MonoLabel>
         <UiButton variant="quiet" :to="to('unaligned')">{{ t('universe.unaligned.exitPage') }}</UiButton>
       </div>
 

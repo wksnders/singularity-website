@@ -60,7 +60,7 @@ function matches(program: Program): boolean {
 
 const shown = computed(() => programs.filter(matches));
 
-/** The eight slots every program card carries, in printed order. */
+/** The card's slots, in the order the anatomy diagram walks them. */
 const anatomy = computed(() =>
   ['name', 'cost', 'art', 'type', 'rules', 'flavour', 'brand', 'set'].map((key, index) => ({
     index: index + 1,

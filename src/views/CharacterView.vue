@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
- * CHARACTER — the door into the lore. Epithet above the name, one faction
- * emblem per membership (multi-faction is canon), art owning the right half on
- * desktop, and the brand's programs as a strip that exits to the gallery.
+ * CHARACTER — the door into the lore. Epithet above the name, one emblem per
+ * faction membership, art owning the right half on desktop, and the primary
+ * brand's programs as a strip that exits to the gallery.
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -15,6 +15,7 @@ import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
+import StatRow from '@/components/molecules/StatRow.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
@@ -47,13 +48,31 @@ const memberships = computed(() =>
     : [],
 );
 
-const brand = computed(() =>
-  character.value?.brandId
-    ? brandById(character.value.brandId)
-    : character.value?.personalBrandId
-      ? brandById(character.value.personalBrandId)
-      : null,
-);
+/**
+ * Faction brands in printed order, then a personal brand if there is one. A
+ * character may hold both, so these concatenate rather than fall back.
+ */
+const playedBrands = computed(() => {
+  const c = character.value;
+  if (!c) return [];
+  return [...c.brandIds, ...(c.personalBrandId ? [c.personalBrandId] : [])]
+    .map((id) => brandById(id))
+    .filter((b): b is NonNullable<ReturnType<typeof brandById>> => Boolean(b));
+});
+
+/** The primary brand owns the breadcrumb and the program strip. */
+const brand = computed(() => playedBrands.value[0] ?? null);
+const otherBrands = computed(() => playedBrands.value.slice(1));
+
+/** In the order they read on the card. */
+const cardStats = computed(() => {
+  const c = character.value;
+  if (!c) return [];
+  return [
+    { label: t('character.statHp'), value: String(c.hp) },
+    { label: t('character.statAbility'), value: c.abilityName },
+  ].filter((s) => s.value && s.value !== '0');
+});
 
 const brandPrograms = computed(() => (brand.value ? programsOfBrand(brand.value.id) : []));
 const shownPrograms = computed(() => brandPrograms.value.slice(0, 5));
@@ -61,9 +80,10 @@ const remainingPrograms = computed(() =>
   Math.max((brand.value?.programCount ?? 0) - shownPrograms.value.length, 0),
 );
 
-/** Lateral hops walk the character's own brand, not the whole cast. */
+/** Lateral hops walk the character's primary brand, not the whole cast. */
 const siblings = computed(() => {
-  const pool = characters.filter((c) => c.brandId && c.brandId === character.value?.brandId);
+  const primary = character.value?.brandIds[0];
+  const pool = primary ? characters.filter((c) => c.brandIds[0] === primary) : [];
   const index = pool.findIndex((c) => c.id === props.characterId);
   if (pool.length < 2 || index < 0) return { prev: null, next: null };
   const prev = pool[(index - 1 + pool.length) % pool.length];
@@ -142,6 +162,14 @@ const cardsQuery = computed(() =>
         </div>
         <MonoLabel tone="faint">{{ t('character.emblemNote') }}</MonoLabel>
 
+        <!-- Card face as text, not an image of text: searchable, readable
+             aloud, and errata-linkable. Same rule as the program gallery. -->
+        <div class="char__card">
+          <StatRow :stats="cardStats" bordered />
+          <p class="char__ability">{{ character.abilityText }}</p>
+          <p v-if="character.flavour" class="char__flavour">{{ character.flavour }}</p>
+        </div>
+
         <MarkdownBlock
           v-if="hasLore"
           :slug="`universe/characters/${characterId}`"
@@ -186,6 +214,28 @@ const cardsQuery = computed(() =>
           <UiButton variant="quiet" :to="to('brand', { brandId: brand.id })">
             {{ t('character.brandStory') }}
           </UiButton>
+        </div>
+
+        <!-- Mark and link only. The program strip belongs to the primary
+             brand; three brands' worth of cards would bury it. -->
+        <div v-if="otherBrands.length" class="char__also">
+          <MonoLabel tone="faint">{{ t('character.alsoPlays') }}</MonoLabel>
+          <div class="char__also-list">
+            <BaseLink
+              v-for="other in otherBrands"
+              :key="other.id"
+              :to="to('brand', { brandId: other.id })"
+              class="char__also-brand"
+            >
+              <BrandMark
+                :icon="other.icon"
+                :name="other.name"
+                :color="factionById(other.factionId ?? '')?.color"
+                :size="26"
+              />
+              {{ other.name }}
+            </BaseLink>
+          </div>
         </div>
 
         <div class="char__programs">
@@ -282,6 +332,44 @@ const cardsQuery = computed(() =>
   position: absolute;
   left: var(--space-4);
   bottom: var(--space-3);
+}
+
+.char__card {
+  margin-top: var(--space-5);
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid rgba(var(--rgb-ink), 0.16);
+}
+
+.char__ability {
+  margin-top: var(--space-4);
+  max-width: 60ch;
+  font-size: var(--size-body);
+  line-height: 1.55;
+  color: rgba(var(--rgb-ink), 0.9);
+}
+
+.char__flavour {
+  margin-top: var(--space-3);
+  max-width: 60ch;
+  font-style: italic;
+  color: rgba(var(--rgb-ink), 0.62);
+}
+
+.char__also {
+  margin-top: var(--space-6);
+}
+
+.char__also-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.char__also-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .char__epithet {

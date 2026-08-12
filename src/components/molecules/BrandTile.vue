@@ -2,16 +2,10 @@
 /**
  * The brand shelf tile, used wherever a faction's brands are listed together.
  *
- * It replaces a ContentCard whose art slot was a striped "[ brand art ]"
- * placeholder. The mark IS the brand's art — it is finished, it is 1:1, and it
- * is the thing a player recognises on the back of a card — so this tile leads
- * with it rather than reserving 4:3 for a wide key image that was never going
- * to be drawn per brand.
- *
- * Sits beside FactionTile: same faction edge, same hover, one row up the
- * hierarchy from EntityTile. A brand with no shipped mark still renders — the
- * mark slot falls back to the faction dot — so the four-per-faction grid never
- * develops a hole while art is pending.
+ * The mark IS the brand's art, so the tile leads with it rather than reserving
+ * a wide art slot. Sits beside FactionTile: same faction edge, same hover, one
+ * row up from EntityTile. A brand with no shipped mark falls back to the
+ * faction dot, so the grid never develops a hole while art is pending.
  */
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';

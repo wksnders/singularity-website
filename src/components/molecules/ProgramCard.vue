@@ -2,8 +2,8 @@
 /**
  * Card class 3 of 3 — a printed program card.
  * The card IS an image (63×88, the printed proportions); its wording is DATA,
- * shown in a disclosure below. That is what makes 160 cards searchable,
- * screen-readable, errata-linkable and translatable without redrawing them.
+ * shown in a disclosure below, which is what makes the gallery searchable,
+ * screen-readable, errata-linkable and translatable without redrawing anything.
  * An unrevealed program renders as a sealed slot, not an empty card.
  */
 import { ref } from 'vue';

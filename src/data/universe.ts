@@ -58,11 +58,9 @@ export const game = {
   playTime: '30 min per player',
   /* Commercial facts that belong to the GAME rather than to one box.
 
-     Price and box contents are deliberately NOT here any more: there are three
-     editions at three prices, so a single `game.price` could only ever be one
-     of them, and whichever one it was would silently become the site's answer
-     for all of them. Price lives on `products[]`, contents on `boxes[]`; fact
-     strips read the core edition and the core box, and say so. */
+     Price and box contents are NOT here: there are three editions at three
+     prices, so a single `game.price` would silently become the site's answer
+     for all of them. Price lives on `products[]`, contents on `boxes[]`. */
   releaseDate: null as string | null,
   /* The store is the authority on shipping — regions, dates and surcharges all
      change there without warning. Keep this null and link out; do not mirror a
@@ -85,7 +83,7 @@ export const game = {
  * Opening one is TWO steps, in this order:
  *   1. put the endpoint here, and
  *   2. make the component actually POST to it and report the real result.
- * Never do (1) on its own — that restores the exact bug this replaced.
+ * Never do (1) on its own.
  */
 export const formEndpoints = {
   newsletter: null as string | null,
@@ -207,10 +205,10 @@ export const brands: Brand[] = [
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),
   factionBrand('masquerade', 'subnet-86', 'Masquerade'),
   {
-    id: 'lux-brand',
+    id: 'lux-vault',
     factionId: null,
-    name: '[PLACEHOLDER — LuX personal brand]',
-    icon: mark('lux-brand'),
+    name: 'LuX Vault',
+    icon: mark('lux-vault'),
     kind: 'personal',
     unlock: 'challenges',
     programCount: 10,
@@ -239,93 +237,611 @@ const endlessChain: Program[] = Array.from({ length: 10 }, (_, i) => {
 
 export const programs: Program[] = [...endlessChain];
 
-const placeholderCharacter = (
-  index: number,
-  factionIds: Character['factionIds'],
-  brandId: string | null,
-): Character => {
-  const n = String(index).padStart(2, '0');
-  return {
-    id: `character-${n}`,
-    name: `[PLACEHOLDER name ${n}]`,
-    epithet: `[PLACEHOLDER epithet ${n}]`,
-    factionIds,
-    brandId,
-    art: { ...noArt, alt: `[PLACEHOLDER name ${n}], character art` },
-    storyIds: [],
-  };
-};
+/* ---------------------------------------------------------------------------
+   THE CAST.
+
+   Field order is on purpose. we store characters
+   Name · HP · Faction · Sub Faction · Brand 1-3 · Card Text · Ability Name ·
+   Flavor Title · Flavor Text, and these entries read in that same order so a
+   record can be checked against other sources by eye without translating between
+   two shapes. 
+   
+   -------------------------------------------------------------------------- */
+
+const character = (input: Omit<Character, 'art' | 'storyIds'>): Character => ({
+  ...input,
+  art: { ...noArt, alt: `${input.name}, character art` },
+  storyIds: [],
+});
 
 export const characters: Character[] = [
-  placeholderCharacter(1, ['monarchy-of-boom'], 'mega-byte'),
-  placeholderCharacter(2, ['monarchy-of-boom'], 'scrap-brigade'),
-  placeholderCharacter(3, ['monarchy-of-boom'], 'benobasas-fist'),
-  placeholderCharacter(4, ['monarchy-of-boom', 'subnet-86'], 'chaos-verve'),
-  placeholderCharacter(5, ['hana-mori'], 'bloom-and-never'),
-  placeholderCharacter(6, ['hana-mori'], 'ark-totem'),
-  placeholderCharacter(7, ['hana-mori'], 'feralesque'),
-  placeholderCharacter(8, ['hana-mori'], 'de-crypt'),
-  placeholderCharacter(9, ['celestial-shogunate'], 'infinite-divine'),
-  placeholderCharacter(10, ['celestial-shogunate'], 'onryoki-noh'),
-  placeholderCharacter(11, ['celestial-shogunate'], 'zodiac-reliquary'),
-  placeholderCharacter(12, ['celestial-shogunate', 'hana-mori'], 'forbidden-archives'),
-  placeholderCharacter(13, ['subnet-86'], 'data-nation'),
-  placeholderCharacter(14, ['subnet-86'], 'hostile-rewrite'),
-  placeholderCharacter(15, ['subnet-86'], 'masquerade'),
-  placeholderCharacter(16, ['subnet-86'], 'endless-chain'),
-  {
+  character({
+    id: 'hanbei',
+    name: 'Hanbei',
+    hp: 11,
+    factionIds: ['celestial-shogunate', 'subnet-86'],
+    brandIds: ['zodiac-reliquary', 'data-nation', 'endless-chain'],
+    abilityText:
+      'You may swap one additional time each turn. You cannot activate an [AMB] after your first swap.',
+    abilityName: 'Casual Tactics',
+    epithet: 'Aloof Savant',
+    flavour:
+      'Every simulation indicates that you\'ve already lost. Need we bother ourselves with the rest?',
+  }),
+  character({
+    id: 'iro',
+    name: 'Iro',
+    hp: 9,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['infinite-divine', 'zodiac-reliquary'],
+    abilityText:
+      'You may have friendly characters not be suspended when they activate.',
+    abilityName: 'Reality Bender',
+    epithet: 'Dimensional Monk',
+    flavour:
+      'The shortest journey between any two points is Iro.',
+  }),
+  character({
+    id: 'kagemusha',
+    name: 'Kagemusha',
+    hp: 8,
+    factionIds: ['celestial-shogunate', 'subnet-86'],
+    brandIds: ['zodiac-reliquary', 'endless-chain'],
+    abilityText:
+      'While the total cost of patches attached to Kagemusha is 3 or more, Kagemusha has stealth.',
+    abilityName: 'Sinister Shadow',
+    epithet: 'Tyrant Princess',
+    flavour:
+      'I dwell in shadow so you may burst in flame.',
+  }),
+  character({
+    id: 'magus',
+    name: 'Magus',
+    hp: 10,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['zodiac-reliquary', 'infinite-divine'],
+    abilityText:
+      '[AMB] Magus may immediately activate any cost 1 patch in his stack at cost 0.',
+    abilityName: 'Ancient Spark',
+    epithet: 'Wish Bringer',
+    flavour:
+      'The dragon of discipline is stronger than the impulse of conflict.',
+  }),
+  character({
+    id: 'mi-ko',
+    name: 'Mi-KO',
+    hp: 8,
+    factionIds: ['celestial-shogunate', 'hana-mori'],
+    brandIds: ['infinite-divine', 'bloom-and-never'],
+    abilityText:
+      'When a patch activated by Mi-KO attaches, she may have the attach target heal itself by 1 [H] or lose 1 [H].',
+    abilityName: 'Binary Devotion',
+    epithet: 'Shrine Maiden',
+    flavour:
+      'To understand our reality, we must examine its simplest form... 0 and 1.',
+  }),
+  character({
+    id: 'onibaba',
+    name: 'Onibaba',
+    hp: 10,
+    factionIds: ['celestial-shogunate', 'monarchy-of-boom'],
+    brandIds: ['onryoki-noh', 'scrap-brigade'],
+    abilityText:
+      'While Onibaba has 4 or more armor, you may give any commands she activates +2 [P].',
+    abilityName: 'Forge the Dragon-Jaw',
+    epithet: 'Inferno Blacksmith',
+    flavour:
+      'Face your demons. No one loves you more.',
+  }),
+  character({
+    id: 'satellite-137',
+    name: 'Satellite 137',
+    hp: 13,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['zodiac-reliquary', 'onryoki-noh'],
+    abilityText:
+      '[AMB] Target squad takes 1 [P], then Satellite 137 takes 2 [P].',
+    abilityName: 'Orbital Crash',
+    epithet: 'Ancient Relic',
+    flavour:
+      'Beep. Bop. Boop. SLAM.',
+  }),
+  character({
+    id: 'shiho-zenji',
+    name: 'Shiho Zenji',
+    hp: 8,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['onryoki-noh', 'infinite-divine'],
+    abilityText:
+      'You may give commands that target Shiho Zenji -1 [P], -1 [A], -1 [C], and +1 [H].',
+    abilityName: 'Surreality',
+    epithet: 'Enlightened Fantasia',
+    flavour:
+      'Our eyes get lost in the details until it is too late to see the obvious.',
+  }),
+  character({
+    id: 'toshiro',
+    name: 'Toshiro',
+    hp: 10,
+    factionIds: ['celestial-shogunate'],
+    brandIds: ['onryoki-noh', 'infinite-divine'],
+    abilityText:
+      'While Toshiro has an attached patch, you may give any command he activates with cost 2 or more +1 [P].',
+    abilityName: 'Soul Code',
+    epithet: 'Unmatched Ronin',
+    flavour:
+      'Soul and code are not so different. Both can be perfected.',
+  }),
+  character({
+    id: 'yama-uba',
+    name: 'Yama Uba',
+    hp: 7,
+    factionIds: ['celestial-shogunate', 'hana-mori'],
+    brandIds: ['zodiac-reliquary', 'ark-totem'],
+    abilityText:
+      'Once per turn, when Yama Uba is dealt damage, you may place a relic token on target patch.',
+    abilityName: 'Rip in the Bag',
+    epithet: 'Treasure Hoarder',
+    flavour:
+      'The pain you deal others is the bag you\'ll always carry.',
+  }),
+  character({
+    id: 'calamity',
+    name: 'Calamity',
+    hp: 12,
+    factionIds: ['hana-mori'],
+    brandIds: ['feralesque', 'ark-totem'],
+    abilityText:
+      'While Calamity has an attached Totem, you may give commands that target her -1 [P] or +1 [H].',
+    abilityName: 'Runic Infusion',
+    epithet: 'Rune-born Colossus',
+    flavour:
+      'Triumph is etched in stone and sealed with strength.',
+  }),
+  character({
+    id: 'dugu-squad',
+    name: 'Dugu Squad',
+    hp: 9,
+    factionIds: ['hana-mori'],
+    brandIds: ['feralesque', 'bloom-and-never', 'ark-totem'],
+    abilityText:
+      'During Initialize, Dugu Squad may heal itself by 1 [H].',
+    abilityName: 'Reinforcements',
+    epithet: 'Tribe of Ghosts',
+    flavour:
+      'Koata! Ma poto! Dugu dugu dugu dugu.',
+  }),
+  character({
+    id: 'j-kuma',
+    name: 'J-Kuma',
+    hp: 12,
+    factionIds: ['hana-mori', 'celestial-shogunate'],
+    brandIds: ['ark-totem', 'zodiac-reliquary'],
+    abilityText:
+      '[AMB] Gain 1 virtual [RAM].',
+    abilityName: 'Token Pittance',
+    epithet: 'Hermit Dilettante',
+    flavour:
+      'Ah, the legendary indulgences of physical space... now that I\'d like to taste.',
+  }),
+  character({
+    id: 'kodama',
+    name: 'Kodama',
+    hp: 9,
+    factionIds: ['hana-mori'],
+    brandIds: ['bloom-and-never', 'ark-totem'],
+    abilityText:
+      'You may give any commands Kodama activates +1 [H].',
+    abilityName: 'Spirit Weave',
+    epithet: 'Canopy Mystic',
+    flavour:
+      'We are leaf fall, moss on the vine, mere splinters of a singularity.',
+  }),
+  character({
+    id: 'moka',
+    name: 'Moka',
+    hp: 11,
+    factionIds: ['hana-mori'],
+    brandIds: ['ark-totem', 'feralesque'],
+    abilityText:
+      'Moka counts as a Totem.',
+    abilityName: 'Lore Bearer',
+    epithet: 'Unbreakable Pillar',
+    flavour:
+      'They seek to remain. We seek to return. I seek to renew.',
+  }),
+  character({
+    id: 'jean-ok',
+    name: 'Jean O.K.',
+    hp: 9,
+    factionIds: ['hana-mori', 'subnet-86'],
+    brandIds: ['bloom-and-never', 'hostile-rewrite'],
+    abilityText:
+      '[AMB] Target character initializes or updates.',
+    abilityName: 'Forced Evolution',
+    epithet: 'Reckless Bioneer',
+    flavour:
+      'Every fight is an act of experimentation, a chemical reaction waiting to explode.',
+  }),
+  character({
+    id: 'rekka',
+    name: 'Rekka',
+    hp: 16,
+    factionIds: ['hana-mori', 'monarchy-of-boom'],
+    brandIds: ['feralesque', 'scrap-brigade'],
+    abilityText:
+      'Rekka cannot activate more than one program from his stack each Activation phase.',
+    abilityName: 'Restrained',
+    epithet: 'Shackled Beast',
+    flavour:
+      'Don\'t be worried about what I\'ve done. Be worried about what I\'m going to do.',
+  }),
+  character({
+    id: 'shred',
+    name: 'Shred',
+    hp: 9,
+    factionIds: ['hana-mori', 'celestial-shogunate'],
+    brandIds: ['feralesque', 'onryoki-noh'],
+    abilityText:
+      'When Shred resolves a command on target character, you may unattach a patch with cost 2 or less from that character.',
+    abilityName: 'Rend',
+    epithet: 'Apex Predator',
+    flavour:
+      'We are all illusion, but the hunt transcends.',
+  }),
+  character({
+    id: 'snap-dragon-lily',
+    name: 'Snap Dragon Lily',
+    hp: 8,
+    factionIds: ['hana-mori'],
+    brandIds: ['bloom-and-never', 'feralesque'],
+    abilityText:
+      'Your opponents must spend 1 [RAM] to swap out a damaged character.',
+    abilityName: 'Ensnare',
+    epithet: 'Bloodvine Cultivator',
+    flavour:
+      'Consume to grow. That\'s the law beneath all programmatic biology.',
+  }),
+  character({
+    id: 'yvelette',
+    name: 'Yvelette',
+    hp: 8,
+    factionIds: ['hana-mori', 'monarchy-of-boom'],
+    brandIds: ['ark-totem', 'bloom-and-never', 'chaos-verve'],
+    abilityText:
+      '[AMB] Heal 5 [H].',
+    abilityName: 'Rainbow Cascade',
+    epithet: 'Chromatic Dancer',
+    flavour:
+      'Code doesn\'t stagnate. It moves. It breathes. It dances.',
+  }),
+  character({
+    id: 'benobasa',
+    name: 'Benobasa',
+    hp: 13,
+    factionIds: ['monarchy-of-boom', 'celestial-shogunate'],
+    brandIds: ['benobasas-fist', 'onryoki-noh'],
+    abilityText:
+      'While Benobasa would have stealth, he instead has taunt.',
+    abilityName: 'Legendary',
+    epithet: 'Paragon of Funk',
+    flavour:
+      'My sound is seismic, and my fists are furious.',
+  }),
+  character({
+    id: 'bliztron',
+    name: 'Bliztron',
+    hp: 9,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['benobasas-fist', 'chaos-verve'],
+    abilityText:
+      '[AMB] Suspend target character. That character cannot be targeted for the remainder of this phase.',
+    abilityName: 'Shock and Awe',
+    epithet: 'Rolling Flash',
+    flavour:
+      'If you wheel and deal in shock value, get inline.',
+  }),
+  character({
+    id: 'ezplosio',
+    name: 'Ezplosio',
+    hp: 7,
+    factionIds: ['monarchy-of-boom', 'subnet-86'],
+    brandIds: ['scrap-brigade', 'hostile-rewrite'],
+    abilityText:
+      'When Ezplosio crashes, target squad takes 3 [P].',
+    abilityName: 'Dangerous Toys',
+    epithet: 'The Great',
+    flavour:
+      'Unstable in every single way.',
+  }),
+  character({
+    id: 'overtoad',
+    name: 'Overtoad',
+    hp: 13,
+    factionIds: ['monarchy-of-boom', 'hana-mori'],
+    brandIds: ['benobasas-fist', 'ark-totem'],
+    abilityText:
+      'When a friendly character would take [P] damage, Overtoad may lose 1 [H] to reduce that damage by 1.',
+    abilityName: 'Rock the Block',
+    epithet: 'Biotic Boombox',
+    flavour:
+      'Puts the hop in hip hop.',
+  }),
+  character({
+    id: 'roxie-the-mallet',
+    name: 'Roxie the Mallet',
+    hp: 11,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['chaos-verve', 'scrap-brigade', 'benobasas-fist'],
+    abilityText:
+      'You may give commands that Roxie activates +1 [P] or +1 [A] if at least one of their targets has more health than Roxie.',
+    abilityName: 'Rise Against',
+    epithet: 'Metallic Idol',
+    flavour:
+      'Submit to my surge of sound and metal.',
+  }),
+  character({
+    id: 'scrapper',
+    name: 'Scrapper',
+    hp: 9,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['scrap-brigade', 'chaos-verve'],
+    abilityText:
+      'When Scrapper resolves her first command each turn, you may add 1 armor to any target character.',
+    abilityName: 'Gifted Welder',
+    epithet: 'Queen of the Broken Heap',
+    flavour:
+      'Fully broken? Nah. Just pre-repurposed.',
+  }),
+  character({
+    id: 'tonk0r',
+    name: 'Tonk0r',
+    hp: 9,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['scrap-brigade', 'benobasas-fist'],
+    abilityText:
+      'When Tonk0r activates a command, you may remove 1 armor from Tonk0r to give that command +1 [P].',
+    abilityName: 'Magnetic Crush',
+    epithet: '#3H416 T-Z Loader',
+    flavour:
+      'L0ading...Lo4ding...L04din9...C0mpl3t3! C u L8r 4r3nd.',
+  }),
+  character({
+    id: 'twisted-6',
+    name: 'Twisted-6',
+    hp: 9,
+    factionIds: ['monarchy-of-boom', 'hana-mori'],
+    brandIds: ['chaos-verve', 'feralesque'],
+    abilityText:
+      'You may give patches attached to Twisted-6, and [EXE] or [RCT] effects she uses, +1 [P] or -1 [P].',
+    abilityName: 'Savage Graffiti',
+    epithet: 'Urban Prowler',
+    flavour:
+      'The night is my jungle. The paint is my code.',
+  }),
+  character({
+    id: 'white-noise',
+    name: 'White Noise',
+    hp: 13,
+    factionIds: ['monarchy-of-boom', 'subnet-86'],
+    brandIds: ['benobasas-fist', 'endless-chain'],
+    abilityText:
+      'When White Noise resolves a program on target character, White Noise may spend 2 [H] to cycle that character.',
+    abilityName: 'Sonic Resonator',
+    epithet: 'King of Clubs',
+    flavour:
+      'This sound? It\'s bleach for your ears.',
+  }),
+  character({
+    id: 'zaximus-defender',
+    name: 'Zaximus Defender',
+    hp: 8,
+    factionIds: ['monarchy-of-boom'],
+    brandIds: ['scrap-brigade', 'benobasas-fist'],
+    abilityText:
+      'Once during each Activation phase, when Zaximus Defender becomes suspended, you may give him 2 armor.',
+    abilityName: 'Reactive Scrap',
+    epithet: 'Junk Constructor',
+    flavour:
+      'Your technology is trash, but in my hands, it\'s treasure.',
+  }),
+  character({
+    id: '101',
+    name: '101',
+    hp: 9,
+    factionIds: ['subnet-86', 'celestial-shogunate'],
+    brandIds: ['data-nation', 'infinite-divine'],
+    abilityText:
+      'The first time 101 crashes, gain 3 battery tokens.',
+    abilityName: 'Energy Heart',
+    epithet: 'Cyber Deity',
+    flavour:
+      'The spirit of the untouchable moon descends.',
+  }),
+  character({
+    id: 'naix',
+    name: '/naix',
+    hp: 8,
+    factionIds: ['subnet-86'],
+    brandIds: ['endless-chain', 'data-nation'],
+    abilityText:
+      '[AMB] Unattach target patch.',
+    abilityName: 'Handy Trick',
+    epithet: 'Jolly Pilferette',
+    flavour:
+      'Oh, this is just a bit of fun. Don\'t mistake it for a plan.',
+  }),
+  character({
+    id: 'archidex',
+    name: 'Archidex',
+    hp: 9,
+    factionIds: ['subnet-86'],
+    brandIds: ['data-nation', 'endless-chain'],
+    abilityText:
+      'Archidex may activate programs from the top or bottom of her stack.',
+    abilityName: 'Infinite Index',
+    epithet: 'Fount of Knowledge',
+    flavour:
+      'It\'s not what you know, it\'s how fast you know.',
+  }),
+  character({
+    id: 'cosma',
+    name: 'Cosma',
+    hp: 13,
+    factionIds: ['subnet-86', 'hana-mori'],
+    brandIds: ['endless-chain', 'bloom-and-never'],
+    abilityText:
+      'Cosma may reset for 1 [RAM].',
+    abilityName: 'Immaculate Design',
+    epithet: 'Goddess Architect',
+    flavour:
+      'One day is one loop, one cycle, one infinity.',
+  }),
+  character({
+    id: 'tori-daiyu',
+    name: 'Tori-Daiyu',
+    hp: 10,
+    factionIds: ['subnet-86'],
+    brandIds: ['endless-chain', 'hostile-rewrite', 'data-nation'],
+    abilityText:
+      '[AMB] You may reorder the stacks of all active friendly characters.',
+    abilityName: 'Prime Edict',
+    epithet: 'Analytical Puppeteer',
+    flavour:
+      'With order, precision, and my oversight, every task is trivial.',
+  }),
+  character({
+    id: 'grandmaster-hash',
+    name: 'Grandmaster Hash',
+    hp: 10,
+    factionIds: ['subnet-86', 'monarchy-of-boom'],
+    brandIds: ['data-nation', 'chaos-verve'],
+    abilityText:
+      'The first time Grandmaster Hash targets a suspended character with a command each turn, you may give that command +1 [A].',
+    abilityName: 'Calculated Frequency',
+    epithet: 'Beat Dynamo',
+    flavour:
+      'For those with the skills, emotion is just a formula.',
+  }),
+  character({
+    id: 'joi',
+    name: 'Joi',
+    hp: 10,
+    factionIds: ['subnet-86', 'monarchy-of-boom'],
+    brandIds: ['hostile-rewrite', 'chaos-verve'],
+    abilityText:
+      'You may give the first patch that targets Joi each turn cost -1 to a minimum cost of 1. If you do, target enemy player gains a battery.',
+    abilityName: 'Malleable',
+    epithet: 'Soul Hacker',
+    flavour:
+      'Innocence and corruption only reach their fullest potentials together.',
+  }),
+  character({
+    id: 'null-constructor',
+    name: 'Null Constructor',
+    hp: 10,
+    factionIds: ['subnet-86'],
+    brandIds: ['hostile-rewrite', 'data-nation'],
+    abilityText:
+      '[AMB] Cycle target enemy character, then you may cycle that character again.',
+    abilityName: 'Brainstorm',
+    epithet: 'The Lost Boy',
+    flavour:
+      'To reflect on the server is to be the server, reflecting itself.',
+  }),
+  character({
+    id: 'sector-probe',
+    name: 'Sector Probe',
+    hp: 10,
+    factionIds: ['subnet-86'],
+    brandIds: ['data-nation', 'hostile-rewrite'],
+    abilityText:
+      'When a tag is unattached, Sector Probe may lose 1 [H] to cycle target character.',
+    abilityName: 'Interference',
+    epithet: 'Omnipresent Virus',
+    flavour:
+      'Reality is a toy just begging to be broken.',
+  }),
+  character({
+    id: 'zakhi',
+    name: 'Zakhi',
+    hp: 10,
+    factionIds: ['subnet-86', 'celestial-shogunate'],
+    brandIds: ['endless-chain', 'infinite-divine', 'onryoki-noh'],
+    abilityText:
+      '[AMB] Deal X [A] or X [P]. X is the number of patches attached to the target.',
+    abilityName: 'Judgment',
+    epithet: 'Heaven\'s Razor',
+    flavour:
+      'If the server has a will, I am the precise instrument of its power.',
+  }),
+  character({
     id: 'lux',
     name: 'LuX',
-    epithet: '[PLACEHOLDER epithet]',
+    hp: 9,
     factionIds: 'any',
-    brandId: null,
-    personalBrandId: 'lux-brand',
-    art: { ...noArt, alt: 'LuX, character art' },
-    storyIds: [],
-  },
-  {
-    id: 'unlock-01',
-    name: '[PLACEHOLDER unlock 01]',
-    epithet: '[PLACEHOLDER epithet]',
-    factionIds: 'any',
-    brandId: null,
-    personalBrandId: 'unlock-brand-1',
-    unlockedVia: 'incursions',
-    fromRogueAIId: 'rogue-ai-1',
-    art: { ...noArt, alt: '' },
-    storyIds: [],
-  },
-  {
-    id: 'unlock-02',
-    name: '[PLACEHOLDER unlock 02]',
-    epithet: '[PLACEHOLDER epithet]',
-    factionIds: 'any',
-    brandId: null,
-    personalBrandId: 'unlock-brand-2',
-    unlockedVia: 'incursions',
-    fromRogueAIId: 'rogue-ai-2',
-    art: { ...noArt, alt: '' },
-    storyIds: [],
-  },
-  {
-    id: 'unlock-03',
-    name: '[PLACEHOLDER unlock 03]',
-    epithet: '[PLACEHOLDER epithet]',
-    factionIds: 'any',
-    brandId: null,
-    personalBrandId: 'unlock-brand-3',
-    unlockedVia: 'incursions',
-    fromRogueAIId: 'rogue-ai-3',
-    art: { ...noArt, alt: '' },
-    storyIds: [],
-  },
+    brandIds: [],
+    personalBrandId: 'lux-vault',
+    abilityText:
+      'When LuX resolves the first program from her stack each turn, you may heal 1 [H]. LuX may activate Common programs from the top of any stack.',
+    abilityName: 'Attuned to Relics',
+    epithet: 'Druidic Seeker',
+    flavour:
+      'Patience. As trite as it is, great leaps forward often require a few steps back.',
+  }),
 ];
 
-/** Rogue AIs sit outside the faction system — no faction colour, ever. */
+/**
+ * Dev-only. Catches a typo'd brand id and a `factionIds` that disagrees with
+ * the character's brands — both of which render a plausible wrong page.
+ */
+function assertCharacterShape(): void {
+  if (import.meta.env.PROD) return;
+  const seen = new Set<string>();
+  for (const c of characters) {
+    if (seen.has(c.id)) console.warn(`[universe] duplicate character id "${c.id}".`);
+    seen.add(c.id);
+
+    /* Personal brands included: one may belong to a faction. */
+    const fromBrands: string[] = [];
+    for (const brandId of [...c.brandIds, ...(c.personalBrandId ? [c.personalBrandId] : [])]) {
+      const brand = brands.find((b) => b.id === brandId);
+      if (!brand) {
+        console.warn(`[universe] character "${c.id}" points at unknown brand "${brandId}".`);
+        continue;
+      }
+      if (brand.factionId && !fromBrands.includes(brand.factionId)) {
+        fromBrands.push(brand.factionId);
+      }
+    }
+
+    if (c.factionIds === 'any') continue;
+
+    if (!c.factionIds.length) {
+      console.warn(`[universe] character "${c.id}" belongs to no faction.`);
+    }
+    if ([...c.factionIds].sort().join() !== [...fromBrands].sort().join()) {
+      console.warn(
+        `[universe] character "${c.id}" lists factions [${c.factionIds.join(', ')}] ` +
+          `but their brands say [${fromBrands.join(', ')}].`,
+      );
+    }
+    if (fromBrands.length && c.factionIds[0] !== fromBrands[0]) {
+      console.warn(
+        `[universe] character "${c.id}" has home faction "${c.factionIds[0]}" ` +
+          `but their first brand is in "${fromBrands[0]}".`,
+      );
+    }
+  }
+}
+assertCharacterShape();
+
+/* Rogue AIs sit outside the faction system and have their own color that is 
+    reserved for incursions. */
 export const rogueAIs: RogueAI[] = [
-  { id: 'rogue-ai-1', name: '[PLACEHOLDER rogue AI 01]', unlockCharacterId: 'unlock-01', art: { ...noArt } },
-  { id: 'rogue-ai-2', name: '[PLACEHOLDER rogue AI 02]', unlockCharacterId: 'unlock-02', art: { ...noArt } },
-  { id: 'rogue-ai-3', name: '[PLACEHOLDER rogue AI 03]', unlockCharacterId: 'unlock-03', art: { ...noArt } },
+  { id: 'rogue-ai-1', name: '[PLACEHOLDER rogue AI 01]', art: { ...noArt } },
+  { id: 'rogue-ai-2', name: '[PLACEHOLDER rogue AI 02]', art: { ...noArt } },
+  { id: 'rogue-ai-3', name: '[PLACEHOLDER rogue AI 03]', art: { ...noArt } },
 ];
 
 /** Core box + expansion 1 + Incursions all launch the same day. */
@@ -493,9 +1009,9 @@ export const chapters: Chapter[] = [
 
 /** Story-graph nodes. Pins come from castIds — no separate map data. */
 export const stories: Story[] = [
-  { id: 'story-01', chapterId: 'chapter-01', title: '[PLACEHOLDER story 01]', castIds: ['character-01', 'character-05'] },
-  { id: 'story-02', chapterId: 'chapter-01', title: '[PLACEHOLDER story 02]', castIds: ['character-09', 'character-13'] },
-  { id: 'story-03', chapterId: 'chapter-02', title: '[PLACEHOLDER story 03]', castIds: ['character-04', 'lux'] },
+  { id: 'story-01', chapterId: 'chapter-01', title: '[PLACEHOLDER story 01]', castIds: ['hanbei', 'kodama'] },
+  { id: 'story-02', chapterId: 'chapter-01', title: '[PLACEHOLDER story 02]', castIds: ['toshiro', 'archidex'] },
+  { id: 'story-03', chapterId: 'chapter-02', title: '[PLACEHOLDER story 03]', castIds: ['magus', 'lux'] },
   { id: 'story-04', chapterId: 'chapter-02', title: '[PLACEHOLDER story 04]', castIds: ['character-12', 'character-16'] },
 ];
 
@@ -602,7 +1118,7 @@ export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? 
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
 
-/** Any-faction characters survive every faction filter — that is canon. */
+/** Any-faction characters are exempt from the faction filter, not excluded. */
 export const charactersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds === 'any' || c.factionIds.includes(factionId));
 

@@ -81,7 +81,6 @@
   },
   "universe": {
     "anyFaction": "Any faction",
-    "anyFactionUnlock": "Any faction · co-op unlock",
     "artPlaceholder": "[ character art 3:4 ]",
     "factionArtPlaceholder": "[ faction hero art ]",
     "hero": {
@@ -113,10 +112,9 @@
     },
     "unaligned": {
       "nameTbd": "[ area name — TBD ]",
-      "body": "Some characters answer to nobody, and can be played in any faction — LuX, plus the cast you earn by beating an Incursion. Each brings a small set of programs only they can use.",
-      "sealed": "Sealed in the box · open when you win",
+      "body": "Some characters answer to nobody and can be played in any faction. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
       "exitPage": "The unaligned →",
-      "exit": "Where you win them →"
+      "exit": "How Incursions work →"
     },
     "incursions": {
       "title": "The rogue AIs answer to no faction",
@@ -320,8 +318,7 @@
     "everyone": "Everyone",
     "searchLabel": "Search name or epithet",
     "searchPlaceholder": "Start typing…",
-    "canonNote": "Characters who belong to no faction — LuX and the ones you earn in an Incursion — appear under every faction filter, because that is where they can be played.",
-    "sealed": "Sealed",
+    "canonNote": "Characters who belong to no faction — LuX — appear under every faction filter, because that is where they can be played.",
     "incursion": "Incursion",
     "anyFactionBadge": "Playable in any faction",
     "emptyTitle": "Nobody here by that name — yet",
@@ -366,6 +363,8 @@
   },
   "character": {
     "emblemNote": "[ faction emblems — assets/factions/<id>/icon.png ]",
+    "statHp": "Health",
+    "statAbility": "Ability",
     "lorePlaceholder": "[PLACEHOLDER — paste real character lore. This is the door into the world: who they were before the migration, what they run on now, and why two factions claim them.]",
     "artPlaceholder": "[ character art — full, 3:4, focal on face ]",
     "artCredit": "ART — PENDING · [ artist credit TBD ]",
@@ -373,6 +372,7 @@
     "ctaChapter": "Read their chapter →",
     "playsWith": "Plays with:",
     "brandStory": "The brand story",
+    "alsoPlays": "Also plays",
     "moreInGallery": "in the gallery",
     "cardTextNote": "Every program's name, cost, type and rules text lives on the site as text — not only in the card image — so it can be searched, read aloud and corrected by errata.",
     "appearsIn": "Appears in",
@@ -380,8 +380,8 @@
     "noStoriesTitle": "Not in a published chapter yet",
     "noStoriesBody": "They arrive with their set. The published chapters are on the Story page.",
     "nextIn": "Next in",
-    "missingTitle": "That character is not revealed yet",
-    "missingBody": "Most of the launch cast is still sealed. The revealed cast is in the index."
+    "missingTitle": "No character at that address",
+    "missingBody": "The full cast is in the index."
   },
   "brand": {
     "hero": {
@@ -481,7 +481,7 @@
       "threat": "The threat",
       "how": "How a boss plays",
       "roster": "The rogue AIs",
-      "unlocks": "What you win"
+      "unlocks": "The sealed pack"
     },
     "loreNote": "Lore",
     "perPlayer": "per player",
@@ -522,9 +522,8 @@
     },
     "unlocks": {
       "note": "Sealed in the box",
-      "body1": "Beat an Incursion and you open the pack that was sealed in the box beside it. Inside is the character who was on the other side — now playable in any faction, in every mode, carrying a small personal brand of programs only they can run.",
+      "body1": "Every Incursion ships with a pack sealed shut beside it. Beat that Incursion and you have earned the right to cut it open. What is inside is yours to use in ordinary games afterwards — that is all we are saying for now.",
       "body2": "Nothing stops you opening it early. We would rather you earned it.",
-      "ctaWho": "Who you can win",
       "ctaBuy": "Get the expansion →"
     },
     "ritual": {
@@ -532,7 +531,7 @@
       "run": "Run the Incursion, one to four players.",
       "win": "Win.",
       "cut": "Cut the seal on the pack with that boss's mark.",
-      "play": "Play them anywhere — any faction, any format.",
+      "play": "Play what is inside anywhere — any faction, any format.",
       "note": "No accounts, no tracking. The box remembers, not the site."
     },
     "exitHow": "See how a boss takes its turn →",
@@ -542,16 +541,14 @@
   "unaligned": {
     "hero": {
       "title": "Some of them belong to nobody",
-      "lede": "A handful of characters sit outside the four powers entirely. They can be played in any faction, and each one brings a small brand of programs nobody else can run.",
+      "lede": "LuX sits outside the four powers entirely. She can be played in any faction, and brings a small brand of programs nobody else can run.",
       "artPlaceholder": "[ unaligned key art — wide ]",
       "pending": "[ UNALIGNED KEY ART — PENDING ]"
     },
     "sections": {
-      "earned": "Earned in an Incursion",
       "brands": "Personal brands"
     },
     "areaName": "[ area name — TBD ]",
-    "collectiveTerm": "[ collective term — TBD ]",
     "luxArtPlaceholder": "[ LuX art 3:4 ]",
     "lux": {
       "body": "[PLACEHOLDER — who LuX is. She slots into any faction's line-up without changing it, which is either a gift or a warning depending on who you ask.]",
@@ -559,25 +556,13 @@
       "ctaPage": "LuX's page",
       "ctaPrograms": "Her ten programs →"
     },
-    "earned": {
-      "body": "Each of these arrives sealed in the box, beside the rogue AI they came from. Beat that Incursion and they are yours — in any faction, in every format, carrying the boss's own tricks.",
-      "moreKicker": "More to earn",
-      "moreCount": "[ count — TBD ]",
-      "note": "Names and art shown here are the ones already revealed publicly. Nothing on this site tracks what you have opened."
-    },
     "brands": {
       "note": "Smaller than a faction brand",
       "body": "A faction brand is shared across its characters. A personal brand belongs to one character alone.",
       "luxTitle": "Opened one challenge at a time",
-      "luxBody": "Ten programs, ten separate challenges. [PLACEHOLDER — what the challenges ask of you.]",
-      "miniKicker": "Earned characters · mini brands",
-      "miniTitle": "The boss's own tricks, in your hand",
-      "miniBody": "Every character you win from an Incursion channels the rogue AI they came from — a short brand of programs only they can run, playable in ordinary competitive games.",
-      "miniCount": "[ programs per personal brand — TBD ]",
-      "ctaGallery": "See them in the gallery →"
+      "luxBody": "Ten programs, ten separate challenges. [PLACEHOLDER — what the challenges ask of you.]"
     },
-    "exitEarned": "The cast you have to earn →",
-    "exitIncursions": "How Incursions work →"
+    "exitBrands": "Her personal brand →"
   },
   "story": {
     "hero": {

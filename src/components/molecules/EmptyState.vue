@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * ONE empty state, three variants:
- * - unrevealed: content exists but is deliberately sealed (Incursion unlocks)
+ * - unrevealed: content exists but is deliberately sealed
  * - notYet:     content is coming (an announced chapter)
  * - noResults:  the reader's filter or search found nothing
  * Never a shrug: each variant says what to do next.
