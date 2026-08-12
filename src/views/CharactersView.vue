@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /**
- * CHARACTERS — the full cast index. Faction filter (in the URL), name/epithet
- * search, live count, and the canon rule made visible: characters who belong to
- * no faction appear under every faction filter, because that is where they can
- * be played.
+ * CHARACTERS — the full cast index. Faction filter (in the URL), search over
+ * name, epithet and ability, and a live count. Characters with no faction are
+ * exempt from the filter rather than excluded by it. TODO: should we offer a 
+ * way to exclude them, question for design research.
  */
 import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -18,7 +18,7 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { characters, factionById, factions, rogueAIs } from '@/data/universe';
+import { characters, factionById, factions } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { to } from '@/site/links';
 import type { Character } from '@/data/types';
@@ -46,12 +46,7 @@ const tags = (character: Character) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
-/** Sealed unlocks are editorial content — a badge, never tracked state. */
 function badge(character: Character): string | undefined {
-  if (character.unlockedVia === 'incursions') {
-    const index = rogueAIs.findIndex((ai) => ai.id === character.fromRogueAIId);
-    return `${t('characters.sealed')} · ${t('characters.incursion')} ${String(index + 1).padStart(2, '0')}`;
-  }
   if (character.factionIds === 'any') return t('characters.anyFactionBadge');
   return undefined;
 }
@@ -64,7 +59,10 @@ function matches(character: Character): boolean {
       ? character.factionIds === 'any'
       : character.factionIds === 'any' || character.factionIds.includes(active));
   const query = search.value.trim().toLowerCase();
-  const searchOk = !query || `${character.name} ${character.epithet}`.toLowerCase().includes(query);
+  /* Ability name and text are searchable: "who heals?" is a cast-index question. */
+  const haystack =
+    `${character.name} ${character.epithet} ${character.abilityName} ${character.abilityText}`.toLowerCase();
+  const searchOk = !query || haystack.includes(query);
   return factionOk && searchOk;
 }
 

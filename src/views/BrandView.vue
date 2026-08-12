@@ -84,7 +84,7 @@ const siblings = computed(() => {
   };
 });
 
-const cast = computed(() => characters.filter((c) => c.brandId === props.brandId));
+const cast = computed(() => characters.filter((c) => c.brandIds.includes(props.brandId)));
 
 const tags = () =>
   faction.value ? [{ label: faction.value.name, color: faction.value.color }] : [];
@@ -243,8 +243,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   align-items: center;
 }
 
-/* No frame and no faction underline any more: the mark carries its own
-   faction-coloured ring, and a 2px edge under a circle only fought it. */
+/* No frame, no faction underline: the mark carries its own coloured ring. */
 .brand__mark {
   display: flex;
   flex: 0 0 auto;

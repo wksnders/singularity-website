@@ -56,7 +56,7 @@ OUT = ROOT / "public" / "brands"
 SIZE = 384
 COLOURS = 64
 # LuX's ring is a full-spectrum gradient and bands badly at 64.
-COLOURS_BY_SLUG = {"lux-brand": 160}
+COLOURS_BY_SLUG = {"lux-vault": 160}
 
 # master display name -> brand id in src/data/universe.ts
 SLUGS = {
@@ -81,7 +81,7 @@ SLUGS = {
     "Endless Chain": "endless-chain",
     "Masquerade": "masquerade",
     # Personal
-    "Lux": "lux-brand",
+    "Lux": "lux-vault",
 }
 
 

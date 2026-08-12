@@ -18,7 +18,7 @@ withDefaults(
     /** Rendered above the name, per the character wireframe. */
     epithet?: string;
     name: string;
-    /** Mono badge above the epithet: sealed unlocks, any-faction bonus. */
+    /** Mono badge above the epithet. */
     badge?: string;
     /** One entry per faction membership — a dot beside every name. */
     tags?: { label: string; color?: string | null }[];

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
- * UNALIGNED — the non-faction area: LuX, the cast you earn by beating an
- * Incursion, and their personal brands. Locks here are editorial: there are no
- * accounts, so the site never tracks what a player has opened.
+ * UNALIGNED — the non-faction area: LuX and her personal brand.
+ *
+ * A band is added here when its contents are public
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -11,31 +11,22 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
-import EntityTile from '@/components/molecules/EntityTile.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
-import { brandById, characters, rogueAIs } from '@/data/universe';
+import { brandById, characters } from '@/data/universe';
 import { to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'lux', label: 'LuX' },
-  { id: 'earned', label: t('unaligned.sections.earned') },
   { id: 'personal-brands', label: t('unaligned.sections.brands') },
 ]);
 
 const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
 const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.value.personalBrandId) : null));
-
-const earned = computed(() => characters.filter((c) => c.unlockedVia === 'incursions'));
-
-const sealedBadge = (fromRogueAIId?: string | null) => {
-  const index = rogueAIs.findIndex((ai) => ai.id === fromRogueAIId);
-  return `${t('characters.sealed')} · ${t('characters.incursion')} ${String(index + 1).padStart(2, '0')}`;
-};
 </script>
 
 <template>
@@ -62,7 +53,7 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
 
     <section id="lux" tabindex="-1" class="l-band l-band--line-top">
       <div class="l-wrap">
-        <SectionMarker id="lux" :index="1" :total="3" heading="LuX" />
+        <SectionMarker id="lux" :index="1" :total="2" heading="LuX" />
         <MonoLabel tone="faint">{{ t('universe.anyFaction') }}</MonoLabel>
 
         <div v-if="lux" class="una__feature">
@@ -92,37 +83,7 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
           </div>
         </div>
 
-        <BandFoot :to="{ hash: '#earned' }" :label="t('unaligned.exitEarned')" />
-      </div>
-    </section>
-
-    <section id="earned" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="earned" :index="2" :total="3" :heading="t('unaligned.sections.earned')" />
-        <MonoLabel tone="faint">{{ t('unaligned.collectiveTerm') }}</MonoLabel>
-        <p class="una__body">{{ t('unaligned.earned.body') }}</p>
-
-        <div class="l-grid l-grid--tiles una__gap">
-          <EntityTile
-            v-for="character in earned"
-            :key="character.id"
-            :to="to('character', { characterId: character.id })"
-            :art="character.art"
-            :badge="sealedBadge(character.fromRogueAIId)"
-            :epithet="character.epithet"
-            :name="character.name"
-            :tags="[{ label: t('universe.anyFaction'), color: null }]"
-            :placeholder="t('universe.artPlaceholder')"
-          />
-          <div class="una__more">
-            <MonoLabel tone="faint">{{ t('unaligned.earned.moreKicker') }}</MonoLabel>
-            <p class="una__more-count">{{ t('unaligned.earned.moreCount') }}</p>
-          </div>
-        </div>
-
-        <p class="una__note">{{ t('unaligned.earned.note') }}</p>
-
-        <BandFoot :to="to('incursions')" :label="t('unaligned.exitIncursions')" />
+        <BandFoot :to="{ hash: '#personal-brands' }" :label="t('unaligned.exitBrands')" />
       </div>
     </section>
 
@@ -130,8 +91,8 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
       <div class="l-wrap">
         <SectionMarker
           id="personal-brands"
-          :index="3"
-          :total="3"
+          :index="2"
+          :total="2"
           :heading="t('unaligned.sections.brands')"
         />
         <MonoLabel tone="faint">{{ t('unaligned.brands.note') }}</MonoLabel>
@@ -156,20 +117,6 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
                 {{ String(n).padStart(2, '0') }}
               </li>
             </ul>
-          </article>
-
-          <article class="una__brand">
-            <MonoLabel tone="faint">{{ t('unaligned.brands.miniKicker') }}</MonoLabel>
-            <h3 class="una__brand-title">{{ t('unaligned.brands.miniTitle') }}</h3>
-            <p class="una__body">{{ t('unaligned.brands.miniBody') }}</p>
-            <MonoLabel tone="faint" class="una__gap">{{ t('unaligned.brands.miniCount') }}</MonoLabel>
-            <UiButton
-              variant="quiet"
-              :to="to('cards', {}, { query: { faction: 'unaligned' } })"
-              class="una__gap"
-            >
-              {{ t('unaligned.brands.ctaGallery') }}
-            </UiButton>
           </article>
         </div>
 
@@ -225,30 +172,6 @@ const sealedBadge = (fromRogueAIId?: string | null) => {
   margin-top: var(--space-2);
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 4vw, 2.25rem);
-}
-
-.una__note {
-  margin-top: var(--space-6);
-  max-width: 68ch;
-  font-size: var(--size-m);
-  line-height: 1.6;
-  color: var(--color-ink-faint);
-}
-
-.una__more {
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: var(--space-2);
-  min-height: 200px;
-  border: 1px dashed var(--color-line-strong);
-  border-radius: var(--radius-l);
-  text-align: center;
-}
-
-.una__more-count {
-  font-size: var(--size-s);
-  color: var(--color-ink-faint);
 }
 
 .una__brand {

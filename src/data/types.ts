@@ -44,10 +44,17 @@ export interface Brand {
    * faction dot. Several are deliberately not circular — never clip to one.
    */
   icon: string | null;
-  /** Personal brands (LuX, Incursion unlocks) sit outside the faction maths. */
+  /**
+   * A faction brand is shared across its characters; a personal brand belongs
+   * to one. Says nothing about the brand's faction — read `factionId` for that,
+   * which a personal brand may also have.
+   */
   kind: 'faction' | 'personal';
-  /** How a personal brand's programs are earned. */
-  unlock?: 'challenges' | 'beat-incursion';
+  /**
+   * How THIS brand's programs are gated, if they are. Absent is the normal
+   * case, not an unfilled blank — most brands gate nothing.
+   */
+  unlock?: 'challenges';
   programCount: number;
 }
 
@@ -64,39 +71,55 @@ export interface Program {
   art: Art;
 }
 
-/** "any" is the wildcard: LuX and every Incursion unlock are any-faction. */
+/** "any" is the wildcard: the character can be played in any faction. */
 export type FactionMembership = string[] | 'any';
 
 export interface Character {
   id: string;
   name: string;
   epithet: string;
+  /**
+   * Multi-faction membership is canon. The first entry is the character's main
+   * faction and owns their colour everywhere; later entries are secondary and
+   * render as additional emblems even though the character is still a part of 
+   * those factions. Character factions are stored rather than infered from the
+   * brand to keep it consistent with other places we store character data.
+   * Note that some characters like Lux can go in 'Any' Faction 
+   */
   factionIds: FactionMembership;
-  brandId: string | null;
+  /**
+   * Faction brands the character plays, in printed order. The FIRST is
+   * primary faction. Most characters have two; a few have three; or only 1.
+   * but there isnt a set limit to number of brands.
+   */
+  brandIds: string[];
   personalBrandId?: string | null;
-  /** Earned by beating an Incursion — editorial content, never tracked state. */
-  unlockedVia?: 'incursions';
-  /** The boss whose abilities this character channels in competitive play. */
-  fromRogueAIId?: string | null;
   art: Art;
   /** Stories this character appears in — drives the story graph's pins. */
   storyIds?: string[];
+
+  /* --- Printed card face. Text, never pixels — same rule as Program. ------ */
+
+  /** Starting health, as printed. */
+  hp: number;
+  /** The named ability, e.g. "Casual Tactics". */
+  abilityName: string;
+  /** Exact printed ability text, brackets and all: [AMB], [P], [H], [RAM]. */
+  abilityText: string;
+  /** The italic line under the rules box. Not lore prose — one printed line. */
+  flavour: string;
 }
 
+/** An Incursion boss. */
 export interface RogueAI {
   id: string;
   name: string;
-  /** The character this boss unlocks. */
-  unlockCharacterId: string | null;
   art: Art;
 }
 
 /* ---------------------------------------------------------------------------
-   THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE.
-
-   An earlier model had one `GameSet` that was a product AND a box AND a
-   chapter. All three collapses were wrong, and the type propagated each of
-   them into every view that read it.
+   THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE. Never merge any two of them
+   into one type — each collapse propagates into every view that reads it.
 
      · A BOX is a physical thing with components in it. It is the unit the
        contents list describes, and the unit the story ships inside.

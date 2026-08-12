@@ -9,12 +9,9 @@ import FilterChip from '@/components/atoms/FilterChip.vue';
 import { t } from '@/content';
 import type { FilterOption } from '@/site/filters';
 
-/* The search field's id used to be built from the TRANSLATED count label
-   (`search-${countLabel}`). That happens to be valid in English, but the
-   moment a translation contains a space or a non-ASCII character the id is
-   invalid and the label silently stops being associated with the input.
-   useId() is locale-independent and unique per instance, so two filter bars on
-   one page cannot collide either. */
+/* Must not be derived from any translated string: a space or non-ASCII
+   character makes the id invalid and silently unlinks the label from the
+   input. useId() is locale-independent and unique per instance. */
 const searchId = useId();
 
 const props = defineProps<{

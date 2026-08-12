@@ -6,11 +6,9 @@
  * story's cast list, so it stays correct as chapters are added), and the
  * Convergence vote.
  *
- * This page does NOT sell anything. It used to print an "In the box" list and a
- * Buy button on the lead chapter, back when one array was both product and
- * chapter. It cannot any more, and should not: a chapter may have no product
- * behind it at all, and the editions differ by content, not by story. Box
- * contents belong wherever `products[]` gets rendered.
+ * This page does NOT sell anything. A chapter may have no product behind it at
+ * all, and the editions differ by content rather than by story — box contents
+ * belong wherever `products[]` is rendered.
  */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';

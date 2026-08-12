@@ -167,8 +167,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
             <p class="inc__prose-line">{{ t('incursions.unlocks.body1') }}</p>
             <p class="inc__prose-line">{{ t('incursions.unlocks.body2') }}</p>
             <div class="l-row inc__gap">
-              <UiButton :to="to('unaligned')">{{ t('incursions.unlocks.ctaWho') }}</UiButton>
-              <UiButton variant="quiet" :link="outbound('buy')">
+              <UiButton :link="outbound('buy')">
                 {{ t('incursions.unlocks.ctaBuy') }}
               </UiButton>
             </div>

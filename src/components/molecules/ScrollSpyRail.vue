@@ -11,10 +11,8 @@ import type { SectionEntry } from '@/site/sections';
 /**
  * Derived, not chosen: --width-content + 2 × (--rail-width + --rail-gap)
  *                      = 1120 + 2 × (160 + 24) = 1488.
- *
- * It used to be 1400, which is 88px short — between 1400 and 1488 the rail sat
- * on top of the right-hand end of the copy it was supposed to index. Change
- * either token in tokens.css and this number has to move with it.
+ * Change either token in tokens.css and this number moves with it. Below it the
+ * rail overlaps the copy it indexes.
  */
 const FITS_QUERY = '(min-width: 1488px)';
 
