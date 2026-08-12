@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
- * CHARACTER — the door into the lore. Epithet above the name, one emblem per
- * faction membership, art owning the right half on desktop, and the primary
- * brand's programs as a strip that exits to the gallery.
+ * CHARACTER — the door into the lore. Epithet above the name, one faction
+ * emblem per membership (multi-faction is canon), art owning the right half on
+ * desktop, and the brand's programs as a strip that exits to the gallery.
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -49,8 +49,7 @@ const memberships = computed(() =>
 );
 
 /**
- * Faction brands in printed order, then a personal brand if there is one. A
- * character may hold both, so these concatenate rather than fall back.
+ * Brands in printed order, (personal brands also respect print order).
  */
 const playedBrands = computed(() => {
   const c = character.value;
@@ -60,7 +59,7 @@ const playedBrands = computed(() => {
     .filter((b): b is NonNullable<ReturnType<typeof brandById>> => Boolean(b));
 });
 
-/** The primary brand owns the breadcrumb and the program strip. */
+/** The primary brand owns the breadcrumb and the program strip. TODO decide if we want it this way.*/
 const brand = computed(() => playedBrands.value[0] ?? null);
 const otherBrands = computed(() => playedBrands.value.slice(1));
 
@@ -80,7 +79,7 @@ const remainingPrograms = computed(() =>
   Math.max((brand.value?.programCount ?? 0) - shownPrograms.value.length, 0),
 );
 
-/** Lateral hops walk the character's primary brand, not the whole cast. */
+/** Lateral hops walk the character's primary brand, not the whole cast. TODO maybe this should change too, breadcrumbs should maybe be from how you navigated to the character.*/
 const siblings = computed(() => {
   const primary = character.value?.brandIds[0];
   const pool = primary ? characters.filter((c) => c.brandIds[0] === primary) : [];
@@ -163,7 +162,7 @@ const cardsQuery = computed(() =>
         <MonoLabel tone="faint">{{ t('character.emblemNote') }}</MonoLabel>
 
         <!-- Card face as text, not an image of text: searchable, readable
-             aloud, and errata-linkable. Same rule as the program gallery. -->
+             aloud, and errata-linkable. Same rule as the program gallery. TODO, we need to use actual card images and have the text there as a hidden element for search and screen readers -->
         <div class="char__card">
           <StatRow :stats="cardStats" bordered />
           <p class="char__ability">{{ character.abilityText }}</p>
@@ -217,7 +216,7 @@ const cardsQuery = computed(() =>
         </div>
 
         <!-- Mark and link only. The program strip belongs to the primary
-             brand; three brands' worth of cards would bury it. -->
+             brand; three brands' worth of cards would bury it. TODO open design question on if we want to show all 3 brands or how to do that. -->
         <div v-if="otherBrands.length" class="char__also">
           <MonoLabel tone="faint">{{ t('character.alsoPlays') }}</MonoLabel>
           <div class="char__also-list">
@@ -274,6 +273,7 @@ const cardsQuery = computed(() =>
           />
           <EmptyState
             v-if="!appearsIn.length"
+            variant="notYet"
             :title="t('character.noStoriesTitle')"
             :body="t('character.noStoriesBody')"
           />
@@ -294,6 +294,7 @@ const cardsQuery = computed(() =>
   <section v-else class="l-band">
     <div class="l-wrap l-wrap--reading">
       <EmptyState
+        variant="notYet"
         :title="t('character.missingTitle')"
         :body="t('character.missingBody')"
       />
