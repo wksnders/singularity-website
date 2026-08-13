@@ -59,10 +59,15 @@ const programs = computed<Program[]>(() => {
     name: '',
     cost: '',
     type: '',
-    rules: '',
+    rules: [],
     flavour: '',
     revealed: false,
+    /* A sealed slot is a hole in the grid, not a card: `set` only satisfies the
+       type and is never rendered, and the alts are "" because the slot is
+       decorative — there is no card here to describe. */
+    set: 'CORE',
     art: { src: null, alt: '' },
+    cardArt: { src: null, alt: '' },
   }));
   return [...written, ...filler];
 });
@@ -170,7 +175,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </MonoLabel>
         <p class="brand__body">{{ t('brand.programsBody') }}</p>
 
-        <ul class="brand__programs">
+        <ul class="l-grid l-grid--cards brand__gap">
           <li v-for="program in programs" :key="program.id">
             <ProgramCard
               :program="program"
@@ -292,11 +297,4 @@ const pad = (n: number) => String(n).padStart(2, '0');
   color: var(--faction-text);
 }
 
-.brand__programs {
-  margin-top: var(--space-6);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--space-6) var(--space-4);
-  list-style: none;
-}
 </style>

@@ -17,8 +17,9 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { characters, factionById, factions } from '@/data/universe';
+import { brandById, characters, factionById, factions } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { matchesQuery, searchHaystack } from '@/site/cardText';
 import { to } from '@/site/links';
 import type { Character } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
@@ -44,6 +45,12 @@ const tags = (character: Character) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
+/** Brands are a printed slot on the card, so they are searchable too. */
+const brandNames = (character: Character) =>
+  [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
+    .map((id) => brandById(id)?.name)
+    .filter(Boolean);
+
 function badge(character: Character): string | undefined {
   if (character.factionIds === 'any') return t('characters.anyFactionBadge');
   return undefined;
@@ -57,10 +64,20 @@ function matches(character: Character): boolean {
       ? character.factionIds === 'any'
       : character.factionIds === 'any' || character.factionIds.includes(active));
   const query = search.value.trim().toLowerCase();
-  /* Ability name and text are searchable: "who heals?" is a cast-index question. */
-  const haystack =
-    `${character.name} ${character.epithet} ${character.abilityName} ${character.abilityText}`.toLowerCase();
-  const searchOk = !query || haystack.includes(query);
+  /* Every printed slot except flavour, same rule as the card gallery: name,
+     epithet, health, ability, the brands they play, set. Health is indexed WITH
+     its label — "health 11", never a bare 11 — because a bare number matches
+     every ability line containing it. */
+  const haystack = searchHaystack([
+    character.name,
+    character.epithet,
+    `${t('character.statHp')} ${character.hp}`,
+    character.abilityName,
+    character.abilityText,
+    ...brandNames(character),
+    t(`cards.sets.${character.set}`),
+  ]);
+  const searchOk = matchesQuery(haystack, query);
   return factionOk && searchOk;
 }
 
