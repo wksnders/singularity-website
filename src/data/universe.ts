@@ -29,6 +29,7 @@ import type {
   Video,
   WallpaperKind,
 } from './types';
+import { corePrograms } from './programs';
 
 const noArt = { src: null, alt: '', artist: null };
 
@@ -204,6 +205,16 @@ export const brands: Brand[] = [
   factionBrand('hostile-rewrite', 'subnet-86', 'Hostile Rewrite'),
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),
   factionBrand('masquerade', 'subnet-86', 'Masquerade'),
+  /* A brand with ten printed programs and no faction. It sits outside the
+     per-faction brand lists, so a faction's count must not pick it up. */
+  {
+    id: 'common',
+    factionId: null,
+    name: 'Common',
+    icon: null,
+    kind: 'universal',
+    programCount: 10,
+  },
   {
     id: 'lux-vault',
     factionId: null,
@@ -215,27 +226,11 @@ export const brands: Brand[] = [
   },
 ];
 
-/* Card text is DATA, not pixels: the printed card is an image, but its name,
-   cost, type, rules and flavour must exist as text so the gallery is
-   searchable, screen-readable, errata-linkable and translatable.
-   Piloted here on Endless Chain; the other 15 brands follow the same shape. */
-const endlessChain: Program[] = Array.from({ length: 10 }, (_, i) => {
-  const n = String(i + 1).padStart(2, '0');
-  const revealed = i < 3;
-  return {
-    id: `endless-chain-${n}`,
-    brandId: 'endless-chain',
-    name: revealed ? `[PLACEHOLDER program ${n}]` : '',
-    cost: revealed ? '\u2014' : '',
-    type: revealed ? '[PLACEHOLDER type line]' : '',
-    rules: revealed ? '[PLACEHOLDER rules text — the exact printed wording]' : '',
-    flavour: revealed ? '[PLACEHOLDER flavour line]' : '',
-    revealed,
-    art: { ...noArt, alt: revealed ? `[PLACEHOLDER program ${n}] card` : '' },
-  };
-});
-
-export const programs: Program[] = [...endlessChain];
+/* Card text is DATA, not pixels, so the gallery can be searched, read aloud,
+   linked by errata and translated. The cards live in programs.ts and are
+   re-exported here so every import site stays `@/data/universe`. Read that
+   file's header before editing a card: its typos are the printed ones. */
+export const programs: Program[] = [...corePrograms];
 
 /* ---------------------------------------------------------------------------
    THE CAST.
@@ -249,9 +244,17 @@ export const programs: Program[] = [...endlessChain];
    Row order is faction block, then name. It carries no other meaning
    -------------------------------------------------------------------------- */
 
-const character = (input: Omit<Character, 'art' | 'storyIds'>): Character => ({
+/* Three art objects, derived from the name so an alt cannot describe the wrong
+   person. Which surface may use which: the ART note in types.ts. */
+const character = (
+  input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds'>,
+): Character => ({
   ...input,
   art: { ...noArt, alt: `${input.name}, character art` },
+  sceneArt: { ...noArt, alt: `${input.name} in their world` },
+  /* The alt names WHICH card; the wording is read from the hidden block beside
+     the image, so the alt does not carry the rules. */
+  cardArt: { ...noArt, alt: `${input.name} character card` },
   storyIds: [],
 });
 
