@@ -12,7 +12,8 @@
     "community": "Community — Singularity.exe",
     "soon": "Not yet — Singularity.exe",
     "suffix": " — Singularity.exe",
-    "fallback": "Singularity.exe"
+    "fallback": "Singularity.exe",
+    "faq": "FAQ — Singularity.exe"
   },
   "chrome": {
     "skip": "Skip to content",
@@ -104,8 +105,8 @@
       "count": "characters",
       "searchLabel": "Search by name or epithet",
       "searchPlaceholder": "Start typing a name…",
-      "emptyTitle": "Nobody here by that name — yet",
-      "emptyBody": "Most of the cast has not been revealed yet. Try another faction, or clear the search.",
+      "emptyTitle": "Nobody here by that name",
+      "emptyBody": "Check the spelling, try another faction, or clear the search.",
       "revealNote": "More revealed with every set",
       "exitIndex": "The full cast index →",
       "exit": "The characters who belong to nobody →"
@@ -265,9 +266,13 @@
         "title": "The competition ruleset is being written",
         "body": "The ruleset exists and ships at launch. It will be published here, versioned, with the date it takes effect."
       },
-      "faq": {
-        "title": "The FAQ is being written",
-        "body": "Buying, shipping, box and card dimensions, and the rules questions that come up most."
+      "products": {
+        "title": "The box breakdown is being written",
+        "body": "One entry per box: what is in it, what it costs, and what it needs to be played. It is the one place those three are maintained, which is why the FAQ links here instead of answering twice."
+      },
+      "enquiries": {
+        "title": "The enquiries address is not published yet",
+        "body": "Trade, distribution and licensing go to their own address rather than to support. Until it is up, support will pass a message along."
       },
       "learn-track": {
         "title": "That learning path is still being written",
@@ -311,8 +316,7 @@
       "pending": "[ CAST LINE-UP ART — PENDING ]"
     },
     "sections": {
-      "cast": "Browse the cast",
-      "reveals": "Still to come"
+      "cast": "Browse the cast"
     },
     "note": "The full cast",
     "everyone": "Everyone",
@@ -321,15 +325,8 @@
     "canonNote": "Characters who belong to no faction — LuX — appear under every faction filter, because that is where they can be played.",
     "incursion": "Incursion",
     "anyFactionBadge": "Playable in any faction",
-    "emptyTitle": "Nobody here by that name — yet",
-    "emptyBody": "Most of the launch cast has not been revealed.",
-    "hiddenLabel": "Most of the cast is still unrevealed",
-    "revealsBody": "The rest of the cast arrives the way the story does — a face at a time, as chapters and boxes land. Nothing here is behind an account; you just have to be around when it happens.",
-    "reveals": {
-      "news": "Reveals and announcements",
-      "story": "Faces arrive with their chapter",
-      "community": "Where they land first"
-    },
+    "emptyTitle": "Nobody here by that name",
+    "emptyBody": "Check the spelling, or clear the filters to see the whole cast.",
     "exitUnaligned": "The characters who belong to nobody →",
     "exitUniverse": "Back to the Universe →"
   },
@@ -732,6 +729,92 @@
         "body": "Core set, expansion and Incursions."
       },
       "exit": "See what is in each box →"
+    }
+  },
+  "faq": {
+    "hero": {
+      "crumb": "FAQ",
+      "title": "Questions, answered",
+      "lede": "Buying, the box, how it plays, and how to reach a human.",
+      "pending": "[ FAQ — NO ART SLOT BY DESIGN — THIS PAGE IS READ, NOT BROWSED ]"
+    },
+    "search": {
+      "label": "Search the FAQ",
+      "placeholder": "shipping, sleeves, solo, refund…",
+      "clear": "Clear",
+      "hint": "to search"
+    },
+    "count": {
+      "questions": "questions",
+      "groups": "groups",
+      "matches": "matches",
+      "match": "match",
+      "none": "No questions match that"
+    },
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
+    "copyQuestion": "Copy link to this question",
+    "copyLabel": "Copy link",
+    "matchedOn": "Matched on",
+    "routing": {
+      "kicker": "Not a question? Where it goes",
+      "orderCase": "An order, a refund, a damaged card, an address",
+      "orderLink": "Support",
+      "rulesCase": "A rules question, mid-game",
+      "rulesLink": "Rules reference",
+      "pressCase": "Press, retail, licensing",
+      "pressLink": "Press kit"
+    },
+    "empty": {
+      "kicker": "No matches",
+      "title": "Nothing here answers that one",
+      "body": "Three places that might, depending on what you were after.",
+      "rules": "Rules reference",
+      "clear": "Clear the search"
+    },
+    "stuck": {
+      "title": "Still stuck?",
+      "body": "Rules questions are fastest on Discord, where the designers read the rules desk. Anything about an order goes to support.",
+      "discord": "Ask on Discord",
+      "support": "Contact support"
+    },
+    "groups": {
+      "buying": {
+        "label": "Buying & shipping",
+        "short": "Buying",
+        "standfirst": "",
+        "exit": "Compare the boxes →"
+      },
+      "box": {
+        "label": "The box & the cards",
+        "short": "The box",
+        "standfirst": "",
+        "exit": "See every card →"
+      },
+      "playing": {
+        "label": "Playing",
+        "short": "Playing",
+        "standfirst": "Anything that decides a game is answered in the rules, not here — these send you to the exact rule.",
+        "exit": "Learn to play →"
+      },
+      "solo": {
+        "label": "Solo & Incursions",
+        "short": "Solo",
+        "standfirst": "",
+        "exit": "How Incursions work →"
+      },
+      "digital": {
+        "label": "Try it & digital",
+        "short": "Try it",
+        "standfirst": "",
+        "exit": "Try it free →"
+      },
+      "help": {
+        "label": "Help & contact",
+        "short": "Help",
+        "standfirst": "",
+        "exit": "Back to Learn →"
+      }
     }
   },
   "news": {

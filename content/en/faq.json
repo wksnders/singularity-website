@@ -1,0 +1,750 @@
+[
+  {
+    "id": "where-buy",
+    "group": "buying",
+    "question": "Where can I buy Singularity.exe?",
+    "answer": "[PLACEHOLDER — one buy link, driven by the current sales stage: campaign, late pledge, pledge manager or retail.]",
+    "link": {
+      "key": "buy",
+      "label": "Where to buy"
+    },
+    "keywords": [
+      "order",
+      "purchase",
+      "store",
+      "shop",
+      "retail",
+      "pledge"
+    ]
+  },
+  {
+    "id": "price",
+    "group": "buying",
+    "question": "How much does it cost?",
+    "answer": "There are three boxes at three prices, each listed on its own product entry — so a price is only ever written in one place.",
+    "link": {
+      "key": "products",
+      "label": "Prices, box by box"
+    },
+    "keywords": [
+      "price",
+      "cost",
+      "money",
+      "usd",
+      "how much",
+      "editions"
+    ]
+  },
+  {
+    "id": "release",
+    "group": "buying",
+    "question": "When does it ship?",
+    "answer": "[PLACEHOLDER — release date. The core box, the first expansion and Incursions all release together.]",
+    "keywords": [
+      "release",
+      "date",
+      "ship",
+      "shipping",
+      "when",
+      "launch"
+    ]
+  },
+  {
+    "id": "regions",
+    "group": "buying",
+    "question": "Where do you ship to?",
+    "answer": "Shipping regions, costs and delivery estimates are shown in the store at checkout — that is the only place they are always current, so we do not mirror a region list here.",
+    "keywords": [
+      "postage",
+      "regions",
+      "countries",
+      "international",
+      "eu",
+      "uk",
+      "canada",
+      "australia",
+      "customs",
+      "vat"
+    ]
+  },
+  {
+    "id": "editions",
+    "group": "buying",
+    "question": "What is the difference between the core box, the expansion and Incursions?",
+    "answer": "Three separate boxes: the competitive core game, an expansion that adds cards and advances the story, and the co-op and solo box for one to four players.",
+    "link": {
+      "key": "products",
+      "label": "Compare the three boxes"
+    },
+    "keywords": [
+      "core box",
+      "expansion",
+      "incursions",
+      "difference",
+      "which",
+      "buy first",
+      "editions",
+      "compare"
+    ]
+  },
+  {
+    "id": "need-core",
+    "group": "buying",
+    "question": "Do I need the core box to use the expansion or Incursions?",
+    "answer": "[PLACEHOLDER — compatibility line, one blunt sentence: which boxes are standalone and which require the core box. The full answer sits on each product entry.]",
+    "link": {
+      "key": "products",
+      "label": "What each box needs"
+    },
+    "keywords": [
+      "compatible",
+      "standalone",
+      "requires",
+      "need",
+      "core",
+      "base",
+      "expansion",
+      "incursions"
+    ]
+  },
+  {
+    "id": "boosters",
+    "group": "buying",
+    "question": "Are there booster packs or card rarities?",
+    "answer": "No. There are no random boosters and no rarity system of any kind. Releases are boxed sets: small single-brand or co-op expansions, and large boxes that add a faction and move the story forward.",
+    "keywords": [
+      "booster",
+      "packs",
+      "random",
+      "rarity",
+      "lcg",
+      "tcg",
+      "collectible",
+      "chase"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "instalments",
+    "group": "buying",
+    "question": "Can I pay in instalments?",
+    "answer": "[PLACEHOLDER — instalment plans were planned during the campaign; confirm what the store offers now.]",
+    "keywords": [
+      "instalments",
+      "installments",
+      "pay",
+      "payment plan",
+      "split",
+      "klarna"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "retail",
+    "group": "buying",
+    "question": "Can my local game store stock it?",
+    "answer": "Yes — trade, distribution and wholesale enquiries go to the enquiries address, not to support.",
+    "link": {
+      "key": "enquiries",
+      "label": "Trade & other enquiries"
+    },
+    "keywords": [
+      "retail",
+      "retailer",
+      "distributor",
+      "trade",
+      "wholesale",
+      "store",
+      "stock",
+      "lgs"
+    ]
+  },
+  {
+    "id": "contents",
+    "group": "box",
+    "question": "What comes in the core box?",
+    "body": "faq/contents",
+    "link": {
+      "key": "products",
+      "label": "Everything in the core box"
+    },
+    "keywords": [
+      "contents",
+      "components",
+      "what is in the box",
+      "tokens",
+      "rulebook",
+      "insert"
+    ]
+  },
+  {
+    "id": "counts",
+    "group": "box",
+    "question": "How many characters, brands and programs are there?",
+    "answer": "Every faction has four brands, and every brand has ten programs. [PLACEHOLDER — the exact character and card counts, stated separately for the core box and for the line as a whole.]",
+    "link": {
+      "key": "cards",
+      "label": "Browse the card gallery"
+    },
+    "keywords": [
+      "how many",
+      "cards",
+      "characters",
+      "brands",
+      "programs",
+      "count",
+      "total",
+      "roster"
+    ]
+  },
+  {
+    "id": "sleeves",
+    "group": "box",
+    "question": "Will sleeved cards fit in the insert?",
+    "answer": "Yes. The insert takes sleeved cards, and it is built so cards and tokens go back in as easily as they come out.",
+    "keywords": [
+      "sleeves",
+      "sleeved",
+      "insert",
+      "storage",
+      "organise",
+      "organize",
+      "tray",
+      "wells"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "playmats",
+    "group": "box",
+    "question": "Are there playmats?",
+    "answer": "[PLACEHOLDER — playmats were promised during the campaign; confirm which ones exist and where they are sold.]",
+    "keywords": [
+      "playmat",
+      "mat",
+      "accessories",
+      "neoprene"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "dimensions",
+    "group": "box",
+    "question": "What size are the box and the cards?",
+    "answer": "[PLACEHOLDER — box dimensions and card size. Shelf-fit and sleeve-size questions both depend on this one, so give real numbers in millimetres and inches.]",
+    "keywords": [
+      "dimensions",
+      "size",
+      "mm",
+      "inches",
+      "sleeve size",
+      "shelf"
+    ]
+  },
+  {
+    "id": "colourblind",
+    "group": "box",
+    "question": "Is the game colour-blind accessible?",
+    "answer": "Yes. Anything the game distinguishes by colour also carries its own icon, so colour is never the only signal.",
+    "keywords": [
+      "colour blind",
+      "color blind",
+      "accessibility",
+      "icons",
+      "symbols",
+      "contrast",
+      "deuteranopia"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "alt-art",
+    "group": "box",
+    "question": "Will the campaign alt-art cards be available again?",
+    "answer": "[PLACEHOLDER — say plainly whether exclusive alt art returns. Backers ask this first, and a vague answer reads as a yes.]",
+    "keywords": [
+      "alt art",
+      "alternate",
+      "exclusive",
+      "kickstarter",
+      "gamefound",
+      "backer",
+      "promo"
+    ]
+  },
+  {
+    "id": "language",
+    "group": "box",
+    "question": "What language is the game in, and will it be localised?",
+    "answer": "[PLACEHOLDER — launch language, plus the honest current position on other languages. The site itself is built to serve translated content.]",
+    "keywords": [
+      "language",
+      "english",
+      "localisation",
+      "localization",
+      "translation",
+      "german",
+      "french",
+      "spanish"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "players",
+    "group": "playing",
+    "question": "How many people can play?",
+    "answer": "One to four. The competitive game seats two to four; solo and co-op play run through Incursions, from one player up to a full table of four.",
+    "link": {
+      "key": "learnModes",
+      "label": "The five formats"
+    },
+    "keywords": [
+      "players",
+      "player count",
+      "how many people",
+      "two",
+      "three",
+      "four",
+      "solo"
+    ]
+  },
+  {
+    "id": "length",
+    "group": "playing",
+    "question": "How long is a game?",
+    "answer": "About 30 minutes per player.",
+    "keywords": [
+      "length",
+      "time",
+      "long",
+      "duration",
+      "minutes"
+    ]
+  },
+  {
+    "id": "age",
+    "group": "playing",
+    "question": "What age is it for?",
+    "answer": "14 and up.",
+    "keywords": [
+      "age",
+      "rating",
+      "kids",
+      "children",
+      "14",
+      "family"
+    ]
+  },
+  {
+    "id": "random",
+    "group": "playing",
+    "question": "Is there really no randomness?",
+    "answer": "None. No dice, no shuffling, no card draw deciding a turn — everything that will happen is already on the table for both of you to read.",
+    "link": {
+      "key": "rulesReference",
+      "label": "How a turn resolves, rule by rule"
+    },
+    "keywords": [
+      "random",
+      "randomness",
+      "luck",
+      "dice",
+      "shuffle",
+      "deterministic",
+      "chance",
+      "draw"
+    ]
+  },
+  {
+    "id": "optimal",
+    "group": "playing",
+    "question": "If nothing is random, is there one optimal strategy?",
+    "answer": "No — for the same reason chess does not have one: your opponent is the variable, and the possibility space is enormous.",
+    "link": {
+      "key": "rulesReference",
+      "label": "What the rules actually fix"
+    },
+    "keywords": [
+      "optimal",
+      "solved",
+      "strategy",
+      "meta",
+      "best deck",
+      "chess",
+      "determinism"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "deckbuild",
+    "group": "playing",
+    "question": "Do I have to build a deck?",
+    "answer": "No — the core box comes with balanced starter decks and ready-made decklists, and building your own squad is there when you want it.",
+    "link": {
+      "key": "learnPaths",
+      "label": "Building a squad, in Learn"
+    },
+    "keywords": [
+      "deck building",
+      "deckbuilding",
+      "starter decks",
+      "precon",
+      "squad",
+      "list",
+      "constructed"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "quarterback",
+    "group": "playing",
+    "question": "What stops one player running everyone's turn in 2v2 and co-op?",
+    "answer": "Hidden information: you cannot share what is in your program stack or your inactive characters, and your own turn takes enough thought that backseating someone else's is hard work.",
+    "link": {
+      "key": "learnPaths",
+      "label": "The co-op track"
+    },
+    "keywords": [
+      "quarterbacking",
+      "alpha player",
+      "team",
+      "2v2",
+      "co-op",
+      "cooperative",
+      "talking over"
+    ],
+    "reconfirm": true
+  },
+  {
+    "id": "rules-question",
+    "group": "playing",
+    "question": "I have a rules question mid-game. Where do I look?",
+    "answer": "The rules reference, which is a searchable web page with a link to every individual rule — so a QR code on the table gets you to the exact line. Anything since printing is in the errata log.",
+    "link": {
+      "key": "rulesReference",
+      "label": "Open the rules reference"
+    },
+    "keywords": [
+      "rules question",
+      "interaction",
+      "ruling",
+      "reference",
+      "errata",
+      "clarification",
+      "qr code"
+    ]
+  },
+  {
+    "id": "what-incursions",
+    "group": "solo",
+    "question": "What are Incursions?",
+    "answer": "Co-op missions against a rogue AI. One to four players share a table against a boss that acts entirely from its own deck and its own rules — nobody plays the villain, and nothing it does is random.",
+    "link": {
+      "key": "incursions",
+      "label": "How Incursions work"
+    },
+    "keywords": [
+      "incursions",
+      "co-op",
+      "cooperative",
+      "solo",
+      "boss",
+      "rogue ai",
+      "campaign",
+      "missions"
+    ]
+  },
+  {
+    "id": "solo",
+    "group": "solo",
+    "question": "Can I play solo?",
+    "answer": "Yes. Incursions run from one player up to four, with no change of rules between them.",
+    "keywords": [
+      "solo",
+      "single player",
+      "alone",
+      "one player",
+      "1p"
+    ]
+  },
+  {
+    "id": "coop-need-core",
+    "group": "solo",
+    "question": "Do I need the core box to play Incursions?",
+    "answer": "[PLACEHOLDER — compatibility line for the Incursions box, one sentence; the product entry carries the detail.]",
+    "link": {
+      "key": "products",
+      "label": "What each box needs"
+    },
+    "keywords": [
+      "incursions",
+      "requires",
+      "core",
+      "standalone",
+      "need",
+      "base box",
+      "coop"
+    ]
+  },
+  {
+    "id": "coop-learn",
+    "group": "solo",
+    "question": "Should I learn the base game first?",
+    "answer": "Yes. An Incursion assumes you already know how a skirmish plays, then adds the boss's own setup and rules on top.",
+    "link": {
+      "key": "learnPaths",
+      "label": "The co-op track"
+    },
+    "keywords": [
+      "learn first",
+      "co-op track",
+      "teach",
+      "beginners",
+      "order",
+      "difficulty"
+    ]
+  },
+  {
+    "id": "sealed",
+    "group": "solo",
+    "question": "What are the sealed packs inside the box?",
+    "answer": "Rewards. Beat an Incursion and you open the pack sealed beside it, which holds the character who was on the other side — playable afterwards in any faction, in any format.",
+    "link": {
+      "key": "unaligned",
+      "label": "Who you can earn"
+    },
+    "keywords": [
+      "sealed",
+      "packs",
+      "unlock",
+      "legacy",
+      "spoiler",
+      "reward",
+      "earn",
+      "any faction",
+      "lux"
+    ]
+  },
+  {
+    "id": "open-early",
+    "group": "solo",
+    "question": "Can I just open the sealed packs?",
+    "answer": "Nothing stops you — no accounts, no tracking, and nothing is destroyed. We would rather you earned them.",
+    "link": {
+      "key": "incursions",
+      "label": "What you win"
+    },
+    "keywords": [
+      "open early",
+      "spoil",
+      "sealed pack",
+      "cheat",
+      "legacy",
+      "destroy"
+    ]
+  },
+  {
+    "id": "pnp",
+    "group": "digital",
+    "question": "Is there a print and play?",
+    "answer": "Yes, free: the core-set cards as a download, enough to play a real game before you buy anything.",
+    "link": {
+      "key": "printAndPlay",
+      "label": "Download the print & play"
+    },
+    "keywords": [
+      "print and play",
+      "pnp",
+      "demo",
+      "free",
+      "try",
+      "download",
+      "paper"
+    ]
+  },
+  {
+    "id": "tts",
+    "group": "digital",
+    "question": "Is there a digital version?",
+    "answer": "There is an official Tabletop Simulator build, free with Tabletop Simulator. It is currently a preview: two players, core and expansion cards, with the rules reference built in.",
+    "link": {
+      "key": "tabletopSimulator",
+      "label": "Open in Tabletop Simulator"
+    },
+    "keywords": [
+      "tabletop simulator",
+      "tts",
+      "digital",
+      "online",
+      "steam",
+      "vassal",
+      "module"
+    ]
+  },
+  {
+    "id": "online",
+    "group": "digital",
+    "question": "Can I play online against other people?",
+    "answer": "[PLACEHOLDER — the honest current position on online play beyond Tabletop Simulator. If there is nothing announced, say that rather than saying nothing.]",
+    "keywords": [
+      "online",
+      "app",
+      "digital",
+      "client",
+      "remotely",
+      "web",
+      "matchmaking"
+    ]
+  },
+  {
+    "id": "read-rules",
+    "group": "digital",
+    "question": "Can I read the rules before I buy?",
+    "answer": "Yes. The full rulebook and the rules reference are both on this site — readable as web pages, and downloadable as PDFs if you want them on a tablet.",
+    "link": {
+      "key": "rulesReference",
+      "label": "Read the rules"
+    },
+    "keywords": [
+      "rulebook",
+      "read rules",
+      "before buy",
+      "pdf",
+      "download",
+      "reference",
+      "manual"
+    ]
+  },
+  {
+    "id": "watch",
+    "group": "digital",
+    "question": "Where can I watch it being played?",
+    "answer": "The how-to-play videos in Learn are the same ones the QR codes in the box point at, and they are captioned.",
+    "link": {
+      "key": "learnVideos",
+      "label": "Watch a game"
+    },
+    "keywords": [
+      "video",
+      "youtube",
+      "watch",
+      "playthrough",
+      "how to play",
+      "tutorial",
+      "stream"
+    ]
+  },
+  {
+    "id": "order-problem",
+    "group": "help",
+    "question": "My order is wrong, incomplete or needs a refund.",
+    "answer": "Support handles orders, refunds and missing components directly — it is the fastest route and the only one that can change an order.",
+    "link": {
+      "key": "support",
+      "label": "Contact support"
+    },
+    "keywords": [
+      "order",
+      "wrong",
+      "refund",
+      "missing",
+      "return",
+      "incorrect",
+      "cancel",
+      "change"
+    ]
+  },
+  {
+    "id": "damaged",
+    "group": "help",
+    "question": "A card or component arrived damaged.",
+    "answer": "Send support a photo and your order number and they will replace it. Do not open a new order to fix it.",
+    "link": {
+      "key": "support",
+      "label": "Contact support"
+    },
+    "keywords": [
+      "damaged",
+      "broken",
+      "bent",
+      "replacement",
+      "missing card",
+      "component",
+      "warranty"
+    ]
+  },
+  {
+    "id": "address",
+    "group": "help",
+    "question": "I need to change my shipping address.",
+    "answer": "Address changes go through support, and there is a cut-off once fulfilment starts — the earlier you write, the better.",
+    "link": {
+      "key": "support",
+      "label": "Contact support"
+    },
+    "keywords": [
+      "address",
+      "change",
+      "moving",
+      "shipping details",
+      "update order"
+    ]
+  },
+  {
+    "id": "community",
+    "group": "help",
+    "question": "Where does the community talk?",
+    "answer": "Discord. There is a rules desk the designers read, and channels for squad lists and incursion logs.",
+    "link": {
+      "key": "discord",
+      "label": "Join the Discord"
+    },
+    "keywords": [
+      "discord",
+      "community",
+      "forum",
+      "reddit",
+      "facebook",
+      "talk",
+      "chat",
+      "group"
+    ]
+  },
+  {
+    "id": "press",
+    "group": "help",
+    "question": "I am press, a reviewer or a content creator.",
+    "answer": "The press kit has logos, key art, the fact sheet and boilerplate, all self-serve, with a contact address for anything it does not cover.",
+    "link": {
+      "key": "press",
+      "label": "Open the press kit"
+    },
+    "keywords": [
+      "press",
+      "media",
+      "review",
+      "preview",
+      "creator",
+      "influencer",
+      "key art",
+      "logo",
+      "assets",
+      "kit"
+    ]
+  },
+  {
+    "id": "ai-art",
+    "group": "help",
+    "question": "Do you use AI-generated art or writing?",
+    "sourceKey": "community.team.aiStatement",
+    "keywords": [
+      "ai",
+      "artificial intelligence",
+      "generated",
+      "midjourney",
+      "artists",
+      "illustration",
+      "writing"
+    ]
+  }
+]

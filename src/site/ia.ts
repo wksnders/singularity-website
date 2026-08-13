@@ -120,7 +120,7 @@ const learn: IaSection = {
         { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }), note: true },
         { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }), note: true },
         { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }), note: true },
-        { key: 'learn.faq', to: to('soon', {}, { hash: '#faq' }), note: true },
+        { key: 'learn.faq', to: to('faq'), note: true },
       ],
     },
     {
@@ -157,7 +157,7 @@ const community: IaSection = {
       key: 'community.help',
       items: [
         { key: 'community.support', to: to('community', {}, { hash: '#support' }), note: true },
-        { key: 'community.faq', to: to('soon', {}, { hash: '#faq' }), note: true },
+        { key: 'community.faq', to: to('faq'), note: true },
       ],
     },
     {
@@ -209,7 +209,7 @@ export const footerColumns: IaGroup[] = [
       { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }) },
       { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }) },
       { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }) },
-      { key: 'learn.faq', to: to('soon', {}, { hash: '#faq' }) },
+      { key: 'learn.faq', to: to('faq') },
     ],
   },
   {
