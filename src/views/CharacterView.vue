@@ -8,6 +8,8 @@ import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
+import CardFace from '@/components/molecules/CardFace.vue';
+import ProgramCard from '@/components/molecules/ProgramCard.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -15,7 +17,6 @@ import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
-import StatRow from '@/components/molecules/StatRow.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
@@ -27,6 +28,8 @@ import {
   programsOfBrand,
   stories,
 } from '@/data/universe';
+import { expandIcons } from '@/site/cardText';
+import type { CardLine } from '@/site/cardText';
 import { to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
@@ -63,14 +66,25 @@ const playedBrands = computed(() => {
 const brand = computed(() => playedBrands.value[0] ?? null);
 const otherBrands = computed(() => playedBrands.value.slice(1));
 
-/** In the order they read on the card. */
-const cardStats = computed(() => {
+/**
+ * The whole printed face, in printed order — everything a reader who cannot see
+ * the card would otherwise lose. Name and epithet are omitted only because the
+ * heading above already carries them. Ability text is one string with "\n" in
+ * it, and the card prints those as separate lines.
+ */
+const cardLines = computed<CardLine[]>(() => {
   const c = character.value;
   if (!c) return [];
   return [
-    { label: t('character.statHp'), value: String(c.hp) },
-    { label: t('character.statAbility'), value: c.abilityName },
-  ].filter((s) => s.value && s.value !== '0');
+    { label: t('character.statHp'), values: [String(c.hp)] },
+    { label: t('character.statAbility'), values: [c.abilityName] },
+    {
+      label: t('cards.rules'),
+      values: c.abilityText.split('\n').map((line) => expandIcons(line.trim())),
+    },
+    { label: t('cards.flavour'), values: [c.flavour] },
+    { label: t('cards.set'), values: [t(`cards.sets.${c.set}`)] },
+  ].filter((line) => line.values.some(Boolean));
 });
 
 const brandPrograms = computed(() => (brand.value ? programsOfBrand(brand.value.id) : []));
@@ -161,12 +175,12 @@ const cardsQuery = computed(() =>
         </div>
         <MonoLabel tone="faint">{{ t('character.emblemNote') }}</MonoLabel>
 
-        <!-- Card face as text, not an image of text: searchable, readable
-             aloud, and errata-linkable. Same rule as the program gallery. TODO, we need to use actual card images and have the text there as a hidden element for search and screen readers -->
         <div class="char__card">
-          <StatRow :stats="cardStats" bordered />
-          <p class="char__ability">{{ character.abilityText }}</p>
-          <p v-if="character.flavour" class="char__flavour">{{ character.flavour }}</p>
+          <CardFace
+            :art="character.cardArt"
+            :placeholder="t('character.cardArtPlaceholder')"
+            :lines="cardLines"
+          />
         </div>
 
         <MarkdownBlock
@@ -189,7 +203,7 @@ const cardsQuery = computed(() =>
 
       <div class="char__art">
         <ArtFrame
-          :art="character.art"
+          :art="character.sceneArt"
           ratio="3 / 4"
           :placeholder="t('character.artPlaceholder')"
           eager
@@ -237,14 +251,16 @@ const cardsQuery = computed(() =>
           </div>
         </div>
 
-        <div class="char__programs">
-          <ArtFrame
+        <!-- Named cards, not bare frames: until the art lands every card image
+             is the same placeholder, so a strip without names reads as five
+             empty slots. The brand label is omitted — the band heading is the
+             brand. -->
+        <div class="l-grid l-grid--cards char__gap">
+          <ProgramCard
             v-for="program in shownPrograms"
             :key="program.id"
-            :art="program.art"
-            ratio="63 / 88"
-            radius="s"
-            :placeholder="t('cards.artPlaceholder')"
+            :program="program"
+            :color="memberships[0]?.color"
           />
           <BaseLink
             v-if="remainingPrograms"
@@ -335,21 +351,9 @@ const cardsQuery = computed(() =>
   margin-top: var(--space-5);
   padding: var(--space-4) 0 0;
   border-top: 1px solid rgba(var(--rgb-ink), 0.16);
-}
-
-.char__ability {
-  margin-top: var(--space-4);
-  max-width: 60ch;
-  font-size: var(--size-body);
-  line-height: 1.55;
-  color: rgba(var(--rgb-ink), 0.9);
-}
-
-.char__flavour {
-  margin-top: var(--space-3);
-  max-width: 60ch;
-  font-style: italic;
-  color: rgba(var(--rgb-ink), 0.62);
+  /* The card is a card: hold it at a readable printed width instead of letting
+     it stretch to the column. */
+  max-width: 264px;
 }
 
 .char__also {
@@ -445,16 +449,11 @@ const cardsQuery = computed(() =>
   gap: var(--space-3);
 }
 
-.char__programs {
-  margin-top: var(--space-6);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: var(--space-3);
-}
 
 .char__more {
   display: grid;
   place-items: center;
+  align-self: start;
   aspect-ratio: 63 / 88;
   border: 1px dashed var(--color-line-dashed);
   border-radius: var(--radius-s);

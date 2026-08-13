@@ -10,6 +10,21 @@
    renders before any markdown exists; a doc of the same slug always wins.
    ========================================================================== */
 
+/* ---------------------------------------------------------------------------
+   ART COMES IN LAYERS, AND THEY ARE NOT INTERCHANGEABLE.
+
+     · ILLUSTRATION (`art`) — the subject alone, no frame. Croppable,
+       focal-pointable, safe behind text.
+     · SCENE (`sceneArt`) — characters only: the character in their background.
+     · CARD (`cardArt`) — the printed card, frame and rules box included. Never
+       cropped, never a backdrop: a crop removes printed rules.
+
+   Separate fields, so a surface cannot reach for the wrong one and a missing
+   card renders a placeholder rather than the illustration. A surface showing
+   the ILLUSTRATION must not also carry the card's wording: art plus text is a
+   reconstruction of a card, not a card. Show the card, or show the art.
+   -------------------------------------------------------------------------- */
+
 /** Every image on the site is an art object, never a bare path. */
 export interface Art {
   src: string | null;
@@ -44,8 +59,12 @@ export interface Brand {
    * faction dot. Several are deliberately not circular — never clip to one.
    */
   icon: string | null;
-  /** Personal brands belong to one character and sit outside the faction maths. */
-  kind: 'faction' | 'personal';
+  /**
+   * `personal` and `universal` are both faction-less. Anything asking "does this
+   * brand belong to a faction?" tests `factionId`, never `kind` — the
+   * any-faction filter has to return both.
+   */
+  kind: 'faction' | 'personal' | 'universal';
   /** How a personal brand's programs are earned. if they are earned. */
   unlock?: 'challenges';
   programCount: number;
@@ -56,12 +75,35 @@ export interface Program {
   brandId: string;
   name: string;
   cost: string;
+  /** Printed type line: "Command", "Patch: Self", "Patch: Ally", "Patch: Any". */
   type: string;
-  rules: string;
+  /**
+   * The printed qualifier after the type line — "Totem", "Tag". Its own field
+   * rather than part of `type`: rules text counts sub-types ("X is equal to all
+   * your active Totems"), so it has to be readable on its own.
+   */
+  subType?: string;
+  /**
+   * Printed rules lines in printed order, one entry per printed line. Joining
+   * them invents punctuation the card does not have, and errata quote this.
+   */
+  rules: string[];
+  /** May be empty: a card that prints an `unlock` line instead has no flavour. */
   flavour: string;
+  /**
+   * The printed Endian Key line. Never styled as flavour: flavour is decoration,
+   * this is an instruction the reader can act on. It is not tracked state — see
+   * `Brand.unlock` — and it does not mark a card as a spoiler.
+   */
+  unlock?: string;
   /** Unrevealed programs render as a sealed slot, not as an empty card. */
   revealed: boolean;
+  /** ILLUSTRATION — the program's art alone, no card frame around it. */
   art: Art;
+  /** CARD — the whole printed card. What the gallery shows. */
+  cardArt: Art;
+  /** Which release printed this card. Same codes as `Character.set`. */
+  set: SetCode;
 }
 
 /** "any" is the wildcard: LuX is any-faction. */
@@ -96,7 +138,12 @@ export interface Character {
    */
   set: SetCode;
   personalBrandId?: string | null;
+  /** ILLUSTRATION — the character alone, no background. Tiles, story pins. */
   art: Art;
+  /** SCENE — the character in their background. Not derivable from `art`. */
+  sceneArt: Art;
+  /** CARD — the printed character card. Never cropped: a crop removes rules. */
+  cardArt: Art;
   /** Stories this character appears in — drives the story graph's pins. */
   storyIds?: string[];
 

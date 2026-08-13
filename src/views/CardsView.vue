@@ -19,6 +19,7 @@ import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
 import { brandById, factionById, factions, programs } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { matchesQuery, searchHaystack } from '@/site/cardText';
 import { soon, to } from '@/site/links';
 import type { Program } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
@@ -46,15 +47,30 @@ const factionOf = (program: Program) => {
 function matches(program: Program): boolean {
   const active = faction.value.value;
   const brand = brandOf(program);
+  /* "Unaligned" is every brand with no faction — personal AND universal. Test
+     `factionId`, not `kind`, or one of the two silently disappears. */
   const factionOk =
-    !active ||
-    (active === 'unaligned' ? brand?.kind === 'personal' : brand?.factionId === active);
+    !active || (active === 'unaligned' ? !brand?.factionId : brand?.factionId === active);
   const query = search.value.trim().toLowerCase();
-  const searchOk =
-    !query ||
-    `${program.name} ${program.type} ${program.rules} ${program.flavour}`
-      .toLowerCase()
-      .includes(query);
+  /* EVERY printed slot except flavour — name, cost, type, sub-type, rules,
+     Endian Key, brand, set. Flavour is decoration and would drown a rules
+     lookup in prose that says nothing about how the card plays.
+
+     Numbers are indexed WITH their label — "cost 2", never a bare 2 — because a
+     bare number matches every rules line containing it. Rules join with a space
+     so a phrase spanning two printed lines is still findable, and
+     `searchHaystack` indexes the spoken form of each icon. */
+  const haystack = searchHaystack([
+    program.name,
+    program.type,
+    program.subType,
+    `${t('cards.cost')} ${program.cost}`,
+    program.rules.join(' '),
+    program.unlock,
+    brand?.name,
+    t(`cards.sets.${program.set}`),
+  ]);
+  const searchOk = matchesQuery(haystack, query);
   return factionOk && searchOk;
 }
 
@@ -117,7 +133,7 @@ function clearAll(): void {
 
       <p class="cards__note">{{ t('cardsPage.textNote') }}</p>
 
-      <ul v-if="shown.length" class="cards__grid">
+      <ul v-if="shown.length" class="l-grid l-grid--cards cards__gap">
         <li v-for="program in shown" :key="program.id">
           <ProgramCard
             :program="program"
@@ -226,13 +242,6 @@ function clearAll(): void {
   margin-top: var(--space-6);
 }
 
-.cards__grid {
-  margin-top: var(--space-6);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--space-6) var(--space-4);
-  list-style: none;
-}
 
 .cards__diagram {
   flex: 0 1 300px;
