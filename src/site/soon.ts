@@ -50,11 +50,22 @@ const DESTINATIONS: SoonDestination[] = [
     ],
   },
   {
-    id: 'faq',
+    /* Where a box's contents, its price and what it needs are maintained.
+       The FAQ answers all three in one sentence each and links here rather
+       than restating them, so this is load-bearing for six questions. */
+    id: 'products',
+    kind: 'page',
+    also: [
+      { key: 'ia.learn.faq.label', to: to('faq') },
+      { key: 'ia.universe.cards.label', to: to('cards') },
+    ],
+  },
+  {
+    id: 'enquiries',
     kind: 'page',
     also: [
       { key: 'ia.community.support.label', to: to('community', {}, { hash: '#support' }) },
-      { key: 'ia.learn.paths.label', to: to('learn', {}, { hash: '#paths' }) },
+      { key: 'ia.community.press.label', to: to('community', {}, { hash: '#press' }) },
     ],
   },
   {

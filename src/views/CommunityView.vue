@@ -210,7 +210,7 @@ const factSheet = computed(() => [
       <SectionMarker id="support" :index="4" :total="5" :heading="t('community.sections.support')" />
       <p class="comm__body">
         {{ t('community.support.triage1') }}
-        <BaseLink :to="soon('#faq')">{{ t('ia.learn.faq.label') }}</BaseLink>
+        <BaseLink :to="to('faq')">{{ t('ia.learn.faq.label') }}</BaseLink>
         {{ t('community.support.and') }}
         <BaseLink :link="outbound('discord')">{{ t('chrome.social.discord') }}</BaseLink>
         {{ t('community.support.triage2') }}
@@ -218,7 +218,7 @@ const factSheet = computed(() => [
 
       <SupportForm class="comm__gap" />
 
-      <BandFoot :to="soon('#faq')" :label="t('community.support.exit')" />
+      <BandFoot :to="to('faq')" :label="t('community.support.exit')" />
     </div>
   </section>
 

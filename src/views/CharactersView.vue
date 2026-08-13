@@ -9,7 +9,6 @@ import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
-import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
@@ -27,7 +26,6 @@ import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'cast', label: t('characters.sections.cast') },
-  { id: 'reveals', label: t('characters.sections.reveals') },
 ]);
 
 const faction = useQueryFilter('faction');
@@ -91,7 +89,7 @@ function clearAll(): void {
 
   <section id="cast" tabindex="-1" class="l-band">
     <div class="l-wrap">
-      <SectionMarker id="cast" :index="1" :total="2" :heading="t('characters.sections.cast')" />
+      <SectionMarker id="cast" :index="1" :total="1" :heading="t('characters.sections.cast')" />
       <MonoLabel tone="faint">{{ t('characters.note') }}</MonoLabel>
 
       <FilterBar
@@ -139,39 +137,6 @@ function clearAll(): void {
       <BandFoot :to="to('unaligned')" :label="t('characters.exitUnaligned')" />
     </div>
   </section>
-
-  <section id="reveals" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker
-        id="reveals"
-        :index="2"
-        :total="2"
-        :heading="t('characters.sections.reveals')"
-      />
-      <MonoLabel tone="faint">{{ t('characters.hiddenLabel') }}</MonoLabel>
-      <p class="cast__body">{{ t('characters.revealsBody') }}</p>
-
-      <div class="l-grid l-grid--wide cast__gap">
-        <ContentCard
-          :to="to('news')"
-          :title="t('ia.news.label')"
-          :body="t('characters.reveals.news')"
-        />
-        <ContentCard
-          :to="to('story', {}, { hash: '#chapters' })"
-          :title="t('ia.story.label')"
-          :body="t('characters.reveals.story')"
-        />
-        <ContentCard
-          :to="to('community', {}, { hash: '#discord' })"
-          :title="t('ia.community.label')"
-          :body="t('characters.reveals.community')"
-        />
-      </div>
-
-      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
-    </div>
-  </section>
 </template>
 
 <style>
@@ -180,8 +145,7 @@ function clearAll(): void {
   font-size: clamp(1.875rem, 5.6vw, 3.5rem);
 }
 
-.cast__lede,
-.cast__body {
+.cast__lede {
   margin-top: var(--space-5);
   max-width: 60ch;
   font-size: var(--size-body-l);

@@ -36,7 +36,7 @@ const rulesHub = [
   { key: 'reference', to: soon('#rules-reference') },
   { key: 'errata', to: soon('#errata') },
   { key: 'competition', to: soon('#competition') },
-  { key: 'faq', to: soon('#faq') },
+  { key: 'faq', to: to('faq') },
 ] as const;
 
 const tryIt = [

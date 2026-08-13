@@ -20,7 +20,11 @@ export function useQueryFilter(param: string) {
     const query = { ...route.query };
     if (next) query[param] = next;
     else delete query[param];
-    void router.replace({ query });
+    /* The hash is carried explicitly. `replace({ query })` drops it, which on
+       a page where the reader arrived at a deep link would silently throw the
+       anchor away the first time they touched a filter and the address bar
+       would stop matching the page they are looking at. */
+    void router.replace({ query, hash: route.hash });
   }
 
   function toggle(id: string): void {
