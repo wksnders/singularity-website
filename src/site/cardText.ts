@@ -18,6 +18,7 @@ export const iconWords: Record<string, string> = {
   '[H]': 'Health',
   '[RCT]': 'Reaction',
   '[AMB]': 'Ambush',
+  '[MSK]': 'Mask Effect',
   /* Read as written — the entry exists only to drop the brackets. */
   '[RAM]': 'RAM',
   '[EXE]': 'EXE',

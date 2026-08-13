@@ -29,7 +29,7 @@ import type {
   Video,
   WallpaperKind,
 } from './types';
-import { corePrograms } from './programs';
+import { allPrograms } from './programs';
 
 const noArt = { src: null, alt: '', artist: null };
 
@@ -179,13 +179,22 @@ export const factions: Faction[] = [
  */
 const mark = (id: string) => `/brands/${id}.png`;
 
-const factionBrand = (id: string, factionId: string, name: string, icon = true): Brand => ({
+/* `programCount` is the SLOT COUNT — how many cards the brand prints, which is
+   what `BrandView` pads its grid to. Ten is the common case and the default,
+   not a rule: pass the real number when a brand prints more. */
+const factionBrand = (
+  id: string,
+  factionId: string,
+  name: string,
+  programCount = 10,
+  icon = true,
+): Brand => ({
   id,
   factionId,
   name,
   icon: icon ? mark(id) : null,
   kind: 'faction',
-  programCount: 10,
+  programCount,
 });
 
 export const brands: Brand[] = [
@@ -200,7 +209,9 @@ export const brands: Brand[] = [
   factionBrand('infinite-divine', 'celestial-shogunate', 'Infinite Divine'),
   factionBrand('onryoki-noh', 'celestial-shogunate', 'Onryoki Noh'),
   factionBrand('zodiac-reliquary', 'celestial-shogunate', 'Zodiac Reliquary'),
-  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives'),
+  /* Ten programs plus five Scrolls. Library is a Zone, not a program, and is
+     not counted here — see the note in programs.ts. */
+  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives', 15),
   factionBrand('data-nation', 'subnet-86', 'Data Nation'),
   factionBrand('hostile-rewrite', 'subnet-86', 'Hostile Rewrite'),
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),
@@ -213,7 +224,7 @@ export const brands: Brand[] = [
     name: 'Common',
     icon: null,
     kind: 'universal',
-    programCount: 10,
+    programCount: 14,
   },
   {
     id: 'lux-vault',
@@ -230,7 +241,7 @@ export const brands: Brand[] = [
    linked by errata and translated. The cards live in programs.ts and are
    re-exported here so every import site stays `@/data/universe`. Read that
    file's header before editing a card: its typos are the printed ones. */
-export const programs: Program[] = [...corePrograms];
+export const programs: Program[] = [...allPrograms];
 
 /* ---------------------------------------------------------------------------
    THE CAST.

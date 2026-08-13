@@ -5,9 +5,9 @@
 
      1. TRANSCRIBE, DO NOT EDIT. These strings are the printed wording, typos
         and all ("a total cost 4 of or less" on Decode; "progams" on Holo
-        Kingdom; "concience" on Oni Shift). A string that reads differently from
-        the box makes this file a second, wrong rulebook. Fix the print run
-        first.
+        Kingdom; "concience" on Oni Shift; "heal itself 1 by [H]" on Crackling
+        Stroke). A string that reads differently from the box makes this file a
+        second, wrong rulebook. Fix the print run first.
      2. `rules` is one entry per printed line. Joining them invents punctuation
         the card does not have.
      3. Nothing internal goes in this file. It ships in the JS bundle and is
@@ -16,6 +16,7 @@
         `BrandView` pads its grid to `brand.programCount`.
      4. Ids are `<brandId>-NN` in printed order and are a CONTRACT: errata cite
         them in `affectedProgramIds` (content/en/news/). Append, never reorder.
+
    ========================================================================== */
 
 import type { Program, SetCode } from './types';
@@ -26,7 +27,7 @@ interface CardText {
   name: string;
   /** Printed type line, without the sub-type. */
   type: string;
-  /** "Totem", "Tag". Absent on most cards. */
+  /** "Totem", "Tag", "Food", "Mask", "Scroll". Absent on most cards. */
   subType?: string;
   cost: number;
   /** One entry per printed line, in printed order. */
@@ -37,9 +38,19 @@ interface CardText {
   unlock?: string;
 }
 
-const brandCards = (brandId: string, set: SetCode, cards: CardText[]): Program[] =>
+/**
+ * `start` continues a brand's numbering across sets — see rule 4. It is passed
+ * as the previous group's `.length` rather than a literal, so adding a card to
+ * the earlier set cannot silently collide two ids.
+ */
+const brandCards = (
+  brandId: string,
+  set: SetCode,
+  cards: CardText[],
+  start = 0,
+): Program[] =>
   cards.map((card, index) => ({
-    id: `${brandId}-${String(index + 1).padStart(2, '0')}`,
+    id: `${brandId}-${String(start + index + 1).padStart(2, '0')}`,
     brandId,
     name: card.name,
     cost: String(card.cost),
@@ -290,6 +301,90 @@ const chaosVerve: CardText[] = [
     cost: 1,
     rules: ['[EXE]: Gain 1 virtual [RAM].'],
     flavour: '"Attitude is the name of the game. History won\'t see you from someone else\'s shadow." -Benobasa',
+  },
+];
+
+const megaByte: CardText[] = [
+  {
+    name: 'Regurgitation',
+    type: 'Command',
+    cost: 2,
+    rules: ['Remove X byte tokens from patches attached to friendly characters, then deal X + 1 [P].'],
+    flavour: '"You don\'t understand, the customer is ALWAYS right." -Gu1p, former Restaurateur',
+  },
+  {
+    name: 'Second Helping',
+    type: 'Command',
+    cost: 2,
+    rules: ['You may spend X additional [RAM] to attach up to X crashed Food patches to active characters in this squad.'],
+    flavour: 'Freshly made every minute!',
+  },
+  {
+    name: 'Lunch Break',
+    type: 'Patch: Ally',
+    cost: 1,
+    rules: ['When this character consumes, this character heals itself by 2 [H]. Unattach this patch and ready this character, then you must swap them if able.'],
+    flavour: 'Variety, flavor, and sophistication, all in the most compact form factor.',
+  },
+  {
+    name: 'Iron Stomach',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: ['Patches attached to friendly characters get cost +1 for each byte token on them.'],
+    flavour: 'Plenty gets in. Nothing gets out.',
+  },
+  {
+    name: 'Last Byte',
+    type: 'Patch: Ally',
+    cost: 2,
+    rules: ['Patches attached to characters in this squad gain consume +1.'],
+    flavour: 'Give my compliments to the chef.',
+  },
+  {
+    name: 'Shoyu ROM-In',
+    type: 'Patch: Self',
+    subType: 'Food',
+    cost: 2,
+    rules: ['Consume 3: Gain a battery.'],
+    flavour: '"If I\'m gonna eat the same thing every day, might as well energize me." -Zel, Detective B.H.D.',
+  },
+  {
+    name: 'Syntactic Sugar',
+    type: 'Patch: Ally',
+    subType: 'Food',
+    cost: 2,
+    rules: ['Consume 4: You may unattach a patch with cost less than or equal to the number of byte tokens on this patch.'],
+    flavour: 'So simple and easy to make, people practically give them away.',
+  },
+  {
+    name: 'Uba Stew',
+    type: 'Patch: Ally',
+    subType: 'Food',
+    cost: 3,
+    rules: ['Consume 3: Heal 2 [H].'],
+    flavour: 'No substitutions.',
+  },
+  {
+    name: 'Twisted Tacos',
+    type: 'Patch: Ally',
+    subType: 'Food',
+    cost: 3,
+    rules: [
+      'Consume 2: Deal 2 [P].',
+      'When this character takes damage, unattach this.',
+    ],
+    flavour: "Can't keep me down.",
+  },
+  {
+    name: '3x3x3 Burger',
+    type: 'Patch: Self',
+    subType: 'Food',
+    cost: 4,
+    rules: [
+      "Consume 3: Deal X [P] to up to X different target enemy characters. X is equal to the byte tokens on this patch. This can't be consumed again this turn.",
+      "This program can't be modified.",
+    ],
+    flavour: 'I hope you like sharp cheddar...',
   },
 ];
 
@@ -545,6 +640,100 @@ const feralesque: CardText[] = [
   },
 ];
 
+const deCrypt: CardText[] = [
+  {
+    name: 'Corroded Stim Module',
+    type: 'Command',
+    cost: 2,
+    rules: [
+      'Reclamation',
+      'Heal 2 [H]. If an undead character activates this command, deal 3 [C] instead.',
+    ],
+    flavour: '"It\'s just like the Hippocratic Oath, forgotten and in need of an upgrade." -F1lch',
+  },
+  {
+    name: 'Decrepit Amulet',
+    type: 'Command',
+    cost: 2,
+    rules: [
+      'Reclamation',
+      'You may move one damage from this character to another target character.',
+    ],
+    flavour: '"Be wary of its power. Her intention is clear." -Calamity',
+  },
+  {
+    name: 'Essence Drain',
+    type: 'Command',
+    cost: 3,
+    rules: [
+      'Reclamation',
+      'This character may spend up to 5 [H]. If they do, unattach target patch with cost X or less. X is the amount of [H] spent.',
+    ],
+    flavour: "Not to worry. Neither of us will remember what we've lost.",
+  },
+  {
+    name: 'Memory Failure',
+    type: 'Command',
+    cost: 2,
+    rules: [
+      'Reclamation',
+      'For every 2 damage on this character up to their max [H], you may spend 1 additional [RAM]. Deal 2X [C]. X is the amount of additional [RAM] spent.',
+    ],
+    flavour: "Soul code is nearly inaccessible, unless there's excess code to act as a doorway.",
+  },
+  {
+    name: 'Necrotic Implement',
+    type: 'Patch: Any',
+    cost: 2,
+    rules: [
+      'If this character has damage that is equal to or greater than its max [H], it is undead.',
+      'During Update, this character takes 1 [C].',
+    ],
+    flavour: 'Its usefulness undermines its finality.',
+  },
+  {
+    name: 'Virus Injection',
+    type: 'Patch: Any',
+    cost: 7,
+    rules: [
+      'If this character has damage that is equal to or greater than its max [H], it is undead. During Initialize, this character takes 1 [C].',
+      '[EXE]: Deal X + 2 [C]. X is equal to the amount of damage on this character up to its max [H].',
+    ],
+    flavour: '"What\'s mine is yours, friend." -Voss',
+  },
+  {
+    name: 'Shisha Sosei',
+    type: 'Patch: Crashed Ally',
+    cost: 3,
+    rules: [
+      'On attach, if the target is not crashed, crash Shisha Sosei. Otherwise, revive this character, then they lose all [H].',
+      'This character is undead.',
+    ],
+    flavour: 'From the Fractal Sea to the Broken Heap: to break the cycle, you must understand it.',
+  },
+  {
+    name: 'Deadly Transmission',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: ['During Update, this character takes 1 [C], then attach this to the enemy character with the most damage.'],
+    flavour: 'The burden is shared. The reaping is not.',
+  },
+  {
+    name: 'Derelict Countermeasure',
+    type: 'Patch: Self',
+    cost: 4,
+    rules: ['Undead characters may activate programs at cost -2 to a minimum of 1.'],
+    flavour: 'With no need for self-preservation, all effort turns to dealing death.',
+  },
+  {
+    name: "Charon's Gate",
+    type: 'Patch: Self',
+    cost: 2,
+    rules: ['During Update, you may move one damage from any target character to any friendly character.'],
+    flavour: '"Seven times I\'ve passed through the gate. Seven times I\'ve wished I hadn\'t." -Kar\'abbad, Fractal Reclaimer',
+  },
+];
+
 const infiniteDivine: CardText[] = [
   {
     name: 'Transference',
@@ -797,6 +986,161 @@ const zodiacReliquary: CardText[] = [
   },
 ];
 
+const forbiddenArchives: CardText[] = [
+  {
+    name: 'Inkstone',
+    type: 'Command',
+    cost: 1,
+    rules: ['If the total number of patches attached to friendly characters is 3 or more, gain an ink token.'],
+    flavour: 'The greatest stories begin in a pool of formless black.',
+  },
+  {
+    name: 'Shorthand Rec0rd',
+    type: 'Command',
+    cost: 5,
+    rules: [
+      'Spend X ink. Deal X - 1 [P].',
+      'You may spend 2 ink to treat this card as cost 1 when using it to reset.',
+    ],
+    flavour: 'The smallest strokes make the deepest marks.',
+  },
+  {
+    name: 'Agile Stroke',
+    type: 'Patch: Ally',
+    cost: 2,
+    rules: [
+      '[EXE]: Deal 1 [P].',
+      'Scribe 2: This program, all other commands, and all [EXE] and [RCT] effects get +1 [H] this phase.',
+    ],
+    flavour: 'All tales start from one impulsive stroke.',
+  },
+  {
+    name: 'Stroke of Midnight',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: [
+      'Enemy programs that target patches attached to friendly characters gain cost +1.',
+      'Scribe 1: Cycle target character.',
+    ],
+    flavour: 'She read the script, and the darkest hour followed.',
+  },
+  {
+    name: 'Dissolution Kana',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: [
+      'Treat all friendly programs as cost -1 when using them to reset down to a minimum of 1.',
+      'Scribe 2: Deal 1 [P].',
+    ],
+    flavour: 'Some words are written, other words are unwritten.',
+  },
+  {
+    name: 'Stroke of Genius',
+    type: 'Patch: Ally',
+    cost: 2,
+    rules: [
+      'This character cannot be cycled by enemy characters or enemy programs.',
+      'Scribe 1: Ready target character.',
+    ],
+    flavour: 'A single word has infinite power, if properly timed and placed.',
+  },
+  {
+    name: "Engraver's Mark",
+    type: 'Patch: Self',
+    cost: 2,
+    rules: [
+      "Once during each opponent's turn when a patch is unattached from an enemy character, you may deal 1 [P].",
+      'Scribe 2: This program, all other commands, and all [EXE] and [RCT] effects get +1 [P] this phase.',
+    ],
+    flavour: 'An undeniable signature of authorial authenticity.',
+  },
+  {
+    name: 'Gilded Cryptek',
+    type: 'Patch: Ally',
+    cost: 2,
+    rules: [
+      'Enemy programs get cost +1 when used to reset.',
+      'Scribe 1: Unattach target patch with cost 2 or less.',
+    ],
+    flavour: 'Words are the best tools for creating understanding. They are also the best tools for completely obscuring it.',
+  },
+  {
+    name: 'Crackling Stroke',
+    type: 'Patch: Ally',
+    cost: 2,
+    rules: [
+      'During Update, this character may heal itself 1 by [H].',
+      'Scribe 2: Target character loses 1 [H].',
+    ],
+    flavour: 'The phrase pierced like cinders through silk.',
+  },
+  {
+    name: "Revisionist's Stroke",
+    type: 'Patch: Self',
+    cost: 2,
+    rules: [
+      "[EXE]: Heal X [H]. X is the number of programs in this character's stack.",
+      "Scribe 1: Rearrange all programs in target friendly character's stack.",
+    ],
+    flavour: 'A timely reprieve for some, a sudden blinding for many.',
+  },
+  {
+    name: 'The Ironclad Chronicle',
+    type: 'Command',
+    subType: 'Scroll',
+    cost: 3,
+    rules: [
+      'Transcribe',
+      "Add 2 armor to target character. This program's cost cannot be reduced.",
+    ],
+    flavour: '"Each deletion refined it. When perfection was reached, it allowed no more." -The Ironclad Chronicle',
+  },
+  {
+    name: 'Codex of the Lost',
+    type: 'Command',
+    subType: 'Scroll',
+    cost: 3,
+    rules: [
+      'Transcribe',
+      "Gain 1 virtual RAM. This program's cost cannot be reduced.",
+    ],
+    flavour: '"The underworld\'s history was written by many unseen hands. God help those who attempt to read it." -Ral Kaid',
+  },
+  {
+    name: 'Rec0rd Totem',
+    type: 'Patch: Self',
+    subType: 'Scroll Totem',
+    cost: 3,
+    rules: [
+      "This program's cost cannot be reduced.",
+      '[EXE]: Transcribe. Deal 1 [P].',
+    ],
+    flavour: '"No glyph or rune is more sacred than a cairn left for the lost." -Unattributed',
+  },
+  {
+    name: 'Tale of Flowing Water',
+    type: 'Command',
+    subType: 'Scroll',
+    cost: 3,
+    rules: [
+      'Transcribe',
+      "Heal 2 [H]. This program's cost cannot be reduced.",
+    ],
+    flavour: '"They searched for the Golden Hedron and never returned, though some say they marked their path with water." -The Binary Insight',
+  },
+  {
+    name: 'The Forgotten Truth',
+    type: 'Command',
+    subType: 'Scroll',
+    cost: 3,
+    rules: [
+      'Transcribe',
+      "This program's cost cannot be modified.",
+    ],
+    flavour: '"That cursed scroll is the anthology of tales too dangerous to be remembered." -Ri:se',
+  },
+];
+
 const dataNation: CardText[] = [
   {
     name: 'Holo Kingdom',
@@ -1036,7 +1380,107 @@ const endlessChain: CardText[] = [
   },
 ];
 
-const common: CardText[] = [
+const masquerade: CardText[] = [
+  {
+    name: 'Danse Macabre',
+    type: 'Patch: Self',
+    cost: 3,
+    rules: [
+      'Characters with 3 or more programs in their stack must spend 1 [RAM] to deactivate.',
+      '[EXE]: Cycle target character.',
+    ],
+    flavour: "It's a glitch that we can all share.",
+  },
+  {
+    name: 'Grand Ball',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: ["When an enemy character resolves a [MSK] effect during their Activation phase, you may place that Mask on the bottom of target enemy character's stack if they have not activated that Mask this turn."],
+    flavour: 'Revelry, degeneracy, lunacy, madness.',
+  },
+  {
+    name: 'Mask of Endless Revelry',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: This character updates, then initializes, then loses 1 [H].',
+    ],
+    flavour: '"Every day\'s worth celebrating, don\'t you think? Come. I\'ll take good care of you." -Pendulum\'s Imprint',
+  },
+  {
+    name: "Mask of Selecta's Purge",
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: Target opponent receives a battery.',
+    ],
+    flavour: '"Why try so hard to change yourself? You know, you are perfect just the way you are." -Selecta\'s Imprint',
+  },
+  {
+    name: 'Mask of the Silent Name',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: Unattach the lowest cost patch attached to a friendly character.',
+    ],
+    flavour: '"It\'s easier to forget, isn\'t it? Just go with the flow... see what happens." -Plexil\'s Imprint',
+  },
+  {
+    name: 'Mask of Broken Cephalons',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: The character in this squad with the lowest [H] takes 3 [A].',
+    ],
+    flavour: '"Something feels broken inside, doesn\'t it? Your code may not be as reliable as you thought." -G4g3\'s Imprint',
+  },
+  {
+    name: 'Mask of the Demon Machine',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: The character in this squad with the lowest [H] takes 3 [P].',
+    ],
+    flavour: '"Sleep and rest are weakness. Train yourself until you fall to pieces. When you are done, get up and do it again." -Zakhi\'s Shadow Imprint',
+  },
+  {
+    name: 'Mask of Tabula Rasa',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: [
+      'Adaptive, Possession',
+      '[MSK]: Cycle all friendly characters that do not have a Mask on top of their stack.',
+    ],
+    flavour: '"Problems manifest when the tethers between selves erode, but differing expressions are natural." -Ix\'s Imprint',
+  },
+  {
+    name: 'Tempting Invitation',
+    type: 'Command',
+    cost: 3,
+    rules: ["Deal X - 1 [A]. X is equal to the number of programs in the target character's stack."],
+    flavour: 'A venue to exercise our basest impulse.',
+  },
+  {
+    name: 'Drifting Shadows',
+    type: 'Patch: Any',
+    cost: 3,
+    rules: ['When this character is targeted by a command, [EXE] effect, or [RCT] effect, cancel that program, then unattach this patch.'],
+    flavour: 'The art of getting lost in the crowd.',
+  },
+];
+
+const commonCore: CardText[] = [
   {
     name: 'Decode',
     type: 'Command',
@@ -1109,8 +1553,44 @@ const common: CardText[] = [
   },
 ];
 
-/* TODO — CONFIRM BOX. Printed with set code LUX, recorded as CORE below. If
-   that is wrong, `boxes[]` contents has to change with it. */
+const commonEx1: CardText[] = [
+  {
+    name: 'Back from the Brink',
+    type: 'Patch: Ally',
+    cost: 3,
+    rules: ["[RCT]: When this character would crash due to taking damage, instead, set this character's [H] to 1."],
+    flavour: 'With just a few bits duplicated and encrypted, we can approximate a rudimentary regeneration.',
+  },
+  {
+    name: 'S.P.4.4.M.',
+    type: 'Patch: Self',
+    subType: 'Food',
+    cost: 2,
+    rules: ['Consume 3: This character takes 1 [P]. Deal 1 [P].'],
+    flavour: 'All-you-can-eat.',
+  },
+  {
+    name: 'Softcopy Scroll',
+    type: 'Command',
+    cost: 3,
+    rules: [
+      'Transcribe',
+      "This program's cost cannot be reduced.",
+    ],
+    flavour: 'Everyone has a story to tell.',
+  },
+  {
+    name: 'Blank Mask',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 1,
+    rules: ["Place this program on the bottom of target enemy character's stack."],
+    flavour: 'A clean slate. A borrowed face. A new beginning.',
+  },
+];
+
+/* TODO — CONFIRM BOX. Every card here is printed with set code LUX and recorded
+   as CORE. If that is wrong, `boxes[]` contents has to change with it. */
 
 const luxVault: CardText[] = [
   {
@@ -1129,22 +1609,76 @@ const luxVault: CardText[] = [
     flavour: '',
     unlock: "Endian Key: Win a game with no programs left in any of your characters' stacks.",
   },
+  {
+    name: 'Nine Lives',
+    type: 'Patch: Self',
+    cost: 2,
+    rules: ["[RCT]: When this character would crash due to taking damage, instead, set this character's [H] to 1."],
+    flavour: '',
+    unlock: 'Endian Key: In one game, heal LuX by a total 9 [H] while LuX is undead.',
+  },
+  {
+    name: 'Canned 2NA',
+    type: 'Patch: Self',
+    subType: 'Food',
+    cost: 2,
+    rules: ['Consume 3: This character loses 1 [H]. Heal 2 [H].'],
+    flavour: '',
+    unlock: 'Endian Key: Attach three different Food patches to LuX with a single activation of Second Helping.',
+  },
+  {
+    name: 'MT. Scroll Box',
+    type: 'Command',
+    cost: 4,
+    rules: [
+      'Transcribe. Reduce the ink cost of the first scribe effect added to this program by 1, to a minimum of 0.',
+      "This program's cost cannot be reduced.",
+    ],
+    flavour: '',
+    unlock: "Endian Key: Spend six or more ink on one activation of Softcopy Scroll from LuX's stack.",
+  },
+  {
+    name: 'Mask of the Locked Heart',
+    type: 'Command',
+    subType: 'Mask',
+    cost: 2,
+    rules: ["Place this program on the bottom of target enemy character's stack."],
+    flavour: '',
+    unlock: 'Endian Key: Crash a character with seven or more programs in their stack.',
+  },
 ];
 
 /* Gallery order follows `brands[]` in universe.ts. */
-export const corePrograms: Program[] = [
+export const allPrograms: Program[] = [
   ...brandCards('scrap-brigade', 'CORE', scrapBrigade),
   ...brandCards('benobasas-fist', 'CORE', benobasasFist),
   ...brandCards('chaos-verve', 'CORE', chaosVerve),
+  ...brandCards('mega-byte', 'EX1', megaByte),
   ...brandCards('bloom-and-never', 'CORE', bloomAndNever),
   ...brandCards('ark-totem', 'CORE', arkTotem),
   ...brandCards('feralesque', 'CORE', feralesque),
+  ...brandCards('de-crypt', 'EX1', deCrypt),
   ...brandCards('infinite-divine', 'CORE', infiniteDivine),
   ...brandCards('onryoki-noh', 'CORE', onryokiNoh),
   ...brandCards('zodiac-reliquary', 'CORE', zodiacReliquary),
+  ...brandCards('forbidden-archives', 'EX1', forbiddenArchives),
   ...brandCards('data-nation', 'CORE', dataNation),
   ...brandCards('hostile-rewrite', 'CORE', hostileRewrite),
   ...brandCards('endless-chain', 'CORE', endlessChain),
-  ...brandCards('common', 'CORE', common),
+  ...brandCards('masquerade', 'EX1', masquerade),
+  ...brandCards('common', 'CORE', commonCore),
+  ...brandCards('common', 'EX1', commonEx1, commonCore.length),
   ...brandCards('lux-vault', 'CORE', luxVault),
 ];
+
+/* TODO — NOT A PROGRAM, AND NOT WIRED UP. Library is a Zone: it has no cost to
+   pay and it is not one of a brand's programs, so it is deliberately absent
+   from `allPrograms` and renders nowhere. The text is kept here so it is not
+   lost. Give Zones a type and a surface of their own before using this. */
+export const libraryZone: CardText = {
+  name: 'Library',
+  type: 'Zone',
+  cost: 0,
+  rules: ['(Reminder: You may have up to 8 ink tokens. Programs activated from the Library return to the Library.)'],
+  flavour: '',
+};
