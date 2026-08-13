@@ -18,8 +18,10 @@ const props = withDefaults(
     radius?: 's' | 'm' | 'l' | 'none';
     /** One eager image per page: the hero. */
     eager?: boolean;
+    /** `contain` for anything that must not be cropped — a printed card. */
+    fit?: 'cover' | 'contain';
   }>(),
-  { ratio: '3 / 4', placeholder: '[ art pending ]', radius: 'none', eager: false },
+  { ratio: '3 / 4', placeholder: '[ art pending ]', radius: 'none', eager: false, fit: 'cover' },
 );
 
 const focal = (art: Art) =>
@@ -38,7 +40,7 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
-      :style="{ objectPosition: focal(art) }"
+      :style="{ objectPosition: focal(art), objectFit: fit }"
     />
     <div v-else class="c-art__empty">
       <span class="c-art__caption">{{ placeholder }}</span>
