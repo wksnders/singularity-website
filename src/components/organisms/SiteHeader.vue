@@ -18,7 +18,7 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
 <template>
   <header
     class="c-nav"
-    :class="{ 'is-solid': scrolled, 'is-hidden': navHidden }"
+    :class="{ 'is-solid': scrolled, 'is-hidden': navHidden, 'is-mega': megaOpen !== null }"
     @mouseleave="closeMega()"
   >
     <div class="c-nav__bar l-wrap">
@@ -44,12 +44,22 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
             type="button"
             class="c-nav__chevron"
             :data-mega-trigger="section.key"
+            :aria-controls="`mega-${section.key}`"
             :aria-expanded="megaOpen === section.key"
             :aria-label="t(`ia.${section.key}.label`) + ' ' + t('chrome.sections')"
             @click="toggleMega(section.key)"
           >
             ▾
           </button>
+
+          <!-- Two constraints on this spot: the panel follows its own trigger,
+               and it exists while closed for `aria-controls` to resolve. -->
+          <MegaPanel
+            v-if="section.mega"
+            v-show="megaOpen === section.key"
+            :id="`mega-${section.key}`"
+            :section="section"
+          />
         </span>
       </nav>
 
@@ -67,10 +77,6 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
         <span class="c-nav__burger-bars" aria-hidden="true" />
       </button>
     </div>
-
-    <template v-for="section in primaryNav" :key="`mega-${section.key}`">
-      <MegaPanel v-if="wide && section.mega && megaOpen === section.key" :section="section" />
-    </template>
   </header>
 </template>
 
@@ -92,6 +98,11 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
 .c-nav.is-solid {
   background: rgba(var(--rgb-bg), 0.88);
   border-bottom-color: var(--color-line);
+}
+
+/* Otherwise this doubles with the open panel's own border-top. */
+.c-nav.is-mega {
+  border-bottom-color: transparent;
 }
 
 .c-nav.is-hidden {
