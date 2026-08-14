@@ -17,11 +17,20 @@ const props = defineProps<{ section: IaSection }>();
 
 const featured = computed(() => characters[0] ?? null);
 const groups = computed(() => props.section.mega ?? []);
+const hasFeatured = computed(() => Boolean(props.section.featuredCharacter && featured.value));
+
+/* Never a fixed track in the stylesheet: a group past the count wraps to a
+   second row silently, instead of failing where anyone would see it. */
+const columns = computed(() => {
+  const track = groups.value.map(() => 'minmax(0, 1fr)');
+  if (hasFeatured.value) track.push('minmax(0, 1.2fr)');
+  return track.join(' ');
+});
 </script>
 
 <template>
   <div class="c-mega">
-    <div class="c-mega__inner l-wrap">
+    <div class="c-mega__inner l-wrap" :style="{ '--mega-columns': columns }">
       <div v-for="group in groups" :key="group.key" class="c-mega__col">
         <MonoLabel tone="faint" class="c-mega__title">{{ t(`ia.${group.key}.label`) }}</MonoLabel>
 
@@ -51,7 +60,7 @@ const groups = computed(() => props.section.mega ?? []);
       </div>
 
       <BaseLink
-        v-if="section.featuredCharacter && featured"
+        v-if="hasFeatured && featured"
         :to="to('character', { characterId: featured.id })"
         class="c-mega__col c-mega__featured"
       >
@@ -72,7 +81,12 @@ const groups = computed(() => props.section.mega ?? []);
 </template>
 
 <style>
+/* Positions against `.c-nav`, not the item it is nested in — giving
+   `.c-nav__item` a position of its own moves the panel onto the chevron. */
 .c-mega {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
   border-top: 1px solid var(--color-line);
   background: rgba(var(--rgb-surface), 0.97);
   backdrop-filter: blur(18px);
@@ -80,7 +94,7 @@ const groups = computed(() => props.section.mega ?? []);
 
 .c-mega__inner {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1.2fr;
+  grid-template-columns: var(--mega-columns);
   gap: var(--space-8);
   padding-block: var(--space-6) 28px;
 }
@@ -138,7 +152,6 @@ const groups = computed(() => props.section.mega ?? []);
   display: block;
   border-radius: var(--radius-m);
   overflow: hidden;
-  border-bottom: 2px solid var(--faction);
 }
 
 .c-mega__scrim {
