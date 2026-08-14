@@ -90,7 +90,7 @@ const story: IaSection = {
     {
       key: 'story.also',
       items: [
-        { key: 'story.buy', to: to('soon', {}, { hash: '#buy' }), note: true },
+        { key: 'story.buy', outbound: 'buy', note: true },
         { key: 'story.pastVotes', to: to('soon', {}, { hash: '#vote' }), note: true },
       ],
     },

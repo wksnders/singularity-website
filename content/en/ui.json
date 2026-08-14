@@ -272,10 +272,6 @@
         "title": "The competition ruleset is being written",
         "body": "The ruleset exists and ships at launch. It will be published here, versioned, with the date it takes effect."
       },
-      "products": {
-        "title": "The box breakdown is being written",
-        "body": "One entry per box: what is in it, what it costs, and what it needs to be played. It is the one place those three are maintained, which is why the FAQ links here instead of answering twice."
-      },
       "enquiries": {
         "title": "The enquiries address is not published yet",
         "body": "Trade, distribution and licensing go to their own address rather than to support. Until it is up, support will pass a message along."
@@ -307,10 +303,6 @@
       "vote": {
         "title": "Past Convergences are not published yet",
         "body": "The first vote has not closed. The open vote is on the Story page."
-      },
-      "buy": {
-        "title": "The store is not open yet",
-        "body": "The core box, the expansion and Incursions all go on sale the same day. Print & play is free in the meantime."
       }
     }
   },

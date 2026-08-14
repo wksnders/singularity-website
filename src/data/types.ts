@@ -175,8 +175,8 @@ export interface RogueAI {
    chapter. All three collapses were wrong, and the type propagated each of
    them into every view that read it.
 
-     · A BOX is a physical thing with components in it. It is the unit the
-       contents list describes, and the unit the story ships inside.
+     · A BOX is a physical thing with components in it. It is the unit a
+       component list describes, and the unit the story ships inside.
      · A PRODUCT (SKU) is a way to pay. It bundles one or more boxes. Core
        Edition is one box; Gameplay Complete Edition is six. A box that is sold
        on its own later simply gains a product of its own containing only it —
@@ -189,9 +189,9 @@ export interface RogueAI {
 
    The invariants, in order of how easy they are to break:
 
-     1. Contents live on `Box`, never on `Product`. A SKU-only extra (a pledge
-        exclusive, a promo) goes in `Product.extras`, which is for things that
-        arrive OUTSIDE any box — not a convenient second contents list.
+     1. The component list of a box is the STORE's, and is not mirrored here —
+        see `Box`. `Product.extras` is for things that arrive OUTSIDE any box (a
+        pledge exclusive, a promo) and is not a way to reintroduce one.
      2. `Chapter.boxIds` points at boxes, never at products.
      3. `Product.boxCount` is the claim; `Product.boxIds` is the enumeration.
         When both are present they must agree — `assertProductShape()` in
@@ -199,13 +199,16 @@ export interface RogueAI {
         exact error nobody notices.
    -------------------------------------------------------------------------- */
 
-/** A physical box. Has contents. Has no price — a box is not a SKU. */
+/**
+ * A physical box. No price — a box is not a SKU — and no component list: the
+ * store states what is in a box, and a second copy drifts from it. `summary`
+ * is a one-line gloss for fact strips, not a short contents list, and it is
+ * the only component claim the site makes.
+ */
 export interface Box {
   id: string;
   name: string;
-  /** Component list, in box order. One line item per entry. */
-  contents: string[];
-  /** One line for fact strips. The full list is `contents`. */
+  /** One line for fact strips. */
   summary: string | null;
   relatedBrandIds: string[];
 }

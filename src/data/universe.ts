@@ -45,8 +45,8 @@ export const game = {
      It is not a claim about any single box: solo and co-op are Incursions, and
      Incursions is its own product, sold separately (it launches the same day as
      the core box and expansion 1). So never render this count as "what is in the
-     core box" — the box facts are `boxes[].contents`, and which box gets you
-     solo is a purchase question that belongs in the Incursions bands.
+     core box" — which box gets you solo is a purchase question, and it belongs
+     in the Incursions bands and on the store.
 
      Per-mode counts (2 for the duel, 3–4 for free-for-all) live beside each mode
      in ui.json. */
@@ -61,7 +61,7 @@ export const game = {
 
      Price and box contents are NOT here: there are three editions at three
      prices, so a single `game.price` would silently become the site's answer
-     for all of them. Price lives on `products[]`, contents on `boxes[]`. */
+     for all of them. Price lives on `products[]`. */
   releaseDate: null as string | null,
   /* The store is the authority on shipping — regions, dates and surcharges all
      change there without warning. Keep this null and link out; do not mirror a
@@ -93,7 +93,7 @@ export const formEndpoints = {
 
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
-  buy: null,
+  buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/',
   /* Root-relative, NOT absolute: these three are files this site serves from
      `public/downloads/`, and `outbound()` joins them to the deploy base. Hosting
      them here rather than linking a Dropbox share is deliberate — no expiring
@@ -1126,8 +1126,9 @@ export const rogueAIs: RogueAI[] = [
 
 /** Core box + expansion 1 + Incursions all launch the same day. */
 /* ---------------------------------------------------------------------------
-   WHAT IS IN A BOX. Boxes hold components and carry story. They do NOT hold a
-   price — see the three-level note above `Box` in types.ts.
+   WHAT IS IN A BOX. Boxes carry story and group components. They hold neither
+   a price nor a component list — see the three-level note above `Box` in
+   types.ts.
 
    Only the core box is described today. The other boxes exist (Gameplay
    Complete is six of them) but have not been named to the site, and inventing
@@ -1138,21 +1139,6 @@ export const boxes: Box[] = [
     id: 'core-box',
     name: 'Core box',
     summary: '40 characters + LuX · 140 programs · 6 environment shards',
-    contents: [
-      '40 unique characters',
-      /* 130 printed for the cast above, plus LuX's own ten — quoted as one
-         number because a buyer counts cards, not authorship. */
-      '140 unique gameplay programs',
-      'LuX, and the ten programs of her personal brand',
-      '6 environment shards — legendary locations that rewrite the battlefield',
-      '20 fragment cards',
-      'A sealed bonus pack: more characters, lore and content, opened once you have collected the fragments',
-      '158 tokens',
-      '12 alternate-art characters',
-      '4 oversized starter-deck strategy cards',
-      '40 premium card sleeves — two decks, colour-coded by team and numbered 1–5',
-      '10 duplicate common cards',
-    ],
     relatedBrandIds: ['endless-chain'],
   },
 ];
@@ -1248,7 +1234,7 @@ function assertProductShape(): void {
 }
 assertProductShape();
 
-/** The edition fact strips quote. Never index products[] by position. */
+/** The core SKU. Never index products[] by position. */
 export const coreProduct = products.find((p) => p.id === 'core-edition') ?? products[0];
 /** The box those fact strips actually describe. */
 export const coreBox = boxes.find((b) => b.id === 'core-box') ?? boxes[0];

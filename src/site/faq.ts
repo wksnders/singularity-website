@@ -26,23 +26,23 @@
 import type { RouteLocationRaw } from 'vue-router';
 import { docHtml, getCollection, getDoc, t } from '@/content';
 import { outbound, soon, to } from '@/site/links';
-import type { ResolvedLink } from '@/site/links';
+import type { LinkSpec, ResolvedLink } from '@/site/links';
 
 export interface FaqGroup {
   /** Public anchor for the band. Never renamed. */
   id: string;
   /** Exit link at the foot of the band. */
-  exit: RouteLocationRaw;
+  exit: LinkSpec;
 }
 
 /** Order is page order. Labels are `faq.groups.<id>.*` in ui.json. */
 export const faqGroups: FaqGroup[] = [
-  { id: 'buying', exit: soon('#products') },
-  { id: 'box', exit: to('cards') },
-  { id: 'playing', exit: to('learn', {}, { hash: '#paths' }) },
-  { id: 'solo', exit: to('incursions') },
-  { id: 'digital', exit: to('learn', {}, { hash: '#try' }) },
-  { id: 'help', exit: to('learn') },
+  { id: 'buying', exit: { outbound: 'buy' } },
+  { id: 'box', exit: { to: to('cards') } },
+  { id: 'playing', exit: { to: to('learn', {}, { hash: '#paths' }) } },
+  { id: 'solo', exit: { to: to('incursions') } },
+  { id: 'digital', exit: { to: to('learn', {}, { hash: '#try' }) } },
+  { id: 'help', exit: { to: to('learn') } },
 ];
 
 /**
@@ -54,8 +54,10 @@ export const faqGroups: FaqGroup[] = [
  * locale the day a second language lands.
  */
 const LINK_TARGETS: Record<string, () => RouteLocationRaw | ResolvedLink> = {
-  buy: () => soon('#buy'),
-  products: () => soon('#products'),
+  buy: () => outbound('buy'),
+  /* Not a typo: contents, price and compatibility are all the store's, so the
+     five questions that ask for any of them exit to the same place `buy` does. */
+  products: () => outbound('buy'),
   enquiries: () => soon('#enquiries'),
   rulesReference: () => soon('#rules-reference'),
   printAndPlay: () => outbound('printAndPlay'),
