@@ -251,10 +251,7 @@ const cardsQuery = computed(() =>
           </div>
         </div>
 
-        <!-- Named cards, not bare frames: until the art lands every card image
-             is the same placeholder, so a strip without names reads as five
-             empty slots. The brand label is omitted — the band heading is the
-             brand. -->
+        <!-- No brand label: the band heading is the brand. -->
         <div class="l-grid l-grid--cards char__gap">
           <ProgramCard
             v-for="program in shownPrograms"

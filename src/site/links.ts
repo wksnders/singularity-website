@@ -61,6 +61,20 @@ export interface ResolvedLink {
 }
 
 /**
+ * A destination written in a DATA file — site/ia.ts, site/soon.ts.
+ *
+ * `to` for an internal route, `outbound` for a KEY into data/universe.ts.
+ * Never a URL, and never a hand-written link to /soon in place of an outbound
+ * key: `outbound()` is the one place that knows whether a destination is live,
+ * so a key resolves to /soon only while `urls` has none for it, while a
+ * hand-written one goes on saying "soon" about a file the site already serves.
+ */
+export interface LinkSpec {
+  to?: RouteLocationRaw;
+  outbound?: OutboundKey;
+}
+
+/**
  * Join a root-relative `public/` path to the deploy base.
  *
  * The site sits at /singularity-website/ today and at a domain root once the
@@ -92,4 +106,13 @@ export function outbound(key: OutboundKey): ResolvedLink {
 /** A page that is written but not built yet. */
 export function soon(hash: string): RouteLocationRaw {
   return to('soon', {}, { hash });
+}
+
+/**
+ * Resolve a data-file destination. Renderers go through this rather than
+ * reading `spec.to`, which on an `outbound` row is undefined — BaseLink
+ * degrades that to plain text, so the link would go missing without erroring.
+ */
+export function resolveLink(spec: LinkSpec): ResolvedLink {
+  return spec.outbound ? outbound(spec.outbound) : { to: spec.to, external: false };
 }

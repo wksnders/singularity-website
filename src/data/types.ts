@@ -110,7 +110,7 @@ export interface Program {
 export type FactionMembership = string[] | 'any';
 
 /** Printed set code. Widen as releases are announced. */
-export type SetCode = 'CORE' | 'EX1';
+export type SetCode = 'CORE' | 'EX1' | 'INC';
 
 export interface Character {
   id: string;

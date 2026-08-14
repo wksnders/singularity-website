@@ -7,12 +7,13 @@
  */
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
 import { soonDestination } from '@/site/soon';
-import { to } from '@/site/links';
+import { resolveLink, to } from '@/site/links';
 
 const route = useRoute();
 const destination = computed(() => soonDestination(route.hash));
@@ -35,7 +36,7 @@ const body = computed(() => t(`soon.d.${destination.value.id}.body`));
       <MonoLabel tone="faint">{{ t('soon.alsoTitle') }}</MonoLabel>
       <ul class="soon__also">
         <li v-for="item in destination.also" :key="item.key">
-          <RouterLink :to="item.to">{{ t(item.key) }}</RouterLink>
+          <BaseLink :link="resolveLink(item)">{{ t(item.key) }}</BaseLink>
         </li>
       </ul>
       <UiButton :to="to('home')" class="soon__back">{{ t('soon.back') }}</UiButton>

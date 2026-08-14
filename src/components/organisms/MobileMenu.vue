@@ -11,7 +11,7 @@ import JumpChip from '@/components/atoms/JumpChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { primaryNav, socialKeys } from '@/site/ia';
-import { outbound } from '@/site/links';
+import { outbound, resolveLink } from '@/site/links';
 import { useChrome } from '@/composables/useChrome';
 
 const { menuOpen, toggleMenu } = useChrome();
@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
           <JumpChip
             v-for="jump in section.jumps"
             :key="jump.key"
-            :to="jump.to"
+            :link="resolveLink(jump)"
             @click="toggleMenu()"
           >
             {{ t(`ia.${jump.key}.label`) }}
