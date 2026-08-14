@@ -7,13 +7,14 @@
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import type { RouteLocationRaw } from 'vue-router';
+import type { ResolvedLink } from '@/site/links';
 
-defineProps<{ to: RouteLocationRaw; label: string }>();
+defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
 </script>
 
 <template>
   <div class="c-bandfoot">
-    <UiButton variant="quiet" :to="to">{{ label }}</UiButton>
+    <UiButton variant="quiet" :to="to" :link="link">{{ label }}</UiButton>
     <a class="c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
   </div>
 </template>

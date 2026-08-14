@@ -3,7 +3,7 @@
     "id": "where-buy",
     "group": "buying",
     "question": "Where can I buy Singularity.exe?",
-    "answer": "[PLACEHOLDER — one buy link, driven by the current sales stage: campaign, late pledge, pledge manager or retail.]",
+    "answer": "On Gamefound. Every buy link on this site goes to the same place.",
     "link": {
       "key": "buy",
       "label": "Where to buy"
@@ -21,7 +21,7 @@
     "id": "price",
     "group": "buying",
     "question": "How much does it cost?",
-    "answer": "There are three boxes at three prices, each listed on its own product entry — so a price is only ever written in one place.",
+    "answer": "Three boxes at three prices. They are listed on the Gamefound page, which is the only place they are kept.",
     "link": {
       "key": "products",
       "label": "Prices, box by box"

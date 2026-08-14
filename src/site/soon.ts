@@ -49,17 +49,6 @@ const DESTINATIONS: SoonDestination[] = [
     ],
   },
   {
-    /* Where a box's contents, its price and what it needs are maintained.
-       The FAQ answers all three in one sentence each and links here rather
-       than restating them, so this is load-bearing for six questions. */
-    id: 'products',
-    kind: 'page',
-    also: [
-      { key: 'ia.learn.faq.label', to: to('faq') },
-      { key: 'ia.universe.cards.label', to: to('cards') },
-    ],
-  },
-  {
     id: 'enquiries',
     kind: 'page',
     also: [
@@ -118,14 +107,6 @@ const DESTINATIONS: SoonDestination[] = [
     id: 'vote',
     kind: 'page',
     also: [{ key: 'ia.story.convergence.label', to: to('story', {}, { hash: '#convergence' }) }],
-  },
-  {
-    id: 'buy',
-    kind: 'link',
-    also: [
-      { key: 'ia.learn.printAndPlay.label', outbound: 'printAndPlay' },
-      { key: 'ia.story.chapters.label', to: to('story', {}, { hash: '#chapters' }) },
-    ],
   },
 ];
 

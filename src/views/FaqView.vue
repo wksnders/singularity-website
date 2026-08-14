@@ -27,7 +27,7 @@ import { t } from '@/content';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { assertFaqShape, faqEntries, faqGroups } from '@/site/faq';
 import { markHtml, matcher, segments } from '@/site/highlight';
-import { soon, to } from '@/site/links';
+import { resolveLink, soon, to } from '@/site/links';
 import type { FaqEntry } from '@/site/faq';
 import type { SectionEntry } from '@/site/sections';
 
@@ -72,7 +72,7 @@ const bands = computed(() =>
   faqGroups
     .map((group, i) => ({
       id: group.id,
-      exit: group.exit,
+      exit: resolveLink(group.exit),
       index: i + 1,
       label: t(`faq.groups.${group.id}.label`),
       short: t(`faq.groups.${group.id}.short`),
@@ -400,7 +400,7 @@ const routing = [
         </details>
       </div>
 
-      <BandFoot :to="band.exit" :label="band.exitLabel" />
+      <BandFoot :link="band.exit" :label="band.exitLabel" />
     </div>
   </section>
 

@@ -22,7 +22,6 @@ import {
   chapters,
   characters,
   coreBox,
-  coreProduct,
   factionById,
   factions,
   game,
@@ -33,11 +32,13 @@ import type { Stat } from '@/site/stats';
 
 /* Commercial facts have reserved slots even while the values are unknown.
 
-   Price and contents are the CORE EDITION's, not the game's — there are three
-   editions at three prices. The strip is titled to say so; if this ever renders
-   without that title, it is lying by omission. */
+   These are the CORE EDITION's, not the game's — there are three editions. The
+   strip is titled to say so; if this ever renders without that title, it is
+   lying by omission.
+
+   PRICE IS NOT A ROW HERE: three editions cost three different amounts and the
+   store is the authority on all three. */
 const boxFacts = computed<Stat[]>(() => [
-  { label: t('home.facts.price'), value: coreProduct.price, reserved: true },
   { label: t('home.facts.release'), value: game.releaseDate, reserved: true },
   { label: t('home.facts.box'), value: coreBox.summary, reserved: true },
   { label: t('home.facts.ships'), value: game.shipsTo, reserved: true },
