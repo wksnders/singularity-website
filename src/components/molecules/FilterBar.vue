@@ -4,7 +4,7 @@
  * optional search field, and a live result count announced to screen readers.
  * Deliberately NOT sticky — below 600px the nav owns the only sticky slot.
  */
-import { useId } from 'vue';
+import { computed, useId } from 'vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
 import { t } from '@/content';
 import type { FilterOption } from '@/site/filters';
@@ -28,6 +28,10 @@ const props = defineProps<{
 defineEmits<{ toggle: [string]; clear: []; 'update:search': [string] }>();
 
 const isActive = (id: string | null) => props.active === id;
+
+const activeLabel = computed(
+  () => props.options.find((option) => option.id === props.active)?.label ?? null,
+);
 </script>
 
 <template>
@@ -59,7 +63,8 @@ const isActive = (id: string | null) => props.active === id;
     </div>
 
     <p class="c-filters__count" aria-live="polite">
-      {{ count }} {{ countLabel }}<template v-if="active"> {{ t('filters.in') }}</template>
+      {{ count }} {{ countLabel
+      }}<template v-if="activeLabel"> {{ t('filters.in') }} {{ activeLabel }}</template>
     </p>
   </div>
 </template>
