@@ -19,6 +19,7 @@ import type {
   Chapter,
   Character,
   Faction,
+  FormEndpoint,
   NewsCategory,
   OutboundUrls,
   PlayMode,
@@ -69,7 +70,8 @@ export const game = {
   shipsTo: null as string | null,
   ageRating: '14+',
   ratingMarks: null as string | null,
-  supportEmail: null as string | null,
+  supportEmail: 'singularity-support@octothorpe.com' as string | null,
+  pressEmail: 'singularity-press@octothorpe.com' as string | null,
   trailerYouTubeId: '_eyxoFI4F-8',
   copyrightYear: 2026,
 };
@@ -85,10 +87,13 @@ export const game = {
  *   1. put the endpoint here, and
  *   2. make the component actually POST to it and report the real result.
  * Never do (1) on its own.
+ *
+ * `SupportForm` has step 2. Its `url` must answer with CORS headers — see
+ * `FormEndpoint` in types.ts for why nothing else will do.
  */
 export const formEndpoints = {
   newsletter: null as string | null,
-  support: null as string | null,
+  support: null as FormEndpoint | null,
 };
 
 /** Launch-day replacements happen HERE, not in nine page templates. */

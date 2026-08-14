@@ -310,3 +310,19 @@ export interface OutboundUrls {
 }
 
 export type OutboundKey = keyof OutboundUrls;
+
+/**
+ * Where a form POSTs. `url` must accept JSON and answer with CORS headers:
+ * an endpoint the browser cannot read the status of leaves the form unable to
+ * tell "sent" from "failed", and it will report sent. Any endpoint requiring
+ * `mode: 'no-cors'` fails this and does not belong here.
+ */
+export interface FormEndpoint {
+  /** Absolute https URL. */
+  url: string;
+  /**
+   * Merged into every payload, for provider credentials that are public by
+   * design. Never a secret: this ships in the bundle.
+   */
+  fields?: Record<string, string>;
+}
