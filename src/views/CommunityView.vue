@@ -176,6 +176,11 @@ const factSheet = computed(() => [
           <UiButton :to="soon('#press-kit')" class="comm__gap">
             {{ t('community.press.cta') }}
           </UiButton>
+          <p class="comm__meta comm__gap">
+            {{ t('community.press.contact') }}
+            <a v-if="game.pressEmail" :href="`mailto:${game.pressEmail}`">{{ game.pressEmail }}</a>
+            <TbdValue v-else />
+          </p>
         </div>
 
         <div class="comm__card">

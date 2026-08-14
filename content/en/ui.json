@@ -150,8 +150,10 @@
     "order": "Order number (if you have one)",
     "message": "What went wrong?",
     "submit": "Send to support",
+    "sending": "Sending…",
     "fallback": "Or email us directly:",
     "done": "Sent. We answer order and refund questions within two working days.",
+    "error": "That didn't send, the message never left this page, so nothing has reached us. Copy your text somewhere safe, then try again in a few minutes or use the email route above.",
     "closed": "Support is not open yet. Nothing typed here would reach us, so the form stays shut until it can."
   },
   "home": {
@@ -870,6 +872,7 @@
       "whatTitle": "What is in it",
       "whatBody": "Logos, key art, box shots, fact sheet and boilerplate — self-serve, no email required.",
       "cta": "Download the kit",
+      "contact": "Interviews, review copies and anything the kit does not answer:",
       "boilerplate": "Boilerplate",
       "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. About 30 minutes per player. Zero randomness. Solo and co-op play ship in the Incursions box.",
       "crossover": "Crossover content with",
