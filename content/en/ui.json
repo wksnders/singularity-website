@@ -79,7 +79,8 @@
     "set": "Set",
     "sets": {
       "CORE": "Core set",
-      "EX1": "Expansion"
+      "EX1": "Expansion",
+      "INC": "Incursions"
     },
     "unrevealed": "Not revealed yet",
     "unnamed": "[ unrevealed program ]",

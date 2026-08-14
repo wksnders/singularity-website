@@ -14,11 +14,12 @@
 
 import type { RouteLocationRaw } from 'vue-router';
 import { to } from '@/site/links';
+import type { LinkSpec } from '@/site/links';
 
-export interface IaItem {
+/** One nav row. Its destination follows the `LinkSpec` rule in site/links.ts. */
+export interface IaItem extends LinkSpec {
   /** i18n key root — resolves to ia.<key>.label and ia.<key>.note. */
   key: string;
-  to: RouteLocationRaw;
   /** Show the second line in mega panels. */
   note?: boolean;
 }
@@ -128,7 +129,7 @@ const learn: IaSection = {
       items: [
         { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }), note: true },
         { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }), note: true },
-        { key: 'learn.printAndPlay', to: to('soon', {}, { hash: '#print-and-play' }), note: true },
+        { key: 'learn.printAndPlay', outbound: 'printAndPlay', note: true },
       ],
     },
   ],

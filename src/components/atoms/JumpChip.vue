@@ -5,13 +5,21 @@
  */
 import BaseLink from './BaseLink.vue';
 import type { RouteLocationRaw } from 'vue-router';
+import type { ResolvedLink } from '@/site/links';
 
-defineProps<{ to: RouteLocationRaw; index?: string; current?: boolean; accent?: boolean }>();
+defineProps<{
+  to?: RouteLocationRaw;
+  link?: ResolvedLink;
+  index?: string;
+  current?: boolean;
+  accent?: boolean;
+}>();
 </script>
 
 <template>
   <BaseLink
     :to="to"
+    :link="link"
     class="c-jump"
     :class="{ 'is-current': current, 'is-accent': accent }"
     :aria-current="current ? 'true' : undefined"

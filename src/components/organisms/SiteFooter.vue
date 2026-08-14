@@ -9,7 +9,7 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import { t } from '@/content';
 import { footerColumns, socialKeys } from '@/site/ia';
-import { outbound } from '@/site/links';
+import { outbound, resolveLink } from '@/site/links';
 import { game } from '@/data/universe';
 </script>
 
@@ -20,7 +20,7 @@ import { game } from '@/data/universe';
         <div v-for="column in footerColumns" :key="column.key">
           <MonoLabel tone="faint">{{ t(`ia.${column.key}.label`) }}</MonoLabel>
           <div class="c-footer__links">
-            <BaseLink v-for="item in column.items" :key="item.key" :to="item.to">
+            <BaseLink v-for="item in column.items" :key="item.key" :link="resolveLink(item)">
               {{ t(`ia.${item.key}.label`) }}
             </BaseLink>
           </div>

@@ -66,8 +66,7 @@
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 
-/* Printed cards, wherever they appear. A card is the same object on the
-   gallery, a brand page and a character page, so it is laid out once. */
+/* Printed cards, wherever they appear. One layout, three surfaces. */
 .l-grid--cards {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-6) var(--space-4);

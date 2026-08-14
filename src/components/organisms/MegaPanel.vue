@@ -10,7 +10,7 @@ import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { characters, factions } from '@/data/universe';
-import { to } from '@/site/links';
+import { resolveLink, to } from '@/site/links';
 import type { IaSection } from '@/site/ia';
 
 const props = defineProps<{ section: IaSection }>();
@@ -38,7 +38,12 @@ const groups = computed(() => props.section.mega ?? []);
         </template>
 
         <template v-else>
-          <BaseLink v-for="item in group.items" :key="item.key" :to="item.to" class="c-mega__row">
+          <BaseLink
+            v-for="item in group.items"
+            :key="item.key"
+            :link="resolveLink(item)"
+            class="c-mega__row"
+          >
             <span class="c-mega__label">{{ t(`ia.${item.key}.label`) }}</span>
             <span v-if="item.note" class="c-mega__note">{{ t(`ia.${item.key}.note`) }}</span>
           </BaseLink>

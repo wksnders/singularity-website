@@ -8,13 +8,12 @@
    never dead-ends. Only listed, public destinations belong here.
    ========================================================================== */
 
-import type { RouteLocationRaw } from 'vue-router';
 import { to } from '@/site/links';
+import type { LinkSpec } from '@/site/links';
 
-export interface SoonAlso {
+export interface SoonAlso extends LinkSpec {
   /** i18n key for the label, reusing the IA keys where they fit. */
   key: string;
-  to: RouteLocationRaw;
 }
 
 export interface SoonDestination {
@@ -124,7 +123,7 @@ const DESTINATIONS: SoonDestination[] = [
     id: 'buy',
     kind: 'link',
     also: [
-      { key: 'ia.learn.printAndPlay.label', to: to('soon', {}, { hash: '#print-and-play' }) },
+      { key: 'ia.learn.printAndPlay.label', outbound: 'printAndPlay' },
       { key: 'ia.story.chapters.label', to: to('story', {}, { hash: '#chapters' }) },
     ],
   },

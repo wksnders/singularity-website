@@ -16,7 +16,8 @@
         `BrandView` pads its grid to `brand.programCount`.
      4. Ids are `<brandId>-NN` in printed order and are a CONTRACT: errata cite
         them in `affectedProgramIds` (content/en/news/). Append, never reorder.
-
+        A brand printed across two sets keeps ONE run of numbers, so the second
+        set's cards continue where the first stopped.
    ========================================================================== */
 
 import type { Program, SetCode } from './types';
@@ -39,9 +40,9 @@ interface CardText {
 }
 
 /**
- * `start` continues a brand's numbering across sets — see rule 4. It is passed
- * as the previous group's `.length` rather than a literal, so adding a card to
- * the earlier set cannot silently collide two ids.
+ * `start` continues a brand's numbering across sets — see rule 4. Pass the
+ * previous group's `.length`, never a literal: a literal goes stale the moment
+ * a card is added to the earlier set, and collides two ids silently.
  */
 const brandCards = (
   brandId: string,
@@ -1589,8 +1590,7 @@ const commonEx1: CardText[] = [
   },
 ];
 
-/* TODO — CONFIRM BOX. Every card here is printed with set code LUX and recorded
-   as CORE. If that is wrong, `boxes[]` contents has to change with it. */
+/* Printed set code is LUX. Recorded as CORE, the box these ship in. */
 
 const luxVault: CardText[] = [
   {
@@ -1671,14 +1671,168 @@ export const allPrograms: Program[] = [
   ...brandCards('lux-vault', 'CORE', luxVault),
 ];
 
-/* TODO — NOT A PROGRAM, AND NOT WIRED UP. Library is a Zone: it has no cost to
-   pay and it is not one of a brand's programs, so it is deliberately absent
-   from `allPrograms` and renders nowhere. The text is kept here so it is not
-   lost. Give Zones a type and a surface of their own before using this. */
+/* ============================================================================
+   PARKED — printed cards that are not programs. Exported so the text is not
+   lost; nothing renders any of it. not added to `allPrograms`.
+
+   TODO — each needs a type and a surface of its own.
+   ========================================================================== */
+
+/* Not one of Forbidden Archives' fifteen cards. */
 export const libraryZone: CardText = {
   name: 'Library',
   type: 'Zone',
-  cost: 0,
+  cost: 0,//doesnt have a cost.
   rules: ['(Reminder: You may have up to 8 ink tokens. Programs activated from the Library return to the Library.)'],
   flavour: '',
 };
+
+/* Architech Designs. Set `INC` and brand Architech Design on every one, so neither is
+   stored per entry — `CardText` carries neither field. */
+export const architechDesigns: CardText[] = [
+  {
+    name: 'Treasure Cache',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ['[EXE]: Gain 1 virtual [RAM].'],
+    flavour: 'A subspace pocket of resources, hidden in plain sight.',
+  },
+  {
+    name: 'Scroll of Dispel Code',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ['[EXE]: You may spend 2 [RAM] to unattach target patch.'],
+    flavour: 'A single use debug code for prior state restoration.',
+  },
+  {
+    name: "Fortune's Cross",
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ["[EXE]: You may reorder target friendly character's stack."],
+    flavour: 'A prediction of the most likely immediate outcome, allowing time for adaptation.',
+  },
+  {
+    name: 'Blessing of One',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 1,
+    rules: ['[EXE]: Heal 3 [H].'],
+    flavour: 'A back-up allocation of memory redundancy for soul code.',
+  },
+  {
+    name: 'Small Boots',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 1,
+    rules: ['[EXE]: If the next program you activate this phase is cost 2 or less, it activates at cost 0.'],
+    flavour: 'Pre-boot loading for simple operations.',
+  },
+  {
+    name: 'Green Torch',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ['[EXE]: Ready target character.'],
+    flavour: 'An efficient helper function for reinitialization.',
+  },
+  {
+    name: 'Skip-Skip',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ['[EXE]: Reset target friendly character for 0 [RAM].'],
+    flavour: 'An ancient GOTO command exploit.',
+  },
+  {
+    name: 'Rejuvenating Aura',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 3,
+    rules: ['During Initialize, this character may heal itself by 1 [H].'],
+    flavour: 'Background processes for regenerating partial data.',
+  },
+  {
+    name: 'Protocol of Holding',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 3,
+    rules: ['During Update, if you have unspent max [RAM], you may gain a battery.'],
+    flavour: 'An experimental storage protocol for unused resources.',
+  },
+  {
+    name: 'Blue Screams',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ['During Update, if you have unspent max [RAM], you may cycle target character.'],
+    flavour: 'Forced cascading of excess resource allocation.',
+  },
+  {
+    name: 'Rainbow Ink',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 2,
+    rules: ["[EXE]: Unattach target patch, then lose X [H]. X is equal to the patch's cost."],
+    flavour: 'A low level function for 1-to-1 bit deletion.',
+  },
+  {
+    name: 'Force Cantrip',
+    type: 'Patch: Ally',
+    subType: 'Architech Design',
+    cost: 3,
+    rules: ['[RCT]: Give target command +1 [P] or -1 [P].'],
+    flavour: 'A deft modification of mid-sequence code.',
+  },
+];
+
+export interface EnvironmentCard {
+  name: string;
+  /** The named ability, e.g. "Fog of War". */
+  ability: string;
+  /** Exact printed rules text. */
+  rules: string;
+  flavour: string;
+}
+
+/* All six print "Environment" as their type line, so it is not stored. */
+export const environments: EnvironmentCard[] = [
+  {
+    name: 'Railway Network',
+    ability: 'Event Scheduler',
+    rules: 'When you swap a character out, unattach all of their attached patches, then reattach them to active friendly characters.',
+    flavour: 'No programs on the network are ever out of reach.',
+  },
+  {
+    name: 'Molten Horizon',
+    ability: 'Over-surge',
+    rules: 'The cap for max [RAM] before gaining overload is now 5.',
+    flavour: "It's a burning nexus of memory-scorching heat, endlessly churning, endlessly recycling.",
+  },
+  {
+    name: 'Pristine Creation',
+    ability: 'Memory Lattice',
+    rules: 'During Refresh, skip the Deactivate [RAM] step. During Start-Up, before you ready max [RAM], gain virtual [RAM] equal to your unspent [RAM].',
+    flavour: 'The perfect construction of the garden distorts reality, slowing and accelerating time together.',
+  },
+  {
+    name: 'Darklight Fracture',
+    ability: 'Fog of War',
+    rules: 'Characters with no damage have stealth.',
+    flavour: 'Below lies an endless abyss of dark, dotted only by the last flickering remnants of the shattered city.',
+  },
+  {
+    name: 'Hall of Echoes',
+    ability: 'Inhabitance',
+    rules: 'Each turn, players must perform a swap if able.',
+    flavour: 'Each in turn must play their part, then exit with a bow.',
+  },
+  {
+    name: 'Prismatarium',
+    ability: 'Starstruck',
+    rules: "During your first turn, gain 5 virtual [RAM]. Characters cannot be crashed or reduced below 1 [H] on any player's first turn.",
+    flavour: 'When the right confluence of ancient stars align, a strange and mysterious energy emerges.',
+  },
+];
