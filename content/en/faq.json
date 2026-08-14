@@ -3,7 +3,7 @@
     "id": "where-buy",
     "group": "buying",
     "question": "Where can I buy Singularity.exe?",
-    "answer": "On Gamefound. Every buy link on this site goes to the same place.",
+    "answer": "On Gamefound, We're selling digitally there operating on a remaining stock model. If you see no listed products there now, then we are all sold out of everything in your geographical region. We dont have any announced plans for if or when future print runs will occur,but do keep an eye on future announcements.",
     "link": {
       "key": "buy",
       "label": "Where to buy"
@@ -21,7 +21,7 @@
     "id": "price",
     "group": "buying",
     "question": "How much does it cost?",
-    "answer": "Three boxes at three prices. They are listed on the Gamefound page, which is the only place they are kept.",
+    "answer": "We have some different product options. They are all listed on the Gamefound page, which is the only place they are kept.",
     "link": {
       "key": "products",
       "label": "Prices, box by box"
@@ -39,7 +39,7 @@
     "id": "release",
     "group": "buying",
     "question": "When does it ship?",
-    "answer": "[PLACEHOLDER — release date. The core box, the first expansion and Incursions all release together.]",
+    "answer": "We are aiming to fulfill this fall(September-November 2026)",
     "keywords": [
       "release",
       "date",
@@ -70,8 +70,8 @@
   {
     "id": "editions",
     "group": "buying",
-    "question": "What is the difference between the core box, the expansion and Incursions?",
-    "answer": "Three separate boxes: the competitive core game, an expansion that adds cards and advances the story, and the co-op and solo box for one to four players.",
+    "question": "What is the difference between the core box, the expansions and Incursions?",
+    "answer": "Three separate boxes: the competitive core game, 4 expansions that each add more cards and new strategies, and the co-op and solo box for one to four players.",
     "link": {
       "key": "products",
       "label": "Compare the three boxes"
@@ -91,7 +91,7 @@
     "id": "need-core",
     "group": "buying",
     "question": "Do I need the core box to use the expansion or Incursions?",
-    "answer": "[PLACEHOLDER — compatibility line, one blunt sentence: which boxes are standalone and which require the core box. The full answer sits on each product entry.]",
+    "answer": "Expansions contain a full deck in each box, the Incursions set requires you to bring your own decks to play against them",
     "link": {
       "key": "products",
       "label": "What each box needs"
@@ -128,7 +128,7 @@
     "id": "instalments",
     "group": "buying",
     "question": "Can I pay in instalments?",
-    "answer": "[PLACEHOLDER — instalment plans were planned during the campaign; confirm what the store offers now.]",
+    "answer": "instalment plans were availible during the campaign but are not currently availible.",
     "keywords": [
       "instalments",
       "installments",
@@ -143,7 +143,7 @@
     "id": "retail",
     "group": "buying",
     "question": "Can my local game store stock it?",
-    "answer": "Yes — trade, distribution and wholesale enquiries go to the enquiries address, not to support.",
+    "answer": "Yes, for trade, distribution and wholesale enquiries go to the enquiries address, not to support.",
     "link": {
       "key": "enquiries",
       "label": "Trade & other enquiries"
