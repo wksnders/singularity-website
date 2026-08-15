@@ -308,6 +308,10 @@
       "vote": {
         "title": "Past Convergences are not published yet",
         "body": "The first vote has not closed. The open vote is on the Story page."
+      },
+      "stack-builder": {
+        "title": "The stack builder is being written",
+        "body": "Every program a character can reach is already on their page, and the whole gallery is searchable. Building and saving a stack is the part that is not here yet."
       }
     }
   },
@@ -380,9 +384,41 @@
     "appearsIn": "Appears in",
     "chapterArtPlaceholder": "[ chapter art ]",
     "noStoriesTitle": "Not in a published chapter yet",
-    "noStoriesBody": "They arrive with their set. The published chapters are on the Story page.",
+    "noStoriesBody": "They have not turned up in a published chapter yet. The story follows a few at a time, come chat with us on Discord to let us know what you want to see next.",
     "missingTitle": "No character at that address",
-    "missingBody": "The full cast is in the index."
+    "missingBody": "The full cast is in the index.",
+    "castLabel": "Cast",
+    "brandsLabel": "Brands",
+    "cardKicker": "Their character card",
+    "cardSlot": "[ printed character card 63×88 ]",
+    "seeCardLarge": "See the card at reading size",
+    "enlarge": "Enlarge",
+    "artBy": "Art by",
+    "artistSlot": "[ artist ]",
+    "printings": "Printings",
+    "printedAs": "Printed as",
+    "poolTitle": "What they can play",
+    "poolNote": "Their stack is chosen from these brands, not fixed to them.",
+    "customize": "Customize",
+    "stackLabel": "Their stack",
+    "commonNote": "Every character can play Common.",
+    "aboutBrand": "About",
+    "galleryExit": "These brands in the gallery",
+    "openInGallery": "Open in the card gallery",
+    "cardAnatomy": "How a character card is laid out",
+    "backToCard": "Back to their character card",
+    "faceCard": "The card",
+    "faceArt": "Art only",
+    "loreTitle": "Who they were",
+    "moreFrom": "More from",
+    "readChapters": "Read the chapters so far",
+    "noErrata": "No errata affects this card.",
+    "rowBrand": "Brand",
+    "rowSet": "Set",
+    "rowAccess": "Brand access",
+    "rowPrinting": "Printing",
+    "rowArtist": "Artist",
+    "rowSource": "Source"
   },
   "brand": {
     "hero": {
@@ -469,7 +505,8 @@
         "title": "Set & number",
         "body": "Collector info: which box, which slot."
       }
-    }
+    },
+    "brandScope": "Brands"
   },
   "incursions": {
     "hero": {
@@ -1104,5 +1141,18 @@
         "label": "Community"
       }
     }
+  },
+  "pool": {
+    "filterLabel": "Filter the pool by brand",
+    "allBrands": "All",
+    "ofTotal": "of",
+    "programsShown": "programs shown",
+    "programs": "programs",
+    "scrollBack": "Scroll back:",
+    "scrollForward": "Scroll forward:",
+    "cardPlaceholder": "[ card ]"
+  },
+  "cardZoom": {
+    "close": "Close"
   }
 }

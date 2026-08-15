@@ -22,6 +22,8 @@
 
 import type { Program, SetCode } from './types';
 
+const PROGRAM_ARTIST = 'Josh Bruce';
+
 /** A card as written down. Id, art and reveal state are mechanical and are
     filled in by `brandCards`, so they cannot drift per entry. */
 interface CardText {
@@ -64,8 +66,8 @@ const brandCards = (
     set,
     /* Not interchangeable — see the ART COMES IN LAYERS note in types.ts.
        `src: null` draws the placeholder frame until the files land. */
-    art: { src: null, alt: `${card.name}, program art`, artist: null },
-    cardArt: { src: null, alt: `${card.name} card`, artist: null },
+    art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
+    cardArt: { src: null, alt: `${card.name} card`, artist: PROGRAM_ARTIST },
   }));
 
 const scrapBrigade: CardText[] = [

@@ -112,6 +112,21 @@ export type FactionMembership = string[] | 'any';
 /** Printed set code. Widen as releases are announced. */
 export type SetCode = 'CORE' | 'EX1' | 'INC';
 
+/* One printed edition: art always, identity only where it differs. Mechanics
+   stay on the character — errata against an ability hits every printing. */
+export interface Printing {
+  id: string;
+  label: string;
+  name?: string;
+  abilityName?: string;
+  flavour?: string;
+  art: Art;
+  sceneArt: Art;
+  cardArt: Art;
+  source?: string;
+  licensor?: string;
+}
+
 export interface Character {
   id: string;
   /* What "12 of 57" counts. In tens so an insert does not renumber the rest;
@@ -149,6 +164,8 @@ export interface Character {
   cardArt: Art;
   /** Stories this character appears in — drives the story graph's pins. */
   storyIds?: string[];
+  /* Alt Arts BEYOND the standard one */
+  printings?: Printing[];
 
   /* --- Printed card face. Text, never pixels — same rule as Program. ------ */
 

@@ -16,6 +16,7 @@ defineProps<{
   prev?: Crumb | null;
   next?: Crumb | null;
   position?: { label: string; index: number; total: number } | null;
+  compactHops?: boolean;
 }>();
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -39,14 +40,28 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <span v-if="position" class="c-crumbs__position">
         {{ position.label }} {{ pad(position.index) }} / {{ pad(position.total) }}
       </span>
-      <BaseLink v-if="prev" :to="prev.to" rel="prev" class="c-crumbs__hop">
-        <span class="l-sr-only">{{ t('wayfinding.previous') }}</span>
+      <BaseLink
+        v-if="prev"
+        :to="prev.to"
+        rel="prev"
+        class="c-crumbs__hop"
+        :class="{ 'c-crumbs__hop--icon': compactHops }"
+        :title="compactHops ? prev.label : undefined"
+      >
+        <span class="l-sr-only">{{ t('wayfinding.previous') }} {{ prev.label }}</span>
         <span aria-hidden="true">←</span>
-        {{ prev.label }}
+        <span v-if="!compactHops" aria-hidden="true">{{ prev.label }}</span>
       </BaseLink>
-      <BaseLink v-if="next" :to="next.to" rel="next" class="c-crumbs__hop">
-        <span class="l-sr-only">{{ t('wayfinding.next') }}</span>
-        {{ next.label }}
+      <BaseLink
+        v-if="next"
+        :to="next.to"
+        rel="next"
+        class="c-crumbs__hop"
+        :class="{ 'c-crumbs__hop--icon': compactHops }"
+        :title="compactHops ? next.label : undefined"
+      >
+        <span class="l-sr-only">{{ t('wayfinding.next') }} {{ next.label }}</span>
+        <span v-if="!compactHops" aria-hidden="true">{{ next.label }}</span>
         <span aria-hidden="true">→</span>
       </BaseLink>
     </div>
@@ -124,5 +139,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
   border-radius: var(--radius-s);
   color: var(--color-ink-muted);
   white-space: nowrap;
+}
+
+.c-crumbs__hop--icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding-inline: 0;
 }
 </style>
