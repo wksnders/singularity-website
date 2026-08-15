@@ -13,7 +13,7 @@
      3. Nothing internal goes in this file. It ships in the JS bundle and is
         readable in devtools, so "in this file" means published — which is also
         why an unannounced card is simply absent rather than `revealed: false`.
-        `BrandView` pads its grid to `brand.programCount`.
+        Sealed slots come from `Brand.programCount`, never from this file.
      4. Ids are `<brandId>-NN` in printed order and are a CONTRACT: errata cite
         them in `affectedProgramIds` (content/en/news/). Append, never reorder.
         A brand printed across two sets keeps ONE run of numbers, so the second

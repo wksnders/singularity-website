@@ -16,7 +16,7 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
-import { brandById, characters } from '@/data/universe';
+import { brandById, brandSlotCount, characters } from '@/data/universe';
 import { to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
@@ -27,6 +27,7 @@ const sections = computed<SectionEntry[]>(() => [
 
 const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
 const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.value.personalBrandId) : null));
+const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value) : 0));
 </script>
 
 <template>
@@ -69,8 +70,8 @@ const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.valu
             <p class="una__epithet">{{ lux.epithet }}</p>
             <h3 class="una__name">{{ lux.name }}</h3>
             <p class="una__body">{{ t('unaligned.lux.body') }}</p>
-            <p class="una__body">
-              {{ luxBrand?.programCount ?? 10 }} {{ t('unaligned.lux.brandLine') }}
+            <p v-if="luxSlots" class="una__body">
+              {{ luxSlots }} {{ t('unaligned.lux.brandLine') }}
             </p>
             <div class="l-row una__gap">
               <UiButton :to="to('character', { characterId: lux.id })">
@@ -101,7 +102,7 @@ const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.valu
         <div class="l-grid l-grid--wide una__gap">
           <article class="una__brand">
             <MonoLabel tone="faint">
-              LuX · {{ luxBrand?.programCount ?? 10 }} {{ t('faction.stats.programs') }}
+              LuX<template v-if="luxSlots"> · {{ luxSlots }} {{ t('faction.stats.programs') }}</template>
             </MonoLabel>
             <h3 class="una__brand-title">
               <BrandMark
@@ -113,7 +114,7 @@ const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.valu
             </h3>
             <p class="una__body">{{ t('unaligned.brands.luxBody') }}</p>
             <ul class="una__slots">
-              <li v-for="n in luxBrand?.programCount ?? 10" :key="n">
+              <li v-for="n in luxSlots" :key="n">
                 {{ String(n).padStart(2, '0') }}
               </li>
             </ul>
