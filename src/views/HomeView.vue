@@ -21,7 +21,7 @@ import { getDoc, getDocs, metaString, t } from '@/content';
 import {
   chapters,
   characters,
-  coreBox,
+  coreProduct,
   tryRoutes,
   factionById,
   factions,
@@ -30,16 +30,6 @@ import {
 } from '@/data/universe';
 import { outbound, to } from '@/site/links';
 import type { Stat } from '@/site/stats';
-
-/* The CORE EDITION's facts, not the game's — the strip's title has to say so or
-   it lies by omission. No price row: three editions, three prices, and the store
-   is the authority on all of them. */
-const boxFacts = computed<Stat[]>(() => [
-  { label: t('home.facts.release'), value: game.releaseDate, reserved: true },
-  { label: t('home.facts.box'), value: coreBox.summary, reserved: true },
-  { label: t('home.facts.ships'), value: game.shipsTo, reserved: true },
-  { label: t('home.facts.ages'), value: game.ageRating, reserved: true },
-]);
 
 const pitchStats = computed<Stat[]>(() => [
   { label: t('home.pitch.players'), value: game.players },
@@ -117,12 +107,22 @@ function scrollCast(direction: 1 | -1): void {
     </p>
   </PageHero>
 
-  <!-- A0 · the box at a glance -->
-  <section class="l-band l-band--tight l-band--alt l-band--line-top l-band--line-bottom">
-    <div class="l-wrap">
-      <h2 class="l-sr-only">{{ t('home.facts.title') }}</h2>
-      <StatRow :stats="boxFacts" />
-    </div>
+  <!-- A0 · the offer. The page's one filled buy button is in the hero above,
+       so this bar's action is a text link. -->
+  <section class="home__offer">
+    <h2 class="l-sr-only">{{ t('home.offer.title') }}</h2>
+    <p class="l-wrap home__offer-line">
+      <span class="home__offer-state">
+        <span class="home__offer-dot" aria-hidden="true"></span>{{ t('home.offer.badge') }}
+      </span>
+      <span v-if="coreProduct.price" class="home__offer-price">
+        <strong>{{ t('home.offer.from') }} {{ coreProduct.price }}</strong>
+        {{ t('home.offer.priceQualifier') }}
+      </span>
+      <BaseLink :link="outbound('buy')" class="home__offer-cta">
+        {{ t('home.offer.cta') }} →
+      </BaseLink>
+    </p>
   </section>
 
   <!-- A · pitch and ways to play -->
@@ -356,6 +356,66 @@ function scrollCast(direction: 1 | -1): void {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+}
+
+/* Announcement bar, not a band: it holds one line and its height is set by the
+   44px tap target inside it, so it never takes --band-y padding. */
+.home__offer {
+  border-top: 1px solid rgba(var(--rgb-accent), 0.2);
+  border-bottom: 1px solid rgba(var(--rgb-accent), 0.2);
+  background: rgba(var(--rgb-accent), 0.07);
+}
+
+.home__offer-line {
+  padding-block: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1) var(--space-4);
+  text-align: center;
+  font-size: var(--size-body);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+.home__offer-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.home__offer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  box-shadow: 0 0 10px 1px rgba(var(--rgb-accent), 0.7);
+}
+
+.home__offer-price {
+  color: var(--color-ink-soft);
+}
+
+.home__offer-price::before {
+  content: '·';
+  margin-inline-end: var(--space-4);
+  color: rgba(var(--rgb-ink), 0.28);
+}
+
+.home__offer-price strong {
+  font-weight: 700;
+  color: var(--color-ink-muted);
+}
+
+.home__offer-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .home__h2 {
