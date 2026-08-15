@@ -186,6 +186,7 @@ export const factions: Faction[] = [
  * no recognized mark passes null and renders the faction dot placeholder, as before.
  */
 const mark = (id: string) => `/brands/${id}.png`;
+const rogueBrand = (id: string) => `/rogue-ai/${id}.png`;
 
 /* `programCount` is the SLOT COUNT — how many cards the brand prints, which is
    what `BrandView` pads its grid to. Ten is the common case and the default,
@@ -230,7 +231,7 @@ export const brands: Brand[] = [
     id: 'common',
     factionId: null,
     name: 'Common',
-    icon: null,
+    icon: mark('common'),
     kind: 'universal',
     programCount: 14,
   },
@@ -1189,9 +1190,14 @@ assertCharacterShape();
 /* Rogue AIs sit outside the faction system and have their own color that is 
     reserved for incursions. */
 export const rogueAIs: RogueAI[] = [
-  { id: 'rogue-ai-1', name: '[PLACEHOLDER rogue AI 01]', art: { ...noArt } },
-  { id: 'rogue-ai-2', name: '[PLACEHOLDER rogue AI 02]', art: { ...noArt } },
-  { id: 'rogue-ai-3', name: '[PLACEHOLDER rogue AI 03]', art: { ...noArt } },
+  { id: 'calebrena', name: 'Calebrena', art: { ...noArt }, brand: rogueBrand('calebrena') },
+  { id: 'invader', name: 'Invader', art: { ...noArt }, brand: rogueBrand('invader') },
+  {
+    id: 'paths-of-terminus',
+    name: 'Paths of Terminus',
+    art: { ...noArt },
+    brand: rogueBrand('paths-of-terminus'),
+  },
 ];
 
 /** Core box + expansion 1 + Incursions all launch the same day. */
