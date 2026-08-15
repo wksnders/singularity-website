@@ -3,29 +3,52 @@
  * P4 — the breadcrumb spine on lore pages, with lateral hops (previous/next
  * faction, brand or character). 44px targets: this is the main way a reader
  * walks sideways through the universe.
+ *
+ * Mount it only where there is an ancestor to name: a lone crumb with no `to`
+ * is a navigation landmark with nothing to navigate to.
  */
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import { t } from '@/content';
 import type { Crumb } from '@/site/sections';
 
 defineProps<{
   crumbs: Crumb[];
   prev?: Crumb | null;
   next?: Crumb | null;
+  position?: { label: string; index: number; total: number } | null;
 }>();
+
+const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <template>
-  <nav class="c-crumbs" aria-label="Breadcrumb">
+  <nav class="c-crumbs" :aria-label="t('wayfinding.breadcrumb')">
     <ol class="c-crumbs__list">
       <li v-for="(crumb, i) in crumbs" :key="i" class="c-crumbs__item">
-        <BaseLink v-if="crumb.to" :to="crumb.to" class="c-crumbs__link">{{ crumb.label }}</BaseLink>
+        <BaseLink
+          v-if="crumb.to"
+          :to="crumb.to"
+          class="c-crumbs__link"
+          :class="{ 'c-crumbs__link--parent': i === crumbs.length - 2 }"
+        >{{ crumb.label }}</BaseLink>
         <span v-else aria-current="page" class="c-crumbs__current">{{ crumb.label }}</span>
         <span v-if="i < crumbs.length - 1" class="c-crumbs__sep" aria-hidden="true">/</span>
       </li>
     </ol>
     <div v-if="prev || next" class="c-crumbs__hops">
-      <BaseLink v-if="prev" :to="prev.to" class="c-crumbs__hop">← {{ prev.label }}</BaseLink>
-      <BaseLink v-if="next" :to="next.to" class="c-crumbs__hop">{{ next.label }} →</BaseLink>
+      <span v-if="position" class="c-crumbs__position">
+        {{ position.label }} {{ pad(position.index) }} / {{ pad(position.total) }}
+      </span>
+      <BaseLink v-if="prev" :to="prev.to" rel="prev" class="c-crumbs__hop">
+        <span class="l-sr-only">{{ t('wayfinding.previous') }}</span>
+        <span aria-hidden="true">←</span>
+        {{ prev.label }}
+      </BaseLink>
+      <BaseLink v-if="next" :to="next.to" rel="next" class="c-crumbs__hop">
+        <span class="l-sr-only">{{ t('wayfinding.next') }}</span>
+        {{ next.label }}
+        <span aria-hidden="true">→</span>
+      </BaseLink>
     </div>
   </nav>
 </template>
@@ -55,19 +78,24 @@ defineProps<{
 
 .c-crumbs__link,
 .c-crumbs__current,
+.c-crumbs__position,
 .c-crumbs__hop {
   font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.12em;
+  font-size: var(--size-mono-m);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .c-crumbs__link {
-  color: var(--color-ink-faint);
+  color: var(--color-ink-muted);
+}
+
+.c-crumbs__link--parent {
+  color: var(--color-accent-text);
 }
 
 .c-crumbs__current {
-  color: var(--color-ink);
+  color: var(--color-ink-soft);
 }
 
 .c-crumbs__sep {
@@ -76,12 +104,20 @@ defineProps<{
 
 .c-crumbs__hops {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
+  align-items: center;
+}
+
+.c-crumbs__position {
+  color: var(--color-ink-faint);
+  white-space: nowrap;
 }
 
 .c-crumbs__hop {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   min-height: 44px;
   padding-inline: var(--space-3);
   border: 1px solid var(--color-line);

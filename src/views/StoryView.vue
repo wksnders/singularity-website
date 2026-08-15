@@ -16,7 +16,6 @@ import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
@@ -84,7 +83,6 @@ function pinColor(characterId: string): string | null {
 
 <template>
   <SecondaryHero glow="80% 70% at 22% 0%" :note="t('story.hero.pending')">
-    <Breadcrumbs :crumbs="[{ label: t('ia.story.label') }]" />
     <h1 class="story__title">{{ t('story.hero.title') }}</h1>
     <p class="story__lede">{{ t('story.hero.lede') }}</p>
     <SectionIndex :sections="sections" />

@@ -277,6 +277,7 @@ const character = (
 export const characters: Character[] = [
   character({
     id: 'gargaunaut-prime',
+    order: 420,
     name: 'Gargaunaut Prime',
     hp: 11,
     factionIds: ['celestial-shogunate', 'monarchy-of-boom'],
@@ -291,6 +292,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hanbei',
+    order: 10,
     name: 'Hanbei',
     hp: 11,
     factionIds: ['celestial-shogunate', 'subnet-86'],
@@ -305,6 +307,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'iro',
+    order: 20,
     name: 'Iro',
     hp: 9,
     factionIds: ['celestial-shogunate'],
@@ -319,6 +322,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'kagemusha',
+    order: 30,
     name: 'Kagemusha',
     hp: 8,
     factionIds: ['celestial-shogunate', 'subnet-86'],
@@ -333,6 +337,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'magus',
+    order: 40,
     name: 'Magus',
     hp: 10,
     factionIds: ['celestial-shogunate'],
@@ -347,6 +352,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'mi-ko',
+    order: 50,
     name: 'Mi-KO',
     hp: 8,
     factionIds: ['celestial-shogunate', 'hana-mori'],
@@ -361,6 +367,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'onibaba',
+    order: 60,
     name: 'Onibaba',
     hp: 10,
     factionIds: ['celestial-shogunate', 'monarchy-of-boom'],
@@ -375,6 +382,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'piiko',
+    order: 430,
     name: 'Piiko',
     hp: 9,
     factionIds: ['celestial-shogunate', 'hana-mori'],
@@ -389,6 +397,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ral-kaid',
+    order: 440,
     name: 'Ral Kaid',
     hp: 10,
     factionIds: ['celestial-shogunate', 'subnet-86'],
@@ -403,6 +412,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ri-se',
+    order: 450,
     name: 'Ri • Se',
     hp: 10,
     factionIds: ['celestial-shogunate'],
@@ -417,6 +427,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'satellite-137',
+    order: 70,
     name: 'Satellite 137',
     hp: 13,
     factionIds: ['celestial-shogunate'],
@@ -431,6 +442,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'shiho-zenji',
+    order: 80,
     name: 'Shiho Zenji',
     hp: 8,
     factionIds: ['celestial-shogunate'],
@@ -445,6 +457,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'toshiro',
+    order: 90,
     name: 'Toshiro',
     hp: 10,
     factionIds: ['celestial-shogunate'],
@@ -459,6 +472,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'yama-uba',
+    order: 100,
     name: 'Yama Uba',
     hp: 7,
     factionIds: ['celestial-shogunate', 'hana-mori'],
@@ -473,6 +487,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'bronwyn',
+    order: 460,
     name: 'Bronwyn',
     hp: 10,
     factionIds: ['hana-mori'],
@@ -487,6 +502,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'calamity',
+    order: 110,
     name: 'Calamity',
     hp: 12,
     factionIds: ['hana-mori'],
@@ -501,6 +517,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'dugu-squad',
+    order: 120,
     name: 'Dugu Squad',
     hp: 9,
     factionIds: ['hana-mori'],
@@ -515,6 +532,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'he4p',
+    order: 470,
     name: 'He4p',
     hp: 7,
     factionIds: ['hana-mori', 'monarchy-of-boom'],
@@ -529,6 +547,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'j-kuma',
+    order: 130,
     name: 'J-Kuma',
     hp: 12,
     factionIds: ['hana-mori', 'celestial-shogunate'],
@@ -543,6 +562,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'jean-ok',
+    order: 140,
     name: 'Jean O.K.',
     hp: 9,
     factionIds: ['hana-mori', 'subnet-86'],
@@ -557,6 +577,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'kodama',
+    order: 150,
     name: 'Kodama',
     hp: 9,
     factionIds: ['hana-mori'],
@@ -571,6 +592,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'moka',
+    order: 160,
     name: 'Moka',
     hp: 11,
     factionIds: ['hana-mori'],
@@ -585,6 +607,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'o-mori',
+    order: 480,
     name: 'O-mori',
     hp: 9,
     factionIds: ['hana-mori', 'celestial-shogunate'],
@@ -599,6 +622,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'rekka',
+    order: 170,
     name: 'Rekka',
     hp: 16,
     factionIds: ['hana-mori', 'monarchy-of-boom'],
@@ -613,6 +637,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'shred',
+    order: 180,
     name: 'Shred',
     hp: 9,
     factionIds: ['hana-mori', 'celestial-shogunate'],
@@ -627,6 +652,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'snap-dragon-lily',
+    order: 190,
     name: 'Snap Dragon Lily',
     hp: 8,
     factionIds: ['hana-mori'],
@@ -641,6 +667,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'voss',
+    order: 490,
     name: 'Voss',
     hp: 8,
     factionIds: ['hana-mori', 'subnet-86'],
@@ -655,6 +682,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'yvelette',
+    order: 200,
     name: 'Yvelette',
     hp: 8,
     factionIds: ['hana-mori', 'monarchy-of-boom'],
@@ -669,6 +697,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'benobasa',
+    order: 210,
     name: 'Benobasa',
     hp: 13,
     factionIds: ['monarchy-of-boom', 'celestial-shogunate'],
@@ -683,6 +712,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'bliztron',
+    order: 220,
     name: 'Bliztron',
     hp: 9,
     factionIds: ['monarchy-of-boom'],
@@ -697,6 +727,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'burger-808',
+    order: 500,
     name: 'Burger 808',
     hp: 15,
     factionIds: ['monarchy-of-boom'],
@@ -711,6 +742,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ezplosio',
+    order: 230,
     name: 'Ezplosio',
     hp: 7,
     factionIds: ['monarchy-of-boom', 'subnet-86'],
@@ -725,6 +757,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hungry-and-hounds',
+    order: 510,
     name: 'Hungry & Hounds',
     hp: 8,
     factionIds: ['monarchy-of-boom', 'hana-mori'],
@@ -739,6 +772,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'overtoad',
+    order: 240,
     name: 'Overtoad',
     hp: 13,
     factionIds: ['monarchy-of-boom', 'hana-mori'],
@@ -753,6 +787,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ritz',
+    order: 520,
     name: 'Ritz',
     hp: 10,
     factionIds: ['monarchy-of-boom', 'subnet-86'],
@@ -767,6 +802,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'roxie-the-mallet',
+    order: 250,
     name: 'Roxie the Mallet',
     hp: 11,
     factionIds: ['monarchy-of-boom'],
@@ -781,6 +817,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'sansho',
+    order: 530,
     name: 'Sansho',
     hp: 9,
     factionIds: ['monarchy-of-boom', 'celestial-shogunate'],
@@ -795,6 +832,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'scrapper',
+    order: 260,
     name: 'Scrapper',
     hp: 9,
     factionIds: ['monarchy-of-boom'],
@@ -809,6 +847,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'tonk0r',
+    order: 270,
     name: 'Tonk0r',
     hp: 9,
     factionIds: ['monarchy-of-boom'],
@@ -823,6 +862,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'twisted-6',
+    order: 280,
     name: 'Twisted-6',
     hp: 9,
     factionIds: ['monarchy-of-boom', 'hana-mori'],
@@ -837,6 +877,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'white-noise',
+    order: 290,
     name: 'White Noise',
     hp: 13,
     factionIds: ['monarchy-of-boom', 'subnet-86'],
@@ -851,6 +892,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'zaximus-defender',
+    order: 300,
     name: 'Zaximus Defender',
     hp: 8,
     factionIds: ['monarchy-of-boom'],
@@ -865,6 +907,7 @@ export const characters: Character[] = [
   }),
   character({
     id: '101',
+    order: 310,
     name: '101',
     hp: 9,
     factionIds: ['subnet-86', 'celestial-shogunate'],
@@ -879,6 +922,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'naix',
+    order: 320,
     name: '/naix',
     hp: 8,
     factionIds: ['subnet-86'],
@@ -893,6 +937,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'archidex',
+    order: 330,
     name: 'Archidex',
     hp: 9,
     factionIds: ['subnet-86'],
@@ -907,6 +952,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'broker',
+    order: 540,
     name: 'Broker',
     hp: 8,
     factionIds: ['subnet-86', 'celestial-shogunate'],
@@ -921,6 +967,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'cosma',
+    order: 340,
     name: 'Cosma',
     hp: 13,
     factionIds: ['subnet-86', 'hana-mori'],
@@ -935,6 +982,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'grandmaster-hash',
+    order: 350,
     name: 'Grandmaster Hash',
     hp: 10,
     factionIds: ['subnet-86', 'monarchy-of-boom'],
@@ -949,6 +997,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'joi',
+    order: 360,
     name: 'Joi',
     hp: 10,
     factionIds: ['subnet-86', 'monarchy-of-boom'],
@@ -963,6 +1012,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'mastermind',
+    order: 550,
     name: 'Mastermind',
     hp: 13,
     factionIds: ['subnet-86', 'hana-mori'],
@@ -977,6 +1027,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'null-constructor',
+    order: 370,
     name: 'Null Constructor',
     hp: 10,
     factionIds: ['subnet-86'],
@@ -991,6 +1042,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'que3n',
+    order: 560,
     name: 'Que3n',
     hp: 9,
     factionIds: ['subnet-86', 'monarchy-of-boom'],
@@ -1005,6 +1057,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'sector-probe',
+    order: 380,
     name: 'Sector Probe',
     hp: 10,
     factionIds: ['subnet-86'],
@@ -1019,6 +1072,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'the-host',
+    order: 570,
     name: 'The Host',
     hp: 11,
     factionIds: ['subnet-86'],
@@ -1033,6 +1087,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'tori-daiyu',
+    order: 390,
     name: 'Tori-Daiyu',
     hp: 10,
     factionIds: ['subnet-86'],
@@ -1047,6 +1102,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'zakhi',
+    order: 400,
     name: 'Zakhi',
     hp: 10,
     factionIds: ['subnet-86', 'celestial-shogunate'],
@@ -1061,6 +1117,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'lux',
+    order: 410,
     name: 'LuX',
     hp: 9,
     factionIds: 'any',
@@ -1074,7 +1131,8 @@ export const characters: Character[] = [
     flavour:
       'Patience. As trite as it is, great leaps forward often require a few steps back.',
   }),
-];
+  /* Written in faction blocks, READ in `order`. Moving a row changes nothing. */
+].sort((a, b) => a.order - b.order);
 
 /**
  * Dev-only. Catches a typo'd brand id and a `factionIds` that disagrees with
@@ -1083,9 +1141,13 @@ export const characters: Character[] = [
 function assertCharacterShape(): void {
   if (import.meta.env.PROD) return;
   const seen = new Set<string>();
+  const orders = new Set<number>();
   for (const c of characters) {
     if (seen.has(c.id)) console.warn(`[universe] duplicate character id "${c.id}".`);
     seen.add(c.id);
+
+    if (orders.has(c.order)) console.warn(`[universe] duplicate character order ${c.order}.`);
+    orders.add(c.order);
 
     /* all brands included */
     const fromBrands: string[] = [];

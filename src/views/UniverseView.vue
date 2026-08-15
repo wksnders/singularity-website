@@ -9,7 +9,6 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
@@ -78,7 +77,6 @@ function clearAll(): void {
 
 <template>
   <SecondaryHero glow="90% 70% at 78% 0%" :note="t('universe.hero.pending')">
-    <Breadcrumbs :crumbs="[{ label: t('ia.universe.label') }]" />
     <h1 class="universe__title">{{ t('universe.hero.title') }}</h1>
     <p class="universe__lede">{{ t('universe.hero.lede') }}</p>
     <SectionIndex :sections="sections" />
