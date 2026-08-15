@@ -62,7 +62,6 @@ export const game = {
      region list the site cannot keep true. */
   shipsTo: null as string | null,
   ageRating: '14+',
-  ratingMarks: null as string | null,
   supportEmail: 'singularity-support@octothorpe.com' as string | null,
   pressEmail: 'singularity-press@octothorpe.com' as string | null,
   trailerYouTubeId: '_eyxoFI4F-8',

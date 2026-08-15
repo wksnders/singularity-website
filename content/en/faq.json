@@ -181,7 +181,7 @@
     "id": "counts",
     "group": "box",
     "question": "How many characters, brands and programs are there?",
-    "answer": "Every faction has four brands, and every brand has ten programs. [PLACEHOLDER — the exact character and card counts, stated separately for the core box and for the line as a whole.]",
+    "answer": "Depends on the set you own, For the core server there are 40+ characters and 140+ program cards, the plus is because there's a sealed pack in the box, and to avoid spoilers I'll stop there.",
     "link": {
       "key": "cards",
       "label": "Browse the card gallery"
@@ -201,7 +201,7 @@
     "id": "sleeves",
     "group": "box",
     "question": "Will sleeved cards fit in the insert?",
-    "answer": "Yes. The insert takes sleeved cards, and it is built so cards and tokens go back in as easily as they come out.",
+    "answer": "Yes. The insert takes sleeved cards up to 100 microns and it is built so cards and tokens go back in as easily as they come out.",
     "keywords": [
       "sleeves",
       "sleeved",
@@ -218,7 +218,7 @@
     "id": "playmats",
     "group": "box",
     "question": "Are there playmats?",
-    "answer": "[PLACEHOLDER — playmats were promised during the campaign; confirm which ones exist and where they are sold.]",
+    "answer": "Premium double stitched playmats exist in the Architech's Edition boxes",
     "keywords": [
       "playmat",
       "mat",
@@ -230,15 +230,14 @@
   {
     "id": "dimensions",
     "group": "box",
-    "question": "What size are the box and the cards?",
-    "answer": "[PLACEHOLDER — box dimensions and card size. Shelf-fit and sleeve-size questions both depend on this one, so give real numbers in millimetres and inches.]",
+    "question": "What size are the cards?",
+    "answer": "Cards are standard MTG-size (63mm x 88mm)",
     "keywords": [
       "dimensions",
       "size",
       "mm",
       "inches",
-      "sleeve size",
-      "shelf"
+      "sleeve size"
     ]
   },
   {
