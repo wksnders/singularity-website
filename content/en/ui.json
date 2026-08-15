@@ -40,7 +40,6 @@
     "onThisPage": "On this page",
     "sectionRail": "Sections",
     "sections": "Sections",
-    "copyLink": "Copy link to section",
     "copied": "COPIED",
     "breadcrumb": "Breadcrumb",
     "previous": "Previous:",
@@ -157,6 +156,13 @@
       "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
       "pending": "[ HERO SPLASH — PENDING ]",
       "secondary": "See how it plays"
+    },
+    "offer": {
+      "title": "The offer",
+      "badge": "While supplies last",
+      "from": "From",
+      "priceQualifier": "USD + shipping",
+      "cta": "Get it now"
     },
     "facts": {
       "title": "The box, at a glance",
