@@ -48,12 +48,13 @@ const cast = computed<Character[]>(() =>
 /** Lateral hops: the spine walks sideways through the factions. */
 const neighbours = computed(() => {
   const index = factions.findIndex((f) => f.id === props.factionId);
-  if (index < 0) return { prev: null, next: null };
+  if (index < 0) return { prev: null, next: null, position: null };
   const prev = factions[(index - 1 + factions.length) % factions.length];
   const next = factions[(index + 1) % factions.length];
   return {
     prev: { label: prev.name, to: to('faction', { factionId: prev.id }) },
     next: { label: next.name, to: to('faction', { factionId: next.id }) },
+    position: { label: t('faction.hero.position'), index: index + 1, total: factions.length },
   };
 });
 
@@ -84,6 +85,7 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
         :crumbs="[{ label: t('ia.universe.label'), to: to('universe') }, { label: name }]"
         :prev="neighbours.prev"
         :next="neighbours.next"
+        :position="neighbours.position"
       />
       <div class="faction__identity">
         <div class="faction__emblem">
@@ -128,7 +130,7 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
           <EntityTile
             v-for="character in cast"
             :key="character.id"
-            :to="to('character', { characterId: character.id })"
+            :to="to('character', { characterId: character.id }, { query: { faction: faction.id } })"
             :art="character.art"
             :epithet="character.epithet"
             :name="character.name"

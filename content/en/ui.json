@@ -55,7 +55,10 @@
     "sectionRail": "Sections",
     "sections": "Sections",
     "copyLink": "Copy link to section",
-    "copied": "COPIED"
+    "copied": "COPIED",
+    "breadcrumb": "Breadcrumb",
+    "previous": "Previous:",
+    "next": "Next:"
   },
   "filters": {
     "all": "All",
@@ -335,6 +338,7 @@
       "artPlaceholder": "[ faction hero art — 21:9 ]",
       "pending": "[ FACTION HERO — PENDING ]",
       "emblem": "[ emblem ]",
+      "position": "Faction",
       "lorePlaceholder": "[PLACEHOLDER — paste real faction lore. Two or three sentences establishing who they are, how they fight and what they want from the Singularity.]"
     },
     "stats": {
@@ -377,7 +381,6 @@
     "chapterArtPlaceholder": "[ chapter art ]",
     "noStoriesTitle": "Not in a published chapter yet",
     "noStoriesBody": "They arrive with their set. The published chapters are on the Story page.",
-    "nextIn": "Next in",
     "missingTitle": "No character at that address",
     "missingBody": "The full cast is in the index."
   },

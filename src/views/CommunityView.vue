@@ -12,7 +12,6 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
@@ -73,7 +72,6 @@ const factSheet = computed(() => [
 
 <template>
   <SecondaryHero glow="70% 60% at 84% 0%" :note="t('community.hero.pending')">
-    <Breadcrumbs :crumbs="[{ label: t('ia.community.label') }]" />
     <h1 class="comm__title">{{ t('community.hero.title') }}</h1>
     <p class="comm__lede">{{ t('community.hero.lede') }}</p>
 

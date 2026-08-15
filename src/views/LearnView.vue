@@ -9,7 +9,6 @@ import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
@@ -48,7 +47,6 @@ const tryIt = [
 
 <template>
   <SecondaryHero glow="85% 70% at 40% 0%" :note="t('learn.hero.pending')">
-    <Breadcrumbs :crumbs="[{ label: t('ia.learn.label') }]" />
     <h1 class="learn__title">{{ t('learn.hero.title') }}</h1>
     <p class="learn__lede">{{ t('learn.hero.lede') }}</p>
     <SectionIndex :sections="sections" />

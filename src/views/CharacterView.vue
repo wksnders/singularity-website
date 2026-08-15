@@ -5,6 +5,7 @@
  * desktop, and the brand's programs as a strip that exits to the gallery.
  */
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
@@ -62,7 +63,7 @@ const playedBrands = computed(() => {
     .filter((b): b is NonNullable<ReturnType<typeof brandById>> => Boolean(b));
 });
 
-/** The primary brand owns the breadcrumb and the program strip. TODO decide if we want it this way.*/
+/** The primary brand owns the program strip. TODO decide if we want it this way.*/
 const brand = computed(() => playedBrands.value[0] ?? null);
 const otherBrands = computed(() => playedBrands.value.slice(1));
 
@@ -93,7 +94,18 @@ const remainingPrograms = computed(() =>
   Math.max((brand.value?.programCount ?? 0) - shownPrograms.value.length, 0),
 );
 
-/** Lateral hops walk the character's primary brand, not the whole cast. TODO maybe this should change too, breadcrumbs should maybe be from how you navigated to the character.*/
+/* Honoured only for a faction this character belongs to: unchecked, any id in
+   any URL becomes a claim about any character. */
+const route = useRoute();
+const scopedFaction = computed(() => {
+  const id = route.query.faction;
+  if (typeof id !== 'string') return null;
+  return memberships.value.some((faction) => faction.id === id) ? id : null;
+});
+
+const scopeQuery = computed(() => (scopedFaction.value ? { faction: scopedFaction.value } : undefined));
+
+/** Lateral hops walk the character's primary brand, not the whole cast. */
 const siblings = computed(() => {
   const primary = character.value?.brandIds[0];
   const pool = primary ? characters.filter((c) => c.brandIds[0] === primary) : [];
@@ -102,8 +114,14 @@ const siblings = computed(() => {
   const prev = pool[(index - 1 + pool.length) % pool.length];
   const next = pool[(index + 1) % pool.length];
   return {
-    prev: { label: prev.name, to: to('character', { characterId: prev.id }) },
-    next: { label: next.name, to: to('character', { characterId: next.id }) },
+    prev: {
+      label: prev.name,
+      to: to('character', { characterId: prev.id }, { query: scopeQuery.value }),
+    },
+    next: {
+      label: next.name,
+      to: to('character', { characterId: next.id }, { query: scopeQuery.value }),
+    },
   };
 });
 
@@ -116,15 +134,6 @@ const appearsIn = computed(() =>
       return { story, chapter };
     }),
 );
-
-const nextInFaction = computed(() => {
-  const factionId = memberships.value[0]?.id;
-  if (!factionId) return null;
-  const pool = characters.filter(
-    (c) => Array.isArray(c.factionIds) && c.factionIds.includes(factionId) && c.id !== props.characterId,
-  );
-  return pool[0] ?? null;
-});
 
 const cardsQuery = computed(() =>
   memberships.value[0] ? { faction: memberships.value[0].id } : undefined,
@@ -141,13 +150,15 @@ const cardsQuery = computed(() =>
       }"
     >
       <div class="char__copy l-wrap">
+        <!-- No faction or brand segment: a segment must be a page this URL
+             truncates to. -->
         <Breadcrumbs
           :crumbs="[
             { label: t('ia.universe.label'), to: to('universe') },
-            memberships[0]
-              ? { label: memberships[0].name, to: to('faction', { factionId: memberships[0].id }) }
-              : { label: t('universe.anyFaction'), to: to('unaligned') },
-            ...(brand ? [{ label: brand.name, to: to('brand', { brandId: brand.id }) }] : []),
+            {
+              label: t('characters.hero.crumb'),
+              to: to('characters', {}, { query: scopeQuery }),
+            },
             { label: name },
           ]"
           :prev="siblings.prev"
@@ -289,15 +300,6 @@ const cardsQuery = computed(() =>
             :title="t('character.noStoriesTitle')"
             :body="t('character.noStoriesBody')"
           />
-        </div>
-
-        <div v-if="nextInFaction" class="char__next">
-          <MonoLabel tone="faint">
-            {{ t('character.nextIn') }} {{ memberships[0]?.name }}
-          </MonoLabel>
-          <UiButton variant="quiet" :to="to('character', { characterId: nextInFaction.id })">
-            {{ nextInFaction.name }} →
-          </UiButton>
         </div>
       </div>
     </section>
@@ -472,14 +474,5 @@ const cardsQuery = computed(() =>
   font-size: var(--size-m);
   line-height: 1.6;
   color: var(--color-ink-faint);
-}
-
-.char__next {
-  margin-top: var(--space-8);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-6);
-  align-items: center;
-  justify-content: space-between;
 }
 </style>

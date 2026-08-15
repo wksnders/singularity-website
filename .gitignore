@@ -5,23 +5,10 @@ dist-ssr
 .DS_Store
 .vite
 
-# ===========================================================================
-# AI / AGENT ARTEFACTS — NEVER COMMITTED. NO EXCEPTIONS.
-#
-# This repo is PUBLIC, and everything in src/ and content/ is compiled into
-# dist/ and served to visitors. "Committed" and "published" are the same act.
-#
-# AI working files carry product context the shipped site deliberately does
-# not: unannounced content, roadmap, embargoed decisions, and the reasoning
-# behind them. That includes REVIEWS and AUDITS, which are the worst offenders
-# — a review enumerates every known gap and unshipped plan in one file.
-#
-# The rule is CATEGORY-based, not filename-based: if a tool or a model wrote
-# it for us rather than for visitors, it does not belong in this repo. It
-# lives in the separate private repo. See PORT-NOTES.md.
-#
-# Adding a new tool? Add its files here FIRST, before you run it.
-# ===========================================================================
+# Tool and agent artefacts. The rule is category-based, not filename-based:
+# if a tool wrote it for us rather than for visitors, it does not belong in a
+# public repo. Adding a new tool? Add its files here first, before you run it.
+# See "What must never be committed" for more info.
 
 # Agent instruction and memory files
 CLAUDE.md
@@ -46,6 +33,12 @@ copilot-instructions.md
 .sourcegraph/
 .gemini/
 .opencode/
+.design/
+
+# Agent tool configuration and exports
+.mcp.json
+.mcp.local.json
+*.dc.html
 
 # Handoff, planning, review and audit documents
 HANDOFF.md

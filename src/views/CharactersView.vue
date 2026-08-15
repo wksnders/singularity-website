@@ -83,6 +83,10 @@ function matches(character: Character): boolean {
 
 const shown = computed(() => characters.filter(matches));
 
+const tileQuery = computed(() =>
+  faction.value.value ? { faction: faction.value.value } : undefined,
+);
+
 function clearAll(): void {
   faction.set(null);
   search.value = '';
@@ -130,7 +134,7 @@ function clearAll(): void {
         <EntityTile
           v-for="character in shown"
           :key="character.id"
-          :to="to('character', { characterId: character.id })"
+          :to="to('character', { characterId: character.id }, { query: tileQuery })"
           :art="character.art"
           :badge="badge(character)"
           :epithet="character.epithet"

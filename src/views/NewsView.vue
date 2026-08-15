@@ -7,7 +7,6 @@
 import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
@@ -88,7 +87,6 @@ const kicker = (post: Doc) =>
 
 <template>
   <SecondaryHero glow="75% 65% at 68% 0%" :note="t('news.hero.pending')">
-    <Breadcrumbs :crumbs="[{ label: t('ia.news.label') }]" />
     <h1 class="news__title">{{ t('news.hero.title') }}</h1>
     <p class="news__lede">{{ t('news.hero.lede') }}</p>
   </SecondaryHero>
