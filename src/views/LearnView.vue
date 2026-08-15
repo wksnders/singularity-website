@@ -6,6 +6,7 @@
  * reference is a first-class citizen, not a PDF at the bottom.
  */
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
@@ -28,8 +29,10 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'try', label: t('learn.sections.try') },
 ]);
 
-/** Three tracks. The co-op track assumes the base game — say so. */
 const tracks = ['new', 'veteran', 'coop'] as const;
+
+const route = useRoute();
+const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
 
 const rulesHub = [
   { key: 'reference', to: soon('#rules-reference') },
@@ -58,14 +61,21 @@ const tryIt = [
     <div class="l-wrap">
       <SectionMarker id="paths" :index="1" :total="5" :heading="t('learn.paths.heading')" />
       <div class="l-grid l-grid--wide learn__gap">
-        <ContentCard
+        <div
           v-for="track in tracks"
+          :id="`path-${track}`"
           :key="track"
-          :to="soon('#learn-track')"
-          :kicker="t(`learn.tracks.${track}.kicker`)"
-          :title="t(`learn.tracks.${track}.title`)"
-          :body="t(`learn.tracks.${track}.body`)"
-        />
+          tabindex="-1"
+          class="learn__track"
+        >
+          <ContentCard
+            :to="soon('#learn-track')"
+            :current="currentTrack === track"
+            :kicker="t(`learn.tracks.${track}.kicker`)"
+            :title="t(`learn.tracks.${track}.title`)"
+            :body="t(`learn.tracks.${track}.body`)"
+          />
+        </div>
       </div>
       <BandFoot :to="{ hash: '#modes' }" :label="t('learn.paths.exit')" />
     </div>
@@ -186,6 +196,15 @@ const tryIt = [
   font-size: var(--size-body-l);
   line-height: 1.6;
   color: var(--color-ink-soft);
+}
+
+.learn__track {
+  display: flex;
+  scroll-margin-top: var(--scroll-offset);
+}
+
+.learn__track > .c-card {
+  flex: 1 1 auto;
 }
 
 .learn__gap {
