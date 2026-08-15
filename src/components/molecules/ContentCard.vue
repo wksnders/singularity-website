@@ -20,6 +20,7 @@ withDefaults(
     ratio?: string;
     /** The one filled card in a group — used once per screen at most. */
     featured?: boolean;
+    current?: boolean;
   }>(),
   { ratio: '16 / 9', featured: false },
 );
@@ -31,7 +32,7 @@ withDefaults(
     :to="to"
     :link="link"
     class="c-card"
-    :class="{ 'c-card--featured': featured }"
+    :class="{ 'c-card--featured': featured, 'c-card--current': current }"
   >
     <ArtFrame v-if="placeholder || art" :art="art" :ratio="ratio" :placeholder="placeholder" />
     <div class="c-card__body">
@@ -58,6 +59,11 @@ withDefaults(
   border-color: rgba(var(--rgb-accent), 0.5);
   color: var(--color-ink);
   text-decoration: none;
+}
+
+.c-card--current {
+  border-color: rgba(var(--rgb-accent), 0.55);
+  box-shadow: 0 0 32px rgba(var(--rgb-accent), 0.16);
 }
 
 .c-card--featured {

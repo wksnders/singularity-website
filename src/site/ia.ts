@@ -110,9 +110,9 @@ const learn: IaSection = {
     {
       key: 'learn.tracks',
       items: [
-        { key: 'learn.new', to: to('learn', {}, { hash: '#paths' }), note: true },
-        { key: 'learn.veteran', to: to('learn', {}, { hash: '#paths' }), note: true },
-        { key: 'learn.coop', to: to('learn', {}, { hash: '#paths' }), note: true },
+        { key: 'learn.new', to: to('learn', {}, { hash: '#path-new' }), note: true },
+        { key: 'learn.veteran', to: to('learn', {}, { hash: '#path-veteran' }), note: true },
+        { key: 'learn.coop', to: to('learn', {}, { hash: '#path-coop' }), note: true },
       ],
     },
     {
