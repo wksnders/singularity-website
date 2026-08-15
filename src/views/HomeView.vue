@@ -114,7 +114,6 @@ function scrollCast(direction: 1 | -1): void {
       <span>{{ game.players }} {{ t('home.hero.players') }}</span>
       <span>{{ t('home.hero.modes') }}</span>
       <span>{{ t('home.hero.length') }}</span>
-      <span class="home__hero-claim">{{ t('home.hero.zero') }}</span>
     </p>
   </PageHero>
 
@@ -156,7 +155,7 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- B · zero randomness + trailer -->
+  <!-- B · the claim + trailer -->
   <section class="l-band l-band--line-top l-band--line-bottom home__claim">
     <div class="l-wrap l-wrap--reading home__center">
       <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
@@ -357,10 +356,6 @@ function scrollCast(direction: 1 | -1): void {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
-}
-
-.home__hero-claim {
-  color: var(--color-accent-text);
 }
 
 .home__h2 {

@@ -154,7 +154,6 @@
       "players": "players",
       "modes": "Solo · co-op · versus",
       "length": "30 min / player",
-      "zero": "Zero randomness",
       "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
       "pending": "[ HERO SPLASH — PENDING ]",
       "secondary": "See how it plays"
@@ -180,7 +179,7 @@
     },
     "zero": {
       "title": "No dice. No shuffle. No luck.",
-      "body": "Zero randomness means there is always a best line — and always a reason you lost. See it in the trailer.",
+      "body": "There is always a best line and always a reason you lost. See it in the trailer.",
       "trailerTitle": "Singularity.exe trailer",
       "trailerPlaceholder": "[ trailer poster frame — 16:9 ]",
       "caption": "Captioned · plays inline",
