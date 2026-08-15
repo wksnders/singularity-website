@@ -736,7 +736,7 @@
     "id": "ai-art",
     "group": "help",
     "question": "Do you use AI-generated art or writing?",
-    "sourceKey": "community.team.aiStatement",
+    "body": "community/ai-statement",
     "keywords": [
       "ai",
       "artificial intelligence",

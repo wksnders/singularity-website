@@ -13,6 +13,7 @@ import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
+import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
@@ -241,10 +242,10 @@ const factSheet = computed(() => [
         </div>
       </div>
 
-      <!-- One source string, two placements: here and in the FAQ. -->
+      <!-- One source document, two placements: here and in the FAQ. -->
       <div class="comm__statement">
         <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
-        <p class="comm__body">{{ t('community.team.aiStatement') }}</p>
+        <MarkdownBlock slug="community/ai-statement" measure class="comm__gap" />
       </div>
 
       <p class="comm__meta">{{ t('community.team.credits') }}</p>
