@@ -6,6 +6,7 @@
  */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import FilterChip from '@/components/atoms/FilterChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -19,6 +20,7 @@ import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
 import { brandById, factionById, factions, programs } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { useQueryList } from '@/composables/useQueryList';
 import { matchesQuery, searchHaystack } from '@/site/cardText';
 import { soon, to } from '@/site/links';
 import type { Program } from '@/data/types';
@@ -31,7 +33,14 @@ const sections = computed<SectionEntry[]>(() => [
 ]);
 
 const faction = useQueryFilter('faction');
+const brandScope = useQueryList('brand');
 const search = ref('');
+
+const scopedBrands = computed(() =>
+  brandScope.values.value
+    .map((id) => brandById(id))
+    .filter((b): b is NonNullable<ReturnType<typeof brandById>> => Boolean(b)),
+);
 
 const filterOptions = computed<FilterOption[]>(() => [
   ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
@@ -51,6 +60,8 @@ function matches(program: Program): boolean {
      `factionId`, not `kind`, or one of the two silently disappears. */
   const factionOk =
     !active || (active === 'unaligned' ? !brand?.factionId : brand?.factionId === active);
+  const brandOk =
+    !brandScope.values.value.length || brandScope.values.value.includes(program.brandId);
   const query = search.value.trim().toLowerCase();
   /* EVERY printed slot except flavour — name, cost, type, sub-type, rules,
      Endian Key, brand, set. Flavour is decoration and would drown a rules
@@ -71,7 +82,7 @@ function matches(program: Program): boolean {
     t(`cards.sets.${program.set}`),
   ]);
   const searchOk = matchesQuery(haystack, query);
-  return factionOk && searchOk;
+  return factionOk && brandOk && searchOk;
 }
 
 const shown = computed(() => programs.filter(matches));
@@ -87,6 +98,7 @@ const anatomy = computed(() =>
 
 function clearAll(): void {
   faction.set(null);
+  brandScope.clear();
   search.value = '';
 }
 </script>
@@ -115,6 +127,20 @@ function clearAll(): void {
         :heading="t('cardsPage.sections.gallery')"
       />
       <MonoLabel tone="faint">{{ t('cardsPage.countNote') }}</MonoLabel>
+
+      <div v-if="scopedBrands.length" class="cards__scope">
+        <MonoLabel tone="muted" as="span">{{ t('cardsPage.brandScope') }}</MonoLabel>
+        <FilterChip
+          v-for="scoped in scopedBrands"
+          :key="scoped.id"
+          :active="true"
+          :color="factionById(scoped.factionId ?? '')?.color"
+          show-dot
+          @toggle="brandScope.remove(scoped.id)"
+        >
+          {{ scoped.name }}
+        </FilterChip>
+      </div>
 
       <FilterBar
         class="cards__gap"

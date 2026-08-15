@@ -23,6 +23,7 @@ import type {
   NewsCategory,
   OutboundUrls,
   PlayMode,
+  Printing,
   Product,
   Program,
   RogueAI,
@@ -33,6 +34,8 @@ import type {
 import { allPrograms } from './programs';
 
 const noArt = { src: null, alt: '', artist: null };
+
+const CHARACTER_ARTIST = 'Héctor Sevilla Luján';
 
 export const game = {
   name: 'Singularity.exe',
@@ -266,11 +269,11 @@ const character = (
   input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds'>,
 ): Character => ({
   ...input,
-  art: { ...noArt, alt: `${input.name}, character art` },
-  sceneArt: { ...noArt, alt: `${input.name} in their world` },
+  art: { ...noArt, alt: `${input.name}, character art`, artist: CHARACTER_ARTIST },
+  sceneArt: { ...noArt, alt: `${input.name} in their world`, artist: CHARACTER_ARTIST },
   /* The alt names WHICH card; the wording is read from the hidden block beside
      the image, so the alt does not carry the rules. */
-  cardArt: { ...noArt, alt: `${input.name} character card` },
+  cardArt: { ...noArt, alt: `${input.name} character card`, artist: CHARACTER_ARTIST },
   storyIds: [],
 });
 
@@ -1399,10 +1402,8 @@ export const wallpapers = [
   { id: 'wall-04', kind: 'avatar', file: null as string | null },
 ];
 
-/**
- * Studio credit lives in one band on Community. Per-artwork artist credit is a
- * post-launch job — `art.artist` is in the schema and stays unfilled for now.
- */
+/* Studio credit lives in one band on Community; per-artwork credit is
+   `art.artist`, filled by the two art factories. */
 /* Source: .ai/gamefound-copy.md, Image 06 — the printed campaign credits.
    Fifteen credit lines, fifteen people. Matt Anderson and Alex Johnstone each
    appear TWICE in the printed list (blocks 1 and 2) under different titles;
@@ -1449,6 +1450,35 @@ export const boxesOfProduct = (productId: string) =>
     .filter((b): b is Box => Boolean(b));
 export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? null;
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
+
+export const printingsOf = (character: Character): Printing[] => [
+  {
+    id: 'standard',
+    label: 'STANDARD',
+    art: character.art,
+    sceneArt: character.sceneArt,
+    cardArt: character.cardArt,
+  },
+  ...(character.printings ?? []),
+];
+
+/* A rename is what separates a different face from a re-skin, so it alone sets
+   `isReflavour`: new art is not a new identity. */
+export function resolvePrinting(character: Character, printing: Printing) {
+  return {
+    id: printing.id,
+    label: printing.label,
+    name: printing.name ?? character.name,
+    abilityName: printing.abilityName ?? character.abilityName,
+    flavour: printing.flavour ?? character.flavour,
+    art: printing.art,
+    sceneArt: printing.sceneArt,
+    cardArt: printing.cardArt,
+    source: printing.source ?? null,
+    licensor: printing.licensor ?? null,
+    isReflavour: Boolean(printing.name),
+  };
+}
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
 
 /** Any-faction characters are exempt from the faction filter, not excluded. (for now may change later) */
