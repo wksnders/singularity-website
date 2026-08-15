@@ -16,9 +16,9 @@ import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
-import { brandsOfFaction, characters, factionById, factions, programsOfBrand } from '@/data/universe';
+import { brandSlotCount, brandsOfFaction, characters, factionById, factions } from '@/data/universe';
 import { to } from '@/site/links';
-import type { Character } from '@/data/types';
+import type { Brand, Character } from '@/data/types';
 
 const props = defineProps<{ factionId: string }>();
 
@@ -34,7 +34,7 @@ useDocumentTitle(() => name.value);
 
 const brands = computed(() => (faction.value ? brandsOfFaction(faction.value.id) : []));
 const programCount = computed(() =>
-  brands.value.reduce((total, brand) => total + brand.programCount, 0),
+  brands.value.reduce((total, brand) => total + brandSlotCount(brand), 0),
 );
 
 const cast = computed<Character[]>(() =>
@@ -66,7 +66,7 @@ const tags = (character: Character) =>
         .map((f) => ({ label: f.name, color: f.color }))
     : [{ label: t('universe.anyFaction'), color: null }];
 
-const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
+const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats.programs')}`;
 </script>
 
 <template>
@@ -117,7 +117,7 @@ const brandPrograms = (brandId: string) => programsOfBrand(brandId).length;
             :key="brand.id"
             :brand="brand"
             :faction="faction"
-            :note="`${brandPrograms(brand.id) || brand.programCount} ${t('faction.stats.programs')}`"
+            :note="brandNote(brand)"
           />
         </div>
       </div>

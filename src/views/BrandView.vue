@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * BRAND — three bands: the brand's own story (a brand is a body of work, not a
- * colour swatch), its exactly-ten programs as printed cards with their wording
- * as text, and the characters who play it.
+ * colour swatch), its programs as printed cards with their wording as text,
+ * and the characters who play it.
  */
 import { computed } from 'vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
@@ -21,6 +21,7 @@ import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandById,
+  brandSlotCount,
   brandsOfFaction,
   characters,
   factionById,
@@ -49,10 +50,9 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'cast', label: t('brand.sections.cast') },
 ]);
 
-/** Data holds however many programs are written; the slot count is the brand's. */
 const programs = computed<Program[]>(() => {
   const written = programsOfBrand(props.brandId);
-  const total = brand.value?.programCount ?? written.length;
+  const total = brand.value ? brandSlotCount(brand.value) : written.length;
   const filler: Program[] = Array.from({ length: Math.max(total - written.length, 0) }, (_, i) => ({
     id: `${props.brandId}-slot-${written.length + i + 1}`,
     brandId: props.brandId,
@@ -171,7 +171,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="l-wrap">
         <SectionMarker id="programs" :index="2" :total="3" :heading="t('brand.sections.programs')" />
         <MonoLabel tone="faint">
-          {{ brand.programCount }} {{ t('brand.cardsNote') }}
+          {{ programs.length }} {{ t('brand.cardsNote') }}
         </MonoLabel>
         <p class="brand__body">{{ t('brand.programsBody') }}</p>
 
@@ -187,7 +187,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </li>
         </ul>
 
-        <MonoLabel tone="faint" class="brand__gap">
+        <MonoLabel v-if="revealed < programs.length" tone="faint" class="brand__gap">
           {{ revealed }} {{ t('brand.of') }} {{ programs.length }} {{ t('brand.revealed') }}
         </MonoLabel>
 

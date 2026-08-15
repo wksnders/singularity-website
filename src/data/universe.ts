@@ -237,14 +237,11 @@ export const factions: Faction[] = [
 const mark = (id: string) => `/brands/${id}.png`;
 const rogueBrand = (id: string) => `/rogue-ai/${id}.png`;
 
-/* `programCount` is the SLOT COUNT — how many cards the brand prints, which is
-   what `BrandView` pads its grid to. Ten is the common case and the default,
-   not a rule: pass the real number when a brand prints more. */
 const factionBrand = (
   id: string,
   factionId: string,
   name: string,
-  programCount = 10,
+  programCount: number | null = null,
   icon = true,
 ): Brand => ({
   id,
@@ -267,22 +264,18 @@ export const brands: Brand[] = [
   factionBrand('infinite-divine', 'celestial-shogunate', 'Infinite Divine'),
   factionBrand('onryoki-noh', 'celestial-shogunate', 'Onryoki Noh'),
   factionBrand('zodiac-reliquary', 'celestial-shogunate', 'Zodiac Reliquary'),
-  /* Ten programs plus five Scrolls. Library is a Zone, not a program, and is
-     not counted here — see the note in programs.ts. */
-  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives', 15),
+  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives'),
   factionBrand('data-nation', 'subnet-86', 'Data Nation'),
   factionBrand('hostile-rewrite', 'subnet-86', 'Hostile Rewrite'),
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),
   factionBrand('masquerade', 'subnet-86', 'Masquerade'),
-  /* A brand with ten printed programs and no faction. It sits outside the
-     per-faction brand lists, so a faction's count must not pick it up. */
   {
     id: 'common',
     factionId: null,
     name: 'Common',
     icon: mark('common'),
     kind: 'universal',
-    programCount: 14,
+    programCount: null,
   },
   {
     id: 'lux-vault',
@@ -291,6 +284,7 @@ export const brands: Brand[] = [
     icon: mark('lux-vault'),
     kind: 'personal',
     unlock: 'challenges',
+    /* Ten printed; the four not transcribed yet are held back deliberately. */
     programCount: 10,
   },
 ];
@@ -1481,6 +1475,9 @@ export const boxesOfProduct = (productId: string) =>
     .filter((b): b is Box => Boolean(b));
 export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? null;
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
+
+export const brandSlotCount = (brand: Brand) =>
+  brand.programCount ?? programsOfBrand(brand.id).length;
 
 export const printingsOf = (character: Character): Printing[] => [
   {
