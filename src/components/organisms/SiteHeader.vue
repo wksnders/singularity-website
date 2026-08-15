@@ -1,14 +1,13 @@
 <script setup lang="ts">
 /**
- * The site bar. Transparent over a hero, solid past 80px, retracts on
- * scroll-down. Four of the five sections carry a mega panel; News is flat.
- * Faction dots inside the Universe panel are the ONLY faction colour in chrome.
+ * The site bar. Faction dots inside the Universe panel are the ONLY faction
+ * colour anywhere in chrome.
  */
 import MegaPanel from './MegaPanel.vue';
-import PlayNowMenu from './PlayNowMenu.vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
 import { primaryNav } from '@/site/ia';
-import { to } from '@/site/links';
+import { outbound, to } from '@/site/links';
 import { useChrome } from '@/composables/useChrome';
 
 const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, closeMega, toggleMenu } =
@@ -64,7 +63,7 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
       </nav>
 
       <div class="c-nav__spacer" />
-      <PlayNowMenu />
+      <BaseLink :link="outbound('buy')" class="c-nav__buy">{{ t('chrome.buy') }}</BaseLink>
 
       <button
         v-if="!wide"
@@ -194,6 +193,26 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
   font-size: var(--size-s);
   line-height: 1;
   cursor: pointer;
+}
+
+.c-nav__buy {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: var(--size-m);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--glow-accent);
+}
+
+.c-nav__buy:hover {
+  color: var(--color-on-accent);
+  text-decoration: none;
 }
 
 .c-nav__spacer {

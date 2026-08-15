@@ -1,11 +1,8 @@
 /* ============================================================================
    Chrome state: one composable, shared by header and mobile sheet.
 
-   Behaviours ported from the mock:
-   - `wide` comes from matchMedia, not a CSS breakpoint, because the desktop nav
-     and the mobile sheet are different components.
-   - The bar solidifies past 80px and retracts on scroll-down past 240px.
-   - One mega panel open at a time; Escape closes and returns focus.
+   `wide` is matchMedia rather than a CSS breakpoint because the desktop nav and
+   the mobile sheet are separate components, not one component restyled.
    ========================================================================== */
 
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
@@ -19,7 +16,6 @@ const scrolled = ref(false);
 const navHidden = ref(false);
 const megaOpen = ref<string | null>(null);
 const menuOpen = ref(false);
-const playOpen = ref(false);
 
 let listeners = 0;
 let lastY = 0;
@@ -27,7 +23,6 @@ let media: MediaQueryList | null = null;
 
 function closeAll(): void {
   megaOpen.value = null;
-  playOpen.value = false;
 }
 
 function onMedia(): void {
@@ -49,7 +44,7 @@ function onScroll(): void {
 function onKeydown(event: KeyboardEvent): void {
   if (event.key !== 'Escape') return;
   const open = megaOpen.value;
-  if (!open && !playOpen.value && !menuOpen.value) return;
+  if (!open && !menuOpen.value) return;
   closeAll();
   menuOpen.value = false;
   if (open) {
@@ -84,28 +79,19 @@ export function useChrome() {
     navHidden: readonly(navHidden),
     megaOpen: readonly(megaOpen),
     menuOpen,
-    playOpen,
-    /** Hover-open, desktop only. */
     openMega(key: string) {
       if (wide.value && megaOpen.value !== key) {
         megaOpen.value = key;
-        playOpen.value = false;
       }
     },
     toggleMega(key: string) {
       megaOpen.value = megaOpen.value === key ? null : key;
-      playOpen.value = false;
     },
     closeMega() {
       megaOpen.value = null;
     },
-    togglePlay() {
-      playOpen.value = !playOpen.value;
-      megaOpen.value = null;
-    },
     toggleMenu() {
       menuOpen.value = !menuOpen.value;
-      playOpen.value = false;
     },
     closeAll,
   };

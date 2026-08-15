@@ -22,7 +22,6 @@
     "menu": "Menu",
     "close": "Close menu",
     "sections": "sections",
-    "playNow": "Play Now",
     "featured": "Featured character",
     "featuredPlaceholder": "[ featured character art ]",
     "social": {
@@ -31,20 +30,7 @@
       "instagram": "Instagram",
       "boardgamegeek": "BGG"
     },
-    "play": {
-      "buy": {
-        "label": "Buy the box",
-        "note": "Core set · expansion · Incursions"
-      },
-      "printAndPlay": {
-        "label": "Print & play",
-        "note": "Core set + expansion, print-ready"
-      },
-      "tabletopSimulator": {
-        "label": "Tabletop Simulator",
-        "note": "Free 2-player preview build"
-      }
-    }
+    "buy": "Buy the box"
   },
   "footer": {
     "publishedBy": "Published by",
@@ -170,7 +156,8 @@
       "length": "30 min / player",
       "zero": "Zero randomness",
       "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
-      "pending": "[ HERO SPLASH — PENDING ]"
+      "pending": "[ HERO SPLASH — PENDING ]",
+      "secondary": "See how it plays"
     },
     "facts": {
       "title": "The box, at a glance",
@@ -227,18 +214,10 @@
       "artPlaceholder": "[ chapter key art ]"
     },
     "ways": {
-      "title": "Three ways in",
+      "title": "Ways in",
       "buy": {
         "title": "Buy the box",
         "body": "Core set, expansion and Incursions — all launching day one. No random boosters, ever."
-      },
-      "pnp": {
-        "title": "Print & play",
-        "body": "Print-ready sheets for the core set and the first expansion, free. Try a real game tonight."
-      },
-      "tts": {
-        "title": "Tabletop Simulator",
-        "body": "The free two-player preview build, on the Steam Workshop. Play with anyone, anywhere — Tabletop Simulator required."
       }
     },
     "news": {
@@ -384,7 +363,7 @@
     "appearsIn": "Appears in",
     "chapterArtPlaceholder": "[ chapter art ]",
     "noStoriesTitle": "Not in a published chapter yet",
-    "noStoriesBody": "They have not turned up in a published chapter yet. The story follows a few at a time, come chat with us on Discord to let us know what you want to see next.",
+    "noStoriesBody": "They have not turned up in a published chapter yet.",
     "missingTitle": "No character at that address",
     "missingBody": "The full cast is in the index.",
     "castLabel": "Cast",
@@ -418,7 +397,8 @@
     "rowAccess": "Brand access",
     "rowPrinting": "Printing",
     "rowArtist": "Artist",
-    "rowSource": "Source"
+    "rowSource": "Source",
+    "noStoriesDiscord": "Tell us who you want to see next on Discord"
   },
   "brand": {
     "hero": {
@@ -671,7 +651,7 @@
       "modes": "Modes of play",
       "videos": "Videos",
       "rules": "Rules hub",
-      "try": "Try it free"
+      "try": "Ways to try"
     },
     "paths": {
       "heading": "Where are you starting?",
@@ -753,22 +733,7 @@
       "exit": "Play a game before you buy one →"
     },
     "try": {
-      "heading": "Try it tonight",
-      "pnp": {
-        "kicker": "Free",
-        "title": "Print & play",
-        "body": "Print-ready sheets for the core set and the first expansion — the competitive cards, free. Not a cut-down demo, the real game."
-      },
-      "tts": {
-        "kicker": "Digital",
-        "title": "Tabletop Simulator",
-        "body": "The official preview build: two players, core and expansion cards, rules reference in-game. Free on the Steam Workshop; Tabletop Simulator required."
-      },
-      "buy": {
-        "kicker": "The box",
-        "title": "Buy the box",
-        "body": "Core set, expansion and Incursions."
-      },
+      "heading": "Ways to try it",
       "exit": "See what is in each box →"
     }
   },
@@ -848,7 +813,7 @@
         "label": "Try it & digital",
         "short": "Try it",
         "standfirst": "",
-        "exit": "Try it free →"
+        "exit": "Ways to try it →"
       },
       "help": {
         "label": "Help & contact",
@@ -1067,7 +1032,7 @@
       },
       "printAndPlay": {
         "label": "Print & play",
-        "note": "The core set, free"
+        "note": "Free to download · needs a printer"
       },
       "paths": {
         "label": "Learn to play"
@@ -1154,5 +1119,56 @@
   },
   "cardZoom": {
     "close": "Close"
+  },
+  "try": {
+    "tiers": {
+      "free": "Watch and read",
+      "effort": "Print it yourself",
+      "owned": "Play it in Tabletop Simulator"
+    },
+    "requires": {
+      "printer": "Needs a printer",
+      "cutter": "A cutter or scissors",
+      "tts": "Needs Tabletop Simulator"
+    },
+    "cost": {
+      "paid-third-party": "a paid app on Steam"
+    },
+    "caveat": {
+      "competitiveOnly": "The real competitive cards — not a cut-down demo.",
+      "preview": "Preview build: two players, core and expansion cards, art not final."
+    },
+    "routes": {
+      "fullGame": {
+        "kicker": "Watch",
+        "title": "Watch a full game",
+        "body": "A whole match, start to crash — the closest thing to a trial that costs nothing."
+      },
+      "howToPlay": {
+        "kicker": "Watch",
+        "title": "How to play",
+        "body": "Short captioned videos. The same ones the printed QR codes point at."
+      },
+      "rules": {
+        "kicker": "Read",
+        "title": "Read the rules",
+        "body": "The whole reference. Determinism is the kind of claim you can check by reading."
+      },
+      "cards": {
+        "kicker": "Browse",
+        "title": "Browse every card",
+        "body": "Rules text in full, as real text — searchable and screen-readable."
+      },
+      "printAndPlay": {
+        "kicker": "Free to download",
+        "title": "Print & play",
+        "body": "Print-ready sheets for the core set and the first expansion."
+      },
+      "tts": {
+        "kicker": "Needs Tabletop Simulator",
+        "title": "Tabletop Simulator",
+        "body": "Our Workshop mod is free."
+      }
+    }
   }
 }

@@ -1,13 +1,10 @@
 /* ============================================================================
    Universe data types.
 
-   The split that matters:
-   - THIS file (and universe.ts) hold IDS, RELATIONS, COLOURS and FACTS —
-     things a translator must never touch.
-   - Every user-visible sentence lives in a markdown file under content/<locale>/
-     and is merged in at read time (see src/composables/useUniverse.ts).
-   The `name` / `epithet` / `tagline` fields below are FALLBACKS so the site
-   renders before any markdown exists; a doc of the same slug always wins.
+   This file and universe.ts hold IDS, RELATIONS, COLOURS and FACTS — things a
+   translator must never touch. Every user-visible sentence lives in
+   content/<locale>/ instead. The `name` / `epithet` / `tagline` fields here are
+   FALLBACKS: a doc of the same slug always wins.
    ========================================================================== */
 
 /* ---------------------------------------------------------------------------
@@ -19,10 +16,9 @@
      · CARD (`cardArt`) — the printed card, frame and rules box included. Never
        cropped, never a backdrop: a crop removes printed rules.
 
-   Separate fields, so a surface cannot reach for the wrong one and a missing
-   card renders a placeholder rather than the illustration. A surface showing
-   the ILLUSTRATION must not also carry the card's wording: art plus text is a
-   reconstruction of a card, not a card. Show the card, or show the art.
+   Separate fields so a surface cannot reach for the wrong one. A surface
+   showing the ILLUSTRATION must not carry the card's wording: art plus text is
+   a reconstruction of a card, not a card. Show the card, or show the art.
    -------------------------------------------------------------------------- */
 
 /** Every image on the site is an art object, never a bare path. */
@@ -135,25 +131,13 @@ export interface Character {
   name: string;
   epithet: string;
   /**
-   * Multi-faction membership is canon. The first entry is the character's main
-   * faction and owns their colour everywhere; later entries are secondary and
-   * render as additional emblems even though the character is still a part of 
-   * those factions. Character factions are stored rather than infered from the
-   * brand to keep it consistent with other places we store character data.
-   * Note that some characters like Lux can go in 'Any' Faction 
+   * Multi-faction membership is canon. The first entry owns the page's colour;
+   * the rest are equally real memberships and render as further emblems.
    */
   factionIds: FactionMembership;
-  /**
-   * Faction brands the character plays, in printed order. The FIRST is
-   * primary faction. Most characters have two; a few have three; or only 1.
-   * but there isnt a set limit to number of brands.
-   */
+  /** Faction brands they play, in printed order. No limit on how many. */
   brandIds: string[];
-  /**
-   * Which release the character is printed in. Required, not optional: array
-   * position does not carry this, the cast is ordered by faction and name
-   * 
-   */
+  /** Which release printed them. Required: array position does not carry it. */
   set: SetCode;
   personalBrandId?: string | null;
   /** ILLUSTRATION — the character alone, no background. Tiles, story pins. */
@@ -162,7 +146,7 @@ export interface Character {
   sceneArt: Art;
   /** CARD — the printed character card. Never cropped: a crop removes rules. */
   cardArt: Art;
-  /** Stories this character appears in — drives the story graph's pins. */
+  /** Stories this character appears in - drives the story graph's pins. */
   storyIds?: string[];
   /* Alt Arts BEYOND the standard one */
   printings?: Printing[];
@@ -182,6 +166,23 @@ export interface Character {
 /**
  * An Incursion boss.
  */
+/* Barrier ascending. Drives both the order of the try band and its grouping. */
+export type TryTier = 'free' | 'effort' | 'owned';
+
+interface TryRouteFacts {
+  id: string;
+  tier: TryTier;
+  requiresKeys: string[];
+  costNote: 'paid-third-party' | null;
+  minutes: number | null;
+  caveatKey: string | null;
+  /** The Learn band that already offers this, so Learn can leave it out. */
+  alsoOnLearn?: 'videos' | 'rules';
+}
+
+export type TryRoute = TryRouteFacts &
+  ({ outbound: OutboundKey; route?: never } | { route: { name: string; hash?: string }; outbound?: never });
+
 export interface RogueAI {
   id: string;
   name: string;
@@ -192,32 +193,23 @@ export interface RogueAI {
 /* ---------------------------------------------------------------------------
    THREE LEVELS, AND THEY ARE NOT INTERCHANGEABLE.
 
-   An earlier model had one `GameSet` that was a product AND a box AND a
-   chapter. All three collapses were wrong, and the type propagated each of
-   them into every view that read it.
-
-     · A BOX is a physical thing with components in it. It is the unit a
-       component list describes, and the unit the story ships inside.
-     · A PRODUCT (SKU) is a way to pay. It bundles one or more boxes. Core
-       Edition is one box; Gameplay Complete Edition is six. A box that is sold
-       on its own later simply gains a product of its own containing only it —
-       which is why `Box` has no `price` and no "sold separately" flag. The
-       existence of a product pointing at one box IS that fact, and keeping it
-       in one place stops the two from disagreeing.
-     · A CHAPTER is story. It rides in boxes, not in SKUs: bundling six boxes
-       into an edition does not create a chapter, and story also ships with no
-       box at all.
+     · A BOX is a physical thing with components in it, and the unit story
+       ships inside.
+     · A PRODUCT (SKU) is a way to pay, bundling one or more boxes. A box sold
+       on its own later just gains a product containing only it - which is why
+       `Box` has no price and no "sold separately" flag.
+     · A CHAPTER is story. It rides in boxes, never in SKUs: bundling six boxes
+       into an edition creates no chapter, and story also ships with no box.
 
    The invariants, in order of how easy they are to break:
 
-     1. The component list of a box is the STORE's, and is not mirrored here —
-        see `Box`. `Product.extras` is for things that arrive OUTSIDE any box (a
-        pledge exclusive, a promo) and is not a way to reintroduce one.
+     1. A box's component list is the STORE's and is not mirrored here.
+        `Product.extras` is for things arriving OUTSIDE any box, not a way to
+        reintroduce one.
      2. `Chapter.boxIds` points at boxes, never at products.
-     3. `Product.boxCount` is the claim; `Product.boxIds` is the enumeration.
-        When both are present they must agree — `assertProductShape()` in
-        universe.ts checks this in dev, because "six boxes" listing five is the
-        exact error nobody notices.
+     3. `Product.boxCount` is the claim, `Product.boxIds` the enumeration, and
+        `assertProductShape()` checks they agree. "six boxes" listing five is
+        the error nobody notices.
    -------------------------------------------------------------------------- */
 
 /**

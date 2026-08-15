@@ -1,8 +1,7 @@
 <script setup lang="ts">
 /**
  * Mobile navigation is a full sheet, not a dropdown: every section, plus the
- * mono jump chips that make in-page sections reachable from anywhere on the
- * site, plus the demoted socials row above the pinned Play Now CTA.
+ * jump chips that make in-page sections reachable from anywhere on the site.
  */
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -66,16 +65,12 @@ watch(menuOpen, async (open) => {
 
   document.body.classList.remove('is-menu-open');
   document.removeEventListener('keydown', trapTab, true);
-  /* Back to the burger, whether the sheet was closed by the ×, by Escape, by
-     following a link, or by the viewport growing past the wide breakpoint. */
   lastFocused?.focus();
   lastFocused = null;
 });
 
-/* A modal must not survive a navigation. Every link in the sheet already calls
-   toggleMenu(), but the browser back button does not — without this the sheet
-   would sit open over a page the reader never asked for, with the scroll still
-   locked behind it. */
+/* Links in the sheet call toggleMenu(); the browser back button does not, and
+   without this the sheet sits open over a page nobody asked for. */
 const route = useRoute();
 watch(
   () => route.fullPath,
@@ -142,7 +137,7 @@ onBeforeUnmount(() => {
           {{ t(`chrome.social.${key}`) }}
         </BaseLink>
       </div>
-      <BaseLink :link="outbound('buy')" class="c-sheet__cta">{{ t('chrome.playNow') }}</BaseLink>
+      <BaseLink :link="outbound('buy')" class="c-sheet__cta">{{ t('chrome.buy') }}</BaseLink>
     </div>
   </div>
 </template>

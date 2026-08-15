@@ -38,7 +38,7 @@ import {
   resolvePrinting,
   stories,
 } from '@/data/universe';
-import { to } from '@/site/links';
+import { outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
 
@@ -488,6 +488,11 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           </div>
           <div v-else class="char__no-stories">
             <p>{{ t('character.noStoriesBody') }}</p>
+            <p class="char__panel-link">
+              <BaseLink :link="outbound('discord')">
+                {{ t('character.noStoriesDiscord') }} →
+              </BaseLink>
+            </p>
             <p class="char__panel-link">
               <BaseLink :to="to('story', {}, { hash: '#chapters' })">
                 {{ t('character.readChapters') }} →
