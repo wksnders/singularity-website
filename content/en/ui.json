@@ -33,8 +33,7 @@
     "buy": "Buy the box"
   },
   "footer": {
-    "publishedBy": "Published by",
-    "crossover": "Crossover with"
+    "publishedBy": "Published by"
   },
   "wayfinding": {
     "onThisPage": "On this page",
@@ -910,7 +909,7 @@
       "pending": "[ portraits and bios — PENDING ]",
       "portrait": "[ portrait ]",
       "aiKicker": "On AI",
-      "credits": "Card art is credited to its illustrator wherever it appears. Published by Panda; crossover content with Middara.",
+      "credits": "Card art is credited to its illustrator wherever it appears.",
       "exit": "Come say hello in the Discord →"
     }
   },

@@ -248,7 +248,10 @@ const factSheet = computed(() => [
         <MarkdownBlock slug="community/ai-statement" measure class="comm__gap" />
       </div>
 
-      <p class="comm__meta">{{ t('community.team.credits') }}</p>
+      <p class="comm__meta">
+        {{ t('community.team.credits') }}
+        {{ t('footer.publishedBy') }} {{ game.publisher }}.
+      </p>
 
       <BandFoot :to="to('community', {}, { hash: '#discord' })" :label="t('community.team.exit')" />
     </div>

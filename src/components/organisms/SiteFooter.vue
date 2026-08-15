@@ -2,11 +2,10 @@
 /**
  * The footer is the sitemap of record: every section, and every deep-linkable
  * in-page anchor, rendered from the same IA array as the nav. It also carries
- * the publisher credits and the reserved slot for the printed rating marks.
+ * the publisher credits.
  */
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import TbdValue from '@/components/atoms/TbdValue.vue';
 import { t } from '@/content';
 import { footerColumns, socialKeys } from '@/site/ia';
 import { outbound, resolveLink } from '@/site/links';
@@ -38,8 +37,6 @@ import { game } from '@/data/universe';
       <div class="c-footer__legal">
         <span>© {{ game.copyrightYear }} {{ game.studio }} · {{ game.studioCity }}</span>
         <span>{{ t('footer.publishedBy') }} {{ game.publisher }}</span>
-        <span>{{ t('footer.crossover') }} {{ game.crossoverGame }}</span>
-        <TbdValue :value="game.ratingMarks" />
       </div>
     </div>
   </footer>
