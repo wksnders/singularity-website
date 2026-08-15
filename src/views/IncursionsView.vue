@@ -6,6 +6,7 @@
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
@@ -138,7 +139,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <MonoLabel tone="faint">
                 {{ t('characters.incursion') }} {{ pad(index + 1) }}
               </MonoLabel>
-              <h3 class="inc__boss-name">{{ ai.name }}</h3>
+              <h3 class="inc__boss-name">
+                <BrandMark :icon="ai.brand" :name="ai.name" :size="34" />
+                {{ ai.name }}
+              </h3>
               <p class="inc__step-body">{{ t('incursions.roster.linePlaceholder') }}</p>
             </div>
           </article>
@@ -321,6 +325,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 .inc__boss-name {
   margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
   font-weight: 400;

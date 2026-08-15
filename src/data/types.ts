@@ -186,6 +186,7 @@ export interface RogueAI {
   id: string;
   name: string;
   art: Art;
+  brand: string | null;
 }
 
 /* ---------------------------------------------------------------------------

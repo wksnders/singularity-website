@@ -52,6 +52,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 MASTERS = ROOT / "private" / "brand-icons"
 OUT = ROOT / "public" / "brands"
+OUT_ROGUE = ROOT / "public" / "rogue-ai"
 
 SIZE = 384
 COLOURS = 64
@@ -82,6 +83,14 @@ SLUGS = {
     "Masquerade": "masquerade",
     # Personal
     "Lux": "lux-vault",
+    # Universal
+    "Common": "common",
+}
+
+ROGUE_SLUGS = {
+    "Calebrena": "calebrena",
+    "Invader": "invader",
+    "Paths of Terminus": "paths-of-terminus",
 }
 
 
@@ -92,30 +101,33 @@ def build() -> None:
             "They are deliberately not in git — fetch them from the art library first."
         )
 
-    OUT.mkdir(parents=True, exist_ok=True)
     total = 0
-    for name, slug in sorted(SLUGS.items()):
-        master = MASTERS / f"{name}.png"
-        if not master.exists():
-            raise SystemExit(f"missing master: {master}")
+    count = 0
+    for slugs, out in ((SLUGS, OUT), (ROGUE_SLUGS, OUT_ROGUE)):
+        out.mkdir(parents=True, exist_ok=True)
+        for name, slug in sorted(slugs.items()):
+            master = MASTERS / f"{name}.png"
+            if not master.exists():
+                raise SystemExit(f"missing master: {master}")
 
-        art = Image.open(master).convert("RGBA")
-        art = art.crop(art.split()[3].getbbox())
+            art = Image.open(master).convert("RGBA")
+            art = art.crop(art.split()[3].getbbox())
 
-        width, height = art.size
-        side = max(width, height)
-        square = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-        square.paste(art, ((side - width) // 2, (side - height) // 2))
+            width, height = art.size
+            side = max(width, height)
+            square = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+            square.paste(art, ((side - width) // 2, (side - height) // 2))
 
-        square.resize((SIZE, SIZE), Image.LANCZOS).quantize(
-            colors=COLOURS_BY_SLUG.get(slug, COLOURS), method=Image.FASTOCTREE
-        ).save(OUT / f"{slug}.png", "PNG", optimize=True)
+            square.resize((SIZE, SIZE), Image.LANCZOS).quantize(
+                colors=COLOURS_BY_SLUG.get(slug, COLOURS), method=Image.FASTOCTREE
+            ).save(out / f"{slug}.png", "PNG", optimize=True)
 
-        size = (OUT / f"{slug}.png").stat().st_size
-        total += size
-        print(f"{slug:<20} {size // 1024:>3} KB")
+            size = (out / f"{slug}.png").stat().st_size
+            total += size
+            count += 1
+            print(f"{slug:<20} {size // 1024:>3} KB")
 
-    print(f"{'TOTAL':<20} {total // 1024:>3} KB  ({len(SLUGS)} marks)")
+    print(f"{'TOTAL':<20} {total // 1024:>3} KB  ({count} marks)")
 
 
 if __name__ == "__main__":
