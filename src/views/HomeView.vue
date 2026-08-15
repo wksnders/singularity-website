@@ -1,9 +1,8 @@
 <script setup lang="ts">
 /**
- * HOME — a lobby, not a page. Hero, then nine modules in a fixed order:
- * A pitch & ways to play · B zero randomness + trailer · C cast rotator ·
- * D faction shelf · E Incursions · F current chapter · G three ways in ·
- * H news 3-up · I Discord + newsletter. One filled CTA below the fold (G).
+ * HOME - a lobby, not a page. Hero, then the modules marked A–I below, in that
+ * order. Nine is a ceiling, not a target, and G holds the only filled CTA below
+ * the fold.
  */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -11,6 +10,7 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
+import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
 import StatRow from '@/components/molecules/StatRow.vue';
@@ -22,6 +22,7 @@ import {
   chapters,
   characters,
   coreBox,
+  tryRoutes,
   factionById,
   factions,
   game,
@@ -30,14 +31,9 @@ import {
 import { outbound, to } from '@/site/links';
 import type { Stat } from '@/site/stats';
 
-/* Commercial facts have reserved slots even while the values are unknown.
-
-   These are the CORE EDITION's, not the game's — there are three editions. The
-   strip is titled to say so; if this ever renders without that title, it is
-   lying by omission.
-
-   PRICE IS NOT A ROW HERE: three editions cost three different amounts and the
-   store is the authority on all three. */
+/* The CORE EDITION's facts, not the game's — the strip's title has to say so or
+   it lies by omission. No price row: three editions, three prices, and the store
+   is the authority on all of them. */
 const boxFacts = computed<Stat[]>(() => [
   { label: t('home.facts.release'), value: game.releaseDate, reserved: true },
   { label: t('home.facts.box'), value: coreBox.summary, reserved: true },
@@ -108,10 +104,12 @@ function scrollCast(direction: 1 | -1): void {
       <UiButton variant="primary" :link="outbound('buy')">{{ t('home.hero.ctaPlay') }}</UiButton>
       <UiButton :to="to('universe')">{{ t('home.hero.ctaUniverse') }}</UiButton>
     </div>
-    <!-- The player count reads "1–4", which on its own does not tell anyone
-         solo is a real, supported way to play — so the modes are named right
-         next to it. Four items is the ceiling here; anything more and the row
-         wraps into a wall on a phone. -->
+    <p class="home__hero-secondary">
+      <BaseLink :to="to('learn', {}, { hash: '#try' })">{{ t('home.hero.secondary') }} →</BaseLink>
+    </p>
+    <!-- "1–4" alone does not tell anyone solo is supported, so the modes are
+         named beside it. Four items is the ceiling before this wraps on a
+         phone. -->
     <p class="home__hero-stats">
       <span>{{ game.players }} {{ t('home.hero.players') }}</span>
       <span>{{ t('home.hero.modes') }}</span>
@@ -262,30 +260,18 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- G · three ways in — the only filled CTA below the fold -->
+  <!-- G · ways in — the only filled CTA below the fold -->
   <section id="learn" class="l-band l-band--alt l-band--line-top">
     <div class="l-wrap">
       <h2 class="home__h2">{{ t('home.ways.title') }}</h2>
       <div class="l-grid l-grid--wide home__spacer">
         <ContentCard
           featured
-          kicker="01"
           :title="t('home.ways.buy.title')"
           :body="t('home.ways.buy.body')"
           :link="outbound('buy')"
         />
-        <ContentCard
-          kicker="02"
-          :title="t('home.ways.pnp.title')"
-          :body="t('home.ways.pnp.body')"
-          :link="outbound('printAndPlay')"
-        />
-        <ContentCard
-          kicker="03"
-          :title="t('home.ways.tts.title')"
-          :body="t('home.ways.tts.body')"
-          :link="outbound('tabletopSimulator')"
-        />
+        <TryRouteCard v-for="route in tryRoutes" :key="route.id" :route="route" />
       </div>
     </div>
   </section>
@@ -348,6 +334,12 @@ function scrollCast(direction: 1 | -1): void {
   font-size: clamp(1rem, 2.4vw, 1.3125rem);
   line-height: 1.5;
   color: rgba(var(--rgb-ink), 0.82);
+}
+
+.home__hero-secondary {
+  margin-top: var(--space-4);
+  font-size: var(--size-body);
+  font-weight: 500;
 }
 
 .home__cta {

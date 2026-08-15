@@ -28,6 +28,8 @@ import type {
   Program,
   RogueAI,
   Story,
+  TryRoute,
+  TryTier,
   Video,
   WallpaperKind,
 } from './types';
@@ -43,29 +45,17 @@ export const game = {
   studioCity: 'Salt Lake City',
   publisher: 'Panda',
   crossoverGame: 'Middara',
-  /* 1–4, not 2–4. This is the player count for the GAME — every mode across the
-     line — and solo is one of the modes, so the range starts at 1.
-
-     It is not a claim about any single box: solo and co-op are Incursions, and
-     Incursions is its own product, sold separately (it launches the same day as
-     the core box and expansion 1). So never render this count as "what is in the
-     core box" — which box gets you solo is a purchase question, and it belongs
-     in the Incursions bands and on the store.
-
-     Per-mode counts (2 for the duel, 3–4 for free-for-all) live beside each mode
-     in ui.json. */
+  /* The GAME's range across every mode, which is why it starts at 1 — solo is
+     Incursions, and Incursions is a separate product. Never render this as
+     what is in the core box; which box gets you solo is a purchase question. */
   players: '1\u20134',
-  /** Co-op/solo range — state it wherever co-op is sold. Same span as the game
-      as a whole, and still its own field: the Incursions bands quote it alone,
-      and Incursions is a separate box, so the two numbers are not the same
-      claim even when they read the same. */
+  /** Its own field even though it reads the same as `players`: Incursions is a
+      separate box, so the two are not the same claim. */
   incursionsPlayers: '1\u20134',
   playTime: '30 min per player',
-  /* Commercial facts that belong to the GAME rather than to one box.
-
-     Price and box contents are NOT here: there are three editions at three
-     prices, so a single `game.price` would silently become the site's answer
-     for all of them. Price lives on `products[]`. */
+  /* No price here: three editions at three prices, so a single `game.price`
+     would silently become the site's answer for all of them. It lives on
+     `products[]`. */
   releaseDate: null as string | null,
   /* The store is the authority on shipping — regions, dates and surcharges all
      change there without warning. Keep this null and link out; do not mirror a
@@ -80,19 +70,12 @@ export const game = {
 };
 
 /**
- * Form endpoints. Both are CLOSED: there is nothing behind either form yet.
+ * Both CLOSED: while these are null the forms render disabled and say why,
+ * because a form that answers "sent" and drops the message is worse than none.
  *
- * A form that answers "sent" and then drops the message is worse than no form
- * at all — a broken form makes people try again, a lying one does not. So while
- * these are null both forms render disabled and say why.
- *
- * Opening one is TWO steps, in this order:
- *   1. put the endpoint here, and
- *   2. make the component actually POST to it and report the real result.
- * Never do (1) on its own.
- *
- * `SupportForm` has step 2. Its `url` must answer with CORS headers — see
- * `FormEndpoint` in types.ts for why nothing else will do.
+ * Opening one is TWO steps and never just the first: put the endpoint here,
+ * AND make the component POST to it and report the real result. `SupportForm`
+ * has step 2 already; its `url` must answer with CORS headers.
  */
 export const formEndpoints = {
   newsletter: null as string | null,
@@ -102,23 +85,15 @@ export const formEndpoints = {
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
   buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/',
-  /* Root-relative, NOT absolute: these three are files this site serves from
-     `public/downloads/`, and `outbound()` joins them to the deploy base. Hosting
-     them here rather than linking a Dropbox share is deliberate — no expiring
-     share token, no third party disabling the link on a traffic spike, and the
-     filenames carry no version number, so updating a document means overwriting
-     the file and every link ever printed or posted still resolves. Keep it that
-     way: the QR codes in the box point at this site. */
+  /* Root-relative, and the filenames carry no version number: updating a
+     document means overwriting the file, so every link already printed on a box
+     still resolves. Self-hosted for the same reason — no expiring share token. */
   printAndPlay: '/downloads/singularity-competitive-print-and-play.zip',
   /* Steam Workshop: "Singularity.exe Preview 2-Player" (Octothorpe Games).
-     Free, but today a PREVIEW build — two players, core + expansion cards and
-     the in-game rules reference; the assets are not final.
 
-     THIS URL WILL NOT CHANGE. The plan is to update this same workshop item to
-     the full game around ship, so the ID stays put and only the copy goes
-     stale. When that update lands, the three strings that currently say
-     "preview" have to be rewritten: nav.play.tabletopSimulator, home.ways.tts
-     and learn.try.tts in content/en/ui.json. It is on the launch-day list. */
+     THIS URL WILL NOT CHANGE — the same item is updated to the full game around
+     ship, so only the copy goes stale. What says "preview" is the `tts` route's
+     `caveatKey` below, and clearing it is the launch-day edit. */
   tabletopSimulator: 'https://steamcommunity.com/sharedfiles/filedetails/?id=2968522499',
   rulebook: '/downloads/singularity-core-rulebook.pdf',
   /* The lookup document, offered BESIDE the rules page — never instead of it.
@@ -132,6 +107,83 @@ export const urls: OutboundUrls = {
   instagram: 'https://www.instagram.com/octothorpegames/',
   boardgamegeek: 'https://boardgamegeek.com/boardgame/379846/singularityexe',
 };
+
+/* Every way to meet the game short of buying it, ordered by what it costs. */
+export const tryRoutes: TryRoute[] = [
+  {
+    id: 'fullGame',
+    tier: 'free',
+    route: { name: 'learn', hash: '#videos' },
+    requiresKeys: [],
+    costNote: null,
+    minutes: null,
+    caveatKey: null,
+  },
+  {
+    id: 'howToPlay',
+    tier: 'free',
+    route: { name: 'learn', hash: '#videos' },
+    requiresKeys: [],
+    costNote: null,
+    minutes: null,
+    caveatKey: null,
+    alsoOnLearn: 'videos',
+  },
+  {
+    id: 'rules',
+    tier: 'free',
+    outbound: 'rulesReference',
+    requiresKeys: [],
+    costNote: null,
+    minutes: null,
+    caveatKey: null,
+    alsoOnLearn: 'rules',
+  },
+  {
+    id: 'cards',
+    tier: 'free',
+    route: { name: 'cards' },
+    requiresKeys: [],
+    costNote: null,
+    minutes: null,
+    caveatKey: null,
+  },
+  {
+    id: 'printAndPlay',
+    tier: 'effort',
+    outbound: 'printAndPlay',
+    requiresKeys: ['try.requires.printer', 'try.requires.cutter'],
+    costNote: null,
+    minutes: null,
+    caveatKey: 'try.caveat.competitiveOnly',
+  },
+  {
+    id: 'tts',
+    tier: 'owned',
+    outbound: 'tabletopSimulator',
+    requiresKeys: ['try.requires.tts'],
+    costNote: 'paid-third-party',
+    minutes: null,
+    caveatKey: 'try.caveat.preview',
+  },
+];
+
+export const TRY_TIERS: TryTier[] = ['free', 'effort', 'owned'];
+
+export const tryRoutesOfTier = (tier: TryTier) => tryRoutes.filter((r) => r.tier === tier);
+
+function assertTryRoutes(): void {
+  if (import.meta.env.PROD) return;
+  for (const route of tryRoutes) {
+    if (route.tier !== 'free') continue;
+    if (route.requiresKeys.length || route.costNote) {
+      console.warn(
+        `[universe] try route "${route.id}" is tier "free" but states a requirement or a cost.`,
+      );
+    }
+  }
+}
+assertTryRoutes();
 
 /** Five formats, confirmed. Not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
@@ -178,12 +230,9 @@ export const factions: Faction[] = [
 ];
 
 /**
- * A brand's mark lives at `/brands/<id>.png` and is generated from the master
- * art by scripts/brand-icons.py. Deriving the path from the id rather than
- * storing a string means a mark can never point at the wrong brand, and an
- * unbuilt mark is a 404 rather than a silently wrong picture — which is why
- * `mark()` is opt-in per brand instead of a default on every one. A brand with
- * no recognized mark passes null and renders the faction dot placeholder, as before.
+ * Derived from the id rather than stored, so a mark can never point at the
+ * wrong brand and an unbuilt one 404s instead of showing the wrong picture.
+ * Opt-in per brand: null renders the faction dot instead.
  */
 const mark = (id: string) => `/brands/${id}.png`;
 const rogueBrand = (id: string) => `/rogue-ai/${id}.png`;
@@ -255,13 +304,9 @@ export const programs: Program[] = [...allPrograms];
 /* ---------------------------------------------------------------------------
    THE CAST.
 
-   Field order is on purpose. we store characters
-   Name · HP · Faction · Sub Faction · Brand 1-3 · Set · Card Text ·
-   Ability Name · Flavor Title · Flavor Text, and these entries read in that
-   same order so a record can be checked against other sources by eye without
-   translating between two shapes.
-
-   Row order is faction block, then name. It carries no other meaning
+   Field order matches the internal sheet. Name · HP · Faction · Sub Faction ·
+   Brand 1-3 · Set · Card Text · Ability Name · Flavor Title · Flavor Text  
+   a record can be checked against it by eye without translating two shapes.
    -------------------------------------------------------------------------- */
 
 /* Three art objects, derived from the name so an alt cannot describe the wrong
@@ -1202,13 +1247,11 @@ export const rogueAIs: RogueAI[] = [
 
 /** Core box + expansion 1 + Incursions all launch the same day. */
 /* ---------------------------------------------------------------------------
-   WHAT IS IN A BOX. Boxes carry story and group components. They hold neither
-   a price nor a component list — see the three-level note above `Box` in
-   types.ts.
+   WHAT IS IN A BOX. See the three-level note above `Box` in types.ts.
 
-   Only the core box is described today. The other boxes exist (Gameplay
-   Complete is six of them) but have not been named to the site, and inventing
-   names here would put fictional products in front of buyers.
+   Only the core box is described today. The others exist but have not been
+   named to the site, and inventing names here would put fictional products in
+   front of buyers.
    -------------------------------------------------------------------------- */
 export const boxes: Box[] = [
   {
@@ -1220,15 +1263,14 @@ export const boxes: Box[] = [
 ];
 
 /* ---------------------------------------------------------------------------
-   WHAT YOU BUY. A SKU is a way to pay, and it bundles boxes.
+   WHAT YOU BUY.
 
-   Every price here is CAMPAIGN pricing on the storefront, not an MSRP, and the
-   storefront is the authority on both price and shipping. When those diverge,
-   fix them here — never in a template.
+   Prices here are CAMPAIGN pricing, not MSRP, and the storefront is the
+   authority on price and shipping both. When they diverge, fix them here and
+   never in a template.
 
-   When a box that currently ships only inside an edition starts selling on its
-   own, add a PRODUCT for it whose `boxIds` is that one box. Do not add a flag
-   to the box.
+   A box that starts selling on its own gains a PRODUCT whose `boxIds` is that
+   one box. Never a flag on the box.
    -------------------------------------------------------------------------- */
 export const products: Product[] = [
   {
@@ -1249,12 +1291,7 @@ export const products: Product[] = [
     kind: 'edition',
     status: 'available',
     price: '$170',
-    /* Six boxes, and each of them may be sold separately in future. One of the
-       six is the SAME core box the Core Edition ships — confirmed, which is why
-       it is one `Box` entry referenced by two SKUs rather than two near-identical
-       entries. The other five are not named to the site yet, so this list is a
-       partial enumeration: `boxCount` is the fact, `boxIds` is how much of it we
-       can spell. Do not synthesise the missing five from other editions. */
+    /* One of the six IS the core box the Core Edition ships. */
     boxCount: 6,
     boxIds: ['core-box'],
     extras: [],
@@ -1279,16 +1316,12 @@ export const products: Product[] = [
 ];
 
 /**
- * Dev-only shape check.
+ * `boxCount` is the claim, `boxIds` how much of it we can spell. UNDER-listing
+ * is legal and is today's state; over-listing and dangling ids are bugs.
  *
- * `boxCount` is the claim, `boxIds` is how much of that claim we can currently
- * spell. UNDER-listing is legal and is the state today — Gameplay Complete says
- * six and names one, because only the core box has been identified to the site.
- * OVER-listing and dangling ids are always bugs, so those are what this catches.
- *
- * When the six are named (see the research notes), tighten the first check to
- * strict equality — an edition that claims six and lists five renders a
- * perfectly plausible wrong page, and nothing else would notice.
+ * Tighten the first check to strict equality once the six are named: an edition
+ * claiming six and listing five renders a plausible wrong page, and nothing
+ * else would notice.
  */
 function assertProductShape(): void {
   if (import.meta.env.PROD) return;
@@ -1316,14 +1349,12 @@ export const coreProduct = products.find((p) => p.id === 'core-edition') ?? prod
 export const coreBox = boxes.find((b) => b.id === 'core-box') ?? boxes[0];
 
 /* ---------------------------------------------------------------------------
-   WHAT YOU READ. Chapters are numbered, and the number drives the `#ch-01`
-   anchors, which are public URL contracts.
+   WHAT YOU READ. The chapter number drives the `#ch-01` anchors, which are
+   public URL contracts.
 
-   `boxIds` is empty on all three today: which box carries which chapter is an
-   OPEN QUESTION, and an empty array renders "no box attached", which is also
-   what a story-only release looks like. Guessing here would print a purchase
-   claim. Note these are BOXES — bundling boxes into an edition does not create
-   or move a chapter.
+   `boxIds` is empty on all three: which box carries which chapter is an OPEN
+   QUESTION, and guessing would print a purchase claim. Empty renders "no box
+   attached", which is also what a story-only release looks like.
    -------------------------------------------------------------------------- */
 export const chapters: Chapter[] = [
   {
@@ -1410,20 +1441,14 @@ export const wallpapers = [
 
 /* Studio credit lives in one band on Community; per-artwork credit is
    `art.artist`, filled by the two art factories. */
-/* Source: .ai/gamefound-copy.md, Image 06 — the printed campaign credits.
-   Fifteen credit lines, fifteen people. Matt Anderson and Alex Johnstone each
-   appear TWICE in the printed list (blocks 1 and 2) under different titles;
-   here they are one person each with the two titles joined by " · ", so the
-   grid shows fifteen faces rather than seventeen cards with two repeats.
+/* The printed campaign credits, in printed order. Matt Anderson and Alex
+   Johnstone are each credited twice under different titles; here they are one
+   person with both titles joined, so the grid shows fifteen people not seventeen.
 
-   Order follows the printed blocks: direction/design, art, senior design, then
-   the Panda GM and associate block. Names are set as printed — Héctor Sevilla
-   Luján and João Guisado carry diacritics that are part of the spelling. Never
-   ASCII-fold them.
-
-   "Box Server Illustration" and "Singularity Logo" are credits for artefacts
-   rather than job titles. Kept verbatim; they read slightly oddly in a field
-   phrased for people, and that is the credits' wording, not a typo to fix. */
+   Names are set as printed. The diacritics in Héctor Sevilla Luján and João
+   Guisado are part of the spelling. "Box Server
+   Illustration" and "Singularity Logo" credit artefacts rather than people, and
+   are the credits' own wording rather than typos to fix. */
 export const team = [
   { id: 'team-matt-anderson', name: 'Matt Anderson', role: 'Game and Creative Director · Design Director, Art Director, and Narrative Lead' },
   { id: 'team-alex-johnstone', name: 'Alex Johnstone', role: 'Product Developer and Production Manager · Visual Identity Lead and Graphic Designer' },

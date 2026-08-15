@@ -1,9 +1,8 @@
 <script setup lang="ts">
 /**
  * LEARN — the most linked-to page on the site, so it carries the full
- * wayfinding kit. Five bands: pick your path · modes · videos · rules hub ·
- * try it free. The thesis: zero randomness raises the bar on the rules, so the
- * reference is a first-class citizen, not a PDF at the bottom.
+ * wayfinding kit. Zero randomness raises the bar on the rules, which is why the
+ * reference is a first-class citizen here and not a PDF at the bottom.
  */
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
@@ -11,15 +10,17 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
+import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
-import { modes, videos } from '@/data/universe';
+import { modes, TRY_TIERS, tryRoutesOfTier, videos } from '@/data/universe';
 import { outbound, soon, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
+import type { TryTier } from '@/data/types';
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'paths', label: t('learn.sections.paths') },
@@ -34,6 +35,8 @@ const tracks = ['new', 'veteran', 'coop'] as const;
 const route = useRoute();
 const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
 
+const routesToTry = (tier: TryTier) => tryRoutesOfTier(tier).filter((r) => !r.alsoOnLearn);
+
 const rulesHub = [
   { key: 'reference', to: soon('#rules-reference') },
   { key: 'errata', to: soon('#errata') },
@@ -41,11 +44,6 @@ const rulesHub = [
   { key: 'faq', to: to('faq') },
 ] as const;
 
-const tryIt = [
-  { key: 'pnp', link: outbound('printAndPlay') },
-  { key: 'tts', link: outbound('tabletopSimulator') },
-  { key: 'buy', link: outbound('buy') },
-] as const;
 </script>
 
 <template>
@@ -168,15 +166,15 @@ const tryIt = [
   <section id="try" tabindex="-1" class="l-band l-band--line-top">
     <div class="l-wrap">
       <SectionMarker id="try" :index="5" :total="5" :heading="t('learn.try.heading')" />
-      <div class="l-grid l-grid--wide learn__gap">
-        <ContentCard
-          v-for="item in tryIt"
-          :key="item.key"
-          :link="item.link"
-          :kicker="t(`learn.try.${item.key}.kicker`)"
-          :title="t(`learn.try.${item.key}.title`)"
-          :body="t(`learn.try.${item.key}.body`)"
-        />
+      <div v-for="tier in TRY_TIERS" :key="tier" class="learn__tier">
+        <MonoLabel tone="muted">{{ t(`try.tiers.${tier}`) }}</MonoLabel>
+        <div class="l-grid l-grid--wide learn__gap">
+          <TryRouteCard
+            v-for="tryRoute in routesToTry(tier)"
+            :key="tryRoute.id"
+            :route="tryRoute"
+          />
+        </div>
       </div>
       <BandFoot :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
     </div>
@@ -205,6 +203,10 @@ const tryIt = [
 
 .learn__track > .c-card {
   flex: 1 1 auto;
+}
+
+.learn__tier + .learn__tier {
+  margin-top: var(--space-9);
 }
 
 .learn__gap {
