@@ -242,15 +242,15 @@ const factionBrand = (
   id: string,
   factionId: string,
   name: string,
-  programCount: number | null = null,
-  icon = true,
+  extra: Partial<Brand> = {},
 ): Brand => ({
   id,
   factionId,
   name,
-  icon: icon ? mark(id) : null,
+  icon: mark(id),
   kind: 'faction',
-  programCount,
+  programCount: null,
+  ...extra,
 });
 
 export const brands: Brand[] = [
@@ -265,7 +265,9 @@ export const brands: Brand[] = [
   factionBrand('infinite-divine', 'celestial-shogunate', 'Infinite Divine'),
   factionBrand('onryoki-noh', 'celestial-shogunate', 'Onryoki Noh'),
   factionBrand('zodiac-reliquary', 'celestial-shogunate', 'Zodiac Reliquary'),
-  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives'),
+  factionBrand('forbidden-archives', 'celestial-shogunate', 'Forbidden Archives', {
+    facetSubType: 'Scroll',
+  }),
   factionBrand('data-nation', 'subnet-86', 'Data Nation'),
   factionBrand('hostile-rewrite', 'subnet-86', 'Hostile Rewrite'),
   factionBrand('endless-chain', 'subnet-86', 'Endless Chain'),

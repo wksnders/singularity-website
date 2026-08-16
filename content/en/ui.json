@@ -69,6 +69,12 @@
       "EX1": "Expansion",
       "INC": "Incursions"
     },
+    "subTypes": {
+      "Scroll": "The Scrolls"
+    },
+    "subTypeNotes": {
+      "Scroll": "Scrolls can optionally enter the Library zone, when an Archivist Knows how to find them."
+    },
     "unrevealed": "Not revealed yet",
     "unnamed": "[ unrevealed program ]",
     "artPlaceholder": "[ printed card 63×88 ]"
@@ -417,8 +423,9 @@
     "storyPlaceholder1": "[PLACEHOLDER — the brand's own story. Who built these programs, what they were built for, and what it costs to run them. A brand is a body of work, not a colour swatch: this reads as its own short piece of fiction.]",
     "storyPlaceholder2": "[PLACEHOLDER — second beat. Where the brand sits inside its faction, and who disagrees with it.]",
     "storyPlaceholder3": "[PLACEHOLDER — third beat, ending on the hook that sends a reader to the cards.]",
-    "cardsNote": "cards · 63 × 88 mm",
-    "programsBody": "A brand is a set of programs. Each is shown as the printed card, with its wording also held as text — searchable, linkable from errata, and always current.",
+    "cardsNote": "cards",
+    "showLabel": "Show",
+    "rulesLink": "The rules, in full",
     "unrevealed": "Unrevealed",
     "of": "of",
     "revealed": "revealed",

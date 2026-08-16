@@ -22,6 +22,9 @@ const props = defineProps<{
   color?: string | null;
   /** Sealed-in-the-box programs: locks are editorial, never tracked state. */
   sealedLabel?: string;
+  /** Show the printed sub-type above the name. For a grid that is all one
+      brand's cards, where the sub-type is the distinction worth drawing. */
+  branded?: boolean;
 }>();
 
 /** Sub-type sits on the printed type line, not in a row of its own. */
@@ -61,11 +64,15 @@ const lines = computed<CardLine[]>(() =>
     </div>
 
     <div class="c-prog__caption">
+      <MonoLabel v-if="branded && program.subType" class="c-prog__subtype">
+        {{ program.subType }}
+      </MonoLabel>
       <h3 class="c-prog__name">{{ program.revealed ? program.name : t('cards.unnamed') }}</h3>
       <p v-if="brandLabel" class="c-prog__brand">
         <BrandMark :icon="brandIcon" :name="brandLabel" :color="color" :size="20" />
         {{ brandLabel }}
       </p>
+
     </div>
   </div>
 </template>
@@ -106,4 +113,9 @@ const lines = computed<CardLine[]>(() =>
   font-size: var(--size-mono-m);
   color: var(--color-ink-faint);
 }
+
+.c-prog .c-prog__subtype {
+  color: var(--faction-text);
+}
+
 </style>
