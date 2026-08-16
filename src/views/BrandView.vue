@@ -5,12 +5,14 @@
  * and the characters who play it.
  */
 import { computed } from 'vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
+import FilterChip from '@/components/atoms/FilterChip.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ProgramCard from '@/components/molecules/ProgramCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
@@ -18,6 +20,8 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
+import { useQueryFilter } from '@/composables/useQueryFilter';
+import { hasSubType } from '@/site/cardText';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandById,
@@ -27,8 +31,8 @@ import {
   factionById,
   programsOfBrand,
 } from '@/data/universe';
-import { to } from '@/site/links';
-import type { Program } from '@/data/types';
+import { soon, to } from '@/site/links';
+import type { Character, Program } from '@/data/types';
 import type { SectionEntry } from '@/site/sections';
 
 const props = defineProps<{ brandId: string }>();
@@ -50,6 +54,12 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'cast', label: t('brand.sections.cast') },
 ]);
 
+const facet = computed(() => brand.value?.facetSubType ?? null);
+const isFacet = (program: Program) => hasSubType(program.subType, facet.value ?? '');
+
+const cards = useQueryFilter('cards');
+const showingFacet = computed(() => Boolean(facet.value) && cards.value.value === 'facet');
+
 const programs = computed<Program[]>(() => {
   const written = programsOfBrand(props.brandId);
   const total = brand.value ? brandSlotCount(brand.value) : written.length;
@@ -69,10 +79,21 @@ const programs = computed<Program[]>(() => {
     art: { src: null, alt: '' },
     cardArt: { src: null, alt: '' },
   }));
-  return [...written, ...filler];
+  /* Facet cards lead, so filtering to them is a page that shortens rather than
+     one that reshuffles. Display order only*/
+  const ordered = facet.value
+    ? [...written.filter(isFacet), ...written.filter((p) => !isFacet(p))]
+    : written;
+  return [...ordered, ...filler];
 });
 
-const revealed = computed(() => programs.value.filter((p) => p.revealed).length);
+const shown = computed(() =>
+  showingFacet.value ? programs.value.filter(isFacet) : programs.value,
+);
+
+const facetCount = computed(() => programs.value.filter(isFacet).length);
+
+const revealed = computed(() => shown.value.filter((p) => p.revealed).length);
 
 const siblings = computed(() => {
   if (!faction.value) return { prev: null, next: null, index: 0, total: 0 };
@@ -91,8 +112,14 @@ const siblings = computed(() => {
 
 const cast = computed(() => characters.filter((c) => c.brandIds.includes(props.brandId)));
 
-const tags = () =>
-  faction.value ? [{ label: faction.value.name, color: faction.value.color }] : [];
+
+const tags = (character: Character) =>
+  Array.isArray(character.factionIds)
+    ? character.factionIds
+        .map((id) => factionById(id))
+        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
+        .map((f) => ({ label: f.name, color: f.color }))
+    : [{ label: t('universe.anyFaction'), color: null }];
 
 const pad = (n: number) => String(n).padStart(2, '0');
 </script>
@@ -170,14 +197,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <section id="programs" tabindex="-1" class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
         <SectionMarker id="programs" :index="2" :total="3" :heading="t('brand.sections.programs')" />
-        <MonoLabel tone="faint">
+        <MonoLabel v-if="!facet" tone="faint">
           {{ programs.length }} {{ t('brand.cardsNote') }}
         </MonoLabel>
-        <p class="brand__body">{{ t('brand.programsBody') }}</p>
+
+        <div v-if="facet" class="l-row brand__facets" role="group" :aria-label="t('brand.showLabel')">
+          <FilterChip :active="!showingFacet" :count="programs.length" @toggle="cards.set(null)">
+            {{ t('filters.all') }}
+          </FilterChip>
+          <FilterChip
+            :active="showingFacet"
+            :count="facetCount"
+            show-dot
+            @toggle="cards.set('facet')"
+          >
+            {{ t(`cards.subTypes.${facet}`) }}
+          </FilterChip>
+        </div>
+
+        <p v-if="showingFacet" class="brand__facet-note">
+          {{ t(`cards.subTypeNotes.${facet}`) }}
+          <BaseLink :to="soon('#rules-reference')">{{ t('brand.rulesLink') }}</BaseLink>.
+        </p>
 
         <ul class="l-grid l-grid--cards brand__gap">
-          <li v-for="program in programs" :key="program.id">
+          <li v-for="program in shown" :key="program.id">
             <ProgramCard
+              branded
               :program="program"
               :brand-label="name"
               :brand-icon="brand.icon"
@@ -187,8 +233,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </li>
         </ul>
 
-        <MonoLabel v-if="revealed < programs.length" tone="faint" class="brand__gap">
-          {{ revealed }} {{ t('brand.of') }} {{ programs.length }} {{ t('brand.revealed') }}
+        <MonoLabel v-if="revealed < shown.length" tone="faint" class="brand__gap">
+          {{ revealed }} {{ t('brand.of') }} {{ shown.length }} {{ t('brand.revealed') }}
         </MonoLabel>
 
         <BandFoot
@@ -209,7 +255,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
             :art="character.art"
             :epithet="character.epithet"
             :name="character.name"
-            :tags="tags()"
+            :tags="tags(character)"
             :placeholder="t('universe.artPlaceholder')"
           />
         </div>
@@ -270,6 +316,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
   margin-top: var(--space-6);
 }
 
+.brand__facets {
+  margin-top: var(--space-6);
+  align-items: center;
+}
+
+.brand__facet-note {
+  margin-top: var(--space-4);
+  max-width: 60ch;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--faction);
+  font-size: var(--size-m);
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}
+
 .brand__body {
   max-width: 68ch;
   font-size: var(--size-m);
@@ -296,5 +357,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   font-style: italic;
   color: var(--faction-text);
 }
+
 
 </style>

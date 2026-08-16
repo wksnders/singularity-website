@@ -45,6 +45,13 @@ export const searchHaystack = (parts: (string | null | undefined)[]): string =>
     .join(' ')
     .toLowerCase();
 
+/**
+ * A card prints its sub-types as one string — "Scroll Totem" is both and the
+ * rules count them one at a time.
+ */
+export const hasSubType = (subType: string | undefined, name: string): boolean =>
+  new RegExp(`(^| )${name}( |$)`).test(subType ?? '');
+
 /** One labelled row of a printed card face; `values` is one printed line each. */
 export interface CardLine {
   label: string;

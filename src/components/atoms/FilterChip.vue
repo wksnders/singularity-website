@@ -4,7 +4,12 @@
  * Deliberately unlike JumpChip (square, mono, numbered, navigates) — a reader
  * must be able to tell "this filters" from "this takes me somewhere".
  */
-defineProps<{ active: boolean; color?: string | null; showDot?: boolean }>();
+defineProps<{
+  active: boolean;
+  color?: string | null;
+  showDot?: boolean;
+  count?: number;
+}>();
 defineEmits<{ toggle: [] }>();
 </script>
 
@@ -19,6 +24,7 @@ defineEmits<{ toggle: [] }>();
   >
     <span v-if="showDot" class="c-chip__dot" aria-hidden="true" />
     <slot />
+    <span v-if="count !== undefined" class="c-chip__count">{{ count }}</span>
   </button>
 </template>
 
@@ -51,6 +57,12 @@ defineEmits<{ toggle: [] }>();
   background: var(--color-accent-wash);
   border-color: rgba(var(--rgb-accent), 0.45);
   color: var(--color-ink);
+}
+
+.c-chip__count {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  color: var(--color-ink-soft);
 }
 
 .c-chip__dot {

@@ -115,8 +115,9 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior(target, _from, savedPosition) {
+  scrollBehavior(target, from, savedPosition) {
     if (savedPosition) return savedPosition;
+    if (target.path === from.path && target.hash === from.hash) return false;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (target.hash) {
       return { el: target.hash, behavior: reduced ? 'auto' : 'smooth' };

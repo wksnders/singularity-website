@@ -66,6 +66,7 @@ export interface Brand {
   /** The announced print run. null = unannounced, and `brandSlotCount()` counts
       the cards instead. Never a guess: the gap renders as sealed slots. */
   programCount: number | null;
+  facetSubType?: string;
 }
 
 export interface Program {
