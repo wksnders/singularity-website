@@ -207,7 +207,7 @@ export const footerColumns: IaGroup[] = [
       { key: 'learn.paths', to: to('learn', {}, { hash: '#paths' }) },
       { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }) },
       { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }) },
-      { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }) },
+      { key: 'learn.reference', to: to('rules') },
       { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }) },
       { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }) },
       { key: 'learn.faq', to: to('faq') },

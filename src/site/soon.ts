@@ -24,18 +24,10 @@ export interface SoonDestination {
 
 const DESTINATIONS: SoonDestination[] = [
   {
-    id: 'rules-reference',
-    kind: 'page',
-    also: [
-      { key: 'ia.learn.videos.label', to: to('learn', {}, { hash: '#videos' }) },
-      { key: 'ia.learn.modes.label', to: to('learn', {}, { hash: '#modes' }) },
-      { key: 'ia.universe.cards.label', to: to('cards') },
-    ],
-  },
-  {
     id: 'errata',
     kind: 'page',
     also: [
+      { key: 'ia.learn.reference.label', to: to('rules') },
       { key: 'ia.universe.cards.label', to: to('cards') },
       { key: 'ia.news.label', to: to('news', {}, { query: { category: 'errata' } }) },
     ],
@@ -44,6 +36,7 @@ const DESTINATIONS: SoonDestination[] = [
     id: 'competition',
     kind: 'page',
     also: [
+      { key: 'ia.learn.reference.label', to: to('rules') },
       { key: 'ia.learn.modes.label', to: to('learn', {}, { hash: '#modes' }) },
       { key: 'ia.community.discord.label', to: to('community', {}, { hash: '#discord' }) },
     ],

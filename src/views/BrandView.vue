@@ -32,7 +32,7 @@ import {
   factionById,
   programsOfBrand,
 } from '@/data/universe';
-import { soon, to } from '@/site/links';
+import { to } from '@/site/links';
 import type { Character, Program } from '@/data/types';
 import type { SectionEntry } from '@/site/sections';
 
@@ -220,7 +220,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
         <p v-if="showingFacet" class="brand__facet-note">
           {{ t(`cards.subTypeNotes.${facet}`) }}
-          <BaseLink :to="soon('#rules-reference')">{{ t('brand.rulesLink') }}</BaseLink>.
+          <BaseLink :to="to('rules')">{{ t('brand.rulesLink') }}</BaseLink>.
         </p>
 
         <ul class="l-grid l-grid--cards brand__gap">
