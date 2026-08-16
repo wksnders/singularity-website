@@ -1,0 +1,1582 @@
+[
+  {
+    "id": "using-the-rules-reference",
+    "title": "Using the Rules Reference",
+    "blocks": [
+      {
+        "kind": "text",
+        "text": "This Rules Reference is for answering all rules questions. If this is your first time playing Singularity, first read through the Learn to Play Guide to understand the core concepts of the game. This book can be kept nearby during the course of gameplay and referenced only as needs for clarification arise."
+      },
+      {
+        "kind": "text",
+        "text": "Terms are organized alphabetically in a glossary, and their associated definitions and clarifications are addressed beneath."
+      },
+      {
+        "kind": "note",
+        "text": "The Golden Rules of Precedence: If the Rules Reference contradicts the Learn to Play book, the Rules Reference takes priority. If a card’s text contradicts either, the card takes priority."
+      }
+    ]
+  },
+  {
+    "id": "activating-a-program",
+    "title": "Activating a Program",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Each program may only be activated once per turn."
+      },
+      {
+        "kind": "rule",
+        "text": "To activate a program, declare all required targets first, then pay the program’s cost. All targets must be declared before activation, even if the program features the word ‘then’."
+      },
+      {
+        "kind": "rule",
+        "text": "A program cannot be activated unless it has valid targets."
+      },
+      {
+        "kind": "rule",
+        "text": "Using EXEs and reactions does not count toward a program’s once-per-turn activation limit."
+      },
+      {
+        "kind": "rule",
+        "text": "EXEs and reactions may be used on the same turn their patch was activated."
+      },
+      {
+        "kind": "rule",
+        "text": "Using an EXE or reaction does not count as activating a patch for the purpose of triggered effects."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs are always activated by a character. This is usually the character that owns the program’s origin stack."
+      },
+      {
+        "kind": "rule",
+        "text": "Once activated, active programs will always resolve unless canceled by an effect, even if the character that activated the program crashes before the program resolves."
+      },
+      {
+        "kind": "note",
+        "text": "For questions on the sequences in which various game effects and actions are resolved, see Timing and Simultaneous Effects."
+      },
+      {
+        "kind": "rule",
+        "text": "If a program is activated from another character’s stack due to a card effect, the activating character chooses targets, but must still follow the program’s targeting restrictions."
+      },
+      {
+        "kind": "example",
+        "text": "Onibaba has Forcefield of Boom (a Patch: Self) on top of her stack. She also has Fungal Possession attached, allowing any character to activate programs from her stack. If another character activates Forcefield of Boom, it can only target the character that activated it from Onibaba’s stack."
+      }
+    ]
+  },
+  {
+    "id": "active-and-inactive",
+    "title": "Active and Inactive",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Active cards are currently affecting the game with their rules and can be interacted with."
+      },
+      {
+        "kind": "rule",
+        "text": "Inactive cards do not affect the game and cannot be targeted."
+      },
+      {
+        "kind": "rule",
+        "text": "Active characters can be targeted, activate programs during their Activation phase, and apply their abilities to the game."
+      },
+      {
+        "kind": "rule",
+        "text": "Commands become active after they have a designated target (if required) and their costs have been paid. While active, they can be targeted and modified. Once resolved, the command is no longer active and returns to its origin stack."
+      },
+      {
+        "kind": "rule",
+        "text": "Patches are active as long as they’re attached to an active character. If attached to an inactive character, the patch is inactive and has no effect."
+      },
+      {
+        "kind": "example",
+        "text": "Toshiro has Viral Venom attached to him, which deals 1 [C] damage to him during Update. If Toshiro is deactivated, Viral Venom remains attached, but has no effect while he’s inactive."
+      },
+      {
+        "kind": "rule",
+        "text": "Patches with used EXE and reaction effects are active until those effects fully resolve. They become inactive when returned to their origin stack."
+      }
+    ]
+  },
+  {
+    "id": "adaptive",
+    "title": "Adaptive",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When a program with adaptive crashes or returns to its origin stack, its controller may instead place it on the bottom of any stack belonging to one of their active characters."
+      },
+      {
+        "kind": "rule",
+        "text": "If a character crashes with adaptive programs in their stack, adaptive triggers for each of those programs."
+      },
+      {
+        "kind": "rule",
+        "text": "Adaptive programs cannot be added to the stack of a character that is about to fall in."
+      }
+    ]
+  },
+  {
+    "id": "ambush",
+    "title": "Ambush [AMB]",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Ambush abilities are triggered the first time a character is activated during the game via the swap character action."
+      },
+      {
+        "kind": "rule",
+        "text": "Ambush abilities are optional. If you choose not to use it, it cannot be used later in the game."
+      },
+      {
+        "kind": "rule",
+        "text": "Ambush does not trigger if a character starts the game active."
+      },
+      {
+        "kind": "rule",
+        "text": "Ambush does not trigger when a character falls in."
+      },
+      {
+        "kind": "rule",
+        "text": "Ambush effects resolve before the newly activated character is suspended."
+      }
+    ]
+  },
+  {
+    "id": "architech-design",
+    "title": "Architech Design",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "At the start of a Terminal Incursions cooperative battle, shuffle all Architech Designs into a face down deck. Draw from this deck as instructed by the Terminal Incursion rules."
+      },
+      {
+        "kind": "rule",
+        "text": "When drawn, an Architech Design may be attached to any character in your squad at cost 0."
+      },
+      {
+        "kind": "rule",
+        "text": "If an Architech Design would return to a stack, crash, or be overwritten, return it to the bottom of the Architech Design deck instead."
+      }
+    ]
+  },
+  {
+    "id": "archivist-and-library",
+    "title": "Archivist and Library",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "At the start of the game, each character with the archivist ability may choose a unique Scroll-type program to add to a special zone specific to that player called the Library."
+      },
+      {
+        "kind": "rule",
+        "text": "A Library zone may not contain more than one of the same programs. All Scrolls in a Library must be unique."
+      },
+      {
+        "kind": "rule",
+        "text": "During their Activation phase, archivist characters may activate any Scroll from the Library by paying its RAM cost. Activated programs resolve normally, then return to the Library."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs in the Library follow normal activation rules and may not be activated more than once per turn."
+      },
+      {
+        "kind": "rule",
+        "text": "The Library is a special, untargetable zone. It is not a stack."
+      },
+      {
+        "kind": "rule",
+        "text": "Friendly players may share a Library. Opponents have separate Libraries."
+      }
+    ]
+  },
+  {
+    "id": "armor",
+    "title": "Armor",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Armor is tracked using armor tokens placed on a character."
+      },
+      {
+        "kind": "rule",
+        "text": "When a character with armor would take [P], [A], or [C] damage, that damage is prevented by removing 1 armor token per damage taken instead."
+      },
+      {
+        "kind": "rule",
+        "text": "If damage exceeds the amount of armor, the remainder is assigned as normal. For example, if a character has 3 armor and takes 4 damage, they lose all armor and take 1 damage."
+      },
+      {
+        "kind": "rule",
+        "text": "If all damage is prevented by armor (or other means), no damage is considered to have been dealt or taken."
+      },
+      {
+        "kind": "rule",
+        "text": "Armor does not block effects that cause a character to lose [H], as losing health does not count as taking damage. In these cases, place damage tokens equal to the [H] lost and do not remove armor."
+      }
+    ]
+  },
+  {
+    "id": "battery",
+    "title": "Battery",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "The player who goes second receives a battery token after the turn order is decided. Some characters or programs may also generate battery tokens."
+      },
+      {
+        "kind": "rule",
+        "text": "During your Activation phase, you may discard a battery token at any time to gain 1 virtual RAM."
+      },
+      {
+        "kind": "rule",
+        "text": "Virtual RAM does not increase your max RAM and is discarded at the end of the turn."
+      },
+      {
+        "kind": "rule",
+        "text": "There is no limit to the number of battery tokens a player may hold."
+      }
+    ]
+  },
+  {
+    "id": "cancel",
+    "title": "Cancel",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "If a program is canceled, it has no effect and is immediately returned to its origin stack. RAM spent on activating the program is not returned."
+      },
+      {
+        "kind": "rule",
+        "text": "A canceled program still counts as having been activated during that Activation phase, and may not be activated a second time."
+      }
+    ]
+  },
+  {
+    "id": "consume-and-byte",
+    "title": "Consume and Byte",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "During the Update step of the Refresh phase, a character may consume one of their attached patches with a consume effect. This happens after the Ready step."
+      },
+      {
+        "kind": "rule",
+        "text": "To consume, place a byte token on the patch and resolve its consume effect, then suspend the character."
+      },
+      {
+        "kind": "rule",
+        "text": "Once the number of byte tokens on a patch equals or exceeds its consume value, crash that patch."
+      },
+      {
+        "kind": "rule",
+        "text": "Consume does not count as activating a program."
+      }
+    ]
+  },
+  {
+    "id": "control-and-controller",
+    "title": "Control and Controller",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "The controller of a card is the player who included it in their deck and began the game with it."
+      },
+      {
+        "kind": "rule",
+        "text": "A card’s controller never changes during the game, regardless of who activates or interacts with it."
+      }
+    ]
+  },
+  {
+    "id": "cost",
+    "title": "Cost",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "To activate a program, you must pay RAM equal to its listed cost."
+      },
+      {
+        "kind": "rule",
+        "text": "Most effects that modify cost (like stealth, Overclock, or Dust of the Desert) occur after targets are declared but before activation."
+      },
+      {
+        "kind": "rule",
+        "text": "All targets must be declared before activation, even if the program uses the word “then.” Any cost changes due to targeting are applied before you pay."
+      },
+      {
+        "kind": "rule",
+        "text": "If a program’s cost changes after it has been activated, the new cost does not affect RAM already paid and does not require further payment."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs that unattach patches often use cost to determine valid targets."
+      },
+      {
+        "kind": "rule",
+        "text": "Some effects can modify the cost of attached patches persistently, making them easier or harder to remove."
+      }
+    ]
+  },
+  {
+    "id": "crash",
+    "title": "Crash",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "A character crashes when they have damage equal to or greater than their health ([H])."
+      },
+      {
+        "kind": "rule",
+        "text": "When a character crashes, their patches are unattached, the character crashes, and then their entire stack of programs crashes."
+      },
+      {
+        "kind": "rule",
+        "text": "Crashed characters, stacks, and programs are placed in the crash zone and cannot interact with the game or be targeted unless specified by a card effect."
+      },
+      {
+        "kind": "rule",
+        "text": "All attached patches are immediately unattached and return to their origin stacks. If their origin stack is also crashed, those patches crash too."
+      },
+      {
+        "kind": "rule",
+        "text": "All tokens on a crashed character are removed."
+      },
+      {
+        "kind": "rule",
+        "text": "If multiple cards are returned to the same origin stack as a result of a crash (such as adaptive programs or unattached patches), the controller of that stack chooses the order in which they are returned."
+      },
+      {
+        "kind": "rule",
+        "text": "Active patches that come from crashed stacks will remain in play until unattached."
+      },
+      {
+        "kind": "rule",
+        "text": "After a crash, a new character must fall in (see Falling In), or the game is lost."
+      },
+      {
+        "kind": "rule",
+        "text": "You win the game immediately if your opponent has three crashed characters. Any effects that would trigger as a result of the final crash do not resolve."
+      },
+      {
+        "kind": "rule",
+        "text": "For specific order of operations see the Learn to Play guide."
+      }
+    ]
+  },
+  {
+    "id": "current-squad",
+    "title": "Current Squad",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "The current squad refers to the squad controlled by the player taking the current turn."
+      },
+      {
+        "kind": "rule",
+        "text": "In Incursion scenarios, current squad refers to the squad that most recently had an Activation phase. (I.e., the player whose turn led into the Incursion phase.)"
+      }
+    ]
+  },
+  {
+    "id": "cycle",
+    "title": "Cycle",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "To cycle a character, move the top program of their stack to the bottom."
+      },
+      {
+        "kind": "rule",
+        "text": "Cycling does not activate a program, and cycled programs may still be activated later that turn if they haven’t been used yet."
+      },
+      {
+        "kind": "rule",
+        "text": "Characters with empty stacks may still be cycled, though it has no effect."
+      }
+    ]
+  },
+  {
+    "id": "damage",
+    "title": "Damage",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Characters with at least one damage token on them are considered damaged."
+      },
+      {
+        "kind": "rule",
+        "text": "Characters that lose [H] (health) do not count as having taken damage."
+      },
+      {
+        "kind": "rule",
+        "text": "If all damage is prevented (e.g., by armor) and no damage tokens are placed, no damage is considered to have been dealt or taken."
+      },
+      {
+        "kind": "rule",
+        "text": "If a character has damage equal to or greater than its health, it crashes immediately."
+      },
+      {
+        "kind": "rule",
+        "text": "A character that crashes due to taking damage is considered to have taken all of that damage, including any amount exceeding its health."
+      },
+      {
+        "kind": "rule",
+        "text": "For modifying damage, see ‘Modification.’"
+      },
+      {
+        "kind": "rule",
+        "text": "For moving damage, see ‘Moving Damage and Other Tokens.’"
+      }
+    ]
+  },
+  {
+    "id": "deal",
+    "title": "Deal",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Deal means to assign damage to a target. If no target is specified, the implied target is a character. For example, “Deal 3 [P]” with no specified target means “Target character takes 3 [P] damage.”"
+      },
+      {
+        "kind": "rule",
+        "text": "If a card refers to a damage-dealing program, it means any program that uses the word “Deal” in its rules text."
+      },
+      {
+        "kind": "rule",
+        "text": "All damage types, [P], [A], or [C], place the same number of damage tokens when resolved."
+      },
+      {
+        "kind": "rule",
+        "text": "The damage type only determines which other effects can modify that damage."
+      },
+      {
+        "kind": "rule",
+        "text": "If all damage is prevented (e.g., by armor) and no damage tokens are placed, no damage is considered to have been dealt or taken."
+      }
+    ]
+  },
+  {
+    "id": "endian-key",
+    "title": "Endian Key",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Endian Keys represent optional challenges for you to accomplish in Singularity, and may be pursued as an expression of mastery to ‘unlock’ LuX’s unique programs."
+      },
+      {
+        "kind": "rule",
+        "text": "There is no rule that an Endian Key challenge must be completed to play with LuX’s corresponding program. Endian Keys are voluntary restrictions and accomplishments."
+      },
+      {
+        "kind": "rule",
+        "text": "Choose Endian Key challenges to attempt during Setup in the Select a Singularity Fragment step."
+      }
+    ]
+  },
+  {
+    "id": "enemy",
+    "title": "Enemy",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Enemy refers to any active character controlled by an opponent."
+      },
+      {
+        "kind": "rule",
+        "text": "In multiplayer games, all opponents’ characters are considered enemies."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs or effects that affect “enemy characters” do not affect your own squad or any friendly characters."
+      }
+    ]
+  },
+  {
+    "id": "environment-shards",
+    "title": "Environment Shards",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Environment Shards are optional, persistent effects that modify the rules of a competitive game of Singularity."
+      },
+      {
+        "kind": "rule",
+        "text": "All players must agree to use an Environment Shard before the game begins. The chosen shard can be selected by mutual agreement or at random."
+      },
+      {
+        "kind": "rule",
+        "text": "Once in play, an Environment Shard cannot be interacted with or removed. Its rule remains active for the entire game."
+      },
+      {
+        "kind": "rule",
+        "text": "Environment Shards are not recommended for solo or cooperative game modes such as Incursions."
+      }
+    ]
+  },
+  {
+    "id": "exe",
+    "title": "EXE [EXE]",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "During the Activation phase of your turn, you may use an EXE effect on a patch attached to an active friendly character."
+      },
+      {
+        "kind": "rule",
+        "text": "To use an EXE effect, resolve its effect. After any responses, unattach the patch and return it to its origin stack."
+      },
+      {
+        "kind": "rule",
+        "text": "Suspended characters may not use EXE effects."
+      },
+      {
+        "kind": "rule",
+        "text": "Using an EXE does not count as activating a program."
+      },
+      {
+        "kind": "rule",
+        "text": "EXE effects may not be modified by effects that specify commands."
+      },
+      {
+        "kind": "rule",
+        "text": "You may not use EXE effects on patches attached to an opponent’s character, even if you were the one who activated and attached the patch."
+      },
+      {
+        "kind": "rule",
+        "text": "EXE effects may be used on the same turn the patch was activated from a stack."
+      },
+      {
+        "kind": "rule",
+        "text": "A patch may be activated again after its EXE effect resolves, as long as it has not already been activated that turn."
+      },
+      {
+        "kind": "rule",
+        "text": "Resolving an EXE effect does not count as resolving a program. It counts as resolving an EXE."
+      }
+    ]
+  },
+  {
+    "id": "falling-in",
+    "title": "Falling In",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When a character is crashed, and the game has not ended as a result, the player who controls the crashed character must immediately activate an inactive character. This is called falling in."
+      },
+      {
+        "kind": "rule",
+        "text": "No actions may be taken between the crash and the activation of the new character."
+      },
+      {
+        "kind": "rule",
+        "text": "Characters that fall in do not trigger ambush effects."
+      },
+      {
+        "kind": "rule",
+        "text": "Characters are not suspended when they fall in."
+      },
+      {
+        "kind": "rule",
+        "text": "After falling in, the current phase continues as normal."
+      },
+      {
+        "kind": "rule",
+        "text": "If a player is required to fall in but has no inactive characters remaining, they lose the game immediately."
+      }
+    ]
+  },
+  {
+    "id": "friendly",
+    "title": "Friendly",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Friendly refers to any active character controlled by you or your allies."
+      },
+      {
+        "kind": "rule",
+        "text": "In team games, your teammate’s active characters are also considered friendly."
+      }
+    ]
+  },
+  {
+    "id": "heal",
+    "title": "Heal",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Heal means to remove damage tokens from a specified target."
+      },
+      {
+        "kind": "rule",
+        "text": "If no target is specified, the implied target is a character. “Heal 3 [H]” means “Remove 3 [H] damage from the target character.”"
+      },
+      {
+        "kind": "rule",
+        "text": "Characters cannot be healed beyond their maximum health."
+      },
+      {
+        "kind": "rule",
+        "text": "If no damage is removed, the character does not count as having been healed."
+      }
+    ]
+  },
+  {
+    "id": "immediately",
+    "title": "Immediately",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Any effect that occurs immediately occurs with no opportunity for response."
+      },
+      {
+        "kind": "rule",
+        "text": "See ‘Timing and Simultaneous Effects’."
+      }
+    ]
+  },
+  {
+    "id": "inactive",
+    "title": "Inactive",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Inactive cards do not affect the game and may not be targeted unless an effect specifically allows it."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs in stacks are considered inactive."
+      },
+      {
+        "kind": "rule",
+        "text": "Patches attached to inactive characters are also inactive. They have no effect, cannot be targeted, and their EXE and reaction effects cannot be used."
+      }
+    ]
+  },
+  {
+    "id": "initialize-and-update",
+    "title": "Initialize and Update",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "As part of a player’s Start-Up phase, all characters in their squad will initialize. That player may choose the order in which characters initialize."
+      },
+      {
+        "kind": "rule",
+        "text": "When a character is initialized, they resolve all “During Initialize” effects in their character ability, on their attached patches, and on any other effects that reference them directly."
+      },
+      {
+        "kind": "rule",
+        "text": "Initializing an individual character does not trigger a full Start-Up phase."
+      },
+      {
+        "kind": "rule",
+        "text": "If multiple “During Initialize” effects happen at once, the controller chooses the order in which they resolve."
+      },
+      {
+        "kind": "rule",
+        "text": "Update follows the same rules and procedures as initialize, but takes place during the Refresh phase."
+      }
+    ]
+  },
+  {
+    "id": "ink",
+    "title": "Ink",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Ink tokens are used to add scribe effects to programs with transcribe."
+      },
+      {
+        "kind": "rule",
+        "text": "Ink functions like max RAM. You spend it during your Activation phase and flip it to its unspent side when you ready your max RAM during Start-Up."
+      },
+      {
+        "kind": "rule",
+        "text": "When you spend ink, flip the token to its spent side."
+      },
+      {
+        "kind": "rule",
+        "text": "Like max RAM, ink is not discarded during the Refresh phase."
+      },
+      {
+        "kind": "rule",
+        "text": "You may have up to 8 ink tokens at any time."
+      }
+    ]
+  },
+  {
+    "id": "library",
+    "title": "Library",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "See ‘Archivist and Library’."
+      }
+    ]
+  },
+  {
+    "id": "lose",
+    "title": "Lose",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Lose means reducing a value by a certain amount."
+      },
+      {
+        "kind": "rule",
+        "text": "If a player is told to “lose max [RAM]”, they may choose to lose spent max RAM, but they cannot lose more than they have."
+      },
+      {
+        "kind": "rule",
+        "text": "A player may not lose max [RAM] that they do not have."
+      },
+      {
+        "kind": "rule",
+        "text": "Losing [H] places damage tokens but does not count as taking damage. This includes effects like overload."
+      }
+    ]
+  },
+  {
+    "id": "may",
+    "title": "May",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Whenever a program or character says a player may take an action, it is optional. The player can decide whether to perform the action or ignore it."
+      },
+      {
+        "kind": "rule",
+        "text": "If the player forgets to take that action when the trigger occurs, the opportunity is lost."
+      }
+    ]
+  },
+  {
+    "id": "modification",
+    "title": "Modification",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When a program or ability modifies a program, all matching values (like [P], [A], [C], or cost) are increased or decreased by the given amount."
+      },
+      {
+        "kind": "example",
+        "text": "Stone Hands, which deals 2 [P] and then 1 [P] is modified by Pump it Up to get +1 [P]. Stone Hands now deals 3 [P] and then 2 [P]."
+      },
+      {
+        "kind": "rule",
+        "text": "If the target program has no matching value, the modification has no effect."
+      },
+      {
+        "kind": "example",
+        "text": "Bit Shift, which deals 1 [A], is modified by Pump it Up to get +1 [P]. Bit Shift still deals only 1 [A]."
+      },
+      {
+        "kind": "rule",
+        "text": "Base values can be modified; modifiers themselves (like +2 [P]) cannot be modified.",
+        "items": [
+          "2 [P] modified by +2 [P] becomes 4 [P].",
+          "+2 [P] cannot be increased to become +4 [P]."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "After all modifications are applied, no base number (such as [P], [A], [C], and [H]) can be reduced below 0, and cost can never be lower than 1."
+      },
+      {
+        "kind": "rule",
+        "text": "If a program uses a variable value (X), calculate X first, then apply modifiers."
+      },
+      {
+        "kind": "example",
+        "text": "Binary Dissonance deals 2X [P], where X is equal to the number of patches on the target character. If the target has 3 patches attached, Binary Dissonance will deal 6 [P]. If modified by +1 [P], it deals 7 [P]."
+      }
+    ]
+  },
+  {
+    "id": "modular-and-module",
+    "title": "Modular and Module",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Characters with modular may transform into a Module patch when the specified condition is met, and their squad has an inactive character. When a character becomes modular:",
+        "items": [
+          "Unattach all patches attached to that character.",
+          "They become a Module patch, then attach it to any target character.",
+          "The modular character’s controller selects an inactive character to fall in."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "While a character is a Module patch:",
+        "items": [
+          "They have cost 1 and the patch effect following their Module keyword.",
+          "They may only be targeted as a patch.",
+          "If the character they are attached to would deactivate, they are immediately unattached.",
+          "When a character would fall in, and this patch’s controller has no inactive characters, they must first unattach this patch or another Module patch they control."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "When a Module patch is unattached, canceled, or would otherwise return to a stack, it immediately becomes a character, then returns to its squad and deactivates."
+      },
+      {
+        "kind": "rule",
+        "text": "If a Module patch would be crashed or overwritten, it instead becomes a character, then is crashed or overwritten."
+      },
+      {
+        "kind": "rule",
+        "text": "Module patches follow normal program activation rules."
+      }
+    ]
+  },
+  {
+    "id": "moving-damage-or-other-tokens",
+    "title": "Moving Damage or other Tokens",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When a damage token is moved between characters, it does not count as taking damage or being healed, and no taking damage or healing effects are triggered."
+      },
+      {
+        "kind": "rule",
+        "text": "The same applies to armor or any other tokens. No gain or loss effects are triggered."
+      }
+    ]
+  },
+  {
+    "id": "overwrite",
+    "title": "Overwrite",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Overwritten characters and programs are removed from the game."
+      },
+      {
+        "kind": "rule",
+        "text": "Overwritten characters and programs may not be targeted by any programs or effects that don’t specify overwrite."
+      },
+      {
+        "kind": "rule",
+        "text": "Overwritten characters count as crashed for victory or loss conditions. They do not count as crashed for any other effect."
+      }
+    ]
+  },
+  {
+    "id": "overload",
+    "title": "Overload",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Whenever max RAM would go above 10, the excess is gained as overload instead."
+      },
+      {
+        "kind": "rule",
+        "text": "During the Start-Up phase, after raising max RAM, each of your active characters loses [H] equal to your overload."
+      },
+      {
+        "kind": "rule",
+        "text": "Overload damage cannot be modified and is unpreventable."
+      }
+    ]
+  },
+  {
+    "id": "possession-and-mask",
+    "title": "Possession and Mask [MSK]",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "If a program with possession is activated by a friendly character to its controller, place it on the bottom of a target enemy character’s stack, ignoring its mask [MSK] effect."
+      },
+      {
+        "kind": "rule",
+        "text": "After all active programs resolve, whenever a mask is revealed to be the top program of an enemy stack, that character immediately activates it at cost 0 using only its mask [MSK] effect."
+      },
+      {
+        "kind": "rule",
+        "text": "This forced activation ignores all program activation restrictions and cannot be delayed or prevented, although the program may be targeted and canceled when active."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs with possession can never remain on top of an enemy character’s stack. They always immediately activate using only the mask [MSK] effect."
+      },
+      {
+        "kind": "rule",
+        "text": "Mask [MSK] effects only activate on enemy characters, and never on friendly characters."
+      }
+    ]
+  },
+  {
+    "id": "ram",
+    "title": "RAM [RAM]",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "RAM is spent to activate programs or resolve effects.",
+        "items": [
+          "If max RAM is spent, it is flipped to its spent side (deactivated).",
+          "If virtual RAM is spent, it is discarded."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "Max RAM persists between turns. All of a player’s max RAM is readied during their Start-Up phase, and is deactivated during the Deactivate RAM step of the Refresh phase."
+      },
+      {
+        "kind": "rule",
+        "text": "All unused virtual RAM is discarded during the Deactivate RAM step of the Refresh phase."
+      },
+      {
+        "kind": "rule",
+        "text": "Players can only gain or use RAM on their own turn."
+      },
+      {
+        "kind": "rule",
+        "text": "Players may never have more than 10 max RAM. If max RAM would be raised beyond 10, overload is raised by that amount instead."
+      },
+      {
+        "kind": "rule",
+        "text": "If you lose max RAM, you may remove max RAM that’s already spent (face down)."
+      },
+      {
+        "kind": "rule",
+        "text": "Spent RAM is the total number of face down max RAM tokens. Virtual RAM never counts as spent RAM."
+      }
+    ]
+  },
+  {
+    "id": "reaction",
+    "title": "Reaction [RCT]",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Reactions can be used during any player’s turn."
+      },
+      {
+        "kind": "rule",
+        "text": "Like EXE effects, reactions unattach the patch when they are used."
+      },
+      {
+        "kind": "rule",
+        "text": "Using a reaction does not count as activating a program. It is a separate effect type."
+      },
+      {
+        "kind": "rule",
+        "text": "Reactions that include “when” or “whenever” must be used in immediate response to the triggering event, prior to any other program activations, EXE uses, or phase changes."
+      },
+      {
+        "kind": "rule",
+        "text": "If a player uses multiple reactions in response to the same event, they choose the order they resolve."
+      },
+      {
+        "kind": "rule",
+        "text": "All players must be given the opportunity to respond with reactions before the triggering event resolves."
+      },
+      {
+        "kind": "rule",
+        "text": "If multiple players have responses, the active player resolves all of theirs first, then each other player in turn order. Players only get one opportunity to respond, but may respond with any number of activations or effects during their response window in any order they choose."
+      },
+      {
+        "kind": "rule",
+        "text": "Suspended or inactive characters cannot use reactions."
+      }
+    ]
+  },
+  {
+    "id": "reclamation",
+    "title": "Reclamation",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When a program you control with reclamation resolves, you may crash it instead of returning it to its origin stack."
+      },
+      {
+        "kind": "rule",
+        "text": "While crashed, it can be activated by any character in its controller’s squad."
+      },
+      {
+        "kind": "rule",
+        "text": "Like other programs, reclamation programs may only be activated once per turn regardless of whether they are crashed or not."
+      },
+      {
+        "kind": "rule",
+        "text": "After being activated and resolved from a crashed state, it remains crashed."
+      }
+    ]
+  },
+  {
+    "id": "relic",
+    "title": "Relic",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Relic tokens represent charges on certain patches."
+      },
+      {
+        "kind": "rule",
+        "text": "They have no effect unless specifically referenced by a card."
+      },
+      {
+        "kind": "rule",
+        "text": "Relic tokens are only added or removed when directly referenced by a card."
+      }
+    ]
+  },
+  {
+    "id": "remove",
+    "title": "Remove",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Remove means to reduce the number of tokens placed on a card by a given amount."
+      },
+      {
+        "kind": "rule",
+        "text": "A player may not remove tokens from a card that do not exist. If a player must remove more tokens from a card than are present, the player removes as many as they can up to the full amount."
+      },
+      {
+        "kind": "rule",
+        "text": "Any effects contingent on removing a number of tokens do not occur if the full amount of tokens cannot be removed."
+      }
+    ]
+  },
+  {
+    "id": "reset",
+    "title": "Reset",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "A reset both readies a suspended character and cycles their top program to the bottom of their stack."
+      },
+      {
+        "kind": "rule",
+        "text": "To reset, pay RAM equal to the cost of the top program in that character’s stack."
+      },
+      {
+        "kind": "rule",
+        "text": "Resetting does not activate that program, and it can still be activated later that turn."
+      },
+      {
+        "kind": "rule",
+        "text": "The same program may be used to reset a character multiple times in the same turn."
+      },
+      {
+        "kind": "rule",
+        "text": "A character may reset even if they’re not suspended or if they only have one program in their stack."
+      },
+      {
+        "kind": "rule",
+        "text": "A character with an empty stack cannot reset."
+      }
+    ]
+  },
+  {
+    "id": "revive",
+    "title": "Revive",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "When an effect revives a crashed character:",
+        "items": [
+          "Deactivate a friendly character who hasn’t activated this turn.",
+          "Activate the crashed character with no damage.",
+          "The revived character is no longer crashed, but may not activate programs this turn, or use EXE [EXE] or reactions [RCT].",
+          "You may return any of their crashed programs from their origin stack to their stack in any order."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "If no character in the revived character’s squad can deactivate, the program or effect triggering the revive is canceled."
+      },
+      {
+        "kind": "rule",
+        "text": "Revived characters may reset the turn they are revived, but doing so does not allow them to activate programs that turn."
+      }
+    ]
+  },
+  {
+    "id": "runtime-priority-token",
+    "title": "Runtime Priority Token",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "The player who takes the first turn is given the runtime priority token."
+      },
+      {
+        "kind": "rule",
+        "text": "In the event of a draw, the player with the runtime priority Token wins the game."
+      },
+      {
+        "kind": "rule",
+        "text": "The runtime priority token may be referenced by card effects."
+      }
+    ]
+  },
+  {
+    "id": "scribe-and-transcribe",
+    "title": "Scribe and Transcribe",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Scribe effects can only be used via the transcribe keyword."
+      },
+      {
+        "kind": "rule",
+        "text": "When activating a command or EXE [EXE] with transcribe:",
+        "items": [
+          "Before choosing targets, you may spend Ink to add any number of unique scribe effects from active patches.",
+          "The ink cost is equal to the number listed after the scribe keyword (e.g., scribe 2 costs 2 ink).",
+          "Each scribe effect may be added once per activation of a Scroll with transcribe.",
+          "If the program is not activated, all ink is refunded."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "All scribe effects are added before targets are declared."
+      },
+      {
+        "kind": "example",
+        "text": "Ral Kaid has Dissolution Kana (Scribe 2: Deal 1 [P]) attached. Ral Kaid activates Codex of the Lost from the Library and spends 2 ink to add Dissolution Kana’s scribe effect. Codex of the Lost now reads: “Gain 1 Virtual RAM. This program’s cost cannot be reduced. Transcribe. Deal 1 [P].” Ral Kaid then declares targets and spends [RAM] to activate it."
+      }
+    ]
+  },
+  {
+    "id": "singularity-fragments",
+    "title": "Singularity Fragments",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "You may choose one Singularity Fragment to pursue per game."
+      },
+      {
+        "kind": "rule",
+        "text": "Singularity Fragments have no gameplay effect. They are optional achievements for exploring content and alternate goals."
+      },
+      {
+        "kind": "rule",
+        "text": "You may set your own personal milestone for how many Fragments to collect before opening the Assembly Pack."
+      }
+    ]
+  },
+  {
+    "id": "spend",
+    "title": "Spend",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "To spend RAM or ink, flip the token to its spent side."
+      },
+      {
+        "kind": "rule",
+        "text": "To spend [H], place damage tokens equal to the spent [H]."
+      },
+      {
+        "kind": "rule",
+        "text": "You cannot spend resources you don’t have:",
+        "items": [
+          "[H] cannot be spent if it would exceed the character’s max health, even if undead.",
+          "You may never spend more RAM, ink, or tokens than you control."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "RAM spent as part of a program’s resolution is separate from that program’s activation cost, and is spent during that program’s resolution."
+      },
+      {
+        "kind": "example",
+        "text": "Channel: RAW costs 1 RAM to activate, and on resolution allows its controller to spend more RAM to deal that much [A] damage. If Channel: RAW is canceled, before resolution, no more than the 1 RAM spent to activate it is spent, or can be spent. Likewise, if Defrag is canceled before resolution, no armor is or can be spent on its resolution effect."
+      },
+      {
+        "kind": "rule",
+        "text": "If an action that required spending resources is found to be invalid after resources are spent, those resources are reverted to their unspent state."
+      },
+      {
+        "kind": "example",
+        "text": "Scrapper’s controller declares an activation of Defrag, flipping 3 RAM to target Toshiro. The opponent points out that Toshiro has stealth, increasing the cost to 5 RAM. Since the cost cannot be paid, the 3 RAM is flipped back to unspent, and the activation does not occur."
+      }
+    ]
+  },
+  {
+    "id": "squad",
+    "title": "Squad",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Squad collectively refers to a grouping of characters under common control."
+      },
+      {
+        "kind": "rule",
+        "text": "For programs that specify “target squad”, all active characters in the target squad will be affected."
+      },
+      {
+        "kind": "rule",
+        "text": "Inactive characters are not affected by squad targeting effects."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs that specify “target squad” are not affected by stealth, taunt, or any other effects that specify “target character”, as a character is not the direct target."
+      }
+    ]
+  },
+  {
+    "id": "stealth",
+    "title": "Stealth",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "If a program directly targets an enemy character with stealth, it gets cost +2. This applies even if only one of the targets has stealth. Squad-targeting effects do not trigger stealth, since they don’t directly target characters."
+      },
+      {
+        "kind": "example",
+        "text": "Benobasa wants to target enemies Toshiro and Kagemusha with Stone Hands, a cost 3 program that deals 2 [P] to target character, then 1 [P] to a different target character. Kagemusha has stealth. Because all targets must be declared before a program is activated, Benobasa must pay 5 RAM, even if Kagemusha is the second target."
+      },
+      {
+        "kind": "rule",
+        "text": "Patches attached to a character can be targeted without the +2 RAM cost."
+      },
+      {
+        "kind": "rule",
+        "text": "If a single program targets multiple characters with stealth, the +2 RAM cost is applied only once."
+      },
+      {
+        "kind": "rule",
+        "text": "If all of a program’s valid targets have stealth, that program can only be activated at +2 RAM cost (e.g., highest health)."
+      },
+      {
+        "kind": "example",
+        "text": "Ferocious Bite, which must target the enemy character with the highest health, may only be activated at cost 6 if the enemy character with the highest health has stealth."
+      },
+      {
+        "kind": "rule",
+        "text": "EXE and reaction effects are not affected by stealth, as they have no associated activation cost."
+      }
+    ]
+  },
+  {
+    "id": "suspend",
+    "title": "Suspend",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Suspended characters may not activate programs, may not use EXE or reaction effects, and may not be deactivated."
+      },
+      {
+        "kind": "rule",
+        "text": "Suspended characters may have patches attached to them."
+      },
+      {
+        "kind": "rule",
+        "text": "While suspended, their character abilities and any ongoing effects on attached patches remain active."
+      },
+      {
+        "kind": "rule",
+        "text": "Characters activated from a swap action enter the battlefield suspended after resolving any ambush effects."
+      },
+      {
+        "kind": "rule",
+        "text": "All suspended characters in your squad are readied during the Ready step of your Refresh phase."
+      },
+      {
+        "kind": "rule",
+        "text": "During your turn, you may ready a suspended character as part of a reset action."
+      },
+      {
+        "kind": "rule",
+        "text": "If an effect says a character can’t be suspended, it only prevents future suspension. It does not ready a character that’s already suspended."
+      }
+    ]
+  },
+  {
+    "id": "swap-character-action",
+    "title": "Swap Character Action",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "You may only initiate one swap action per turn."
+      },
+      {
+        "kind": "rule",
+        "text": "To Swap:",
+        "items": [
+          "Deactivate one of your active characters.",
+          "Activate one of your inactive characters.",
+          "Perform an ambush if applicable.",
+          "Suspend the newly activated character."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "You may not deactivate and then activate the same character as part of a swap action."
+      },
+      {
+        "kind": "rule",
+        "text": "You may not deactivate suspended characters or use them for swap actions."
+      },
+      {
+        "kind": "rule",
+        "text": "Some effects allow multiple swap actions per turn. The extra swap actions may be taken as long as the enabling effect is active."
+      },
+      {
+        "kind": "example",
+        "text": "Hanbei allows one extra swap action every turn. If you initiate a swap action and Hanbei is still active, you may initiate a swap action later in your Activation phase. If Hanbei is deactivated as part of the first swap action, you may not take any further swap actions that turn."
+      }
+    ]
+  },
+  {
+    "id": "target-and-targeting",
+    "title": "Target and Targeting",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Programs that say “target” require you to select a valid target as specified by both the ability text and the program type."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs that say “deal” or “heal” always have a target. If no target or targeting restrictions are specified, the target is any active character."
+      },
+      {
+        "kind": "rule",
+        "text": "An activated patch must always have a target."
+      },
+      {
+        "kind": "rule",
+        "text": "Patch targets must follow their attach type targeting restrictions unless stated otherwise:",
+        "items": [
+          "Patch: Self must target the activating character.",
+          "Patch: Ally may target any active friendly character.",
+          "Patch: Any may target any active character.",
+          "Patch: Crashed Ally may target any crashed friendly character."
+        ]
+      },
+      {
+        "kind": "rule",
+        "text": "All targets must be chosen before paying costs for any game action. Some targets (e.g., characters with stealth) may increase the cost."
+      },
+      {
+        "kind": "rule",
+        "text": "Not all programs require a target. Programs that require targets will include the keyword target, or will say “deal”, “heal”, or have another keyword which implies a target (e.g. possession - see their individual reference sections)."
+      },
+      {
+        "kind": "rule",
+        "text": "If an effect specifies “targeted by a program”, it includes any effect originating from a program, such as EXEs, reactions, “During Update” effects, and any other ongoing effects."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs with no target are unaffected by programs or effects that reference targeting."
+      }
+    ]
+  },
+  {
+    "id": "taunt",
+    "title": "Taunt",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "If a program can target a character in an enemy squad with taunt, but instead targets a character in that squad without taunt, it gets cost +1."
+      },
+      {
+        "kind": "rule",
+        "text": "If any enemy character with Taunt is among the program’s targets, the additional cost does not apply."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs that have no direct target, or reference “target squad” or “all characters,” are not affected by Taunt."
+      },
+      {
+        "kind": "rule",
+        "text": "EXE and reaction effects ignore taunt, as they have no associated cost."
+      }
+    ]
+  },
+  {
+    "id": "then",
+    "title": "Then",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "See ‘Timing and Simultaneous Effects.’"
+      }
+    ]
+  },
+  {
+    "id": "timing-and-simultaneous-effects",
+    "title": "Timing and Simultaneous Effects",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Reactions and character abilities that specify the word ‘when’ or ‘whenever’ must occur immediately after the event that they specify."
+      },
+      {
+        "kind": "rule",
+        "text": "If a character or program that specifies ‘when’ is crashed by the effect that triggers the clause, it crashes first, and the clause does not trigger."
+      },
+      {
+        "kind": "example",
+        "text": "Once per turn, when Yama Uba is dealt damage, she may place a relic token on a target patch. If Yama Uba is crashed as a result of damage, she does not place a relic token."
+      },
+      {
+        "kind": "rule",
+        "text": "When a card is resolving, all sections of its text must resolve entirely before any other effects on other cards can resolve."
+      },
+      {
+        "kind": "example",
+        "text": "101 has one health remaining, and is the first target of Stone Hands, a command that deals 1 [P] to it, and then 1 [P] to a different character. When Stone Hands resolves, 101 does not crash, resolve her crash effect, or trigger a fall in until both target characters have taken damage, and Stone Hands has fully resolved."
+      },
+      {
+        "kind": "rule",
+        "text": "Abilities or effects triggered by a program’s resolution wait until after the program finishes resolving. Multiple triggers controlled by the same player may be resolved in any order that player chooses."
+      },
+      {
+        "kind": "example",
+        "text": "Zaximus Defender has Beaches of the Moon attached. Beaches of the Moon causes Zaximus to heal 2 [H] when he is suspended. Additionally, Zaximus’ character ability allows him to gain 2 armor when he is suspended. In this case, when Zaximus is suspended, the player who controls Zaximus decides the order in which all of the effects resolve."
+      },
+      {
+        "kind": "rule",
+        "text": "If multiple players have responses or triggered effects:",
+        "items": [
+          "The current player declares and resolves all of theirs first.",
+          "Then, in turn order, each other player gets one opportunity to declare and resolve any of their responses.",
+          "Each player receives a single response window per triggering event."
+        ]
+      },
+      {
+        "kind": "example",
+        "text": "Shred wants to target Rekka with Irritant Scratch, and Rekka has Scarification attached. After Irritant Scratch resolves and deals 1 damage, Shred’s controller wants to use his ability to unattach Scarification, and Rekka’s controller wants to use Scarification’s reaction. Because it is Shred’s controller’s turn, he resolves Shred’s ability first, unattaching Scarification before its reaction can activate."
+      },
+      {
+        "kind": "rule",
+        "text": "If a program contains the word “then”, its effects must resolve in the listed order, without interruption, and you must declare all targets for a program with “then” before activation. Responses to any sequenced effect from a program resolution are made according to the “multiple responses” timing above, regardless of what their resolution order was within the program."
+      },
+      {
+        "kind": "example",
+        "text": "Stone Hands reads: “Deal 2 [P] to target character, then 1 [P] to a different target.” Benobasa chooses Toshiro as the first target and Satellite 137 as the second. Satellite 137 has Amulet of Kill Process attached, which can cancel a program that targets him. Since targets are declared before activation, Satellite 137 can cancel Stone Hands as soon as it is activated, preventing all effects. However, he cannot wait until after Toshiro takes damage."
+      }
+    ]
+  },
+  {
+    "id": "transcribe",
+    "title": "Transcribe",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "See ‘Scribe and Transcribe.’"
+      }
+    ]
+  },
+  {
+    "id": "universal",
+    "title": "Universal",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Multi-colored, Universal brand icons indicate that a character can be included in any squad regardless of faction, and regardless of any other brands that they may have."
+      },
+      {
+        "kind": "rule",
+        "text": "Programs with a Universal brand icon can only be included in the origin stacks of characters with the matching Universal brand. They may not be taken by any character."
+      }
+    ]
+  },
+  {
+    "id": "undead",
+    "title": "Undead",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "Undead characters do not crash from damage and can accumulate any amount of damage."
+      },
+      {
+        "kind": "rule",
+        "text": "Undead characters are not considered when determining the lowest health character in a squad unless all characters in that squad are undead."
+      },
+      {
+        "kind": "rule",
+        "text": "While undead, characters are considered as crashed for victory conditions, even if they have less damage than their max health."
+      },
+      {
+        "kind": "example",
+        "text": "Voss is undead, and in the same squad, Kodama is also undead with an attached Shisha Sosei. If one more character in this squad crashes or becomes undead, the controlling player loses the game."
+      },
+      {
+        "kind": "rule",
+        "text": "You cannot choose to deactivate an undead character as part of a swap. If an effect would deactivate them, they crash instead."
+      },
+      {
+        "kind": "rule",
+        "text": "If an undead character has less damage than their max [H], and their undead status is removed, they are no longer considered crashed."
+      },
+      {
+        "kind": "rule",
+        "text": "Undead characters count as a victory point for each opponent of their controller."
+      }
+    ]
+  },
+  {
+    "id": "unique",
+    "title": "Unique",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "If a card or rule specifies “unique”, only one copy of a card can apply in that instance."
+      },
+      {
+        "kind": "rule",
+        "text": "Cards are considered copies if they share the exact same name."
+      }
+    ]
+  },
+  {
+    "id": "update",
+    "title": "Update",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "See ‘Initialize & Update’"
+      }
+    ]
+  },
+  {
+    "id": "victory-points",
+    "title": "Victory Points",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "You gain 1 victory point each time a program or character ability you control crashes or overwrites an opponent’s character."
+      },
+      {
+        "kind": "rule",
+        "text": "You may use any tokens or markers to track Victory Points."
+      },
+      {
+        "kind": "rule",
+        "text": "Undead characters count as a victory point for each opponent of their controller while they’re undead."
+      },
+      {
+        "kind": "rule",
+        "text": "You do not lose victory points if a previously crashed character later becomes uncrashed."
+      },
+      {
+        "kind": "rule",
+        "text": "You cannot gain victory points by crashing your own characters."
+      },
+      {
+        "kind": "rule",
+        "text": "When any number of characters crash due to Overload, if all players would have less than three characters, the game is a draw. Otherwise, no victory points are awarded, and the game continues."
+      }
+    ]
+  },
+  {
+    "id": "when",
+    "title": "When",
+    "blocks": [
+      {
+        "kind": "rule",
+        "text": "See ‘Timing and Simultaneous Effects.’"
+      }
+    ]
+  }
+]

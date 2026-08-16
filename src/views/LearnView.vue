@@ -38,7 +38,7 @@ const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
 const routesToTry = (tier: TryTier) => tryRoutesOfTier(tier).filter((r) => !r.alsoOnLearn);
 
 const rulesHub = [
-  { key: 'reference', to: soon('#rules-reference') },
+  { key: 'reference', to: to('rules') },
   { key: 'errata', to: soon('#errata') },
   { key: 'competition', to: soon('#competition') },
   { key: 'faq', to: to('faq') },
@@ -146,10 +146,6 @@ const rulesHub = [
         />
       </div>
 
-      <!-- Both documents live, so this line carries two links. It sits BESIDE
-           the rules-reference card, which still points at /soon: the searchable
-           HTML reference is being written, and a PDF beside it is the standing
-           rule, not a substitute for it. -->
       <p class="learn__note">
         {{ t('learn.rules.booklet') }}
         <BaseLink :link="outbound('rulebook')">{{ t('learn.rules.bookletLink') }}</BaseLink>

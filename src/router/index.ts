@@ -81,6 +81,12 @@ const routes: RouteRecordRaw[] = [
     meta: { titleKey: 'meta.learn' },
   },
   {
+    path: path('learn/rules'),
+    name: 'rules',
+    component: () => import('@/views/RulesView.vue'),
+    meta: { titleKey: 'meta.rules' },
+  },
+  {
     path: path('learn/faq'),
     name: 'faq',
     component: () => import('@/views/FaqView.vue'),

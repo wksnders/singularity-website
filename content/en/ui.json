@@ -13,7 +13,8 @@
     "soon": "Not yet — Singularity.exe",
     "suffix": " — Singularity.exe",
     "fallback": "Singularity.exe",
-    "faq": "FAQ — Singularity.exe"
+    "faq": "FAQ — Singularity.exe",
+    "rules": "Rules reference — Singularity.exe"
   },
   "chrome": {
     "skip": "Skip to content",
@@ -744,6 +745,36 @@
       "heading": "Ways to try it",
       "exit": "See what is in each box →"
     }
+  },
+  "rules": {
+    "hero": {
+      "crumb": "Rules reference",
+      "title": "Rules reference"
+    },
+    "search": {
+      "label": "Search the rules reference",
+      "placeholder": "Search the rules — press /",
+      "clear": "Clear"
+    },
+    "count": {
+      "terms": "terms",
+      "term": "term",
+      "none": "No term matches"
+    },
+    "az": "Jump to a letter",
+    "example": "Example",
+    "copyLink": "Copy a link to",
+    "copyLabel": "Copy link",
+    "pdf": {
+      "body": "The same words as the printed reference in the box.",
+      "link": "Download the PDF"
+    },
+    "empty": {
+      "kicker": "No match",
+      "title": "Nothing under that word",
+      "body": "Try the term as the cards print it — the reference uses the same wording. Icons work too: [P] and power damage find the same rules."
+    },
+    "letterGroup": "Terms beginning with"
   },
   "faq": {
     "hero": {
