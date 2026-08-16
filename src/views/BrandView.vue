@@ -220,7 +220,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
         <p v-if="showingFacet" class="brand__facet-note">
           {{ t(`cards.subTypeNotes.${facet}`) }}
-          <BaseLink :to="to('rules')">{{ t('brand.rulesLink') }}</BaseLink>.
+          <BaseLink :to="to('learn', {}, { hash: '#paths' })">{{ t('brand.learnLink') }}</BaseLink>.
         </p>
 
         <ul class="l-grid l-grid--cards brand__gap">
