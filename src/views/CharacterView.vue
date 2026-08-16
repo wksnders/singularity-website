@@ -289,7 +289,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           <dl class="char__facts">
             <div>
               <dt><MonoLabel tone="muted" as="span">{{ t('character.statHp') }}</MonoLabel></dt>
-              <dd class="char__fact-value">{{ character.hp }}</dd>
+              <dd class="char__hp">{{ character.hp }}</dd>
             </div>
             <div class="char__facts-brands">
               <dt><MonoLabel tone="muted" as="span">{{ t('character.brandsLabel') }}</MonoLabel></dt>
@@ -713,10 +713,19 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   min-width: 0;
 }
 
-.char__fact-value {
+.char__hp {
   margin: 7px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25em;
+  aspect-ratio: 1;
+  padding: 0 0.3em;
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-pill);
   font-size: 1.125rem;
   font-weight: 500;
+  line-height: 1;
 }
 
 .char__brand-list {
