@@ -147,6 +147,7 @@ const groups = computed<PoolGroup[]>(() =>
         name: program.name,
         brandId: brand.id,
         brandName: brand.name,
+        set: program.set,
         art: program.art,
       })),
     };
@@ -203,7 +204,7 @@ const cardLines = computed<CardLine[]>(() => {
 
 const zoomRows = computed<ZoomRow[]>(() => {
   const rows: ZoomRow[] = [];
-  const setLabel = t(`cards.sets.${character.value?.set}`);
+  const setLabel = t(`cards.sets.${selected.value?.set ?? character.value?.set}`);
   if (selected.value) {
     rows.push({ label: t('character.rowBrand'), value: selected.value.brandName });
     rows.push({ label: t('character.rowSet'), value: setLabel });
@@ -401,11 +402,17 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                   radius="m"
                   fit="contain"
                 />
+                <span class="char__panel-zoom" aria-hidden="true">
+                  {{ t('character.enlarge') }}
+                </span>
               </button>
               <MonoLabel :tone="selected ? 'muted' : 'accent'" class="char__panel-kicker">
                 {{ detailKicker }}
               </MonoLabel>
               <h3 class="char__panel-name">{{ detailName }}</h3>
+              <MonoLabel tone="faint" class="char__panel-artist">
+                {{ t('character.artBy') }} {{ artist }}
+              </MonoLabel>
 
               <div v-if="!selected" class="char__face">
                 <button
@@ -807,6 +814,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 }
 
 .char__panel-card {
+  position: relative;
   display: block;
   width: 100%;
   padding: 0;
@@ -815,6 +823,35 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   overflow: hidden;
   background: var(--color-surface);
   cursor: zoom-in;
+  transition: border-color var(--dur-2) var(--ease-out);
+}
+
+.char__panel-card:hover,
+.char__panel-card:focus-visible {
+  border-color: rgba(var(--rgb-accent), 0.55);
+}
+
+.char__panel-zoom {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  padding: 4px 8px;
+  border-radius: var(--radius-s);
+  background: rgba(var(--rgb-bg), 0.8);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+
+.char__panel-card:hover .char__panel-zoom,
+.char__panel-card:focus-visible .char__panel-zoom {
+  color: var(--color-ink-bright);
+}
+
+.char__panel-artist {
+  margin-top: var(--space-2);
 }
 
 .char__panel-kicker {
