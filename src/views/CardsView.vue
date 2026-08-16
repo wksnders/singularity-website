@@ -6,6 +6,7 @@
  */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
@@ -17,6 +18,7 @@ import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
 import { t } from '@/content';
 import { brandById, factionById, factions, programs } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
@@ -35,6 +37,7 @@ const sections = computed<SectionEntry[]>(() => [
 const faction = useQueryFilter('faction');
 const brandScope = useQueryList('brand');
 const search = ref('');
+const zoomed = ref<Program | null>(null);
 
 const scopedBrands = computed(() =>
   brandScope.values.value
@@ -166,6 +169,7 @@ function clearAll(): void {
             :brand-label="brandOf(program)?.name"
             :brand-icon="brandOf(program)?.icon"
             :color="factionOf(program)?.color"
+            @select="zoomed = program"
           />
         </li>
       </ul>
@@ -239,6 +243,21 @@ function clearAll(): void {
       <BandFoot :to="to('learn')" :label="t('cardsPage.exitLearn')" />
     </div>
   </section>
+
+  <ProgramZoom
+    :open="Boolean(zoomed)"
+    :program="zoomed"
+    :brand-name="zoomed ? (brandOf(zoomed)?.name ?? '') : ''"
+    @close="zoomed = null"
+  >
+    <template #links>
+      <p class="cards__zoom-link">
+        <BaseLink v-if="zoomed" :to="to('brand', { brandId: zoomed.brandId })">
+          {{ t('character.aboutBrand') }} {{ brandOf(zoomed)?.name }} →
+        </BaseLink>
+      </p>
+    </template>
+  </ProgramZoom>
 </template>
 
 <style>

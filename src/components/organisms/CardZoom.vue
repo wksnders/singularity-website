@@ -2,7 +2,7 @@
 /**
  * The card at reading size
  */
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
@@ -34,7 +34,8 @@ const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabi
 watch(
   () => props.open,
   async (open) => {
-    const page = document.getElementById('char-page');
+    /* Teleported to <body>, so inerting the page does not inert the dialog. */
+    const page = document.getElementById('main');
     if (open) {
       lastFocused = document.activeElement as HTMLElement | null;
       document.body.style.overflow = 'hidden';
@@ -50,8 +51,17 @@ watch(
     page?.removeAttribute('inert');
     page?.removeAttribute('aria-hidden');
     if (lastFocused?.isConnected) lastFocused.focus();
+    lastFocused = null;
   },
 );
+
+onBeforeUnmount(() => {
+  if (!props.open) return;
+  document.body.style.overflow = '';
+  const page = document.getElementById('main');
+  page?.removeAttribute('inert');
+  page?.removeAttribute('aria-hidden');
+});
 
 function onKeydown(event: KeyboardEvent): void {
   if (event.key === 'Escape') {
@@ -76,54 +86,55 @@ function onKeydown(event: KeyboardEvent): void {
 </script>
 
 <template>
-  <div
-    v-if="open"
-    id="char-zoom"
-    ref="dialog"
-    class="c-zoom"
-    role="dialog"
-    aria-modal="true"
-    :aria-label="name"
-    @keydown="onKeydown"
-  >
-    <div class="c-zoom__backdrop" @click="emit('close')" />
-
-    <button
-      ref="closeButton"
-      type="button"
-      class="c-zoom__close"
-      :aria-label="t('cardZoom.close')"
-      @click="emit('close')"
+  <Teleport to="body">
+    <div
+      v-if="open"
+      ref="dialog"
+      class="c-zoom"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="name"
+      @keydown="onKeydown"
     >
-      <span aria-hidden="true">&times;</span>
-    </button>
+      <div class="c-zoom__backdrop" @click="emit('close')" />
 
-    <div class="c-zoom__shell">
-      <div class="c-zoom__body">
-        <div class="c-zoom__figure">
-          <ArtFrame :art="art" ratio="63 / 88" :placeholder="placeholder" radius="m" fit="contain" />
-        </div>
+      <button
+        ref="closeButton"
+        type="button"
+        class="c-zoom__close"
+        :aria-label="t('cardZoom.close')"
+        @click="emit('close')"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
 
-        <div class="c-zoom__meta">
-          <MonoLabel tone="muted">{{ kicker }}</MonoLabel>
-          <h2 class="c-zoom__name">{{ name }}</h2>
+      <div class="c-zoom__shell">
+        <div class="c-zoom__body">
+          <div class="c-zoom__figure">
+            <ArtFrame :art="art" ratio="63 / 88" :placeholder="placeholder" radius="m" fit="contain" />
+          </div>
 
-          <slot name="face" />
+          <div class="c-zoom__meta">
+            <MonoLabel tone="muted">{{ kicker }}</MonoLabel>
+            <h2 class="c-zoom__name">{{ name }}</h2>
 
-          <dl class="c-zoom__rows">
-            <div v-for="row in rows" :key="row.label" class="c-zoom__row">
-              <dt><MonoLabel tone="muted" as="span">{{ row.label }}</MonoLabel></dt>
-              <dd class="c-zoom__value">{{ row.value }}</dd>
-            </div>
-          </dl>
+            <slot name="face" />
 
-          <p class="c-zoom__errata">{{ errataLine }}</p>
+            <dl class="c-zoom__rows">
+              <div v-for="row in rows" :key="row.label" class="c-zoom__row">
+                <dt><MonoLabel tone="muted" as="span">{{ row.label }}</MonoLabel></dt>
+                <dd class="c-zoom__value">{{ row.value }}</dd>
+              </div>
+            </dl>
 
-          <slot name="links" />
+            <p class="c-zoom__errata">{{ errataLine }}</p>
+
+            <slot name="links" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style>

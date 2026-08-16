@@ -10,10 +10,13 @@
 /* ---------------------------------------------------------------------------
    ART COMES IN LAYERS, AND THEY ARE NOT INTERCHANGEABLE.
 
-     · ILLUSTRATION (`art`) — the subject alone, no frame. Croppable,
-       focal-pointable, safe behind text.
-     · SCENE (`sceneArt`) — characters only: the character in their background.
-     · CARD (`cardArt`) — the printed card, frame and rules box included. Never
+   All three are the same painting at different depths of the printed card:
+
+     · ILLUSTRATION (`art`) — the subject as they appear on the card, with the
+       background cut away. Croppable, focal-pointable, safe behind text.
+     · SCENE (`sceneArt`) — characters only: subject and background as printed,
+       without the rules text.
+     · CARD (`cardArt`) — the card as it is in play, rules text and all. Never
        cropped, never a backdrop: a crop removes printed rules.
 
    Separate fields so a surface cannot reach for the wrong one. A surface
@@ -145,7 +148,7 @@ export interface Character {
   personalBrandId?: string | null;
   /** ILLUSTRATION — the character alone, no background. Tiles, story pins. */
   art: Art;
-  /** SCENE — the character in their background. Not derivable from `art`. */
+  /** SCENE — subject and background as printed, without the rules text. */
   sceneArt: Art;
   /** CARD — the printed character card. Never cropped: a crop removes rules. */
   cardArt: Art;

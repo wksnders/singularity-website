@@ -9,6 +9,7 @@ import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
+import FaceToggle from '@/components/atoms/FaceToggle.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -21,6 +22,7 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import CardPool from '@/components/organisms/CardPool.vue';
 import type { PoolCard, PoolGroup } from '@/components/organisms/CardPool.vue';
 import CardZoom from '@/components/organisms/CardZoom.vue';
+import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
 import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useMediaQuery } from '@/composables/useMediaQuery';
@@ -34,6 +36,7 @@ import {
   characters,
   factionById,
   printingsOf,
+  programById,
   programsOfBrand,
   resolvePrinting,
   stories,
@@ -147,7 +150,6 @@ const groups = computed<PoolGroup[]>(() =>
         name: program.name,
         brandId: brand.id,
         brandName: brand.name,
-        set: program.set,
         art: program.art,
       })),
     };
@@ -173,8 +175,12 @@ function openCharacterCard(): void {
 
 const detailArt = computed(() => {
   if (selected.value) return selected.value.art;
-  return face.value === 'art' ? active.value?.art : active.value?.cardArt;
+  return face.value === 'art' ? active.value?.sceneArt : active.value?.cardArt;
 });
+
+const zoomedProgram = computed(() =>
+  selected.value ? programById(selected.value.id) : null,
+);
 
 const detailKicker = computed(() =>
   selected.value
@@ -203,21 +209,16 @@ const cardLines = computed<CardLine[]>(() => {
 });
 
 const zoomRows = computed<ZoomRow[]>(() => {
-  const rows: ZoomRow[] = [];
-  const setLabel = t(`cards.sets.${selected.value?.set ?? character.value?.set}`);
-  if (selected.value) {
-    rows.push({ label: t('character.rowBrand'), value: selected.value.brandName });
-    rows.push({ label: t('character.rowSet'), value: setLabel });
-  } else {
-    rows.push({ label: t('character.rowSet'), value: setLabel });
-    rows.push({
+  const rows: ZoomRow[] = [
+    { label: t('character.rowSet'), value: t(`cards.sets.${character.value?.set}`) },
+    {
       label: t('character.rowAccess'),
       value: playedBrands.value.map((b) => b.name).join(' · '),
-    });
-    rows.push({ label: t('character.rowPrinting'), value: active.value?.label ?? '' });
-  }
-  rows.push({ label: t('character.rowArtist'), value: artist.value });
-  if (active.value?.source && !selected.value) {
+    },
+    { label: t('character.rowPrinting'), value: active.value?.label ?? '' },
+    { label: t('character.rowArtist'), value: artist.value },
+  ];
+  if (active.value?.source) {
     const licensor = active.value.licensor ? ` · ${active.value.licensor}` : '';
     rows.push({ label: t('character.rowSource'), value: `${active.value.source}${licensor}` });
   }
@@ -414,24 +415,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 {{ t('character.artBy') }} {{ artist }}
               </MonoLabel>
 
-              <div v-if="!selected" class="char__face">
-                <button
-                  type="button"
-                  class="char__face-btn"
-                  :aria-pressed="face === 'card'"
-                  @click="face = 'card'"
-                >
-                  {{ t('character.faceCard') }}
-                </button>
-                <button
-                  type="button"
-                  class="char__face-btn"
-                  :aria-pressed="face === 'art'"
-                  @click="face = 'art'"
-                >
-                  {{ t('character.faceArt') }}
-                </button>
-              </div>
+              <FaceToggle v-if="!selected" v-model="face" />
 
               <p class="char__panel-link">
                 <BaseLink v-if="selected" :to="to('cards', {}, { query: galleryQuery })">
@@ -511,46 +495,41 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
     </div>
 
     <CardZoom
-      :open="zoomOpen"
+      :open="zoomOpen && !selected"
       :kicker="detailKicker"
       :name="detailName ?? ''"
       :art="detailArt ?? active.cardArt"
-      :placeholder="t('character.cardSlot')"
+      :placeholder="face === 'art' ? t('character.sceneSlot') : t('character.cardSlot')"
       :rows="zoomRows"
       :errata-line="t('character.noErrata')"
       @close="zoomOpen = false"
     >
-      <template v-if="!selected" #face>
-        <div class="char__face">
-          <button
-            type="button"
-            class="char__face-btn"
-            :aria-pressed="face === 'card'"
-            @click="face = 'card'"
-          >
-            {{ t('character.faceCard') }}
-          </button>
-          <button
-            type="button"
-            class="char__face-btn"
-            :aria-pressed="face === 'art'"
-            @click="face = 'art'"
-          >
-            {{ t('character.faceArt') }}
-          </button>
-        </div>
+      <template #face>
+        <FaceToggle v-model="face" />
       </template>
       <template #links>
         <p class="char__panel-link">
-          <BaseLink v-if="selected" :to="to('cards', {}, { query: galleryQuery })">
-            {{ t('character.openInGallery') }} →
-          </BaseLink>
-          <BaseLink v-else :to="to('cards', {}, { hash: '#anatomy' })">
+          <BaseLink :to="to('cards', {}, { hash: '#anatomy' })">
             {{ t('character.cardAnatomy') }} →
           </BaseLink>
         </p>
       </template>
     </CardZoom>
+
+    <ProgramZoom
+      :open="zoomOpen && Boolean(selected)"
+      :program="zoomedProgram"
+      :brand-name="selected?.brandName ?? ''"
+      @close="zoomOpen = false"
+    >
+      <template #links>
+        <p class="char__panel-link">
+          <BaseLink :to="to('cards', {}, { query: galleryQuery })">
+            {{ t('character.openInGallery') }} →
+          </BaseLink>
+        </p>
+      </template>
+    </ProgramZoom>
   </template>
 
   <section v-else class="l-band">
@@ -866,38 +845,9 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   letter-spacing: normal;
 }
 
-.char__face {
-  margin-top: 14px;
-  display: flex;
-  max-width: 300px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
 
-.char__face-btn {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 44px;
-  padding-inline: var(--space-3);
-  border: 0;
-  background: transparent;
-  color: var(--color-ink-soft);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
 
-.char__face-btn + .char__face-btn {
-  border-left: 1px solid var(--color-line-strong);
-}
 
-.char__face-btn[aria-pressed='true'] {
-  background: var(--color-accent-wash);
-  color: var(--color-ink);
-}
 
 .char__panel-link {
   margin-top: var(--space-4);
