@@ -73,7 +73,7 @@
       "Scroll": "The Scrolls"
     },
     "subTypeNotes": {
-      "Scroll": "Scrolls can optionally enter the Library zone, when an Archivist Knows how to find them."
+      "Scroll": "Scrolls can optionally enter the Library zone. Just be sure to have an Archivist with you, otherwise you may never find them again."
     },
     "unrevealed": "Not revealed yet",
     "unnamed": "[ unrevealed program ]",

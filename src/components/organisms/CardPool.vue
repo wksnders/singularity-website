@@ -8,7 +8,7 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
-import type { Art } from '@/data/types';
+import type { Art, SetCode } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
 export interface PoolCard {
@@ -16,6 +16,7 @@ export interface PoolCard {
   name: string;
   brandId: string;
   brandName: string;
+  set: SetCode;
   art: Art;
 }
 
