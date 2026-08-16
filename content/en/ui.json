@@ -255,10 +255,6 @@
         "title": "That page is still being written",
         "body": "It is on the list, and it is not live yet. Here is what is open on the site today."
       },
-      "rules-reference": {
-        "title": "The rules reference is being written",
-        "body": "It ships as a searchable, deep-linkable document — never a PDF-only download. The current reference is already available as a PDF from the rules band on the Learn page, and the videos and modes cover the same ground."
-      },
       "errata": {
         "title": "The errata log is being written",
         "body": "Every change will be dated and will point at the cards and rules it touches."
