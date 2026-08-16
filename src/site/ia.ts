@@ -118,7 +118,7 @@ const learn: IaSection = {
     {
       key: 'learn.rulesHub',
       items: [
-        { key: 'learn.reference', to: to('soon', {}, { hash: '#rules-reference' }), note: true },
+        { key: 'learn.reference', to: to('rules'), note: true },
         { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }), note: true },
         { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }), note: true },
         { key: 'learn.faq', to: to('faq'), note: true },

@@ -27,7 +27,7 @@ import { t } from '@/content';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { assertFaqShape, faqEntries, faqGroups } from '@/site/faq';
 import { markHtml, matcher, segments } from '@/site/highlight';
-import { resolveLink, soon, to } from '@/site/links';
+import { resolveLink, to } from '@/site/links';
 import type { FaqEntry } from '@/site/faq';
 import type { SectionEntry } from '@/site/sections';
 
@@ -243,7 +243,7 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
 
 const routing = [
   { key: 'order', to: to('community', {}, { hash: '#support' }) },
-  { key: 'rules', to: soon('#rules-reference') },
+  { key: 'rules', to: to('rules') },
   { key: 'press', to: to('community', {}, { hash: '#press' }) },
 ] as const;
 </script>
@@ -320,7 +320,7 @@ const routing = [
            answer to the question that missed. The three routes the copy names
            sit beside it. -->
       <div class="l-row faq__routes">
-        <UiButton variant="quiet" :to="soon('#rules-reference')">
+        <UiButton variant="quiet" :to="to('rules')">
           {{ t('faq.empty.rules') }}
         </UiButton>
         <UiButton variant="quiet" :to="to('community', {}, { hash: '#discord' })">
