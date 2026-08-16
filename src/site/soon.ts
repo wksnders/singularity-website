@@ -49,14 +49,6 @@ const DESTINATIONS: SoonDestination[] = [
     ],
   },
   {
-    id: 'enquiries',
-    kind: 'page',
-    also: [
-      { key: 'ia.community.support.label', to: to('community', {}, { hash: '#support' }) },
-      { key: 'ia.community.press.label', to: to('community', {}, { hash: '#press' }) },
-    ],
-  },
-  {
     id: 'story-chapter',
     kind: 'page',
     also: [

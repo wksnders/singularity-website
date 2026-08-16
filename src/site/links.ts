@@ -85,6 +85,12 @@ export function soon(hash: string): RouteLocationRaw {
   return to('soon', {}, { hash });
 }
 
+/* `external` so BaseLink renders an anchor at all: an href with external false
+   falls through its template to plain text. */
+export function mailTo(address: string): ResolvedLink {
+  return { href: `mailto:${address}`, external: true };
+}
+
 /* Renderers go through this rather than reading `spec.to`, which on an
    `outbound` row is undefined BaseLink degrades that to plain text, so the
    link goes missing without erroring. */

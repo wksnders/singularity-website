@@ -260,10 +260,6 @@
         "title": "The competition ruleset is being written",
         "body": "The ruleset exists and ships at launch. It will be published here, versioned, with the date it takes effect."
       },
-      "enquiries": {
-        "title": "The enquiries address is not published yet",
-        "body": "Trade, distribution and licensing go to their own address rather than to support. Until it is up, support will pass a message along."
-      },
       "learn-track": {
         "title": "That learning path is still being written",
         "body": "Each path is one ordered route through the game for one kind of player, so nobody reads the parts that are not for them. Until they are up, the modes and the how-to-play videos cover the same ground."
