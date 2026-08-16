@@ -177,8 +177,7 @@ const factSheet = computed(() => [
           </UiButton>
           <p class="comm__meta comm__gap">
             {{ t('community.press.contact') }}
-            <a v-if="game.pressEmail" :href="`mailto:${game.pressEmail}`">{{ game.pressEmail }}</a>
-            <TbdValue v-else />
+            <a :href="`mailto:${game.enquiriesEmail}`">{{ game.enquiriesEmail }}</a>
           </p>
         </div>
 

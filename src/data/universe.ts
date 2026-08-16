@@ -63,7 +63,9 @@ export const game = {
   shipsTo: null as string | null,
   ageRating: '14+',
   supportEmail: 'singularity-support@octothorpe.com' as string | null,
-  pressEmail: 'singularity-press@octothorpe.com' as string | null,
+  /* Press, trade and licensing share one inbox. The split a reader needs is
+     support or not-support, and each surface labels this one for its context. */
+  enquiriesEmail: 'singularity-press@octothorpe.com',
   trailerYouTubeId: '_eyxoFI4F-8',
   copyrightYear: 2026,
 };

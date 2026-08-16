@@ -25,7 +25,8 @@
 
 import type { RouteLocationRaw } from 'vue-router';
 import { docHtml, getCollection, getDoc, t } from '@/content';
-import { outbound, soon, to } from '@/site/links';
+import { game } from '@/data/universe';
+import { mailTo, outbound, soon, to } from '@/site/links';
 import type { LinkSpec, ResolvedLink } from '@/site/links';
 
 export interface FaqGroup {
@@ -58,7 +59,7 @@ const LINK_TARGETS: Record<string, () => RouteLocationRaw | ResolvedLink> = {
   /* Not a typo: contents, price and compatibility are all the store's, so the
      five questions that ask for any of them exit to the same place `buy` does. */
   products: () => outbound('buy'),
-  enquiries: () => soon('#enquiries'),
+  enquiries: () => mailTo(game.enquiriesEmail),
   rulesReference: () => soon('#rules-reference'),
   printAndPlay: () => outbound('printAndPlay'),
   tabletopSimulator: () => outbound('tabletopSimulator'),

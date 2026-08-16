@@ -143,7 +143,7 @@
     "id": "retail",
     "group": "buying",
     "question": "Can my local game store stock it?",
-    "answer": "Yes, for trade, distribution and wholesale enquiries go to the enquiries address, not to support.",
+    "answer": "Yes. Trade, distribution and wholesale enquiries have their own address, not to support.",
     "link": {
       "key": "enquiries",
       "label": "Trade & other enquiries"
@@ -260,7 +260,7 @@
     "id": "alt-art",
     "group": "box",
     "question": "Will the campaign alt-art cards be available again?",
-    "answer": "[PLACEHOLDER — say plainly whether exclusive alt art returns. Backers ask this first, and a vague answer reads as a yes.]",
+    "answer": "Current Gamefound exclusives in the founders pack 1 will not be reprinted.",
     "keywords": [
       "alt art",
       "alternate",
@@ -275,7 +275,7 @@
     "id": "language",
     "group": "box",
     "question": "What language is the game in, and will it be localised?",
-    "answer": "[PLACEHOLDER — launch language, plus the honest current position on other languages. The site itself is built to serve translated content.]",
+    "answer": "English, we currently dont have localization plans in the pipeline but if there is enough demand for it, we'd love to make the game more accessible",
     "keywords": [
       "language",
       "english",
@@ -292,7 +292,7 @@
     "id": "players",
     "group": "playing",
     "question": "How many people can play?",
-    "answer": "One to four. The competitive game seats two to four; solo and co-op play run through Incursions, from one player up to a full table of four.",
+    "answer": "One to four. The competitive game seats two to four; solo and co-op play run through Incursions, from one player up to a full table of four. four players is mostly a practical limit for gametime, if you have the components and time then you can run with more players",
     "link": {
       "key": "learnModes",
       "label": "The five formats"
@@ -311,7 +311,7 @@
     "id": "length",
     "group": "playing",
     "question": "How long is a game?",
-    "answer": "About 30 minutes per player.",
+    "answer": "It generally takes around 45 min for a new player to learn the game, for most games after that taking About 30 minutes per player. Very experienced players can play games in 15 min per player",
     "keywords": [
       "length",
       "time",
@@ -338,7 +338,7 @@
     "id": "random",
     "group": "playing",
     "question": "Is there really no randomness?",
-    "answer": "None. No dice, no shuffling, no card draw deciding a turn — everything that will happen is already on the table for both of you to read.",
+    "answer": "In PVP, None. No dice, no shuffling, no card draw deciding a turn everything that will happen is already on the table for both of you to read. Incursions will generally randomize their starting states and may randomize the actions they take to some extent as well as part of their turns",
     "link": {
       "key": "rulesReference",
       "label": "How a turn resolves, rule by rule"
@@ -358,7 +358,7 @@
     "id": "optimal",
     "group": "playing",
     "question": "If nothing is random, is there one optimal strategy?",
-    "answer": "No — for the same reason chess does not have one: your opponent is the variable, and the possibility space is enormous.",
+    "answer": "No, for the same reason chess does not have one: your opponent and their deck are the variable, and the possibility space is enormous.",
     "link": {
       "key": "rulesReference",
       "label": "What the rules actually fix"
@@ -378,7 +378,7 @@
     "id": "deckbuild",
     "group": "playing",
     "question": "Do I have to build a deck?",
-    "answer": "No — the core box comes with balanced starter decks and ready-made decklists, and building your own squad is there when you want it.",
+    "answer": "No, the core box comes with 4 balanced starter decks and 8 ready-made decklists, and building your own squad is there when you want it and can start with some of the suggestions for how to modify each starter deck.",
     "link": {
       "key": "learnPaths",
       "label": "Building a squad, in Learn"
@@ -418,7 +418,7 @@
     "id": "rules-question",
     "group": "playing",
     "question": "I have a rules question mid-game. Where do I look?",
-    "answer": "The rules reference, which is a searchable web page with a link to every individual rule — so a QR code on the table gets you to the exact line. Anything since printing is in the errata log.",
+    "answer": "The rules reference, which is a document that comes with the game, or look at the searchable web version with a link to every individual rule. Changes since printing are in the errata log.",
     "link": {
       "key": "rulesReference",
       "label": "Open the rules reference"
@@ -437,7 +437,7 @@
     "id": "what-incursions",
     "group": "solo",
     "question": "What are Incursions?",
-    "answer": "Co-op missions against a rogue AI. One to four players share a table against a boss that acts entirely from its own deck and its own rules — nobody plays the villain, and nothing it does is random.",
+    "answer": "Co-op/Solo missions against a rogue AI. One to four players share a table against a boss that acts entirely from its own deck and its own rules. Nobody plays the villain, it has a scripted set of moves it makes on it's turns against you.",
     "link": {
       "key": "incursions",
       "label": "How Incursions work"
@@ -457,7 +457,7 @@
     "id": "solo",
     "group": "solo",
     "question": "Can I play solo?",
-    "answer": "Yes. Incursions run from one player up to four, with no change of rules between them.",
+    "answer": "Yes. Incursions run from one player up to four, using the same sets of rules between them.",
     "keywords": [
       "solo",
       "single player",
@@ -470,7 +470,7 @@
     "id": "coop-need-core",
     "group": "solo",
     "question": "Do I need the core box to play Incursions?",
-    "answer": "[PLACEHOLDER — compatibility line for the Incursions box, one sentence; the product entry carries the detail.]",
+    "answer": "You need to bring a deck to play against it, and the core server is a good way to do that. The Incursions box has everything you need to setup the enemy but doesnt include the cards for you to build a deck to use against them.",
     "link": {
       "key": "products",
       "label": "What each box needs"
@@ -506,8 +506,8 @@
   {
     "id": "sealed",
     "group": "solo",
-    "question": "What are the sealed packs inside the box?",
-    "answer": "Rewards. Beat an Incursion and you open the pack sealed beside it, which holds the character who was on the other side — playable afterwards in any faction, in any format.",
+    "question": "What are the sealed packs inside the Incursion box?",
+    "answer": "Rewards. Beat all 3 Incursions and you open the sealed pack inside the box, which holds some fun surprise unlocks.",
     "link": {
       "key": "unaligned",
       "label": "Who you can earn"
@@ -528,7 +528,7 @@
     "id": "open-early",
     "group": "solo",
     "question": "Can I just open the sealed packs?",
-    "answer": "Nothing stops you — no accounts, no tracking, and nothing is destroyed. We would rather you earned them.",
+    "answer": "Nothing stops you, no accounts, no tracking, and nothing is destroyed. But, we would rather you earned them because we think it's more fun that way.",
     "link": {
       "key": "incursions",
       "label": "What you win"
@@ -546,7 +546,7 @@
     "id": "pnp",
     "group": "digital",
     "question": "Is there a print and play?",
-    "answer": "Yes, free: the core-set cards as a download, enough to play a real game before you buy anything.",
+    "answer": "Yes, downloadable here in the learn section. Includes the core-set and expansion cards as a download, enough to play a real game before you buy anything.",
     "link": {
       "key": "printAndPlay",
       "label": "Download the print & play"
@@ -734,7 +734,7 @@
   {
     "id": "ai-art",
     "group": "help",
-    "question": "Do you use AI-generated art or writing?",
+    "question": "Do you use AI-generated art?",
     "body": "community/ai-statement",
     "keywords": [
       "ai",
