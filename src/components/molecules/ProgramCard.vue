@@ -22,10 +22,11 @@ const props = defineProps<{
   color?: string | null;
   /** Sealed-in-the-box programs: locks are editorial, never tracked state. */
   sealedLabel?: string;
-  /** Show the printed sub-type above the name. For a grid that is all one
-      brand's cards, where the sub-type is the distinction worth drawing. */
+  /** Show the printed sub-type above the name. */
   branded?: boolean;
 }>();
+
+defineEmits<{ select: [] }>();
 
 /** Sub-type sits on the printed type line, not in a row of its own. */
 const typeLine = computed(() =>
@@ -53,12 +54,20 @@ const lines = computed<CardLine[]>(() =>
 
 <template>
   <div class="c-prog" :style="color ? { '--faction': color } : undefined">
-    <CardFace
+    <button
       v-if="program.revealed"
-      :art="program.cardArt"
-      :placeholder="t('cards.artPlaceholder')"
-      :lines="lines"
-    />
+      type="button"
+      class="c-prog__open"
+      :aria-label="`${t('character.enlarge')}: ${program.name}`"
+      @click="$emit('select')"
+    >
+      <CardFace
+        :art="program.cardArt"
+        :placeholder="t('cards.artPlaceholder')"
+        :lines="lines"
+      />
+      <span class="c-prog__zoom" aria-hidden="true">{{ t('character.enlarge') }}</span>
+    </button>
     <div v-else class="c-prog__sealed">
       <MonoLabel tone="faint">{{ sealedLabel || t('cards.unrevealed') }}</MonoLabel>
     </div>
@@ -82,6 +91,38 @@ const lines = computed<CardLine[]>(() =>
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.c-prog__open {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.c-prog__zoom {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  padding: 3px 7px;
+  border-radius: var(--radius-s);
+  background: rgba(var(--rgb-bg), 0.8);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.c-prog__open:hover .c-prog__zoom,
+.c-prog__open:focus-visible .c-prog__zoom {
+  opacity: 1;
 }
 
 .c-prog__sealed {

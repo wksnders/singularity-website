@@ -4,7 +4,7 @@
  * colour swatch), its programs as printed cards with their wording as text,
  * and the characters who play it.
  */
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -19,6 +19,7 @@ import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
+import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { hasSubType } from '@/site/cardText';
@@ -120,6 +121,8 @@ const tags = (character: Character) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }))
     : [{ label: t('universe.anyFaction'), color: null }];
+
+const zoomed = ref<Program | null>(null);
 
 const pad = (n: number) => String(n).padStart(2, '0');
 </script>
@@ -229,6 +232,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               :brand-icon="brand.icon"
               :color="faction?.color"
               :sealed-label="t('brand.unrevealed')"
+              @select="zoomed = program"
             />
           </li>
         </ul>
@@ -271,6 +275,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
         />
       </div>
     </section>
+
+    <ProgramZoom
+      :open="Boolean(zoomed)"
+      :program="zoomed"
+      :brand-name="name"
+      @close="zoomed = null"
+    >
+      <template #links>
+        <p class="brand__zoom-link">
+          <BaseLink :to="to('cards', {}, { query: { brand: brandId } })">
+            {{ t('character.openInGallery') }} →
+          </BaseLink>
+        </p>
+      </template>
+    </ProgramZoom>
   </div>
 
   <section v-else class="l-band">
@@ -319,6 +338,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
 .brand__facets {
   margin-top: var(--space-6);
   align-items: center;
+}
+
+.brand__zoom-link {
+  margin-top: var(--space-5);
 }
 
 .brand__facet-note {
