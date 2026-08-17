@@ -14,6 +14,13 @@ export const INTRO_ID = 'using-the-rules-reference';
 
 export type BlockKind = 'text' | 'note' | 'rule' | 'example';
 
+/**
+ * The shelf an entry sits on. The eyebrow, the class filter and the rail's
+ * groups all read it, so a wrong value silently mis-files the term.
+ *
+ *
+ * TODO — decide on all of these properly
+ */
 export type RuleClass = 'keyword' | 'procedure' | 'wording' | 'term' | 'pointer';
 
 export interface RuleSource {
