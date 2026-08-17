@@ -63,7 +63,9 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
       </nav>
 
       <div class="c-nav__spacer" />
-      <BaseLink :link="outbound('buy')" class="c-nav__buy">{{ t('chrome.buy') }}</BaseLink>
+      <BaseLink :link="outbound('buy')" class="c-nav__buy">
+        {{ wide ? t('chrome.buy') : t('chrome.buyShort') }}
+      </BaseLink>
 
       <button
         v-if="!wide"
@@ -113,14 +115,6 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
   align-items: center;
   gap: var(--space-6);
   height: var(--nav-height);
-}
-
-.c-nav__brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-  color: var(--color-ink);
 }
 
 .c-nav__brand:hover {
@@ -239,5 +233,38 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
   box-shadow:
     0 6px 0 var(--color-ink),
     0 -6px 0 var(--color-ink);
+}
+.c-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  color: var(--color-ink);
+}
+
+@media (max-width: 899px) {
+  .c-nav__bar {
+    gap: var(--space-3);
+  }
+
+  .c-nav__brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .c-nav__wordmark {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .c-nav__buy {
+    padding-inline: var(--space-3);
+  }
+}
+
+@media (max-width: 400px) {
+  .c-nav__bar {
+    gap: var(--space-2);
+  }
 }
 </style>

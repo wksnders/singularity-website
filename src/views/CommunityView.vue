@@ -360,7 +360,7 @@ const factSheet = computed(() => [
 
 .comm__facts > div {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 120px minmax(0, 1fr);
   gap: var(--space-3);
   align-items: baseline;
 }

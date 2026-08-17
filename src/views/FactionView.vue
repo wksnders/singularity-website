@@ -79,7 +79,7 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
       :placeholder="t('faction.hero.artPlaceholder')"
       :pending-note="t('faction.hero.pending')"
       glow="110% 80% at 76% 8%"
-      min-height="min(80vh, 720px)"
+      min-height="min(80dvh, 720px)"
     >
       <Breadcrumbs
         :crumbs="[{ label: t('ia.universe.label'), to: to('universe') }, { label: name }]"

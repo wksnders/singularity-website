@@ -21,12 +21,25 @@ defineProps<{
   placeholder: string;
   /** The face, in printed order. */
   lines: CardLine[];
+  actionLabel?: string;
 }>();
+
+defineEmits<{ select: [] }>();
 </script>
 
 <template>
   <div class="c-face">
-    <ArtFrame :art="art" ratio="63 / 88" radius="s" fit="contain" :placeholder="placeholder" />
+    <component
+      :is="actionLabel ? 'button' : 'div'"
+      :type="actionLabel ? 'button' : undefined"
+      :aria-label="actionLabel"
+      class="c-face__frame"
+      :class="{ 'is-action': actionLabel }"
+      @click="actionLabel && $emit('select')"
+    >
+      <ArtFrame :art="art" ratio="63 / 88" radius="s" fit="contain" :placeholder="placeholder" />
+      <slot name="overlay" />
+    </component>
     <dl class="l-sr-only">
       <template v-for="line in lines" :key="line.label">
         <dt>{{ line.label }}</dt>
@@ -35,3 +48,19 @@ defineProps<{
     </dl>
   </div>
 </template>
+
+<style>
+.c-face__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+}
+
+.c-face__frame.is-action {
+  cursor: zoom-in;
+}
+</style>

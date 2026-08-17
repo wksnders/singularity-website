@@ -36,7 +36,7 @@ const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value)
       :placeholder="t('unaligned.hero.artPlaceholder')"
       :pending-note="t('unaligned.hero.pending')"
       glow="90% 70% at 60% 6%"
-      min-height="min(72vh, 640px)"
+      min-height="min(72dvh, 640px)"
     >
       <Breadcrumbs
         :crumbs="[

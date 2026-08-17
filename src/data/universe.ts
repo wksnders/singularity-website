@@ -67,6 +67,7 @@ export const game = {
      support or not-support, and each surface labels this one for its context. */
   enquiriesEmail: 'singularity-press@octothorpe.com',
   trailerYouTubeId: '_eyxoFI4F-8',
+  rulesUpdated: '2026-08-16' as string | null,
   copyrightYear: 2026,
 };
 

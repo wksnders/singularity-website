@@ -54,20 +54,19 @@ const lines = computed<CardLine[]>(() =>
 
 <template>
   <div class="c-prog" :style="color ? { '--faction': color } : undefined">
-    <button
+    <CardFace
       v-if="program.revealed"
-      type="button"
       class="c-prog__open"
-      :aria-label="`${t('character.enlarge')}: ${program.name}`"
-      @click="$emit('select')"
+      :art="program.cardArt"
+      :placeholder="t('cards.artPlaceholder')"
+      :lines="lines"
+      :action-label="`${t('character.enlarge')}: ${program.name}`"
+      @select="$emit('select')"
     >
-      <CardFace
-        :art="program.cardArt"
-        :placeholder="t('cards.artPlaceholder')"
-        :lines="lines"
-      />
-      <span class="c-prog__zoom" aria-hidden="true">{{ t('character.enlarge') }}</span>
-    </button>
+      <template #overlay>
+        <span class="c-prog__zoom" aria-hidden="true">{{ t('character.enlarge') }}</span>
+      </template>
+    </CardFace>
     <div v-else class="c-prog__sealed">
       <MonoLabel tone="faint">{{ sealedLabel || t('cards.unrevealed') }}</MonoLabel>
     </div>
@@ -94,14 +93,8 @@ const lines = computed<CardLine[]>(() =>
 }
 
 .c-prog__open {
-  position: relative;
   display: block;
   width: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-s);
-  background: transparent;
-  cursor: zoom-in;
 }
 
 .c-prog__zoom {
@@ -120,8 +113,9 @@ const lines = computed<CardLine[]>(() =>
   transition: opacity var(--dur-2) var(--ease-out);
 }
 
+/* focus-WITHIN: the focus lands on the button inside, not on this wrapper. */
 .c-prog__open:hover .c-prog__zoom,
-.c-prog__open:focus-visible .c-prog__zoom {
+.c-prog__open:focus-within .c-prog__zoom {
   opacity: 1;
 }
 

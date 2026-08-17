@@ -52,7 +52,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       :placeholder="t('incursions.hero.artPlaceholder')"
       :pending-note="t('incursions.hero.pending')"
       glow="100% 80% at 24% 6%"
-      min-height="min(78vh, 700px)"
+      min-height="min(78dvh, 700px)"
     >
       <Breadcrumbs
         :crumbs="[

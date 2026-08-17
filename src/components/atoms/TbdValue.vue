@@ -28,5 +28,6 @@ defineProps<{ value?: string | null }>();
   border-style: solid;
   border-color: var(--color-line);
   color: var(--color-ink);
+  white-space: normal;
 }
 </style>

@@ -3,10 +3,10 @@
   Singularity.exe — sitemap.
 
   ORIGIN: replace https://wksnders.github.io/singularity-website with the real origin in
-  all eleven <loc> values. Moving to a custom domain is a find-and-replace here,
+  all twelve <loc> values. Moving to a custom domain is a find-and-replace here,
   one line in robots.txt, and BASE_PATH in vite.config.ts.
 
-  SCOPE: the eleven stable pages only. Faction, brand and character URLs are
+  SCOPE: the twelve stable pages only. Faction, brand and character URLs are
   deliberately absent — they exist and route correctly, but every one of them
   renders placeholder copy today. Add them when their content lands. /soon is
   excluded by design: it is a holding page and must never be a search result.
@@ -48,6 +48,10 @@
   </url>
   <url>
     <loc>https://wksnders.github.io/singularity-website/learn</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://wksnders.github.io/singularity-website/learn/rules</loc>
     <priority>0.8</priority>
   </url>
   <url>
