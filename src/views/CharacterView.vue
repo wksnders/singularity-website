@@ -315,18 +315,14 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           </dl>
 
           <div class="char__card-row">
-            <button
-              type="button"
+            <CardFace
               class="char__card-thumb"
-              :aria-label="`${t('character.seeCardLarge')}: ${active.name}`"
-              @click="openCharacterCard()"
-            >
-              <CardFace
-                :art="active.cardArt"
-                :placeholder="t('character.cardSlot')"
-                :lines="cardLines"
-              />
-            </button>
+              :art="active.cardArt"
+              :placeholder="t('character.cardSlot')"
+              :lines="cardLines"
+              :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
+              @select="openCharacterCard()"
+            />
             <div>
               <MonoLabel tone="accent">{{ t('character.cardKicker') }}</MonoLabel>
               <p class="char__card-cta">
@@ -577,7 +573,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   }
 
   .char__art-frame {
-    max-height: 62vh;
+    max-height: 62dvh;
   }
 }
 

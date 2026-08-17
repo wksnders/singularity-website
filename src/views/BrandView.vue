@@ -140,7 +140,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       :placeholder="t('brand.hero.artPlaceholder')"
       :pending-note="t('brand.hero.pending')"
       glow="100% 80% at 70% 6%"
-      min-height="min(72vh, 640px)"
+      min-height="min(72dvh, 640px)"
     >
       <Breadcrumbs
         :crumbs="[

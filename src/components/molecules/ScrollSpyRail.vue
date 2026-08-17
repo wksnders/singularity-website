@@ -4,7 +4,7 @@
  * 1120px content column is genuinely wide enough to hold it. The nav owns the
  * single sticky slot on mobile.
  */
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { t } from '@/content';
 import type { SectionEntry } from '@/site/sections';
 
@@ -53,31 +53,31 @@ onBeforeUnmount(() => {
 });
 
 const pad = (n: number) => String(n).padStart(2, '0');
+ 
+const grouped = computed(() => props.sections.some((section) => section.group));
+
+const heading = (i: number) =>
+  props.sections[i].group !== props.sections[i - 1]?.group ? props.sections[i].group : '';
 </script>
 
 <template>
-  <nav v-if="shown" class="c-rail" :aria-label="t('wayfinding.sectionRail')">
-    <a
-      v-for="(section, i) in sections"
-      :key="section.id"
-      class="c-rail__link"
-      :class="{ 'is-active': active === section.id }"
-      :href="`#${section.id}`"
-      :aria-current="active === section.id ? 'true' : undefined"
-    >
-      <span class="c-rail__index">{{ pad(i + 1) }}</span>
-      <span class="c-rail__label">{{ section.label }}</span>
-    </a>
+  <nav v-if="shown" class="c-rail" :class="{ 'c-rail--index': grouped }" :aria-label="t('wayfinding.sectionRail')">
+    <template v-for="(section, i) in sections" :key="section.id">
+      <p v-if="heading(i)" class="c-rail__group">{{ heading(i) }}</p>
+      <a
+        class="c-rail__link"
+        :class="{ 'is-active': active === section.id }"
+        :href="`#${section.id}`"
+        :aria-current="active === section.id ? 'true' : undefined"
+      >
+        <span v-if="!grouped" class="c-rail__index">{{ pad(i + 1) }}</span>
+        <span class="c-rail__label">{{ section.label }}</span>
+      </a>
+    </template>
   </nav>
 </template>
 
 <style>
-/* Anchored to the right-hand edge of the CONTENT COLUMN, not to the viewport.
-   Pinned to the viewport it drifted further from the copy the wider the screen
-   got, and — worse — it could never be reasoned about: whether it cleared the
-   text depended on the viewport width instead of on the column it belongs to.
-   Anchored here, the only failure left is running off a too-narrow screen,
-   which FITS_QUERY prevents. */
 .c-rail {
   position: fixed;
   top: 50%;
@@ -88,6 +88,30 @@ const pad = (n: number) => String(n).padStart(2, '0');
   flex-direction: column;
   gap: var(--space-2);
   width: var(--rail-width);
+}
+ 
+.c-rail--index {
+  max-height: 78vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.c-rail__group {
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  opacity: 0.7;
+}
+
+.c-rail--index .c-rail__link {
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font-body);
+  font-size: var(--size-s);
 }
 
 .c-rail__link {

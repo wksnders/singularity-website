@@ -395,6 +395,22 @@
     "reconfirm": true
   },
   {
+    "id": "mulligan",
+    "group": "playing",
+    "question": "Is there a mulligan or an opening hand?",
+    "answer": "No. You build your squad in the order you want to play it before the game, rather than drawing an opening hand you stack the deck and there is no hand to redraw and nothing to keep or throw back.",
+    "keywords": [
+      "mulligan",
+      "opening hand",
+      "starting hand",
+      "redraw",
+      "draw",
+      "shuffle",
+      "deal"
+    ],
+    "reconfirm": true
+  },
+  {
     "id": "quarterback",
     "group": "playing",
     "question": "What stops one player running everyone's turn in 2v2 and co-op?",

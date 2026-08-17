@@ -31,7 +31,8 @@
       "instagram": "Instagram",
       "boardgamegeek": "BGG"
     },
-    "buy": "Buy the box"
+    "buy": "Buy the box",
+    "buyShort": "Buy"
   },
   "footer": {
     "publishedBy": "Published by"
@@ -755,6 +756,7 @@
     "count": {
       "terms": "terms",
       "term": "term",
+      "match": "match",
       "none": "No term matches"
     },
     "az": "Jump to a letter",
@@ -762,15 +764,39 @@
     "copyLink": "Copy a link to",
     "copyLabel": "Copy link",
     "pdf": {
-      "body": "The same words as the printed reference in the box.",
       "link": "Download the PDF"
     },
     "empty": {
       "kicker": "No match",
       "title": "Nothing under that word",
-      "body": "Try the term as the cards print it — the reference uses the same wording. Icons work too: [P] and power damage find the same rules."
+      "body": "Try the term as the cards print it, the reference uses the same wording.If you are still stuck, ask us on Discord.",
+      "discord": "Ask on Discord"
     },
-    "letterGroup": "Terms beginning with"
+    "letterGroup": "Terms beginning with",
+    "current": "Always current",
+    "updated": "Updated",
+    "updatedUnset": "Update date not found",
+    "router": {
+      "body": "This page settles a rule mid-game. If it is your first game or you're still learning how to play, start here instead:",
+      "track": "the Learn to Play track",
+      "book": "the rulebook"
+    },
+    "classes": {
+      "all": "All",
+      "keyword": "Keyword",
+      "procedure": "Procedure",
+      "wording": "Wording",
+      "term": "Term",
+      "pointer": "Redirect"
+    },
+    "related": "Related",
+    "cardClose": "Close",
+    "prevHit": "Previous match",
+    "nextHit": "Next match",
+    "errata": {
+      "body": "Holding a printed booklet? This page is the current fully updated rules, check the errata for lists of what changed against print.",
+      "link": "Errata & rulings"
+    }
   },
   "faq": {
     "hero": {

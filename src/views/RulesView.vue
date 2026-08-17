@@ -1,32 +1,43 @@
 <script setup lang="ts">
 /**
- * Rules reference.
- *
- * Nothing here hard-codes a term, a letter or an ordering: the ids are public
- * URLs and live in `rules.json`.
+ * Rules reference `rules.json`.
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import JumpChip from '@/components/atoms/JumpChip.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
+import RuleEntryView from '@/components/molecules/RuleEntry.vue';
+import RuleText from '@/components/molecules/RuleText.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
+import { useChrome } from '@/composables/useChrome';
 import { useQueryFilter } from '@/composables/useQueryFilter';
-import { markHtml, matcher } from '@/site/highlight';
 import { outbound, to } from '@/site/links';
-import { assertRulesShape, INTRO_ID, rulesEntries, rulesLetters } from '@/site/rules';
-import type { RuleBlock, RuleEntry } from '@/site/rules';
+import {
+  assertRulesShape,
+  CLASS_ORDER,
+  INTRO_ID,
+  matchesRule,
+  rulesEntries,
+  rulesLetters,
+} from '@/site/rules';
+import { game } from '@/data/universe';
+import type { RuleClass } from '@/site/rules';
 import type { SectionEntry } from '@/site/sections';
 
 const route = useRoute();
 const searchId = useId();
+const { navHidden } = useChrome();
 
 const query = useQueryFilter('q');
+const cls = useQueryFilter('class');
 const searchField = ref<HTMLInputElement | null>(null);
+const stickyField = ref<HTMLInputElement | null>(null);
 
 /* Driven by a local ref, not by the param it writes to: binding straight to the
    URL makes every keystroke wait on a router.replace and the caret jumps. */
@@ -44,54 +55,79 @@ function search(next: string): void {
   query.set(next.trim() ? next.trim() : null);
 }
 
-const all = computed(() => rulesEntries());
-const intro = computed(() => all.value.find((entry) => entry.id === INTRO_ID) ?? null);
-
 const terms = computed(() => draft.value.trim().toLowerCase().split(/\s+/).filter(Boolean));
 const searching = computed(() => terms.value.length > 0);
-const re = computed(() => matcher(terms.value));
+
+const all = computed(() => rulesEntries(terms.value));
+const intro = computed(() => all.value.find((entry) => entry.id === INTRO_ID) ?? null);
+const activeClass = computed(() => (cls.value.value ?? '') as RuleClass | '');
 
 const hits = computed(() =>
-  all.value.filter((entry) => terms.value.every((word) => entry.haystack.includes(word))),
+  all.value.filter(
+    (entry) =>
+      entry.id !== INTRO_ID &&
+      matchesRule(entry, terms.value) &&
+      (!activeClass.value || entry.cls === activeClass.value),
+  ),
 );
 
 const letters = computed(() => rulesLetters(hits.value));
-const total = computed(() => letters.value.reduce((n, band) => n + band.entries.length, 0));
-const noResults = computed(() => searching.value && total.value === 0);
+const total = computed(() => hits.value.length);
+const noResults = computed(() => total.value === 0);
+
+/** Counts per class */
+const classes = computed(() =>
+  CLASS_ORDER.map((name) => ({
+    name,
+    count: all.value.filter(
+      (e) => e.id !== INTRO_ID && e.cls === name && matchesRule(e, terms.value),
+    ).length,
+  })).filter((row) => row.count > 0),
+);
+ 
+const alphabet = computed(() => {
+  const live = new Set(letters.value.map((band) => band.letter));
+  const present = [...new Set(all.value.filter((e) => e.id !== INTRO_ID).map((e) => e.letter))];
+  return present.sort().map((letter) => ({ letter, live: live.has(letter) }));
+});
 
 const sections = computed<SectionEntry[]>(() =>
-  letters.value.map((band) => ({ id: band.id, label: band.letter })),
+  CLASS_ORDER.flatMap((name) =>
+    hits.value
+      .filter((entry) => entry.cls === name)
+      .map((entry) => ({ id: entry.id, label: entry.bare, group: t(`rules.classes.${name}`) })),
+  ),
 );
 
 /* t() has no interpolation, so the count is composed here. */
 const countLabel = computed(() => {
   if (noResults.value) return t('rules.count.none');
   const noun = total.value === 1 ? t('rules.count.term') : t('rules.count.terms');
-  if (searching.value) return `${total.value} ${noun}`;
+  if (searching.value || activeClass.value) return `${total.value} ${t('rules.count.match')}`;
   return `${total.value} ${noun}`;
 });
 
-/** Presentation only: the printed order is `blocks` and never changes here. */
-interface Chunk {
-  key: number;
-  kind: 'rules' | 'example' | 'note' | 'text';
-  blocks: RuleBlock[];
+const updated = computed(() => game.rulesUpdated);
+
+/* ------------------------------------------------------------- hit stepping */
+const hitIds = computed(() => hits.value.map((entry) => entry.id));
+const cursor = ref(0);
+watch(hitIds, () => (cursor.value = 0));
+
+function step(by: number): void {
+  if (!hitIds.value.length) return;
+  cursor.value = (cursor.value + by + hitIds.value.length) % hitIds.value.length;
+  jump(hitIds.value[cursor.value]);
 }
 
-function chunks(entry: RuleEntry): Chunk[] {
-  const out: Chunk[] = [];
-  for (const block of entry.blocks) {
-    const last = out[out.length - 1];
-    if (block.kind === 'rule' && last?.kind === 'rules') last.blocks.push(block);
-    else out.push({ key: out.length, kind: block.kind === 'rule' ? 'rules' : block.kind, blocks: [block] });
-  }
-  return out;
+function jump(id: string): void {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'instant', block: 'start' });
+  target.focus({ preventScroll: true });
 }
 
-/* v-html, like the FAQ: the source is a file in this repository plus the
-   <mark> and <a> this page put there. Never user input. */
-const mark = (html: string) => markHtml(html, re.value);
-
+/* -------------------------------------------------------------------- keys */
 function onKeydown(event: KeyboardEvent): void {
   /* Modified presses belong to the browser and to assistive tech. */
   if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
@@ -100,11 +136,12 @@ function onKeydown(event: KeyboardEvent): void {
     return;
   }
   event.preventDefault();
-  searchField.value?.focus();
+  (navHidden.value ? stickyField.value : searchField.value)?.focus();
 }
 
 function clearSearch(): void {
   search('');
+  cls.set(null);
   searchField.value?.focus();
 }
 
@@ -118,27 +155,24 @@ async function applyHash(): Promise<void> {
   const id = route.hash.replace(/^#/, '');
   if (!id || !all.value.some((entry) => entry.id === id)) return;
   if (draft.value) search('');
+  if (activeClass.value) cls.set(null);
   await nextTick();
   /* Wait for the fonts. */
-  await document.fonts?.ready;
-  const target = document.getElementById(id);
-  if (!target) return;
-  //dont use 'auto' here
-  target.scrollIntoView({ behavior: 'instant', block: 'start' });
-  target.focus({ preventScroll: true });
+  await document.fonts?.ready; 
+  jump(id);
 }
 
 const copied = ref<string | null>(null);
 let copyTimer: number | undefined;
 
-async function copyLink(entry: RuleEntry): Promise<void> {
-  const url = `${window.location.origin}${window.location.pathname}#${entry.id}`;
+async function copyLink(id: string): Promise<void> {
+  const url = `${window.location.origin}${window.location.pathname}#${id}`;
   try {
     await navigator.clipboard.writeText(url);
   } catch {
-    window.location.hash = entry.id;
+    window.location.hash = id;
   }
-  copied.value = entry.id;
+  copied.value = id;
   window.clearTimeout(copyTimer);
   copyTimer = window.setTimeout(() => (copied.value = null), 1600);
 }
@@ -164,11 +198,39 @@ watch(() => route.hash, applyHash);
     />
     <h1 class="rules__title">{{ t('rules.hero.title') }}</h1>
 
+    <p class="rules__currency">
+      <MonoLabel tone="accent">{{ t('rules.current') }}</MonoLabel>
+      <MonoLabel tone="faint">
+        {{ updated ? `${t('rules.updated')} ${updated}` : t('rules.updatedUnset') }}
+      </MonoLabel>
+    </p>
+
+    <p class="rules__router">
+      {{ t('rules.router.body') }}
+      <BaseLink class="rules__router-link" :to="to('learn', {}, { hash: '#paths' })">
+        {{ t('rules.router.track') }}
+      </BaseLink>
+      ·
+      <BaseLink class="rules__router-link" :link="outbound('rulebook')">
+        {{ t('rules.router.book') }}
+      </BaseLink>
+    </p>
+
     <div v-if="intro" class="rules__intro">
-      <template v-for="chunk in chunks(intro)" :key="chunk.key">
-        <p v-if="chunk.kind === 'text'" class="rules__lede" v-html="chunk.blocks[0].html" />
-        <p v-else-if="chunk.kind === 'note'" class="rules__precedence" v-html="chunk.blocks[0].html" />
-      </template>
+      <p
+        v-for="(block, i) in intro.blocks.filter((b) => b.kind === 'text')"
+        :key="i"
+        class="rules__lede"
+      >
+        <RuleText :segs="block.segs" />
+      </p>
+      <p
+        v-for="(block, i) in intro.blocks.filter((b) => b.kind === 'note')"
+        :key="`n${i}`"
+        class="rules__precedence"
+      >
+        <RuleText :segs="block.segs" />
+      </p>
     </div>
 
     <div class="rules__search">
@@ -184,38 +246,74 @@ watch(() => route.hash, applyHash);
           :placeholder="t('rules.search.placeholder')"
           @input="search(($event.target as HTMLInputElement).value)"
         />
-        <button v-if="searching" type="button" class="rules__clear" @click="clearSearch()">
+        <button v-if="searching || activeClass" type="button" class="rules__clear" @click="clearSearch()">
           {{ t('rules.search.clear') }}
         </button>
       </div>
       <MonoLabel tone="faint" aria-live="polite">{{ countLabel }}</MonoLabel>
     </div>
 
-    <nav v-if="sections.length" id="on-this-page" class="rules__az" :aria-label="t('rules.az')">
-      <JumpChip
-        v-for="band in sections"
-        :key="band.id"
-        :to="{ hash: `#${band.id}` }"
-        class="rules__az-chip"
+    <div class="rules__filter">
+      <button
+        type="button"
+        class="rules__cls"
+        :aria-pressed="!activeClass"
+        @click="cls.set(null)"
       >
-        {{ band.label }}
+        {{ t('rules.classes.all') }}
+      </button>
+      <button
+        v-for="row in classes"
+        :key="row.name"
+        type="button"
+        class="rules__cls"
+        :aria-pressed="activeClass === row.name"
+        @click="cls.set(activeClass === row.name ? null : row.name)"
+      >
+        {{ t(`rules.classes.${row.name}`) }} <span class="rules__cls-n">{{ row.count }}</span>
+      </button>
+    </div>
+
+    <nav id="on-this-page" class="rules__az" :aria-label="t('rules.az')">
+      <JumpChip
+        v-for="row in alphabet"
+        :key="row.letter"
+        class="rules__az-chip"
+        :class="{ 'is-quiet': !row.live }"
+        :to="{ hash: `#letter-${row.letter.toLowerCase()}` }"
+        :aria-disabled="!row.live"
+      >
+        {{ row.letter }}
       </JumpChip>
     </nav>
-
-    <p class="rules__pdf">
-      {{ t('rules.pdf.body') }}
-      <UiButton variant="quiet" :link="outbound('rulesReference')">
-        {{ t('rules.pdf.link') }}
-      </UiButton>
-    </p>
   </SecondaryHero>
+ 
+  <div v-if="navHidden" class="rules__sticky">
+    <div class="l-wrap rules__sticky-row">
+      <input
+        ref="stickyField"
+        class="rules__sticky-input"
+        type="search"
+        autocomplete="off"
+        :value="draft"
+        :aria-label="t('rules.search.label')"
+        :placeholder="t('rules.search.placeholder')"
+        @input="search(($event.target as HTMLInputElement).value)"
+      />
+      <MonoLabel tone="faint">{{ countLabel }}</MonoLabel>
+      <div v-if="total > 1" class="rules__step">
+        <button type="button" :aria-label="t('rules.prevHit')" @click="step(-1)">↑</button>
+        <button type="button" :aria-label="t('rules.nextHit')" @click="step(1)">↓</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Remounted when the visible set changes: the rail observes its sections
        once, on mount, so a changed list would leave it spying on stale ids. -->
   <ScrollSpyRail :key="sections.map((s) => s.id).join(',')" :sections="sections" />
 
   <section v-if="noResults" class="l-band">
-    <div class="l-wrap">
+    <div class="l-wrap"> 
       <EmptyState
         variant="noResults"
         :kicker="t('rules.empty.kicker')"
@@ -224,17 +322,15 @@ watch(() => route.hash, applyHash);
         :action-label="t('rules.search.clear')"
         @action="clearSearch()"
       />
+      <div class="l-row rules__routes">
+        <UiButton variant="quiet" :to="to('community', {}, { hash: '#discord' })">
+          {{ t('rules.empty.discord') }}
+        </UiButton>
+      </div>
     </div>
   </section>
 
-  <section
-    v-for="(band, i) in letters"
-    :id="band.id"
-    :key="band.id"
-    tabindex="-1"
-    class="l-band l-band--tight"
-    :class="{ 'l-band--alt': i % 2 === 1, 'l-band--line-top': i > 0 }"
-  >
+  <section v-for="band in letters" :id="band.id" :key="band.id" tabindex="-1" class="rules__band">
     <div class="l-wrap">
       <!-- Not aria-hidden: that would step a screen reader from the page h1
            straight to a term's h3 with no band between them. -->
@@ -243,35 +339,25 @@ watch(() => route.hash, applyHash);
         <span class="l-sr-only">{{ t('rules.letterGroup') }} {{ band.letter }}</span>
       </h2>
 
-      <article v-for="entry in band.entries" :id="entry.id" :key="entry.id" tabindex="-1" class="rules__entry">
-        <div class="rules__head">
-          <h3 class="rules__term" v-html="mark(entry.title)" />
-          <button
-            type="button"
-            class="rules__copy"
-            :aria-label="`${t('rules.copyLink')}: ${entry.title}`"
-            @click="copyLink(entry)"
-          >
-            {{ copied === entry.id ? t('wayfinding.copied') : t('rules.copyLabel') }}
-          </button>
-        </div>
+      <RuleEntryView
+        v-for="entry in band.entries"
+        :key="entry.id"
+        :entry="entry"
+        :copied="copied === entry.id"
+        @copy="copyLink(entry.id)"
+      />
+    </div>
+  </section>
 
-        <template v-for="chunk in chunks(entry)" :key="chunk.key">
-          <ul v-if="chunk.kind === 'rules'" class="rules__list">
-            <li v-for="(block, b) in chunk.blocks" :key="b" class="rules__rule">
-              <span v-html="mark(block.html)" />
-              <ul v-if="block.items.length" class="rules__sublist">
-                <li v-for="(item, n) in block.items" :key="n" v-html="mark(item)" />
-              </ul>
-            </li>
-          </ul>
-          <p v-else-if="chunk.kind === 'example'" class="rules__example">
-            <MonoLabel tone="faint">{{ t('rules.example') }}</MonoLabel>
-            <span v-html="mark(chunk.blocks[0].html)" />
-          </p>
-          <p v-else class="rules__note" v-html="mark(chunk.blocks[0].html)" />
-        </template>
-      </article>
+  <section class="l-band l-band--tight l-band--line-top">
+    <div class="l-wrap l-wrap--reading rules__foot">
+      <p>{{ t('rules.errata.body') }}</p>
+      <UiButton variant="quiet" :to="to('soon', {}, { hash: '#errata' })">
+        {{ t('rules.errata.link') }}
+      </UiButton>
+      <UiButton variant="quiet" :link="outbound('rulesReference')">
+        {{ t('rules.pdf.link') }}
+      </UiButton>
     </div>
   </section>
 </template>
@@ -282,6 +368,21 @@ watch(() => route.hash, applyHash);
   font-size: clamp(1.875rem, 5.6vw, 3.5rem);
 }
 
+.rules__currency {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+}
+
+.rules__router {
+  margin-top: var(--space-4);
+  max-width: var(--width-reading);
+  font-size: var(--size-m);
+  color: var(--color-ink-soft);
+}
+
 .rules__intro {
   margin-top: var(--space-5);
   max-width: var(--width-reading);
@@ -289,8 +390,8 @@ watch(() => route.hash, applyHash);
 
 .rules__lede {
   margin-top: var(--space-4);
-  font-size: var(--size-body-l);
-  line-height: 1.6;
+  font-size: var(--size-body);
+  line-height: 1.65;
   color: var(--color-ink-soft);
 }
 
@@ -300,8 +401,8 @@ watch(() => route.hash, applyHash);
   border-left: 2px solid var(--color-accent);
   border-radius: 0 var(--radius-m) var(--radius-m) 0;
   background: var(--color-accent-wash);
-  font-size: var(--size-m);
-  line-height: 1.6;
+  font-size: var(--size-body);
+  line-height: 1.65;
 }
 
 .rules__search {
@@ -329,8 +430,7 @@ watch(() => route.hash, applyHash);
   font-size: var(--size-field);
 }
 
-.rules__clear,
-.rules__copy {
+.rules__clear {
   min-height: 44px;
   padding-inline: var(--space-3);
   border: 0;
@@ -343,13 +443,43 @@ watch(() => route.hash, applyHash);
   cursor: pointer;
 }
 
-.rules__clear:hover,
-.rules__copy:hover {
+.rules__clear:hover {
   color: var(--color-accent-text);
 }
 
+.rules__filter {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.rules__cls {
+  min-height: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.rules__cls[aria-pressed='true'] {
+  background: var(--color-accent-wash);
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.rules__cls-n {
+  opacity: 0.6;
+}
+
 .rules__az {
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
@@ -359,18 +489,58 @@ watch(() => route.hash, applyHash);
   min-width: 44px;
   justify-content: center;
 }
+ 
+.rules__az-chip.is-quiet {
+  opacity: 0.35;
+}
 
-.rules__pdf {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-line);
+.rules__sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: rgba(var(--rgb-bg), 0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.rules__sticky-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-3);
   align-items: center;
-  max-width: var(--width-reading);
-  font-size: var(--size-m);
+  min-height: var(--nav-height);
+}
+
+.rules__sticky-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 40px;
+  padding-inline: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-size: var(--size-field);
+}
+
+.rules__step {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.rules__step button {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-s);
+  background: transparent;
   color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.rules__band {
+  padding-block: var(--space-6);
 }
 
 .rules__letter {
@@ -378,101 +548,22 @@ watch(() => route.hash, applyHash);
   font-size: var(--size-mono-m);
   letter-spacing: var(--track-mono);
   color: var(--color-ink-faint);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-line);
-}
-
-.rules__entry {
-  padding-block: var(--space-6);
-  border-bottom: 1px solid var(--color-line);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-line-strong);
   max-width: var(--width-reading);
 }
 
-.rules__head {
+.rules__routes {
+  margin-top: var(--space-5);
+  justify-content: center;
+}
+
+.rules__foot {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.rules__term {
-  font-size: var(--size-h3);
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.rules__copy {
-  opacity: 0;
-  transition: opacity var(--dur-2) var(--ease-out);
-}
-
-.rules__entry:hover .rules__copy,
-.rules__entry:focus-within .rules__copy {
-  opacity: 1;
-}
-
-.rules__list {
-  margin-top: var(--space-4);
-  padding-left: var(--space-5);
-  list-style: none;
-}
-
-.rules__rule {
-  position: relative;
-  margin-top: var(--space-3);
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
   font-size: var(--size-m);
-  line-height: 1.65;
-  color: var(--color-ink-muted);
-}
-
-.rules__rule::before {
-  content: '›';
-  position: absolute;
-  left: calc(var(--space-5) * -1);
-  color: var(--color-ink-faint);
-}
-
-.rules__sublist {
-  margin-top: var(--space-2);
-  padding-left: var(--space-5);
-}
-
-.rules__sublist li {
-  margin-top: var(--space-2);
-}
-
-.rules__example,
-.rules__note {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-m);
-  background: var(--color-surface);
-  font-size: var(--size-m);
-  line-height: 1.65;
-  color: var(--color-ink-muted);
-}
-
-.rules__example > span {
-  display: block;
-  margin-top: var(--space-2);
-}
-
-.c-rules__ref {
-  color: var(--color-accent-text);
-}
-
-.rules__entry mark {
-  background: var(--color-accent-wash);
-  color: var(--color-ink);
-  border-radius: var(--radius-s);
-  padding-inline: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rules__copy {
-    transition: none;
-  }
+  color: var(--color-ink-soft);
 }
 </style>

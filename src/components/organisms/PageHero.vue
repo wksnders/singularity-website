@@ -24,7 +24,7 @@ withDefaults(
     placeholder: '[ key art ]',
     drift: false,
     glow: '120% 80% at 20% 10%',
-    minHeight: 'min(92vh, 860px)',
+    minHeight: 'min(92dvh, 860px)',
   },
 );
 </script>
