@@ -150,7 +150,7 @@ const groups = computed<PoolGroup[]>(() =>
         name: program.name,
         brandId: brand.id,
         brandName: brand.name,
-        art: program.art,
+        cardArt: program.cardArt,
       })),
     };
   }),
@@ -174,7 +174,7 @@ function openCharacterCard(): void {
 }
 
 const detailArt = computed(() => {
-  if (selected.value) return selected.value.art;
+  if (selected.value) return selected.value.cardArt;
   return face.value === 'art' ? active.value?.sceneArt : active.value?.cardArt;
 });
 
