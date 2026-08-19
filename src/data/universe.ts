@@ -87,7 +87,7 @@ export const formEndpoints = {
 
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
-  buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/',
+  buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/rewards#/section/rewards',
   /* Root-relative, and the filenames carry no version number: updating a
      document means overwriting the file, so every link already printed on a box
      still resolves. Self-hosted for the same reason — no expiring share token. */
