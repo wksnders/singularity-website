@@ -234,4 +234,4 @@ export const footerColumns: IaGroup[] = [
 ];
 
 /** Socials render from data URLs, not from the IA (they are outbound). */
-export const socialKeys = ['discord', 'youtube', 'instagram', 'boardgamegeek'] as const;
+export const socialKeys = ['discord', 'youtube', 'instagram', 'twitter', 'boardgamegeek'] as const;
