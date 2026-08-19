@@ -44,6 +44,7 @@ const SOON_HASH: Record<OutboundKey, string> = {
   discord: '#discord',
   youtube: '#youtube',
   instagram: '#instagram',
+  twitter: '#twitter',
   boardgamegeek: '#bgg',
 };
 

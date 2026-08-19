@@ -108,6 +108,7 @@ export const urls: OutboundUrls = {
      game.trailerYouTubeId and videos[]. This is the "more from us" link. */
   youtube: 'https://www.youtube.com/@octothorpegames',
   instagram: 'https://www.instagram.com/octothorpegames/',
+  twitter: 'https://twitter.com/PlaySingularity',
   boardgamegeek: 'https://boardgamegeek.com/boardgame/379846/singularityexe',
 };
 

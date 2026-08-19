@@ -326,6 +326,7 @@ export interface OutboundUrls {
   discord: string | null;
   youtube: string | null;
   instagram: string | null;
+  twitter: string | null;
   boardgamegeek: string | null;
 }
 
