@@ -6,6 +6,7 @@
  *   that belongs there, which is what the site shows until the renders land.
  * - alt comes from data. Decorative art passes alt: "".
  */
+import { asset } from '@/site/links';
 import type { Art } from '@/data/types';
 
 const props = withDefaults(
@@ -24,6 +25,8 @@ const props = withDefaults(
   { ratio: '3 / 4', placeholder: '[ art pending ]', radius: 'none', eager: false, fit: 'cover' },
 );
 
+const src = (art: Art) => (art.src ? asset(art.src) : null);
+
 const focal = (art: Art) =>
   art.focal ? `${art.focal.x * 100}% ${art.focal.y * 100}%` : '50% 50%';
 
@@ -35,7 +38,7 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
     <img
       v-if="art && art.src"
       class="c-art__img"
-      :src="art.src"
+      :src="src(art)!"
       :alt="art.alt"
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"

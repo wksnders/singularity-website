@@ -132,7 +132,8 @@ export interface Printing {
 export interface Character {
   id: string;
   /* What "12 of 57" counts. In tens so an insert does not renumber the rest;
-     never from the name, which translates and would renumber per locale. */
+     never from the name, which translates and would renumber per locale.
+     Display order, not print order — they disagree at Jean O.K. and Tori-Daiyu. */
   order: number;
   name: string;
   epithet: string;

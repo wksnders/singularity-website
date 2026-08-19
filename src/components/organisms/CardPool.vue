@@ -16,7 +16,7 @@ export interface PoolCard {
   name: string;
   brandId: string;
   brandName: string;
-  art: Art;
+  cardArt: Art;
 }
 
 export interface PoolGroup {
@@ -185,7 +185,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
               @click="emit('select', card)"
             >
               <ArtFrame
-                :art="card.art"
+                :art="card.cardArt"
                 ratio="63 / 88"
                 :placeholder="t('pool.cardPlaceholder')"
                 radius="s"
