@@ -34,6 +34,7 @@ import type {
   WallpaperKind,
 } from './types';
 import { allPrograms } from './programs';
+import { cardFace, hasCardFace } from './programs';
 
 const noArt = { src: null, alt: '', artist: null };
 
@@ -317,7 +318,12 @@ const character = (
   sceneArt: { ...noArt, alt: `${input.name} in their world`, artist: CHARACTER_ARTIST },
   /* The alt names WHICH card; the wording is read from the hidden block beside
      the image, so the alt does not carry the rules. */
-  cardArt: { ...noArt, alt: `${input.name} character card`, artist: CHARACTER_ARTIST },
+  cardArt: {
+    ...noArt,
+    src: hasCardFace(input.set, input.id) ? cardFace('characters', input.name) : null,
+    alt: `${input.name} character card`,
+    artist: CHARACTER_ARTIST,
+  },
   storyIds: [],
 });
 

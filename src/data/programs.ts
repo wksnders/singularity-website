@@ -24,6 +24,20 @@ import type { Program, SetCode } from './types';
 
 const PROGRAM_ARTIST = 'Josh Bruce';
 
+/** Slug rule duplicated in private/card-import/card-art.py, which writes the files. */
+export const cardFace = (folder: 'programs' | 'characters', name: string): string =>
+  `/cards/${folder}/${name
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/['\u2019.]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')}.webp`;
+
+/** Widening this without re-running the import ships broken images, not placeholders. */
+export const hasCardFace = (set: SetCode, id: string): boolean =>
+  set === 'CORE' && id !== 'lux' && !id.startsWith('lux-vault');
+
 /** A card as written down. Id, art and reveal state are mechanical and are
     filled in by `brandCards`, so they cannot drift per entry. */
 interface CardText {
@@ -67,7 +81,11 @@ const brandCards = (
     /* Not interchangeable — see the ART COMES IN LAYERS note in types.ts.
        `src: null` draws the placeholder frame until the files land. */
     art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
-    cardArt: { src: null, alt: `${card.name} card`, artist: PROGRAM_ARTIST },
+    cardArt: {
+      src: hasCardFace(set, brandId) ? cardFace('programs', card.name) : null,
+      alt: `${card.name} card`,
+      artist: PROGRAM_ARTIST,
+    },
   }));
 
 const scrapBrigade: CardText[] = [
