@@ -5,7 +5,6 @@
  * CSS and no new template. Brands carry their own stories, not just card lists.
  */
 import { computed } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import BrandTile from '@/components/molecules/BrandTile.vue';
@@ -87,15 +86,8 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
         :next="neighbours.next"
         :position="neighbours.position"
       />
-      <div class="faction__identity">
-        <div class="faction__emblem">
-          <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('faction.hero.emblem')" />
-        </div>
-        <div>
-          <h1 class="faction__name">{{ name }}</h1>
-          <p class="faction__tagline">{{ tagline }}</p>
-        </div>
-      </div>
+      <h1 class="faction__name">{{ name }}</h1>
+      <p class="faction__tagline">{{ tagline }}</p>
 
       <MarkdownBlock v-if="hasLore" :slug="`universe/factions/${factionId}`" measure class="faction__lore" />
       <p v-else class="faction__lore-placeholder">{{ t('faction.hero.lorePlaceholder') }}</p>
@@ -170,21 +162,8 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
 </template>
 
 <style>
-.faction__identity {
-  margin-top: var(--space-6);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  align-items: center;
-}
-
-.faction__emblem {
-  width: 88px;
-  flex: 0 0 auto;
-  border-bottom: 2px solid var(--faction);
-}
-
 .faction__name {
+  margin-top: var(--space-6);
   font-size: clamp(2rem, 6.4vw, 4rem);
 }
 

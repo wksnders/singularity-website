@@ -325,7 +325,6 @@
     "hero": {
       "artPlaceholder": "[ faction hero art — 21:9 ]",
       "pending": "[ FACTION HERO — PENDING ]",
-      "emblem": "[ emblem ]",
       "position": "Faction",
       "lorePlaceholder": "[PLACEHOLDER — paste real faction lore. Two or three sentences establishing who they are, how they fight and what they want from the Singularity.]"
     },
