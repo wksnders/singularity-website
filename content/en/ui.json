@@ -494,6 +494,38 @@
     },
     "brandScope": "Brands"
   },
+  "incursion": {
+    "hero": {
+      "position": "Encounter",
+      "kind": "Rogue AI",
+      "artPlaceholder": "[ rogue AI art — 21:9 ]",
+      "pending": "[ ROGUE AI ART — PENDING ]",
+      "taglinePlaceholder": "[PLACEHOLDER — one line on what this encounter is, in the player's words.]"
+    },
+    "sections": {
+      "lore": "Where it came from",
+      "challenge": "The challenge",
+      "fights": "How this one fights",
+      "exits": "Where next"
+    },
+    "loreNote": "Lore",
+    "lorePlaceholder": "[PLACEHOLDER — where this one came from. The product narrative intro is written; paste it here once the encounter is announced.]",
+    "challengeNote": "From the narrative intro",
+    "challengePlaceholder": "[PLACEHOLDER — what it does to a table, in the narrative's own voice.]",
+    "fightsNote": "At the table",
+    "fightsPlaceholder": "[PLACEHOLDER — how this encounter plays, in mechanical terms, once the owner has worded it.]",
+    "decidesNote": "What it decides for itself",
+    "decidesPlaceholder": "[PLACEHOLDER — the decisions this boss makes from its own deck, with no human running it.]",
+    "mutationsLabel": "Mutations available",
+    "mutationsNote": "Stack as many as you dare.",
+    "exitsOthers": "The other two",
+    "exitsMode": "The mode",
+    "modeTitle": "Incursions",
+    "modeBody": "How an Incursion works, how you turn it up, and what you win by beating all three.",
+    "exitLearn": "Run your first Incursion, in Learn →",
+    "missingTitle": "No encounter at that address",
+    "missingBody": "The rogue AIs that are published sit on the Incursions page."
+  },
   "incursions": {
     "hero": {
       "title": "Something in here was never anyone's",
@@ -504,8 +536,10 @@
     "sections": {
       "threat": "The threat",
       "how": "How a boss plays",
-      "roster": "The rogue AIs",
-      "unlocks": "The sealed pack"
+      "roster": "The encounters",
+      "mutations": "How you turn it up",
+      "unlocks": "What you win",
+      "next": "Where next"
     },
     "loreNote": "Lore",
     "perPlayer": "per player",
@@ -524,7 +558,7 @@
         "body": "Each boss brings its own setup — a board state you would never build for a skirmish."
       },
       "reveal": {
-        "title": "The boss reveals",
+        "title": "The boss decides for itself",
         "body": "Its next action is already determined. You can read it, and plan against it."
       },
       "answer": {
@@ -549,6 +583,52 @@
       "body1": "Every Incursion ships with a pack sealed shut beside it. Beat that Incursion and you have earned the right to cut it open. What is inside is yours to use in ordinary games afterwards — that is all we are saying for now.",
       "body2": "Nothing stops you opening it early. We would rather you earned it.",
       "ctaBuy": "Get the expansion →"
+    },
+    "mutations": {
+      "note": "Difficulty",
+      "body": "The base battles of Paths of Terminus, Invader and Calebrena are only the beginning. Beat one, and there is a dial you have not touched yet.",
+      "base": {
+        "kicker": "Base battle",
+        "title": "The encounter at base",
+        "body": "Hard enough for a first table, and the version Learn teaches you to run."
+      },
+      "stack": {
+        "kicker": "Stack mutations",
+        "title": "Ten or more per Incursion",
+        "body": "Each adds a terrifying twist. Draw any number at random and stack them; every one you add makes the fight measurably worse for you."
+      },
+      "max": {
+        "kicker": "Max mutations",
+        "title": "Every twist at once",
+        "body": "Meant to be beyond a table that has already won. Clearing it is the thing worth saying out loud."
+      },
+      "countsLabel": "Mutations",
+      "countsNote": "[PLACEHOLDER — per-encounter mutation counts, once the owner confirms them.]",
+      "designs": {
+        "title": "Architech Designs",
+        "setNote": "Set INC",
+        "designs": "designs",
+        "body": "Ghost traces of Old Code, flashing into being in times of dire circumstance. Ephemeral as shooting stars, and worth one small boon when you need it. You find them during an incursion, or draw them at the start for an optional edge.",
+        "exit": "Every Architech Design in the gallery →"
+      }
+    },
+    "next": {
+      "note": "Exits",
+      "learn": {
+        "kicker": "Learn",
+        "title": "The co-op track",
+        "body": "How to run an Incursion, once you know how a skirmish works."
+      },
+      "cards": {
+        "kicker": "Card gallery",
+        "title": "The INC cards",
+        "body": "Every Architech Design, with its real rules text."
+      },
+      "story": {
+        "kicker": "Story",
+        "title": "The chapter they arrive in",
+        "body": "Where Incursions sits in the story of the server."
+      }
     },
     "ritual": {
       "title": "The ritual",

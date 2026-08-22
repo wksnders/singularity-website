@@ -1487,6 +1487,7 @@ export const boxesOfProduct = (productId: string) =>
 export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? null;
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
 export const programById = (id: string) => programs.find((p) => p.id === id) ?? null;
+export const rogueAIById = (id: string) => rogueAIs.find((a) => a.id === id) ?? null;
 
 export const brandSlotCount = (brand: Brand) =>
   brand.programCount ?? programsOfBrand(brand.id).length;
