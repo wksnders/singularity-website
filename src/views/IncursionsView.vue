@@ -1,13 +1,12 @@
 <script setup lang="ts">
 /**
- * INCURSIONS — the public co-op lore page. Readable by anyone who has not
- * bought the expansion. The threat accent is deliberately NOT a faction colour:
- * rogue AIs sit outside the faction system.
+ * INCURSIONS: the public co-op lore page.
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -17,7 +16,9 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { docHtml, getDoc, t } from '@/content';
+import { architechDesigns } from '@/data/programs';
 import { game, rogueAIs } from '@/data/universe';
+import { expandIcons } from '@/site/cardText';
 import { outbound, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
@@ -25,7 +26,9 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'threat', label: t('incursions.sections.threat') },
   { id: 'how', label: t('incursions.sections.how') },
   { id: 'roster', label: t('incursions.sections.roster') },
+  { id: 'mutations', label: t('incursions.sections.mutations') },
   { id: 'unlocks', label: t('incursions.sections.unlocks') },
+  { id: 'next', label: t('incursions.sections.next') },
 ]);
 
 const loreDoc = computed(() => getDoc('universe/incursions'));
@@ -41,6 +44,31 @@ const steps = computed(() =>
 
 const ritual = computed(() =>
   ['run', 'win', 'cut', 'play'].map((key) => t(`incursions.ritual.${key}`)),
+);
+
+const dials = computed(() =>
+  ['base', 'stack', 'max'].map((key, index) => ({
+    index: pad(index + 1),
+    kicker: t(`incursions.mutations.${key}.kicker`),
+    title: t(`incursions.mutations.${key}.title`),
+    body: t(`incursions.mutations.${key}.body`),
+  })),
+);
+
+/* Four is the sample; the whole set is one link away in the gallery. */
+const designs = computed(() => architechDesigns.slice(0, 4));
+
+const exits = computed(() =>
+  [
+    { key: 'learn', to: to('learn', {}, { hash: '#paths' }) },
+    { key: 'cards', to: to('cards') },
+    { key: 'story', to: to('story') },
+  ].map((exit) => ({
+    ...exit,
+    kicker: t(`incursions.next.${exit.key}.kicker`),
+    title: t(`incursions.next.${exit.key}.title`),
+    body: t(`incursions.next.${exit.key}.body`),
+  })),
 );
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -73,7 +101,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     <section id="threat" tabindex="-1" class="l-band l-band--line-top">
       <div class="l-wrap">
-        <SectionMarker id="threat" :index="1" :total="4" :heading="t('incursions.sections.threat')" />
+        <SectionMarker id="threat" :index="1" :total="6" :heading="t('incursions.sections.threat')" />
         <MonoLabel tone="faint">{{ t('incursions.loreNote') }}</MonoLabel>
 
         <MarkdownBlock v-if="hasLore" slug="universe/incursions" measure class="inc__gap" />
@@ -103,7 +131,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     <section id="how" tabindex="-1" class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
-        <SectionMarker id="how" :index="2" :total="4" :heading="t('incursions.sections.how')" />
+        <SectionMarker id="how" :index="2" :total="6" :heading="t('incursions.sections.how')" />
         <MonoLabel tone="faint">{{ t('incursions.how.note') }}</MonoLabel>
         <p class="inc__body">{{ t('incursions.how.body') }}</p>
 
@@ -123,7 +151,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     <section id="roster" tabindex="-1" class="l-band l-band--line-top">
       <div class="l-wrap">
-        <SectionMarker id="roster" :index="3" :total="4" :heading="t('incursions.sections.roster')" />
+        <SectionMarker id="roster" :index="3" :total="6" :heading="t('incursions.sections.roster')" />
         <MonoLabel tone="faint">{{ t('incursions.roster.note') }}</MonoLabel>
         <p class="inc__body">{{ t('incursions.roster.body') }}</p>
 
@@ -141,7 +169,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               </MonoLabel>
               <h3 class="inc__boss-name">
                 <BrandMark :icon="ai.brand" :name="ai.name" :size="34" />
-                {{ ai.name }}
+                <RouterLink :to="to('incursion', { aiId: ai.id })">{{ ai.name }}</RouterLink>
               </h3>
               <p class="inc__step-body">{{ t('incursions.roster.linePlaceholder') }}</p>
             </div>
@@ -156,12 +184,69 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </section>
 
+    <section id="mutations" tabindex="-1" class="l-band l-band--line-top">
+      <div class="l-wrap">
+        <SectionMarker
+          id="mutations"
+          :index="4"
+          :total="6"
+          :heading="t('incursions.sections.mutations')"
+        />
+        <MonoLabel tone="faint">{{ t('incursions.mutations.note') }}</MonoLabel>
+        <p class="inc__body">{{ t('incursions.mutations.body') }}</p>
+
+        <ol class="inc__steps">
+          <li v-for="dial in dials" :key="dial.index">
+            <MonoLabel tone="faint">{{ dial.index }} · {{ dial.kicker }}</MonoLabel>
+            <h3 class="inc__step-title">{{ dial.title }}</h3>
+            <p class="inc__step-body">{{ dial.body }}</p>
+          </li>
+        </ol>
+
+        <ul class="inc__counts">
+          <li v-for="ai in rogueAIs" :key="ai.id">
+            <TbdValue />
+            <MonoLabel tone="faint">
+              {{ t('incursions.mutations.countsLabel') }} · {{ ai.name }}
+            </MonoLabel>
+          </li>
+        </ul>
+        <p class="inc__aside">{{ t('incursions.mutations.countsNote') }}</p>
+
+        <div class="inc__designs">
+          <MonoLabel tone="faint">
+            {{ architechDesigns.length }} {{ t('incursions.mutations.designs.designs') }} ·
+            {{ t('incursions.mutations.designs.setNote') }}
+          </MonoLabel>
+          <h3 class="inc__step-title">{{ t('incursions.mutations.designs.title') }}</h3>
+          <p class="inc__body">{{ t('incursions.mutations.designs.body') }}</p>
+
+          <ul class="l-grid inc__gap">
+            <li v-for="card in designs" :key="card.name" class="inc__design">
+              <MonoLabel tone="faint">
+                {{ card.type }}<template v-if="card.subType"> · {{ card.subType }}</template>
+              </MonoLabel>
+              <h4 class="inc__design-name">
+                {{ card.name }}
+                <span class="inc__design-cost">{{ card.cost }}</span>
+              </h4>
+              <p v-for="(line, i) in card.rules" :key="i" class="inc__step-body">
+                {{ expandIcons(line) }}
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <BandFoot :to="to('cards')" :label="t('incursions.mutations.designs.exit')" />
+      </div>
+    </section>
+
     <section id="unlocks" tabindex="-1" class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
         <SectionMarker
           id="unlocks"
-          :index="4"
-          :total="4"
+          :index="5"
+          :total="6"
           :heading="t('incursions.sections.unlocks')"
         />
         <MonoLabel tone="faint">{{ t('incursions.unlocks.note') }}</MonoLabel>
@@ -189,11 +274,77 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
       </div>
     </section>
+
+    <section id="next" tabindex="-1" class="l-band l-band--line-top">
+      <div class="l-wrap">
+        <SectionMarker
+          id="next"
+          :index="6"
+          :total="6"
+          :heading="t('incursions.sections.next')"
+        />
+        <MonoLabel tone="faint">{{ t('incursions.next.note') }}</MonoLabel>
+
+        <ul class="l-grid inc__gap">
+          <li v-for="exit in exits" :key="exit.key" class="inc__exit">
+            <MonoLabel tone="faint">{{ exit.kicker }}</MonoLabel>
+            <h3 class="inc__step-title">
+              <RouterLink :to="exit.to">{{ exit.title }}</RouterLink>
+            </h3>
+            <p class="inc__step-body">{{ exit.body }}</p>
+          </li>
+        </ul>
+
+        <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
+      </div>
+    </section>
   </div>
 </template>
 
 <style>
-/* Rogue AIs get the threat accent — never a faction colour. */
+.inc__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.inc__counts li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.inc__designs {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-line);
+}
+
+.inc__design,
+.inc__exit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.inc__design-name {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: var(--size-body-l);
+}
+
+.inc__design-cost {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  color: var(--faction-text);
+}
+
 .inc {
   --faction: var(--color-threat);
   --faction-text: var(--color-threat-text);

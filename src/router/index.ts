@@ -63,6 +63,12 @@ const routes: RouteRecordRaw[] = [
     meta: { titleKey: 'meta.incursions' },
   },
   {
+    path: path('universe/incursions/:aiId'),
+    name: 'incursion',
+    component: () => import('@/views/IncursionView.vue'),
+    props: true,
+  },
+  {
     path: path('universe/unaligned'),
     name: 'unaligned',
     component: () => import('@/views/UnalignedView.vue'),
