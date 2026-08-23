@@ -87,16 +87,19 @@
     "artPlaceholder": "[ character art 3:4 ]",
     "factionArtPlaceholder": "[ faction hero art ]",
     "hero": {
-      "title": "A world made entirely of code",
-      "lede": "Rival powers carve up the digital world between them. Every character belongs to one — or to none. Start anywhere: a faction, a face, a card.",
-      "pending": "[ UNIVERSE KEY ART — PENDING ]"
+      "title": "The Autumn Network.",
+      "lede": "A world made entirely of code",
+      "pending": "[ UNIVERSE KEY ART — PENDING ]",
+      "kicker": "The universe of Singularity.exe"
     },
     "sections": {
+      "world": "The Server",
       "factions": "Factions",
       "characters": "Characters",
       "universal": "Universal",
       "incursions": "Incursions",
-      "cards": "Card gallery"
+      "cards": "Card gallery",
+      "lexicon": "Lexicon"
     },
     "factions": {
       "note": "Brands and programs per faction",
@@ -115,19 +118,79 @@
     },
     "universal": {
       "nameTbd": "[ area name — TBD ]",
-      "body": "Some characters answer to nobody and can be played in any faction. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
+      "body": "Some characters are willing to work with any faction to get what they want. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
       "exitPage": "The universal characters →",
       "exit": "How Incursions work →"
     },
     "incursions": {
       "title": "The rogue AIs answer to no faction",
-      "body": "[PLACEHOLDER — Incursions lore intro.] Each boss plays itself from its own deck and rules. Beat one and its counterpart joins your side.",
+      "body": "Each boss plays itself from its own deck and rules, and your whole table is on the same side.",
       "cta": "Enter the Incursions",
-      "exit": "Every card in the game →"
+      "exit": "Every card in the game →",
+      "heading": "Terminal Incursions",
+      "coop": "Co-op"
     },
     "cards": {
       "body": "Every program, with its rules text in full — searchable, and always the current wording.",
       "cta": "Browse every program"
+    },
+    "world": {
+      "standfirst": "Physical reality is a fairy tale, a myth.",
+      "body1": "Humanity lives on as soul code, reborn into the Autumn Network, a digital sprawl built from endless imagination, indeterminable will, and the faint remembrance of ancient ways.",
+      "body2": "The Network is old, and the secrets it holds are older still. Between the Fractal Sea, a roiling chaos of unformed memory, and the Broken Heap, where obsolete code decays into nothingness, forgotten powers stir.",
+      "body3": "No legend burns brighter in the minds of its denizens than that of the Singularity. Fragmented, hidden, and written in the Old Code, it predates nearly every construct on the server. It’s thought that whoever activates the Singularity will rewrite the very foundation of the digital world, and that it will grant untapped power to the first to harness it.",
+      "body4": "The Fragments are surfacing. Unexpected alliances are forming, and digital titans are moving in secret to assemble the pieces. Some of them seek to twist the Network into a throne. Others aim to resurrect what was lost.",
+      "body5": "But, no one can assemble the pieces alone.",
+      "closer": "Gather your allies, because your quest for power will summon enemies of its own. A new protocol is coming online. The Singularity is awakening, and when it does, the Network will never be the same.",
+      "platePlaceholder": "[ establishing plate — the Autumn Network, wide ]",
+      "platePending": "[ THE NETWORK — ART PENDING ]",
+      "relicPlaceholder": "[ a Fragment of the Singularity ]",
+      "relicPending": "[ FRAGMENT — ART PENDING ]",
+      "exit": "The four powers →",
+      "bridge": {
+        "kicker": "What you're holding",
+        "worldLabel": "In the world",
+        "tableLabel": "At the table",
+        "character": {
+          "title": "Character",
+          "world": "[placeholder]",
+          "table": "[placeholder]"
+        },
+        "program": {
+          "title": "Program",
+          "world": "[placeholder]",
+          "table": "[placeholder]"
+        },
+        "brand": {
+          "title": "Brand",
+          "world": "[placeholder]",
+          "table": "[placeholder]"
+        }
+      }
+    },
+    "lexicon": {
+      "kicker": "Lexicon",
+      "termsLabel": "terms",
+      "autumnNetwork": {
+        "title": "Autumn Network/Fall Network",
+        "body": "The world of singularity as we know it, where everyone in this game lives."
+      },
+      "soulCode": {
+        "title": "Soul code",
+        "body": "The code that contains the core of a being."
+      },
+      "oldCode": {
+        "title": "Old Code",
+        "body": "The ancient layer of the Network, written in anchient and forgotten scripts. Barely legible, and dangerous."
+      },
+      "fractalSea": {
+        "title": "The Fractal Sea",
+        "body": "Unformed memory at one edge of the world."
+      },
+      "brokenHeap": {
+        "title": "The Broken Heap",
+        "body": "Where obsolete code decays into nothingness. The other edge."
+      }
     }
   },
   "newsletter": {
@@ -1091,10 +1154,23 @@
         "label": "Card gallery"
       },
       "incursions": {
-        "label": "Incursions"
+        "label": "Terminal Incursions"
       },
       "universal": {
         "label": "Universal"
+      },
+      "world": {
+        "label": "The world"
+      },
+      "lexicon": {
+        "label": "Lexicon"
+      },
+      "newHere": {
+        "label": "New here"
+      },
+      "primer": {
+        "label": "Read the world primer →",
+        "note": "The 40-second version of where all this happens, at the top of the hub."
       }
     },
     "story": {

@@ -51,14 +51,21 @@ const universe: IaSection = {
     {
       key: 'universe.explore',
       items: [
+        { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
         { key: 'universe.characters', to: to('characters') },
         { key: 'universe.cards', to: to('cards') },
         { key: 'universe.incursions', to: to('incursions') },
         { key: 'universe.universal', to: to('universal') },
+        { key: 'universe.lexicon', to: to('universe', {}, { hash: '#lexicon' }) },
       ],
+    },
+    {
+      key: 'universe.newHere',
+      items: [{ key: 'universe.primer', to: to('universe', {}, { hash: '#world' }), note: true }],
     },
   ],
   jumps: [
+    { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
     { key: 'universe.characters', to: to('characters') },
     { key: 'universe.cards', to: to('cards') },
     { key: 'universe.incursions', to: to('incursions') },
@@ -184,12 +191,14 @@ export const footerColumns: IaGroup[] = [
   {
     key: 'footer.universe',
     items: [
+      { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
       { key: 'universe.factions', to: to('universe', {}, { hash: '#factions' }) },
       { key: 'universe.brands', to: to('brand', { brandId: 'endless-chain' }) },
       { key: 'universe.characters', to: to('characters') },
       { key: 'universe.cards', to: to('cards') },
       { key: 'universe.incursions', to: to('incursions') },
       { key: 'universe.universal', to: to('universal') },
+      { key: 'universe.lexicon', to: to('universe', {}, { hash: '#lexicon' }) },
     ],
   },
   {
