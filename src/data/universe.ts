@@ -1455,22 +1455,27 @@ export const wallpapers = [
    Illustration" and "Singularity Logo" credit artefacts rather than people, and
    are the credits' own wording rather than typos to fix. */
 export const team = [
-  { id: 'team-matt-anderson', name: 'Matt Anderson', role: 'Game and Creative Director · Design Director, Art Director, and Narrative Lead' },
-  { id: 'team-alex-johnstone', name: 'Alex Johnstone', role: 'Product Developer and Production Manager · Visual Identity Lead and Graphic Designer' },
-  { id: 'team-logan-erickson', name: 'Logan Erickson', role: 'Lead Game Designer and Publishing Manager' },
-  { id: 'team-lance-tallman', name: 'Lance Tallman', role: 'Narrative Designer and Game Designer' },
-  { id: 'team-hector-sevilla-lujan', name: 'Héctor Sevilla Luján', role: 'Character, Environment, and Rulebook Illustrator' },
-  { id: 'team-josh-bruce', name: 'Josh Bruce', role: 'Program & Token Illustrator' },
-  { id: 'team-wyatt-sanders', name: 'Wyatt Sanders', role: 'Senior Game Designer and Software Engineer' },
-  { id: 'team-mahonri-white', name: 'Mahonri White', role: 'Senior Game Designer' },
-  { id: 'team-joao-guisado', name: 'João Guisado', role: 'Panda GM Project Manager' },
-  { id: 'team-kimball-brooksby', name: 'Kimball Brooksby', role: 'Associate Game Designer' },
-  { id: 'team-alexander-falk', name: 'Alexander Falk', role: 'Associate Game Designer' },
-  { id: 'team-parker-hoot', name: 'Parker Hoot', role: 'Associate Game Designer' },
-  { id: 'team-dylan-shaffer-murphy', name: 'Dylan Shaffer Murphy', role: 'Assistant Producer' },
-  { id: 'team-cameron-brotzman', name: 'Cameron Brotzman', role: 'Box Server Illustration' },
-  { id: 'team-casey-blandford', name: 'Casey Blandford', role: 'Singularity Logo' },
-];
+  { id: 'team-matt-anderson', group: 'studio', name: 'Matt Anderson', role: 'Game and Creative Director · Design Director, Art Director, and Narrative Lead' },
+  { id: 'team-alex-johnstone', group: 'studio', name: 'Alex Johnstone', role: 'Product Developer and Production Manager · Visual Identity Lead and Graphic Designer' },
+  { id: 'team-logan-erickson', group: 'studio', name: 'Logan Erickson', role: 'Lead Game Designer and Publishing Manager' },
+  { id: 'team-lance-tallman', group: 'studio', name: 'Lance Tallman', role: 'Narrative Designer and Game Designer' },
+  { id: 'team-wyatt-sanders', group: 'studio', name: 'Wyatt Sanders', role: 'Senior Game Designer and Software Engineer' },
+  { id: 'team-mahonri-white', group: 'studio', name: 'Mahonri White', role: 'Senior Game Designer' },
+  { id: 'team-kimball-brooksby', group: 'studio', name: 'Kimball Brooksby', role: 'Associate Game Designer' },
+  { id: 'team-alexander-falk', group: 'studio', name: 'Alexander Falk', role: 'Associate Game Designer' },
+  { id: 'team-parker-hoot', group: 'studio', name: 'Parker Hoot', role: 'Associate Game Designer' },
+
+  { id: 'team-hector-sevilla-lujan', group: 'artists', name: 'Héctor Sevilla Luján', role: 'Character, Environment, and Rulebook Illustrator', artTo: 'characters' },
+  { id: 'team-josh-bruce', group: 'artists', name: 'Josh Bruce', role: 'Program & Token Illustrator', artTo: 'cards' },
+  { id: 'team-cameron-brotzman', group: 'artists', name: 'Cameron Brotzman', role: 'Box Server Illustration' },//TODO artTo product images shown somewhere
+
+  { id: 'team-casey-blandford', group: 'friends', name: 'Casey Blandford', role: 'Singularity Logo' },
+  { id: 'team-joao-guisado', group: 'friends', name: 'João Guisado', role: 'Panda GM Project Manager' },
+  { id: 'team-dylan-shaffer-murphy', group: 'friends', name: 'Dylan Shaffer Murphy', role: 'Assistant Producer' },
+] as const;
+
+export const teamGroups = ['studio', 'artists', 'friends'] as const;
+export const teamOf = (group: string) => team.filter((member) => member.group === group);
 
 /* ---------------------------------------------------------------- lookups */
 

@@ -1042,11 +1042,32 @@
       "exit": "Read the FAQ first →"
     },
     "team": {
-      "body": "Octothorpe is a game studio in Salt Lake City, founded in 2015. Singularity.exe is made by a small group of designers, artists and writers — the same people who answer you in the Discord.",
-      "pending": "[ portraits and bios — PENDING ]",
+      "body": "Founded in 2015 in Salt Lake City, UT, we are a lean team of avid, dedicated gamers with a passion for creating compelling new gameplay experiences that push the boundaries of genre convention. Our projects are shaped by decades of professional videogame and tabletop development experience, and we enjoy exploring the intersection of digital and physical games.",
+      "pending": "[ portraits — PENDING ]",
       "portrait": "[ portrait ]",
-      "aiKicker": "On AI",
-      "credits": "Card art is credited to its illustrator wherever it appears.",
+      "seeTheArt": "See the art →",
+      "groups": {
+        "studio": {
+          "title": "The studio",
+          "kicker": "Octothorpe",
+          "body": "We're the core team and are also the people who answer you in the Discord, socials and support."
+        },
+        "artists": {
+          "title": "The artists",
+          "kicker": "Independent",
+          "body": "It has been our pleasure to work with amazing artists that give the Autumn network its face and visual flair. Where possible on this site, artist names are listed with their work."
+        },
+        "friends": {
+          "title": "Friends of the studio",
+          "kicker": "Worked alongside us",
+          "body": "People who worked with us to get this game made."
+        }
+      },
+      "aiKicker": "AI art statement",
+      "aiSummary": "Singularity has NO AI art. Every image in this game was hand made by the talented individuals listed.",
+      "aiFaq": "Also in the FAQ →",
+      "creditKicker": "How we credit",
+      "credits": "This page names the people who built the game and the artists who drew it, including those who have since moved onto other things.",
       "exit": "Come say hello in the Discord →"
     }
   },

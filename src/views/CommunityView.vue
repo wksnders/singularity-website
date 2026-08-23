@@ -1,9 +1,6 @@
 <script setup lang="ts">
 /**
- * COMMUNITY — five deep-linkable bands. The top is a weighted hub index
- * (Discord full width, then the three smaller destinations), because people
- * arrive here hunting for Support from somewhere else on the site.
- * The Discord CTA is the one clearly-secondary conversion against Play Now.
+ * COMMUNITY — five deep-linkable bands.
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -19,12 +16,14 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
-import { coreBox, game, team, wallpaperKinds, wallpapers } from '@/data/universe';
+import { coreBox, game, teamGroups, teamOf, wallpaperKinds, wallpapers } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { outbound, soon, to } from '@/site/links';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
 
+
+const pad = (n: number) => String(n).padStart(2, '0');
 const sections = computed<SectionEntry[]>(() => [
   { id: 'discord', label: t('community.sections.discord') },
   { id: 'wallpapers', label: t('community.sections.wallpapers') },
@@ -48,18 +47,10 @@ const kindSize = (id: string) => wallpaperKinds.find((k) => k.id === id)?.size ?
 
 const channels = ['rules-desk', 'incursion-logs', 'deck-lab', 'convergence'];
 
-/** The press fact sheet renders from game{} — one source for every fact. */
 const factSheet = computed(() => [
-  /* One range, not two. The line as a whole plays 1–4, and printing
-     "1–4 (Incursions: 1–4)" only made a journalist wonder which was which.
-     Which box gets you solo is a purchase question, and it belongs in the
-     Incursions bands and the box facts, not in the headline player count. */
   { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: game.playTime, reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
-  /* No price row: three editions, three prices, and the store is the authority
-     on all of them. A journalist quoting one number here would quote it as the
-     game's price. */
   { label: t('community.facts.release'), value: game.releaseDate, reserved: true },
   { label: t('community.facts.box'), value: coreBox.summary, reserved: true },
   { label: t('community.facts.ships'), value: game.shipsTo, reserved: true },
@@ -233,24 +224,42 @@ const factSheet = computed(() => [
       <p class="comm__body">{{ t('community.team.body') }}</p>
       <MonoLabel tone="faint">{{ t('community.team.pending') }}</MonoLabel>
 
-      <div class="l-grid l-grid--narrow comm__gap">
-        <div v-for="member in team" :key="member.id" class="comm__member">
-          <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('community.team.portrait')" />
-          <h3 class="comm__member-name">{{ member.name }}</h3>
-          <MonoLabel tone="faint">{{ member.role }}</MonoLabel>
+      <div v-for="(group, index) in teamGroups" :key="group" class="comm__team-group">
+        <MonoLabel tone="faint">
+          {{ pad(teamOf(group).length) }} · {{ t(`community.team.groups.${group}.kicker`) }}
+        </MonoLabel>
+        <h3 class="comm__team-title">{{ t(`community.team.groups.${group}.title`) }}</h3>
+        <p class="comm__body">{{ t(`community.team.groups.${group}.body`) }}</p>
+
+        <div class="l-grid l-grid--narrow comm__gap">
+          <div v-for="member in teamOf(group)" :key="member.id" class="comm__member">
+            <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('community.team.portrait')" />
+            <h4 class="comm__member-name">{{ member.name }}</h4>
+            <MonoLabel tone="faint">{{ member.role }}</MonoLabel>
+            <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="comm__member-art">
+              {{ t('community.team.seeTheArt') }}
+            </BaseLink>
+          </div>
         </div>
+
+        <details v-if="index === 1" class="comm__statement">
+          <summary>
+            <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
+            <span class="comm__statement-line">{{ t('community.team.aiSummary') }}</span>
+          </summary>
+          <MarkdownBlock slug="community/ai-statement" measure class="comm__gap" />
+          <BaseLink :to="to('faq', {}, { hash: '#faq-ai-art' })">
+            {{ t('community.team.aiFaq') }}
+          </BaseLink>
+        </details>
       </div>
 
-      <!-- One source document, two placements: here and in the FAQ. -->
       <div class="comm__statement">
-        <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
-        <MarkdownBlock slug="community/ai-statement" measure class="comm__gap" />
+        <MonoLabel tone="faint">{{ t('community.team.creditKicker') }}</MonoLabel>
+        <p class="comm__body">{{ t('community.team.credits') }}</p>
       </div>
 
-      <p class="comm__meta">
-        {{ t('community.team.credits') }}
-        {{ t('footer.publishedBy') }} {{ game.publisher }}.
-      </p>
+      <p class="comm__meta">{{ t('footer.publishedBy') }} {{ game.publisher }}.</p>
 
       <BandFoot :to="to('community', {}, { hash: '#discord' })" :label="t('community.team.exit')" />
     </div>
@@ -258,6 +267,35 @@ const factSheet = computed(() => [
 </template>
 
 <style>
+.comm__team-group {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-line);
+}
+
+.comm__team-title {
+  margin-top: var(--space-2);
+  font-size: var(--size-h3);
+}
+
+.comm__member-art {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+}
+
+.comm__statement summary {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.comm__statement-line {
+  font-size: var(--size-body-l);
+}
+
 .comm__title {
   margin-top: var(--space-5);
   font-size: clamp(1.875rem, 5.6vw, 3.5rem);
