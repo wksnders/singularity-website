@@ -1,8 +1,7 @@
 <script setup lang="ts">
 /**
  * Card class 2 of 3 — the FRAMELESS art tile. Art, then the caption BELOW it.
- * No text over unknown pixels, no scrim, no card chrome: the art is the crown
- * jewel and gets the whole frame.
+ * No text over the art, and dont crop: it frames a printed card.
  */
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -24,14 +23,14 @@ withDefaults(
     tags?: { label: string; color?: string | null }[];
     ratio?: string;
   }>(),
-  { ratio: '3 / 4', placeholder: '[ character art 3:4 ]' },
+  { ratio: '3 / 4', placeholder: '[ printed character card 63×88 ]' },
 );
 </script>
 
 <template>
   <BaseLink :to="to" class="c-tile">
     <span class="c-tile__art" :style="{ '--faction': tags?.[0]?.color || undefined }">
-      <ArtFrame :art="art" :ratio="ratio" radius="m" :placeholder="placeholder" />
+      <ArtFrame :art="art" :ratio="ratio" radius="m" fit="contain" :placeholder="placeholder" />
     </span>
     <span class="c-tile__body">
       <span v-if="badge" class="c-tile__badge">{{ badge }}</span>

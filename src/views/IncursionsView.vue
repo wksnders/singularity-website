@@ -55,7 +55,6 @@ const dials = computed(() =>
   })),
 );
 
-/* Four is the sample; the whole set is one link away in the gallery. */
 const designs = computed(() => architechDesigns.slice(0, 4));
 
 const exits = computed(() =>

@@ -337,13 +337,13 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
         <div class="char__art">
           <div class="char__art-frame">
             <ArtFrame
-              :art="active.art"
-              :placeholder="t('character.artPlaceholder')"
+              :art="active.sceneArt"
+              :placeholder="t('character.sceneSlot')"
               eager
             />
           </div>
           <div class="char__art-foot">
-            <MonoLabel tone="muted">{{ t('character.artBy') }} {{ active.art.artist || t('character.artistSlot') }}</MonoLabel>
+            <MonoLabel tone="muted">{{ t('character.artBy') }} {{ active.sceneArt.artist || t('character.artistSlot') }}</MonoLabel>
             <div v-if="printings.length > 1" class="char__printings">
               <MonoLabel tone="faint" as="span">{{ t('character.printings') }}</MonoLabel>
               <div role="group" :aria-label="t('character.printings')" class="char__printing-chips">

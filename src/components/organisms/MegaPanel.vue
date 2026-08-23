@@ -67,7 +67,7 @@ const columns = computed(() => {
         <MonoLabel tone="faint" class="c-mega__title">{{ t('chrome.featured') }}</MonoLabel>
         <span class="c-mega__art">
           <ArtFrame
-            :art="featured.art"
+            :art="featured.sceneArt"
             ratio="16 / 9"
             radius="m"
             :placeholder="t('chrome.featuredPlaceholder')"

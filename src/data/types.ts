@@ -14,6 +14,7 @@
 
      · ILLUSTRATION (`art`) — the subject as they appear on the card, with the
        background cut away. Croppable, focal-pointable, safe behind text.
+       TODO add in cool parallax with this when we eventually have the art, parked till we get art.
      · SCENE (`sceneArt`) — characters only: subject and background as printed,
        without the rules text.
      · CARD (`cardArt`) — the card as it is in play, rules text and all. Never

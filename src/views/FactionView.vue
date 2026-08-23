@@ -123,11 +123,11 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
             v-for="character in cast"
             :key="character.id"
             :to="to('character', { characterId: character.id }, { query: { faction: faction.id } })"
-            :art="character.art"
+            :art="character.cardArt"
             :epithet="character.epithet"
             :name="character.name"
             :tags="tags(character)"
-            :placeholder="t('universe.artPlaceholder')"
+            :placeholder="t('character.cardArtPlaceholder')"
           />
         </div>
       </div>

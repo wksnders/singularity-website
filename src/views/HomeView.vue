@@ -189,11 +189,11 @@ function scrollCast(direction: 1 | -1): void {
         :key="character.id"
         class="home__rotator-item"
         :to="to('character', { characterId: character.id })"
-        :art="character.art"
+        :art="character.cardArt"
         :epithet="character.epithet"
         :name="character.name"
         :tags="factionTags(character)"
-        :placeholder="t('universe.artPlaceholder')"
+        :placeholder="t('character.cardArtPlaceholder')"
       />
     </div>
     <div class="l-wrap home__spacer">

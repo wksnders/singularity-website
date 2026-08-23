@@ -132,11 +132,11 @@ function clearAll(): void {
           v-for="character in castPreview"
           :key="character.id"
           :to="to('character', { characterId: character.id })"
-          :art="character.art"
+          :art="character.cardArt"
           :epithet="character.epithet"
           :name="character.name"
           :tags="factionTags(character)"
-          :placeholder="t('universe.artPlaceholder')"
+          :placeholder="t('character.cardArtPlaceholder')"
         />
       </div>
 
@@ -179,11 +179,11 @@ function clearAll(): void {
           v-for="character in unaligned"
           :key="character.id"
           :to="to('character', { characterId: character.id })"
-          :art="character.art"
+          :art="character.cardArt"
           :epithet="character.epithet"
           :name="character.name"
           :tags="factionTags(character)"
-          :placeholder="t('universe.artPlaceholder')"
+          :placeholder="t('character.cardArtPlaceholder')"
         />
       </div>
 

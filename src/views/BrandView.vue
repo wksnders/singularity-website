@@ -256,11 +256,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
             v-for="character in cast"
             :key="character.id"
             :to="to('character', { characterId: character.id })"
-            :art="character.art"
+            :art="character.cardArt"
             :epithet="character.epithet"
             :name="character.name"
             :tags="tags(character)"
-            :placeholder="t('universe.artPlaceholder')"
+            :placeholder="t('character.cardArtPlaceholder')"
           />
         </div>
         <EmptyState

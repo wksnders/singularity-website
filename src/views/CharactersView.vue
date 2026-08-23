@@ -135,12 +135,12 @@ function clearAll(): void {
           v-for="character in shown"
           :key="character.id"
           :to="to('character', { characterId: character.id }, { query: tileQuery })"
-          :art="character.art"
+          :art="character.cardArt"
           :badge="badge(character)"
           :epithet="character.epithet"
           :name="character.name"
           :tags="tags(character)"
-          :placeholder="t('universe.artPlaceholder')"
+          :placeholder="t('character.cardArtPlaceholder')"
         />
       </div>
 
