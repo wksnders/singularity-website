@@ -5,6 +5,7 @@
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import JumpChip from '@/components/atoms/JumpChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -21,7 +22,6 @@ import { useQueryFilter } from '@/composables/useQueryFilter';
 import { outbound, soon, to } from '@/site/links';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
-
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const sections = computed<SectionEntry[]>(() => [
@@ -224,37 +224,69 @@ const factSheet = computed(() => [
       <p class="comm__body">{{ t('community.team.body') }}</p>
       <MonoLabel tone="faint">{{ t('community.team.pending') }}</MonoLabel>
 
-      <div v-for="(group, index) in teamGroups" :key="group" class="comm__team-group">
-        <MonoLabel tone="faint">
-          {{ pad(teamOf(group).length) }} · {{ t(`community.team.groups.${group}.kicker`) }}
-        </MonoLabel>
-        <h3 class="comm__team-title">{{ t(`community.team.groups.${group}.title`) }}</h3>
+      <nav :aria-label="t('community.team.groupNav')" class="comm__team-nav">
+        <JumpChip
+          v-for="(group, index) in teamGroups"
+          :key="group"
+          :to="{ hash: `#team-${group}` }"
+          :index="pad(index + 1)"
+        >
+          {{ t(`community.team.groups.${group}.title`) }}
+        </JumpChip>
+      </nav>
+
+      <div
+        v-for="group in teamGroups"
+        :id="`team-${group}`"
+        :key="group"
+        tabindex="-1"
+        class="comm__team-group"
+        :class="`comm__team-group--${group}`"
+      >
+        <div class="comm__team-head">
+          <h3 class="comm__team-title">{{ t(`community.team.groups.${group}.title`) }}</h3>
+          <MonoLabel tone="faint">
+            {{ pad(teamOf(group).length) }} · {{ t(`community.team.groups.${group}.kicker`) }}
+          </MonoLabel>
+        </div>
         <p class="comm__body">{{ t(`community.team.groups.${group}.body`) }}</p>
 
-        <div class="l-grid l-grid--narrow comm__gap">
+        <div class="comm__roster">
           <div v-for="member in teamOf(group)" :key="member.id" class="comm__member">
-            <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('community.team.portrait')" />
-            <h4 class="comm__member-name">{{ member.name }}</h4>
-            <MonoLabel tone="faint">{{ member.role }}</MonoLabel>
-            <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="comm__member-art">
-              {{ t('community.team.seeTheArt') }}
-            </BaseLink>
+            <ArtFrame
+              v-if="group !== 'friends'"
+              class="comm__portrait"
+              :art="null"
+              ratio="1 / 1"
+              radius="m"
+              :placeholder="t('community.team.portrait')"
+            />
+            <div class="comm__member-text">
+              <h4 class="comm__member-name">{{ member.name }}</h4>
+              <p class="comm__member-role">{{ member.role }}</p>
+              <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="comm__member-art">
+                {{ t('community.team.seeTheArt') }}
+              </BaseLink>
+            </div>
           </div>
         </div>
 
-        <details v-if="index === 1" class="comm__statement">
-          <summary>
-            <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
-            <span class="comm__statement-line">{{ t('community.team.aiSummary') }}</span>
+        <details v-if="group === 'artists'" class="comm__statement">
+          <summary class="comm__statement-summary">
+            <span class="comm__statement-text">
+              <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
+              <span class="comm__statement-line">{{ t('community.team.aiSummary') }}</span>
+            </span>
+            <span class="comm__chevron" aria-hidden="true">▾</span>
           </summary>
-          <MarkdownBlock slug="community/ai-statement" measure class="comm__gap" />
-          <BaseLink :to="to('faq', {}, { hash: '#faq-ai-art' })">
+          <MarkdownBlock slug="community/ai-statement" measure class="comm__statement-body" />
+          <BaseLink :to="to('faq', {}, { hash: '#faq-ai-art' })" class="comm__member-art">
             {{ t('community.team.aiFaq') }}
           </BaseLink>
         </details>
       </div>
 
-      <div class="comm__statement">
+      <div class="comm__credit-note">
         <MonoLabel tone="faint">{{ t('community.team.creditKicker') }}</MonoLabel>
         <p class="comm__body">{{ t('community.team.credits') }}</p>
       </div>
@@ -267,33 +299,155 @@ const factSheet = computed(() => [
 </template>
 
 <style>
+.comm__team-nav {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .comm__team-group {
   margin-top: var(--space-8);
   padding-top: var(--space-6);
   border-top: 1px solid var(--color-line);
+  scroll-margin-top: calc(var(--nav-height) + var(--space-4));
+}
+
+.comm__team-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
 }
 
 .comm__team-title {
-  margin-top: var(--space-2);
   font-size: var(--size-h3);
 }
 
+/* Portrait beside the name, never above it. The artists sit a size larger. */
+.comm__roster {
+  margin-top: var(--space-6);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(304px, 100%), 1fr));
+  gap: var(--space-5) var(--space-7);
+}
+
+.comm__team-group--artists .comm__roster {
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+}
+
+.comm__member {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.comm__portrait {
+  flex: 0 0 88px;
+  width: 88px;
+}
+
+.comm__team-group--artists .comm__portrait {
+  flex-basis: 104px;
+  width: 104px;
+}
+
+.comm__member-text {
+  min-width: 0;
+}
+
+.comm__member-role {
+  margin-top: var(--space-1);
+  font-size: var(--size-s);
+  color: var(--color-ink-muted);
+}
+
+/* No portraits here, so each name is a ruled row instead of a card. */
+.comm__team-group--friends .comm__roster {
+  grid-template-columns: repeat(auto-fill, minmax(min(272px, 100%), 1fr));
+  gap: 0 var(--space-7);
+}
+
+.comm__team-group--friends .comm__member {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--color-line);
+}
+
 .comm__member-art {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
   letter-spacing: var(--track-mono);
   text-transform: uppercase;
 }
 
-.comm__statement summary {
-  cursor: pointer;
+.comm__statement {
+  margin-top: var(--space-6);
+  max-width: 760px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-l);
+  background: var(--color-surface);
+}
+
+.comm__statement-summary {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.comm__statement-summary::-webkit-details-marker {
+  display: none;
+}
+
+.comm__statement-text {
+  min-width: 0;
 }
 
 .comm__statement-line {
+  display: block;
+  margin-top: var(--space-1);
   font-size: var(--size-body-l);
+}
+
+.comm__chevron {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-muted);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.comm__statement[open] .comm__chevron {
+  transform: rotate(180deg);
+}
+
+.comm__statement-body,
+.comm__statement > .comm__member-art {
+  margin: 0 var(--space-5);
+}
+
+.comm__statement-body {
+  padding-bottom: var(--space-2);
+}
+
+.comm__credit-note {
+  margin-top: var(--space-7);
+  padding: var(--space-5) var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-l);
+  background: var(--color-surface);
 }
 
 .comm__title {
@@ -422,21 +576,10 @@ const factSheet = computed(() => [
   gap: var(--space-2);
 }
 
-.comm__member {
-  display: grid;
-  gap: var(--space-2);
-}
-
 .comm__member-name {
   font-family: var(--font-display);
   font-size: var(--size-body);
   font-weight: 400;
 }
 
-.comm__statement {
-  margin-top: var(--space-8);
-  padding: var(--space-5);
-  border-left: 2px solid var(--color-accent-wash);
-  max-width: var(--width-reading);
-}
 </style>

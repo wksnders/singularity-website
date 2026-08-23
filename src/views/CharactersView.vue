@@ -34,7 +34,7 @@ const search = ref('');
 
 const filterOptions = computed<FilterOption[]>(() => [
   ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
-  { id: 'unaligned', label: t('ia.universe.unaligned.label'), showDot: true, color: null },
+  { id: 'universal', label: t('ia.universe.universal.label'), showDot: true, color: null },
 ]);
 
 const tags = (character: Character) =>
@@ -60,7 +60,7 @@ function matches(character: Character): boolean {
   const active = faction.value.value;
   const factionOk =
     !active ||
-    (active === 'unaligned'
+    (active === 'universal'
       ? character.factionIds === 'any'
       : character.factionIds === 'any' || character.factionIds.includes(active));
   const query = search.value.trim().toLowerCase();
@@ -155,7 +155,7 @@ function clearAll(): void {
         @action="clearAll()"
       />
 
-      <BandFoot :to="to('unaligned')" :label="t('characters.exitUnaligned')" />
+      <BandFoot :to="to('universal')" :label="t('characters.exitUniversal')" />
     </div>
   </section>
 </template>

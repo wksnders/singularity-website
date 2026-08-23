@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * UNIVERSE HUB — five deep-linkable bands: factions · characters · unaligned ·
+ * UNIVERSE HUB — five deep-linkable bands: factions · characters · universal ·
  * incursions · cards. Carries the full wayfinding kit (header index, desktop
  * scroll-spy rail, per-band marker with a copyable anchor, band feet).
  */
@@ -28,7 +28,7 @@ import type { SectionEntry } from '@/site/sections';
 const sections = computed<SectionEntry[]>(() => [
   { id: 'factions', label: t('universe.sections.factions') },
   { id: 'characters', label: t('universe.sections.characters') },
-  { id: 'unaligned', label: t('universe.sections.unaligned') },
+  { id: 'universal', label: t('universe.sections.universal') },
   { id: 'incursions', label: t('universe.sections.incursions') },
   { id: 'cards', label: t('universe.sections.cards') },
 ]);
@@ -38,7 +38,7 @@ const search = ref('');
 
 const filterOptions = computed<FilterOption[]>(() => [
   ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
-  { id: 'unaligned', label: t('universe.anyFaction'), showDot: true, color: null },
+  { id: 'universal', label: t('universe.anyFaction'), showDot: true, color: null },
 ]);
 
 const factionTags = (character: Character) =>
@@ -53,7 +53,7 @@ const factionTags = (character: Character) =>
 function matchesFaction(character: Character): boolean {
   const active = faction.value.value;
   if (!active) return true;
-  if (active === 'unaligned') return character.factionIds === 'any';
+  if (active === 'universal') return character.factionIds === 'any';
   return character.factionIds === 'any' || character.factionIds.includes(active);
 }
 
@@ -67,7 +67,7 @@ const shownCast = computed(() => characters.filter((c) => matchesFaction(c) && m
 /** The hub shows a taste of the cast; the index page shows all of it. */
 const castPreview = computed(() => shownCast.value.slice(0, 9));
 
-const unaligned = computed(() => characters.filter((c) => c.factionIds === 'any').slice(0, 3));
+const universal = computed(() => characters.filter((c) => c.factionIds === 'any').slice(0, 3));
 
 function clearAll(): void {
   faction.set(null);
@@ -158,25 +158,25 @@ function clearAll(): void {
         </UiButton>
       </div>
 
-      <BandFoot :to="{ hash: '#unaligned' }" :label="t('universe.characters.exit')" />
+      <BandFoot :to="{ hash: '#universal' }" :label="t('universe.characters.exit')" />
     </div>
   </section>
 
-  <!-- 03 · unaligned -->
-  <section id="unaligned" tabindex="-1" class="l-band">
+  <!-- 03 · universal -->
+  <section id="universal" tabindex="-1" class="l-band">
     <div class="l-wrap">
       <SectionMarker
-        id="unaligned"
+        id="universal"
         :index="3"
         :total="5"
-        :heading="t('universe.sections.unaligned')"
+        :heading="t('universe.sections.universal')"
       />
-      <MonoLabel tone="faint">{{ t('universe.unaligned.nameTbd') }}</MonoLabel>
-      <p class="universe__body">{{ t('universe.unaligned.body') }}</p>
+      <MonoLabel tone="faint">{{ t('universe.universal.nameTbd') }}</MonoLabel>
+      <p class="universe__body">{{ t('universe.universal.body') }}</p>
 
       <div class="l-grid l-grid--tiles universe__gap">
         <EntityTile
-          v-for="character in unaligned"
+          v-for="character in universal"
           :key="character.id"
           :to="to('character', { characterId: character.id })"
           :art="character.cardArt"
@@ -188,10 +188,10 @@ function clearAll(): void {
       </div>
 
       <div class="universe__reveal">
-        <UiButton variant="quiet" :to="to('unaligned')">{{ t('universe.unaligned.exitPage') }}</UiButton>
+        <UiButton variant="quiet" :to="to('universal')">{{ t('universe.universal.exitPage') }}</UiButton>
       </div>
 
-      <BandFoot :to="{ hash: '#incursions' }" :label="t('universe.unaligned.exit')" />
+      <BandFoot :to="{ hash: '#incursions' }" :label="t('universe.universal.exit')" />
     </div>
   </section>
 

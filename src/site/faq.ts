@@ -65,7 +65,7 @@ const LINK_TARGETS: Record<string, () => RouteLocationRaw | ResolvedLink> = {
   tabletopSimulator: () => outbound('tabletopSimulator'),
   cards: () => to('cards'),
   incursions: () => to('incursions'),
-  unaligned: () => to('unaligned'),
+  universal: () => to('universal'),
   learnPaths: () => to('learn', {}, { hash: '#paths' }),
   learnModes: () => to('learn', {}, { hash: '#modes' }),
   learnVideos: () => to('learn', {}, { hash: '#videos' }),

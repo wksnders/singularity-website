@@ -54,7 +54,7 @@ const universe: IaSection = {
         { key: 'universe.characters', to: to('characters') },
         { key: 'universe.cards', to: to('cards') },
         { key: 'universe.incursions', to: to('incursions') },
-        { key: 'universe.unaligned', to: to('unaligned') },
+        { key: 'universe.universal', to: to('universal') },
       ],
     },
   ],
@@ -62,7 +62,7 @@ const universe: IaSection = {
     { key: 'universe.characters', to: to('characters') },
     { key: 'universe.cards', to: to('cards') },
     { key: 'universe.incursions', to: to('incursions') },
-    { key: 'universe.unaligned', to: to('unaligned') },
+    { key: 'universe.universal', to: to('universal') },
   ],
 };
 
@@ -189,7 +189,7 @@ export const footerColumns: IaGroup[] = [
       { key: 'universe.characters', to: to('characters') },
       { key: 'universe.cards', to: to('cards') },
       { key: 'universe.incursions', to: to('incursions') },
-      { key: 'universe.unaligned', to: to('unaligned') },
+      { key: 'universe.universal', to: to('universal') },
     ],
   },
   {

@@ -5,7 +5,7 @@
     "characters": "Characters — Singularity.exe",
     "cards": "Card gallery — Singularity.exe",
     "incursions": "Incursions — Singularity.exe",
-    "unaligned": "Unaligned — Singularity.exe",
+    "universal": "Universal — Singularity.exe",
     "story": "Story — Singularity.exe",
     "learn": "Learn to play — Singularity.exe",
     "news": "News — Singularity.exe",
@@ -94,7 +94,7 @@
     "sections": {
       "factions": "Factions",
       "characters": "Characters",
-      "unaligned": "Unaligned",
+      "universal": "Universal",
       "incursions": "Incursions",
       "cards": "Card gallery"
     },
@@ -113,10 +113,10 @@
       "exitIndex": "The full cast index →",
       "exit": "The characters who belong to nobody →"
     },
-    "unaligned": {
+    "universal": {
       "nameTbd": "[ area name — TBD ]",
       "body": "Some characters answer to nobody and can be played in any faction. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
-      "exitPage": "The unaligned →",
+      "exitPage": "The universal characters →",
       "exit": "How Incursions work →"
     },
     "incursions": {
@@ -318,7 +318,7 @@
     "anyFactionBadge": "Playable in any faction",
     "emptyTitle": "Nobody here by that name",
     "emptyBody": "Check the spelling, or clear the filters to see the whole cast.",
-    "exitUnaligned": "The characters who belong to nobody →",
+    "exitUniversal": "The characters who belong to nobody →",
     "exitUniverse": "Back to the Universe →"
   },
   "faction": {
@@ -642,12 +642,12 @@
     "exitTrack": "The co-op learning track →",
     "exitChapter": "The chapter they arrive in →"
   },
-  "unaligned": {
+  "universal": {
     "hero": {
       "title": "Some of them belong to nobody",
       "lede": "LuX sits outside the four powers entirely. She can be played in any faction, and brings a small brand of programs nobody else can run.",
-      "artPlaceholder": "[ unaligned key art — wide ]",
-      "pending": "[ UNALIGNED KEY ART — PENDING ]"
+      "artPlaceholder": "[ universal key art — wide ]",
+      "pending": "[ UNIVERSAL KEY ART — PENDING ]"
     },
     "sections": {
       "brands": "Personal brands"
@@ -1046,6 +1046,7 @@
       "pending": "[ portraits — PENDING ]",
       "portrait": "[ portrait ]",
       "seeTheArt": "See the art →",
+      "groupNav": "Team groups",
       "groups": {
         "studio": {
           "title": "The studio",
@@ -1092,8 +1093,8 @@
       "incursions": {
         "label": "Incursions"
       },
-      "unaligned": {
-        "label": "Unaligned"
+      "universal": {
+        "label": "Universal"
       }
     },
     "story": {

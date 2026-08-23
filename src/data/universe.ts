@@ -1531,4 +1531,4 @@ export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.fac
 export const charactersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds === 'any' || c.factionIds.includes(factionId));
 
-export const unalignedCharacters = () => characters.filter((c) => c.factionIds === 'any');
+export const universalCharacters = () => characters.filter((c) => c.factionIds === 'any');

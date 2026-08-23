@@ -69,10 +69,10 @@ const routes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: path('universe/unaligned'),
-    name: 'unaligned',
-    component: () => import('@/views/UnalignedView.vue'),
-    meta: { titleKey: 'meta.unaligned' },
+    path: path('universe/universal'),
+    name: 'universal',
+    component: () => import('@/views/UniversalView.vue'),
+    meta: { titleKey: 'meta.universal' },
   },
   {
     path: path('story'),

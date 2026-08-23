@@ -47,7 +47,7 @@ const scopedBrands = computed(() =>
 
 const filterOptions = computed<FilterOption[]>(() => [
   ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
-  { id: 'unaligned', label: t('universe.anyFaction'), showDot: true, color: null },
+  { id: 'universal', label: t('universe.anyFaction'), showDot: true, color: null },
 ]);
 
 const brandOf = (program: Program) => brandById(program.brandId);
@@ -59,10 +59,10 @@ const factionOf = (program: Program) => {
 function matches(program: Program): boolean {
   const active = faction.value.value;
   const brand = brandOf(program);
-  /* "Unaligned" is every brand with no faction — personal AND universal. Test
+  /* "Universal" is every brand with no faction — personal AND universal. Test
      `factionId`, not `kind`, or one of the two silently disappears. */
   const factionOk =
-    !active || (active === 'unaligned' ? !brand?.factionId : brand?.factionId === active);
+    !active || (active === 'universal' ? !brand?.factionId : brand?.factionId === active);
   const brandOk =
     !brandScope.values.value.length || brandScope.values.value.includes(program.brandId);
   const query = search.value.trim().toLowerCase();
