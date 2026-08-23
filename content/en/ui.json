@@ -111,7 +111,7 @@
       "emptyBody": "Check the spelling, try another faction, or clear the search.",
       "revealNote": "More revealed with every set",
       "exitIndex": "The full cast index →",
-      "exit": "The characters who belong to nobody →"
+      "exit": "The characters who're happy to work with anyone to achieve their goals →"
     },
     "universal": {
       "nameTbd": "[ area name — TBD ]",
@@ -318,7 +318,7 @@
     "anyFactionBadge": "Playable in any faction",
     "emptyTitle": "Nobody here by that name",
     "emptyBody": "Check the spelling, or clear the filters to see the whole cast.",
-    "exitUniversal": "The characters who belong to nobody →",
+    "exitUniversal": "The characters who're happy to work with anyone to achieve their goals →",
     "exitUniverse": "Back to the Universe →"
   },
   "faction": {
