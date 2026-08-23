@@ -37,15 +37,20 @@ const pitchStats = computed<Stat[]>(() => [
   { label: t('home.pitch.solo'), value: t('home.pitch.soloValue') },
 ]);
 
-/** The rotator shows one character per faction plus the any-faction bonus. */
+/**
+ * Opens on one character per faction, then runs the rest of the roster.
+ * Capped for page weight
+ */
+const ROTATOR_MAX = 20;
+
 const rotatorCast = computed(() => {
-  const perFaction = factions
+  const lead = factions
     .map((faction) =>
       characters.find((c) => Array.isArray(c.factionIds) && c.factionIds[0] === faction.id),
     )
     .filter((c): c is (typeof characters)[number] => Boolean(c));
-  const lux = characters.find((c) => c.id === 'lux');
-  return lux ? [...perFaction, lux] : perFaction;
+  const seen = new Set(lead.map((c) => c.id));
+  return [...lead, ...characters.filter((c) => !seen.has(c.id))].slice(0, ROTATOR_MAX);
 });
 
 const factionTags = (character: (typeof characters)[number]) =>
@@ -177,6 +182,9 @@ function scrollCast(direction: 1 | -1): void {
       <div>
         <MonoLabel tone="accent">{{ t('home.cast.kicker') }}</MonoLabel>
         <h2 class="home__h2">{{ t('home.cast.title') }}</h2>
+        <MonoLabel tone="faint">
+          {{ characters.length }} {{ t('universe.characters.count') }}
+        </MonoLabel>
       </div>
       <div class="home__rotator-nav">
         <button type="button" :aria-label="t('home.cast.prev')" @click="scrollCast(-1)">←</button>
