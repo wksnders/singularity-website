@@ -595,7 +595,7 @@
       "stack": {
         "kicker": "Stack mutations",
         "title": "Ten or more per Incursion",
-        "body": "Each adds a terrifying twist. Draw any number at random and stack them; every one you add makes the fight measurably worse for you."
+        "body": "Each adds a terrifying twist. Draw any number at random; every one you add makes the fight measurably worse for you."
       },
       "max": {
         "kicker": "Max mutations",
