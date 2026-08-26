@@ -1,7 +1,8 @@
 ---
 name: Masquerade
 oneLiner: 'Possess opponent’s characters with the cursed masks, then puppeteer them toward their own demise.'
-quote: ''
+quote: '“So, whenever you say ‘me’ or ‘my’, you are referring to both of us, right?”'
+quoteBy: 'Injection 47'
 ---
 
 Sometimes the best way for an underground network to organize is in plain sight. The

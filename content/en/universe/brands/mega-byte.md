@@ -1,7 +1,8 @@
 ---
 name: Mega Byte
 oneLiner: 'Orchestrate a food fight that’s rigged in your favor, and enjoy the feast while the food does the work.'
-quote: ''
+quote: '“Sometimes a sandwich is more than just a sandwich. But do not worry! Great utility doesn’t mean we compromise on flavor! Here, try a bite. It’s on Fazoli.”'
+quoteBy: 'Fazoli of Fazoli’s Deli'
 ---
 
 In the bustling and convivial megalopolis of the Monarchy of Boom, cooking is art,

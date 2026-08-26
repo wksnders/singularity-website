@@ -1,7 +1,8 @@
 ---
 name: Forbidden Archives
 oneLiner: 'Author the saga of your opponent’s demise with fearsome, customizable scroll programs.'
-quote: ''
+quote: '“The few scribes that have seen the deepest chambers of the Astral Archive possess insights few can fathom.”'
+quoteBy: 'Yama Uba'
 ---
 
 Deep within the confines of the Celestial Shogunate, the Forbidden Archives house the

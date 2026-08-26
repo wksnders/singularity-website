@@ -1,7 +1,8 @@
 ---
 name: Endless Chain
 oneLiner: 'Bind your opponent in a maze of bad decisions and crippling consequences.'
-quote: ''
+quote: '“Soul code is still code. Indecipherable does not mean unsuggestable… unmanipulable… or uncontrollable.”'
+quoteBy: 'LySSSSSS'
 ---
 
 Everyone on the network has an incomprehensible program that runs their consciousness.

@@ -1,7 +1,8 @@
 ---
 name: Onryoki Noh
 oneLiner: 'Blood and shadow are your tools to orchestrate the perfect execution.'
-quote: ''
+quote: '“We are the essence of a whisper. We cease to exist until the target ceases to exist.”'
+quoteBy: 'Noh Coda 4'
 ---
 
 Warriors across dynasties contributed their best works to this collection of shadow

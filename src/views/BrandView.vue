@@ -48,6 +48,7 @@ const oneLiner = computed(() => metaString(doc.value, 'oneLiner', t('brand.oneLi
 
 useDocumentTitle(() => name.value);
 const inWorldQuote = computed(() => metaString(doc.value, 'quote', t('brand.quotePlaceholder')));
+const quoteBy = computed(() => metaString(doc.value, 'quoteBy'));
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'story', label: t('brand.sections.story') },
@@ -192,7 +193,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <p>{{ t('brand.storyPlaceholder2') }}</p>
           <p>{{ t('brand.storyPlaceholder3') }}</p>
         </div>
-        <blockquote class="brand__quote">{{ inWorldQuote }}</blockquote>
+        <blockquote class="brand__quote">
+          {{ inWorldQuote }}
+          <cite v-if="quoteBy" class="brand__quote-by">{{ quoteBy }}</cite>
+        </blockquote>
         <BandFoot :to="{ hash: '#programs' }" :label="t('brand.exitPrograms')" />
       </div>
     </section>
@@ -379,6 +383,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
   font-size: var(--size-body-l);
   font-style: italic;
   color: var(--faction-text);
+}
+
+.brand__quote-by {
+  display: block;
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  font-style: normal;
+  letter-spacing: var(--track-mono);
+  color: var(--color-ink-soft);
 }
 
 
