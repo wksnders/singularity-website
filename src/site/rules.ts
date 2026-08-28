@@ -245,13 +245,16 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
       related: (source.related ?? []).map((id) => ({ id, label: label.get(id) ?? id })),
       redirect: pointer?.target ? { id: pointer.target, label: label.get(pointer.target) ?? '' } : null,
       todo: source.todo ?? '',
-      haystack: [source.title, ...lines, ...(source.aliases ?? [])]
-        .map((part) => `${part} ${expandIcons(part)}`)
-        .join(' ')
-        .toLowerCase(),
+      haystack: fold([source.title, ...lines, ...(source.aliases ?? [])]),
     };
   });
 }
+
+const fold = (parts: string[]) =>
+  parts
+    .map((part) => `${part} ${expandIcons(part)}`)
+    .join(' ')
+    .toLowerCase();
 
 export const matchesRule = (entry: RuleEntry, terms: string[]) =>
   terms.every((term) => matchesQuery(entry.haystack, term));

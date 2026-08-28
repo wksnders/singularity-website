@@ -74,6 +74,9 @@
         "kind": "example",
         "text": "Onibaba has Forcefield of Boom (a Patch: Self) on top of her stack. She also has Fungal Possession attached, allowing any character to activate programs from her stack. If another character activates Forcefield of Boom, it can only target the character that activated it from Onibaba’s stack."
       }
+    ],
+    "aliases": [
+      "cast"
     ]
   },
   {
@@ -113,6 +116,9 @@
         "kind": "rule",
         "text": "Patches with used EXE and reaction effects are active until those effects fully resolve. They become inactive when returned to their origin stack."
       }
+    ],
+    "aliases": [
+      "dormant"
     ]
   },
   {
@@ -132,6 +138,13 @@
         "kind": "rule",
         "text": "Adaptive programs cannot be added to the stack of a character that is about to fall in."
       }
+    ],
+    "aliases": [
+      "recall",
+      "recalled",
+      "recalling",
+      "recalls",
+      "return to hand"
     ]
   },
   {
@@ -159,6 +172,14 @@
         "kind": "rule",
         "text": "Ambush effects resolve before the newly activated character is suspended."
       }
+    ],
+    "aliases": [
+      "ambushed",
+      "ambushes",
+      "battlecry",
+      "enters the battlefield",
+      "etb",
+      "opening gambit"
     ]
   },
   {
@@ -178,6 +199,12 @@
         "kind": "rule",
         "text": "If an Architech Design would return to a stack, crash, or be overwritten, return it to the bottom of the Architech Design deck instead."
       }
+    ],
+    "aliases": [
+      "handicap",
+      "prize",
+      "prizes",
+      "reward"
     ]
   },
   {
@@ -213,6 +240,10 @@
         "kind": "rule",
         "text": "Friendly players may share a Library. Opponents have separate Libraries."
       }
+    ],
+    "aliases": [
+      "archivists",
+      "companion"
     ]
   },
   {
@@ -220,9 +251,18 @@
     "title": "Armor",
     "cls": "term",
     "aliases": [
+      "barrier",
+      "defend",
+      "defended",
+      "defending",
+      "defends",
+      "divine shield",
+      "forcefield",
+      "resistance",
       "shield",
-      "prevent",
-      "block"
+      "shielded",
+      "shields",
+      "tough"
     ],
     "related": [
       "damage",
@@ -273,6 +313,11 @@
         "kind": "rule",
         "text": "There is no limit to the number of battery tokens a player may hold."
       }
+    ],
+    "aliases": [
+      "batteries",
+      "coin",
+      "treasure"
     ]
   },
   {
@@ -280,10 +325,19 @@
     "title": "Cancel",
     "cls": "procedure",
     "aliases": [
+      "cancelled",
+      "cancels",
       "counter",
+      "countered",
+      "countering",
       "counterspell",
+      "counterspells",
+      "fizzle",
+      "fizzled",
+      "fizzles",
       "negate",
-      "fizzle"
+      "negated",
+      "negates"
     ],
     "related": [
       "activating-a-program",
@@ -321,6 +375,12 @@
         "kind": "rule",
         "text": "Consume does not count as activating a program."
       }
+    ],
+    "aliases": [
+      "bytes",
+      "consumed",
+      "consumes",
+      "consuming"
     ]
   },
   {
@@ -336,6 +396,13 @@
         "kind": "rule",
         "text": "A card’s controller never changes during the game, regardless of who activates or interacts with it."
       }
+    ],
+    "aliases": [
+      "controlled",
+      "controllers",
+      "controlling",
+      "controls",
+      "owner"
     ]
   },
   {
@@ -343,9 +410,11 @@
     "title": "Cost",
     "cls": "term",
     "aliases": [
+      "costs",
       "mana cost",
-      "pay",
-      "pay for"
+      "paid for",
+      "pay for",
+      "pays for"
     ],
     "related": [
       "ram",
@@ -385,16 +454,35 @@
     "title": "Crash",
     "cls": "procedure",
     "aliases": [
+      "crashing",
+      "dead",
+      "death",
+      "deathknell",
+      "deathrattle",
+      "deaths",
       "destroy",
       "destroyed",
+      "destroying",
+      "destroys",
+      "died",
+      "dies",
+      "discard pile",
+      "dying wish",
+      "graveyard",
+      "graveyards",
       "kill",
       "killed",
-      "dies",
-      "death",
-      "dead",
-      "graveyard",
-      "discard pile",
-      "trash"
+      "killing",
+      "kills",
+      "knock out",
+      "knocked out",
+      "knocking out",
+      "knocks out",
+      "ko",
+      "last breath",
+      "trash",
+      "trashed",
+      "trashes"
     ],
     "related": [
       "falling-in",
@@ -459,6 +547,9 @@
         "kind": "rule",
         "text": "In Incursion scenarios, current squad refers to the squad that most recently had an Activation phase. (I.e., the player whose turn led into the Incursion phase.)"
       }
+    ],
+    "aliases": [
+      "active pokemon"
     ]
   },
   {
@@ -466,8 +557,10 @@
     "title": "Cycle",
     "cls": "procedure",
     "aliases": [
-      "rotate",
-      "bottom of the deck"
+      "bottom of the deck",
+      "cycles",
+      "recycle",
+      "rotate"
     ],
     "blocks": [
       {
@@ -489,9 +582,18 @@
     "title": "Damage",
     "cls": "term",
     "aliases": [
+      "burned",
+      "damages",
+      "damaging",
       "hit",
+      "hits",
+      "hitting",
       "hurt",
-      "wound"
+      "hurts",
+      "poisoned",
+      "wound",
+      "wounded",
+      "wounds"
     ],
     "related": [
       "armor",
@@ -536,8 +638,19 @@
     "cls": "wording",
     "aliases": [
       "attack",
+      "attacked",
+      "attacking",
+      "attacks",
+      "deals",
+      "hit",
+      "hits",
       "strike",
-      "hit"
+      "strikes",
+      "striking",
+      "struck",
+      "wound",
+      "wounded",
+      "wounds"
     ],
     "blocks": [
       {
@@ -579,6 +692,9 @@
         "kind": "rule",
         "text": "Choose Endian Key challenges to attempt during Setup in the Select a Singularity Fragment step."
       }
+    ],
+    "aliases": [
+      "achievement"
     ]
   },
   {
@@ -621,6 +737,12 @@
         "kind": "rule",
         "text": "Environment Shards are not recommended for solo or cooperative game modes such as Incursions."
       }
+    ],
+    "aliases": [
+      "arena",
+      "battlefield",
+      "location",
+      "stadium"
     ]
   },
   {
@@ -664,6 +786,10 @@
         "kind": "rule",
         "text": "Resolving an EXE effect does not count as resolving a program. It counts as resolving an EXE."
       }
+    ],
+    "aliases": [
+      "consumable",
+      "tool"
     ]
   },
   {
@@ -671,10 +797,16 @@
     "title": "Falling In",
     "cls": "procedure",
     "aliases": [
-      "replace",
-      "summon",
+      "bench",
       "next character",
-      "bench"
+      "replace",
+      "replaced",
+      "replaces",
+      "replacing",
+      "summon",
+      "summoned",
+      "summoning",
+      "summons"
     ],
     "related": [
       "crash",
@@ -721,6 +853,9 @@
         "kind": "rule",
         "text": "In team games, your teammate’s active characters are also considered friendly."
       }
+    ],
+    "aliases": [
+      "ally"
     ]
   },
   {
@@ -729,9 +864,18 @@
     "cls": "wording",
     "aliases": [
       "gain life",
+      "healing",
+      "heals",
       "lifegain",
+      "lifesteal",
+      "regain",
+      "regained",
+      "regains",
+      "regeneration",
       "restore",
-      "regain"
+      "restored",
+      "restores",
+      "restoring"
     ],
     "blocks": [
       {
@@ -787,6 +931,13 @@
         "kind": "rule",
         "text": "Patches attached to inactive characters are also inactive. They have no effect, cannot be targeted, and their EXE and reaction effects cannot be used."
       }
+    ],
+    "aliases": [
+      "benched",
+      "dormant",
+      "face down",
+      "hidden",
+      "out of the game"
     ]
   },
   {
@@ -794,11 +945,17 @@
     "title": "Initialize and Update",
     "cls": "procedure",
     "aliases": [
-      "upkeep",
-      "untap step",
-      "start of turn",
       "end step",
-      "refresh phase"
+      "initializes",
+      "round end",
+      "round start",
+      "start of turn",
+      "startup phase",
+      "untap step",
+      "updated",
+      "updates",
+      "updating",
+      "upkeep"
     ],
     "related": [
       "suspend",
@@ -853,6 +1010,12 @@
         "kind": "rule",
         "text": "You may have up to 8 ink tokens at any time."
       }
+    ],
+    "aliases": [
+      "charges",
+      "energy",
+      "mana",
+      "resource"
     ]
   },
   {
@@ -864,6 +1027,13 @@
         "kind": "rule",
         "text": "See ‘Archivist and Library’."
       }
+    ],
+    "aliases": [
+      "deck",
+      "graveyard",
+      "libraries",
+      "sideboard",
+      "zone"
     ]
   },
   {
@@ -887,6 +1057,10 @@
         "kind": "rule",
         "text": "Losing [H] places damage tokens but does not count as taking damage. This includes effects like overload."
       }
+    ],
+    "aliases": [
+      "loses",
+      "lost"
     ]
   },
   {
@@ -894,8 +1068,11 @@
     "title": "May",
     "cls": "wording",
     "aliases": [
-      "optional",
-      "choose not to"
+      "choose",
+      "chooses",
+      "choosing",
+      "chose",
+      "chosen"
     ],
     "related": [
       "immediately",
@@ -958,6 +1135,19 @@
         "kind": "example",
         "text": "Binary Dissonance deals 2X [P], where X is equal to the number of patches on the target character. If the target has 3 patches attached, Binary Dissonance will deal 6 [P]. If modified by +1 [P], it deals 7 [P]."
       }
+    ],
+    "aliases": [
+      "buff",
+      "buffed",
+      "buffs",
+      "dispel",
+      "dispelled",
+      "dispels",
+      "enchantment",
+      "silence",
+      "silenced",
+      "silences",
+      "silencing"
     ]
   },
   {
@@ -996,6 +1186,17 @@
         "kind": "rule",
         "text": "Module patches follow normal program activation rules."
       }
+    ],
+    "aliases": [
+      "evolution",
+      "evolve",
+      "evolved",
+      "evolves",
+      "evolving",
+      "modules",
+      "mutate",
+      "mutated",
+      "mutates"
     ]
   },
   {
@@ -1030,6 +1231,17 @@
         "kind": "rule",
         "text": "Overwritten characters count as crashed for victory or loss conditions. They do not count as crashed for any other effect."
       }
+    ],
+    "aliases": [
+      "banishment",
+      "exile",
+      "exiled",
+      "exiles",
+      "exiling",
+      "lost zone",
+      "obliterate",
+      "overwrites",
+      "overwriting"
     ]
   },
   {
@@ -1049,6 +1261,16 @@
         "kind": "rule",
         "text": "Overload damage cannot be modified and is unpreventable."
       }
+    ],
+    "aliases": [
+      "deck out",
+      "fatigue",
+      "overloaded",
+      "overloading",
+      "overloads",
+      "overtime",
+      "sandstorm",
+      "sudden death"
     ]
   },
   {
@@ -1076,6 +1298,13 @@
         "kind": "rule",
         "text": "Mask [MSK] effects only activate on enemy characters, and never on friendly characters."
       }
+    ],
+    "aliases": [
+      "curse",
+      "masked",
+      "masks",
+      "possessed",
+      "possesses"
     ]
   },
   {
@@ -1115,6 +1344,14 @@
         "kind": "rule",
         "text": "Spent RAM is the total number of face down max RAM tokens. Virtual RAM never counts as spent RAM."
       }
+    ],
+    "aliases": [
+      "energy",
+      "land",
+      "mana",
+      "mana gem",
+      "power",
+      "runes"
     ]
   },
   {
@@ -1154,6 +1391,10 @@
         "kind": "rule",
         "text": "Suspended or inactive characters cannot use reactions."
       }
+    ],
+    "aliases": [
+      "instant",
+      "interrupt"
     ]
   },
   {
@@ -1177,6 +1418,14 @@
         "kind": "rule",
         "text": "After being activated and resolved from a crashed state, it remains crashed."
       }
+    ],
+    "aliases": [
+      "buyback",
+      "flashback",
+      "play from the graveyard",
+      "reclaim",
+      "reclaimed",
+      "reclaims"
     ]
   },
   {
@@ -1185,6 +1434,7 @@
     "cls": "term",
     "aliases": [
       "counters",
+      "relics",
       "tokens"
     ],
     "blocks": [
@@ -1226,10 +1476,19 @@
     "title": "Reset",
     "cls": "procedure",
     "aliases": [
-      "untap",
+      "readied",
       "ready",
       "refresh",
-      "straighten"
+      "refreshed",
+      "refreshes",
+      "resets",
+      "straighten",
+      "straightened",
+      "straightens",
+      "untap",
+      "untapped",
+      "untapping",
+      "untaps"
     ],
     "related": [
       "suspend",
@@ -1268,9 +1527,14 @@
     "title": "Revive",
     "cls": "procedure",
     "aliases": [
-      "resurrect",
       "reanimate",
-      "return from the graveyard"
+      "reanimated",
+      "reanimates",
+      "resurrect",
+      "resurrected",
+      "resurrects",
+      "return from the graveyard",
+      "reviving"
     ],
     "blocks": [
       {
@@ -1310,6 +1574,9 @@
         "kind": "rule",
         "text": "The runtime priority token may be referenced by card effects."
       }
+    ],
+    "aliases": [
+      "first player"
     ]
   },
   {
@@ -1344,6 +1611,13 @@
         "kind": "example",
         "text": "Ral Kaid has Dissolution Kana (Scribe 2: Deal 1 [P]) attached. Ral Kaid activates Codex of the Lost from the Library and spends 2 ink to add Dissolution Kana’s scribe effect. Codex of the Lost now reads: “Gain 1 Virtual RAM. This program’s cost cannot be reduced. Transcribe. Deal 1 [P].” Ral Kaid then declares targets and spends [RAM] to activate it."
       }
+    ],
+    "aliases": [
+      "scribed",
+      "scribes",
+      "transcribed",
+      "transcribes",
+      "transcribing"
     ]
   },
   {
@@ -1363,6 +1637,9 @@
         "kind": "rule",
         "text": "You may set your own personal milestone for how many Fragments to collect before opening the Assembly Pack."
       }
+    ],
+    "aliases": [
+      "trophy"
     ]
   },
   {
@@ -1371,7 +1648,9 @@
     "cls": "wording",
     "aliases": [
       "pay",
-      "exhaust ram"
+      "paying",
+      "pays",
+      "spends"
     ],
     "related": [
       "ram",
@@ -1418,10 +1697,15 @@
     "title": "Squad",
     "cls": "term",
     "aliases": [
-      "team",
-      "party",
+      "battlefield",
       "board",
-      "battlefield"
+      "creatures",
+      "minions",
+      "monsters",
+      "party",
+      "squads",
+      "team",
+      "warband"
     ],
     "related": [
       "current-squad",
@@ -1453,9 +1737,17 @@
     "title": "Stealth",
     "cls": "term",
     "aliases": [
+      "deflect",
+      "elusive",
       "hexproof",
+      "protection",
+      "resist",
+      "resisted",
+      "resists",
+      "spellshield",
       "ward",
-      "protection"
+      "warded",
+      "wards"
     ],
     "related": [
       "cost",
@@ -1497,9 +1789,30 @@
     "title": "Suspend",
     "cls": "procedure",
     "aliases": [
-      "tap",
+      "asleep",
+      "confused",
       "exhaust",
+      "exhausted",
+      "exhausting",
+      "exhausts",
+      "freeze",
+      "freezes",
+      "freezing",
+      "frostbite",
+      "froze",
+      "frozen",
+      "paralyzed",
       "sideways",
+      "stun",
+      "stunned",
+      "stunning",
+      "stuns",
+      "suspending",
+      "suspends",
+      "tap",
+      "tapped",
+      "tapping",
+      "taps",
       "turned sideways"
     ],
     "related": [
@@ -1573,6 +1886,20 @@
         "kind": "example",
         "text": "Hanbei allows one extra swap action every turn. If you initiate a swap action and Hanbei is still active, you may initiate a swap action later in your Activation phase. If Hanbei is deactivated as part of the first swap action, you may not take any further swap actions that turn."
       }
+    ],
+    "aliases": [
+      "retreat",
+      "retreat cost",
+      "retreated",
+      "retreating",
+      "retreats",
+      "swapped",
+      "swapping",
+      "swaps",
+      "switch",
+      "switched",
+      "switches",
+      "switching"
     ]
   },
   {
@@ -1580,9 +1907,8 @@
     "title": "Target and Targeting",
     "cls": "procedure",
     "aliases": [
-      "legal target",
-      "targeting",
-      "choose target"
+      "choose target",
+      "legal target"
     ],
     "related": [
       "stealth",
@@ -1637,9 +1963,17 @@
     "cls": "term",
     "aliases": [
       "defender",
-      "provoke",
+      "deflect",
+      "guard",
       "must attack",
-      "must be attacked"
+      "must be attacked",
+      "provoke",
+      "provoked",
+      "provokes",
+      "tank",
+      "taunted",
+      "taunting",
+      "taunts"
     ],
     "related": [
       "target-and-targeting"
@@ -1734,6 +2068,12 @@
         "kind": "example",
         "text": "Stone Hands reads: “Deal 2 [P] to target character, then 1 [P] to a different target.” Benobasa chooses Toshiro as the first target and Satellite 137 as the second. Satellite 137 has Amulet of Kill Process attached, which can cancel a program that targets him. Since targets are declared before activation, Satellite 137 can cancel Stone Hands as soon as it is activated, preventing all effects. However, he cannot wait until after Toshiro takes damage."
       }
+    ],
+    "aliases": [
+      "stack",
+      "stacked",
+      "stacking",
+      "stacks"
     ]
   },
   {
@@ -1745,6 +2085,11 @@
         "kind": "rule",
         "text": "See ‘Scribe and Transcribe.’"
       }
+    ],
+    "aliases": [
+      "transcribed",
+      "transcribes",
+      "transcribing"
     ]
   },
   {
@@ -1760,6 +2105,10 @@
         "kind": "rule",
         "text": "Programs with a Universal brand icon can only be included in the origin stacks of characters with the matching Universal brand. They may not be taken by any character."
       }
+    ],
+    "aliases": [
+      "common",
+      "neutral"
     ]
   },
   {
@@ -1799,6 +2148,9 @@
         "kind": "rule",
         "text": "Undead characters count as a victory point for each opponent of their controller."
       }
+    ],
+    "aliases": [
+      "indestructible"
     ]
   },
   {
@@ -1829,6 +2181,11 @@
         "kind": "rule",
         "text": "See ‘Initialize & Update’"
       }
+    ],
+    "aliases": [
+      "updated",
+      "updates",
+      "updating"
     ]
   },
   {
@@ -1836,8 +2193,12 @@
     "title": "Victory Points",
     "cls": "term",
     "aliases": [
+      "prize",
+      "prize card",
+      "prizes",
       "score",
-      "points",
+      "scored",
+      "scores",
       "win condition"
     ],
     "blocks": [
@@ -1872,8 +2233,11 @@
     "title": "When",
     "cls": "pointer",
     "aliases": [
+      "after",
       "trigger",
       "triggered",
+      "triggering",
+      "triggers",
       "whenever"
     ],
     "blocks": [

@@ -62,13 +62,12 @@ const all = computed(() => rulesEntries(terms.value));
 const intro = computed(() => all.value.find((entry) => entry.id === INTRO_ID) ?? null);
 const activeClass = computed(() => (cls.value.value ?? '') as RuleClass | '');
 
+const matched = computed(() =>
+  all.value.filter((entry) => entry.id !== INTRO_ID && matchesRule(entry, terms.value)),
+);
+
 const hits = computed(() =>
-  all.value.filter(
-    (entry) =>
-      entry.id !== INTRO_ID &&
-      matchesRule(entry, terms.value) &&
-      (!activeClass.value || entry.cls === activeClass.value),
-  ),
+  matched.value.filter((entry) => !activeClass.value || entry.cls === activeClass.value),
 );
 
 const letters = computed(() => rulesLetters(hits.value));
@@ -79,9 +78,7 @@ const noResults = computed(() => total.value === 0);
 const classes = computed(() =>
   CLASS_ORDER.map((name) => ({
     name,
-    count: all.value.filter(
-      (e) => e.id !== INTRO_ID && e.cls === name && matchesRule(e, terms.value),
-    ).length,
+    count: matched.value.filter((e) => e.cls === name).length,
   })).filter((row) => row.count > 0),
 );
  
