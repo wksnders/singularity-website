@@ -15,18 +15,23 @@ export const INTRO_ID = 'using-the-rules-reference';
 export type BlockKind = 'text' | 'note' | 'rule' | 'example';
 
 /**
- * The shelf an entry sits on. The eyebrow, the class filter and the rail's
+ * The shelves an entry sits on. The eyebrow, the class filter and the rail's
  * groups all read it, so a wrong value silently mis-files the term.
  *
- *
- * TODO — decide on all of these properly
  */
-export type RuleClass = 'keyword' | 'procedure' | 'wording' | 'term' | 'pointer';
+export type RuleClass =
+  | 'procedure'
+  | 'states'
+  | 'tokens'
+  | 'keyword'
+  | 'cardTypesAndZones'
+  | 'timing';
 
 export interface RuleSource {
   id: string;
   title: string;
-  cls: RuleClass;
+  cls: RuleClass[];
+  pointer?: boolean;
   /** Player-speak from other games. Matches search, not displayed. */
   aliases?: string[];
   related?: string[];
@@ -66,7 +71,9 @@ export interface RuleEntry {
   token: string;
   /** The sort key. */
   bare: string;
-  cls: RuleClass;
+  cls: RuleClass[];
+  /** A redirect stub; `redirect` carries the target. */
+  pointer: boolean;
   letter: string;
   blocks: RuleBlock[];
   related: { id: string; label: string }[];
@@ -232,7 +239,7 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
       items: (block.items ?? []).map((item) => segment(item, ctx, re)),
     }));
 
-    const pointer = source.cls === 'pointer' ? blocks[0]?.segs.find((s) => s.kind === 'ref') : undefined;
+    const pointer = source.pointer ? blocks[0]?.segs.find((s) => s.kind === 'ref') : undefined;
 
     return {
       id: source.id,
@@ -240,6 +247,7 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
       token: tokenOf(source.title),
       bare: bareOf(source.title),
       cls: source.cls,
+      pointer: Boolean(source.pointer),
       letter: bareOf(source.title).charAt(0).toUpperCase(),
       blocks,
       related: (source.related ?? []).map((id) => ({ id, label: label.get(id) ?? id })),
@@ -277,7 +285,14 @@ export function rulesLetters(entries: RuleEntry[]): RuleLetter[] {
   return bands;
 }
 
-export const CLASS_ORDER: RuleClass[] = ['keyword', 'procedure', 'wording', 'term', 'pointer'];
+export const CLASS_ORDER: RuleClass[] = [
+  'procedure',
+  'states',
+  'tokens',
+  'keyword',
+  'cardTypesAndZones',
+  'timing',
+];
 
 /**
  * Dev-only shape check, like `assertFaqShape()`. Nothing type-checks a JSON
@@ -298,7 +313,10 @@ export function assertRulesShape(entries: RuleEntry[]): void {
 
     if (!entry.title) console.warn(`[rules] ${where}: no title`);
     if (!entry.blocks.length) console.warn(`[rules] ${where}: no blocks`);
-    if (entry.cls === 'pointer' && !entry.redirect) {
+    if (entry.id !== INTRO_ID && !entry.cls.length) {
+      console.warn(`[rules] ${where}: on no shelf`);
+    }
+    if (entry.pointer && !entry.redirect) {
       console.warn(`[rules] ${where}: a pointer whose text names no known entry`);
     }
     for (const related of entry.related) {

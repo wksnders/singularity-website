@@ -62,7 +62,7 @@ const heading = (i: number) =>
 
 <template>
   <nav v-if="shown" class="c-rail" :class="{ 'c-rail--index': grouped }" :aria-label="t('wayfinding.sectionRail')">
-    <template v-for="(section, i) in sections" :key="section.id">
+    <template v-for="(section, i) in sections" :key="section.key ?? section.id">
       <p v-if="heading(i)" class="c-rail__group">{{ heading(i) }}</p>
       <a
         class="c-rail__link"

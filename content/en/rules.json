@@ -2,7 +2,7 @@
   {
     "id": "using-the-rules-reference",
     "title": "Using the Rules Reference",
-    "cls": "term",
+    "cls": [],
     "blocks": [
       {
         "kind": "text",
@@ -21,7 +21,10 @@
   {
     "id": "activating-a-program",
     "title": "Activating a Program",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "timing"
+    ],
     "related": [
       "cost",
       "target-and-targeting",
@@ -82,7 +85,9 @@
   {
     "id": "active-and-inactive",
     "title": "Active and Inactive",
-    "cls": "term",
+    "cls": [
+      "states"
+    ],
     "related": [
       "inactive",
       "target-and-targeting"
@@ -124,7 +129,9 @@
   {
     "id": "adaptive",
     "title": "Adaptive",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -150,7 +157,11 @@
   {
     "id": "ambush",
     "title": "Ambush [AMB]",
-    "cls": "keyword",
+    "cls": [
+      "procedure",
+      "keyword",
+      "timing"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -185,7 +196,9 @@
   {
     "id": "architech-design",
     "title": "Architech Design",
-    "cls": "term",
+    "cls": [
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -210,7 +223,10 @@
   {
     "id": "archivist-and-library",
     "title": "Archivist and Library",
-    "cls": "procedure",
+    "cls": [
+      "keyword",
+      "cardTypesAndZones"
+    ],
     "related": [
       "scribe-and-transcribe",
       "library"
@@ -249,7 +265,9 @@
   {
     "id": "armor",
     "title": "Armor",
-    "cls": "term",
+    "cls": [
+      "tokens"
+    ],
     "aliases": [
       "barrier",
       "defend",
@@ -295,7 +313,9 @@
   {
     "id": "battery",
     "title": "Battery",
-    "cls": "term",
+    "cls": [
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -323,7 +343,10 @@
   {
     "id": "cancel",
     "title": "Cancel",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states"
+    ],
     "aliases": [
       "cancelled",
       "cancels",
@@ -357,7 +380,11 @@
   {
     "id": "consume-and-byte",
     "title": "Consume and Byte",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "tokens",
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -386,7 +413,9 @@
   {
     "id": "control-and-controller",
     "title": "Control and Controller",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -408,7 +437,10 @@
   {
     "id": "cost",
     "title": "Cost",
-    "cls": "term",
+    "cls": [
+      "tokens",
+      "keyword"
+    ],
     "aliases": [
       "costs",
       "mana cost",
@@ -452,7 +484,12 @@
   {
     "id": "crash",
     "title": "Crash",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states",
+      "cardTypesAndZones",
+      "timing"
+    ],
     "aliases": [
       "crashing",
       "dead",
@@ -537,7 +574,10 @@
   {
     "id": "current-squad",
     "title": "Current Squad",
-    "cls": "term",
+    "cls": [
+      "keyword",
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -555,7 +595,10 @@
   {
     "id": "cycle",
     "title": "Cycle",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "aliases": [
       "bottom of the deck",
       "cycles",
@@ -580,7 +623,11 @@
   {
     "id": "damage",
     "title": "Damage",
-    "cls": "term",
+    "cls": [
+      "procedure",
+      "tokens",
+      "keyword"
+    ],
     "aliases": [
       "burned",
       "damages",
@@ -635,7 +682,10 @@
   {
     "id": "deal",
     "title": "Deal",
-    "cls": "wording",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "aliases": [
       "attack",
       "attacked",
@@ -678,7 +728,9 @@
   {
     "id": "endian-key",
     "title": "Endian Key",
-    "cls": "term",
+    "cls": [
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -700,7 +752,9 @@
   {
     "id": "enemy",
     "title": "Enemy",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -719,7 +773,9 @@
   {
     "id": "environment-shards",
     "title": "Environment Shards",
-    "cls": "term",
+    "cls": [
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -748,7 +804,10 @@
   {
     "id": "exe",
     "title": "EXE [EXE]",
-    "cls": "keyword",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -795,7 +854,12 @@
   {
     "id": "falling-in",
     "title": "Falling In",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states",
+      "cardTypesAndZones",
+      "timing"
+    ],
     "aliases": [
       "bench",
       "next character",
@@ -843,7 +907,9 @@
   {
     "id": "friendly",
     "title": "Friendly",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -861,7 +927,10 @@
   {
     "id": "heal",
     "title": "Heal",
-    "cls": "wording",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "aliases": [
       "gain life",
       "healing",
@@ -899,7 +968,9 @@
   {
     "id": "immediately",
     "title": "Immediately",
-    "cls": "wording",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -914,7 +985,9 @@
   {
     "id": "inactive",
     "title": "Inactive",
-    "cls": "term",
+    "cls": [
+      "states"
+    ],
     "related": [
       "active-and-inactive"
     ],
@@ -943,7 +1016,11 @@
   {
     "id": "initialize-and-update",
     "title": "Initialize and Update",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "keyword",
+      "timing"
+    ],
     "aliases": [
       "end step",
       "initializes",
@@ -988,7 +1065,9 @@
   {
     "id": "ink",
     "title": "Ink",
-    "cls": "term",
+    "cls": [
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1021,7 +1100,9 @@
   {
     "id": "library",
     "title": "Library",
-    "cls": "pointer",
+    "cls": [
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1034,12 +1115,16 @@
       "libraries",
       "sideboard",
       "zone"
-    ]
+    ],
+    "pointer": true
   },
   {
     "id": "lose",
     "title": "Lose",
-    "cls": "wording",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1066,7 +1151,9 @@
   {
     "id": "may",
     "title": "May",
-    "cls": "wording",
+    "cls": [
+      "keyword"
+    ],
     "aliases": [
       "choose",
       "chooses",
@@ -1092,7 +1179,11 @@
   {
     "id": "modification",
     "title": "Modification",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states",
+      "keyword"
+    ],
     "related": [
       "cost",
       "damage",
@@ -1153,7 +1244,11 @@
   {
     "id": "modular-and-module",
     "title": "Modular and Module",
-    "cls": "term",
+    "cls": [
+      "procedure",
+      "keyword",
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1202,7 +1297,9 @@
   {
     "id": "moving-damage-or-other-tokens",
     "title": "Moving Damage or other Tokens",
-    "cls": "procedure",
+    "cls": [
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1217,7 +1314,11 @@
   {
     "id": "overwrite",
     "title": "Overwrite",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states",
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1247,7 +1348,11 @@
   {
     "id": "overload",
     "title": "Overload",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "states",
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1276,7 +1381,9 @@
   {
     "id": "possession-and-mask",
     "title": "Possession and Mask [MSK]",
-    "cls": "keyword",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1310,7 +1417,9 @@
   {
     "id": "ram",
     "title": "RAM [RAM]",
-    "cls": "keyword",
+    "cls": [
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1357,7 +1466,11 @@
   {
     "id": "reaction",
     "title": "Reaction [RCT]",
-    "cls": "keyword",
+    "cls": [
+      "procedure",
+      "keyword",
+      "timing"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1400,7 +1513,11 @@
   {
     "id": "reclamation",
     "title": "Reclamation",
-    "cls": "procedure",
+    "cls": [
+      "states",
+      "keyword",
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1431,7 +1548,9 @@
   {
     "id": "relic",
     "title": "Relic",
-    "cls": "term",
+    "cls": [
+      "tokens"
+    ],
     "aliases": [
       "counters",
       "relics",
@@ -1455,7 +1574,10 @@
   {
     "id": "remove",
     "title": "Remove",
-    "cls": "wording",
+    "cls": [
+      "procedure",
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1474,7 +1596,10 @@
   {
     "id": "reset",
     "title": "Reset",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "aliases": [
       "readied",
       "ready",
@@ -1525,7 +1650,9 @@
   {
     "id": "revive",
     "title": "Revive",
-    "cls": "procedure",
+    "cls": [
+      "procedure"
+    ],
     "aliases": [
       "reanimate",
       "reanimated",
@@ -1560,7 +1687,9 @@
   {
     "id": "runtime-priority-token",
     "title": "Runtime Priority Token",
-    "cls": "term",
+    "cls": [
+      "tokens"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1582,7 +1711,10 @@
   {
     "id": "scribe-and-transcribe",
     "title": "Scribe and Transcribe",
-    "cls": "procedure",
+    "cls": [
+      "tokens",
+      "keyword"
+    ],
     "related": [
       "ink",
       "archivist-and-library",
@@ -1623,7 +1755,9 @@
   {
     "id": "singularity-fragments",
     "title": "Singularity Fragments",
-    "cls": "term",
+    "cls": [
+      "cardTypesAndZones"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1645,7 +1779,9 @@
   {
     "id": "spend",
     "title": "Spend",
-    "cls": "wording",
+    "cls": [
+      "procedure"
+    ],
     "aliases": [
       "pay",
       "paying",
@@ -1695,7 +1831,10 @@
   {
     "id": "squad",
     "title": "Squad",
-    "cls": "term",
+    "cls": [
+      "keyword",
+      "cardTypesAndZones"
+    ],
     "aliases": [
       "battlefield",
       "board",
@@ -1735,7 +1874,10 @@
   {
     "id": "stealth",
     "title": "Stealth",
-    "cls": "term",
+    "cls": [
+      "states",
+      "keyword"
+    ],
     "aliases": [
       "deflect",
       "elusive",
@@ -1787,7 +1929,10 @@
   {
     "id": "suspend",
     "title": "Suspend",
-    "cls": "procedure",
+    "cls": [
+      "states",
+      "keyword"
+    ],
     "aliases": [
       "asleep",
       "confused",
@@ -1854,7 +1999,9 @@
   {
     "id": "swap-character-action",
     "title": "Swap Character Action",
-    "cls": "procedure",
+    "cls": [
+      "procedure"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -1905,7 +2052,10 @@
   {
     "id": "target-and-targeting",
     "title": "Target and Targeting",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "keyword"
+    ],
     "aliases": [
       "choose target",
       "legal target"
@@ -1960,7 +2110,10 @@
   {
     "id": "taunt",
     "title": "Taunt",
-    "cls": "term",
+    "cls": [
+      "states",
+      "keyword"
+    ],
     "aliases": [
       "defender",
       "deflect",
@@ -2000,18 +2153,25 @@
   {
     "id": "then",
     "title": "Then",
-    "cls": "pointer",
+    "cls": [
+      "keyword",
+      "timing"
+    ],
     "blocks": [
       {
         "kind": "rule",
         "text": "See ‘Timing and Simultaneous Effects.’"
       }
-    ]
+    ],
+    "pointer": true
   },
   {
     "id": "timing-and-simultaneous-effects",
     "title": "Timing and Simultaneous Effects",
-    "cls": "procedure",
+    "cls": [
+      "procedure",
+      "timing"
+    ],
     "related": [
       "reaction",
       "immediately",
@@ -2079,7 +2239,9 @@
   {
     "id": "transcribe",
     "title": "Transcribe",
-    "cls": "pointer",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -2090,12 +2252,15 @@
       "transcribed",
       "transcribes",
       "transcribing"
-    ]
+    ],
+    "pointer": true
   },
   {
     "id": "universal",
     "title": "Universal",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -2114,7 +2279,10 @@
   {
     "id": "undead",
     "title": "Undead",
-    "cls": "term",
+    "cls": [
+      "states",
+      "keyword"
+    ],
     "related": [
       "crash",
       "revive"
@@ -2156,7 +2324,9 @@
   {
     "id": "unique",
     "title": "Unique",
-    "cls": "term",
+    "cls": [
+      "keyword"
+    ],
     "aliases": [
       "legendary",
       "legend rule"
@@ -2175,7 +2345,10 @@
   {
     "id": "update",
     "title": "Update",
-    "cls": "pointer",
+    "cls": [
+      "keyword",
+      "timing"
+    ],
     "blocks": [
       {
         "kind": "rule",
@@ -2186,12 +2359,16 @@
       "updated",
       "updates",
       "updating"
-    ]
+    ],
+    "pointer": true
   },
   {
     "id": "victory-points",
     "title": "Victory Points",
-    "cls": "term",
+    "cls": [
+      "procedure",
+      "timing"
+    ],
     "aliases": [
       "prize",
       "prize card",
@@ -2231,7 +2408,10 @@
   {
     "id": "when",
     "title": "When",
-    "cls": "pointer",
+    "cls": [
+      "keyword",
+      "timing"
+    ],
     "aliases": [
       "after",
       "trigger",
@@ -2245,6 +2425,7 @@
         "kind": "rule",
         "text": "See ‘Timing and Simultaneous Effects.’"
       }
-    ]
+    ],
+    "pointer": true
   }
 ]

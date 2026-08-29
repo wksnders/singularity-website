@@ -926,11 +926,12 @@
     },
     "classes": {
       "all": "All",
-      "keyword": "Keyword",
       "procedure": "Procedure",
-      "wording": "Wording",
-      "term": "Term",
-      "pointer": "Redirect"
+      "states": "States",
+      "tokens": "Tokens",
+      "keyword": "Keyword",
+      "cardTypesAndZones": "Card types and zones",
+      "timing": "Timing"
     },
     "related": "Related",
     "cardClose": "Close",

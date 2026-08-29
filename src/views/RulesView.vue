@@ -67,7 +67,7 @@ const matched = computed(() =>
 );
 
 const hits = computed(() =>
-  matched.value.filter((entry) => !activeClass.value || entry.cls === activeClass.value),
+  matched.value.filter((entry) => !activeClass.value || entry.cls.includes(activeClass.value)),
 );
 
 const letters = computed(() => rulesLetters(hits.value));
@@ -78,7 +78,7 @@ const noResults = computed(() => total.value === 0);
 const classes = computed(() =>
   CLASS_ORDER.map((name) => ({
     name,
-    count: matched.value.filter((e) => e.cls === name).length,
+    count: matched.value.filter((e) => e.cls.includes(name)).length,
   })).filter((row) => row.count > 0),
 );
  
@@ -91,8 +91,13 @@ const alphabet = computed(() => {
 const sections = computed<SectionEntry[]>(() =>
   CLASS_ORDER.flatMap((name) =>
     hits.value
-      .filter((entry) => entry.cls === name)
-      .map((entry) => ({ id: entry.id, label: entry.bare, group: t(`rules.classes.${name}`) })),
+      .filter((entry) => entry.cls.includes(name))
+      .map((entry) => ({
+        id: entry.id,
+        key: `${name}-${entry.id}`,
+        label: entry.bare,
+        group: t(`rules.classes.${name}`),
+      })),
   ),
 );
 
@@ -307,7 +312,7 @@ watch(() => route.hash, applyHash);
 
   <!-- Remounted when the visible set changes: the rail observes its sections
        once, on mount, so a changed list would leave it spying on stale ids. -->
-  <ScrollSpyRail :key="sections.map((s) => s.id).join(',')" :sections="sections" />
+  <ScrollSpyRail :key="sections.map((s) => s.key).join(',')" :sections="sections" />
 
   <section v-if="noResults" class="l-band">
     <div class="l-wrap"> 

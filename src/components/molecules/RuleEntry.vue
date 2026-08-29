@@ -57,8 +57,8 @@ const factLine = (id: string) => {
 <template>
   <article :id="entry.id" tabindex="-1" class="c-rule">
     <div class="c-rule__eyebrow">
-      <MonoLabel :tone="entry.cls === 'keyword' ? 'accent' : 'faint'">
-        {{ t(`rules.classes.${entry.cls}`) }}
+      <MonoLabel :tone="entry.cls.includes('keyword') ? 'accent' : 'faint'">
+        {{ entry.cls.map((name) => t(`rules.classes.${name}`)).join(' · ') }}
       </MonoLabel>
       <span v-if="entry.token" class="c-rule__token">{{ entry.token }}</span>
     </div>
