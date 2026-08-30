@@ -65,12 +65,20 @@ export interface LinkSpec {
 }
 
 /**
- * Join a root-relative `public/` path to the deploy base. A bare "/brands/x.png"
- * from a data file is correct on localhost and a 404 on the live site — the
- * worst kind of bug, because dev never sees it. Absolute URLs pass through.
+ * Join a root-relative `public/` path to wherever public files are served from.
+ * A bare "/brands/x.png" from a data file is correct on localhost and a 404 on
+ * the live site — the worst kind of bug, because dev never sees it. Absolute
+ * URLs pass through.
+ *
+ * This is the ONLY place that decides the host, so VITE_ASSET_BASE moves every
+ * file under public/ to a CDN without touching a data file or a component. Set
+ * it only once those files are actually uploaded: it is a promise about where
+ * they are, and a wrong one 404s art everywhere at once.
  */
+const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE || import.meta.env.BASE_URL).replace(/\/$/, '');
+
 export function asset(path: string): string {
-  return path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path;
+  return path.startsWith('/') ? `${ASSET_BASE}${path}` : path;
 }
 
 export function outbound(key: OutboundKey): ResolvedLink {

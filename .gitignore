@@ -66,3 +66,10 @@ scratch/
 private/
 .ai/
 ai/
+scripts/spaces-upload/
+
+# The two negated files carry VITE_ASSET_BASE, a public URL the build needs.
+.env
+.env.*
+!.env.production
+!.env.development

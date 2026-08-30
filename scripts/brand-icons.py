@@ -3,21 +3,20 @@
 Derive the shipped brand marks from the master art.
 
     private/brand-icons/<Display Name>.png   1024px RGBA masters
-    public/brands/<brand-id>.png             384px, quantised, what ships
+    private/assets/brands/<brand-id>.png     384px, quantised, what ships
 
-THE MASTERS ARE NOT IN GIT. private/ is gitignored, so the repo tracks exactly
-one copy of each mark — the derived one — and nothing is duplicated between a
-source folder and an output folder in version control. The trade is that a
-fresh clone cannot rebuild the marks: the 1024px originals live in the art
+NEITHER SIDE IS IN GIT. private/ is gitignored at both ends; the derived marks
+reach the site by being uploaded to the Space, not by being committed. A fresh
+clone therefore cannot rebuild them: the 1024px originals live in the art
 library, and this folder is the working copy. If you need to change a mark,
 put the new master here and re-run; if this folder is empty, fetch the
 originals before you do.
 
 Why derive at all rather than serving the masters directly:
 
-  · public/ ships VERBATIM. The masters total 2.9 MB and the site never renders
-    a mark larger than 112 CSS px, so serving them would cost 2.9 MB of
-    download to display 382 KB of pixels.
+  · private/assets/ is uploaded VERBATIM. The masters total 2.9 MB and the
+    site never renders a mark larger than 112 CSS px, so serving them would
+    cost 2.9 MB of download to display 382 KB of pixels.
   · The filename becomes the URL. Masters are named for humans
     ("Benobasa's Fist.png"); the web needs `benobasas-fist.png` — no percent
     encoding for spaces and apostrophes, which is the kind of path that works
@@ -28,9 +27,10 @@ Why derive at all rather than serving the masters directly:
     (22 KB vs 62 KB at matched quality). Do not "modernise" this to WebP
     without measuring; the measurement is the reason.
 
-  · UNREVEALED ART NEVER GOES IN public/. Marks for brands that have not been
-    announced stay in private/brand-icons-unrevealed/ and out of SLUGS. Adding
-    one here publishes it the moment the site builds. See .gitignore.
+  · UNREVEALED ART NEVER GOES IN private/assets/. Marks for brands that have
+    not been announced stay in private/brand-icons-unrevealed/ and out of
+    SLUGS. Adding one here publishes it the moment the assets are uploaded,
+    and object keys are guessable, so being unlisted protects nothing.
 
 SIZE is 384, not 256, because the masters are not in git to re-derive from.
 384 is visually indistinguishable from the master at 112 CSS px on a 3x
@@ -51,8 +51,8 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 MASTERS = ROOT / "private" / "brand-icons"
-OUT = ROOT / "public" / "brands"
-OUT_ROGUE = ROOT / "public" / "rogue-ai"
+OUT = ROOT / "private" / "assets" / "brands"
+OUT_ROGUE = ROOT / "private" / "assets" / "rogue-ai"
 
 SIZE = 384
 COLOURS = 64

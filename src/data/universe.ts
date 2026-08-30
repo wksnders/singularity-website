@@ -88,9 +88,6 @@ export const formEndpoints = {
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
   buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/rewards#/section/rewards',
-  /* Root-relative, and the filenames carry no version number: updating a
-     document means overwriting the file, so every link already printed on a box
-     still resolves. Self-hosted for the same reason — no expiring share token. */
   printAndPlay: '/downloads/singularity-competitive-print-and-play.zip',
   /* Steam Workshop: "Singularity.exe Preview 2-Player" (Octothorpe Games).
 
@@ -98,11 +95,17 @@ export const urls: OutboundUrls = {
      ship, so only the copy goes stale. What says "preview" is the `tts` route's
      `caveatKey` below, and clearing it is the launch-day edit. */
   tabletopSimulator: 'https://steamcommunity.com/sharedfiles/filedetails/?id=2968522499',
-  rulebook: '/downloads/singularity-core-rulebook.pdf',
+  /* Absolute on purpose: these two are cached immutable, so they must not
+     follow VITE_ASSET_BASE when its prefix moves. Revising one means uploading
+     under a new prefix and editing this line — overwriting the object leaves
+     caches serving the old document for a year. */
+  rulebook:
+    'https://octothorpe-singularity-website.sfo3.cdn.digitaloceanspaces.com/v1/downloads/singularity-core-rulebook.pdf',
   /* The lookup document, offered BESIDE the rules page — never instead of it.
      The searchable HTML reference is still priority 1; when it ships, this PDF
      stays as the download next to it. */
-  rulesReference: '/downloads/singularity-core-reference.pdf',
+  rulesReference:
+    'https://octothorpe-singularity-website.sfo3.cdn.digitaloceanspaces.com/v1/downloads/singularity-core-reference.pdf',
   discord: 'https://discord.com/invite/XBRfaufKsk',
   /* Channel, not a video: the trailer and the how-to-plays embed by id from
      game.trailerYouTubeId and videos[]. This is the "more from us" link. */
