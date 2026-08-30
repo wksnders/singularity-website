@@ -893,7 +893,7 @@
     },
     "search": {
       "label": "Search the rules reference",
-      "placeholder": "Search the rules — press /",
+      "placeholder": "Search the rules : press /",
       "clear": "Clear"
     },
     "count": {
@@ -930,7 +930,7 @@
       "states": "States",
       "tokens": "Tokens",
       "keyword": "Keyword",
-      "cardTypesAndZones": "Card types and zones",
+      "typesAndZones": "Types and zones",
       "timing": "Timing"
     },
     "related": "Related",

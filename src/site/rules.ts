@@ -24,7 +24,7 @@ export type RuleClass =
   | 'states'
   | 'tokens'
   | 'keyword'
-  | 'cardTypesAndZones'
+  | 'typesAndZones'
   | 'timing';
 
 export interface RuleSource {
@@ -290,7 +290,7 @@ export const CLASS_ORDER: RuleClass[] = [
   'states',
   'tokens',
   'keyword',
-  'cardTypesAndZones',
+  'typesAndZones',
   'timing',
 ];
 
