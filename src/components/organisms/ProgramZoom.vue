@@ -7,6 +7,7 @@ import FaceToggle from '@/components/atoms/FaceToggle.vue';
 import CardZoom from '@/components/organisms/CardZoom.vue';
 import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
 import { t } from '@/content';
+import { to } from '@/site/links';
 import type { Program } from '@/data/types';
 
 const props = defineProps<{
@@ -37,7 +38,11 @@ const rows = computed<ZoomRow[]>(() => {
   const program = props.program;
   if (!program) return [];
   return [
-    { label: t('character.rowBrand'), value: props.brandName },
+    {
+      label: t('character.rowBrand'),
+      value: props.brandName,
+      to: to('brand', { brandId: program.brandId }),
+    },
     { label: t('character.rowSet'), value: t(`cards.sets.${program.set}`) },
     { label: t('character.rowArtist'), value: art.value?.artist || t('character.artistSlot') },
   ];

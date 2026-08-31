@@ -26,9 +26,8 @@ import { hasSubType } from '@/site/cardText';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandById,
-  brandSlotCount,
   brandsOfFaction,
-  characters,
+  charactersOfBrand,
   factionById,
   programsOfBrand,
 } from '@/data/universe';
@@ -64,29 +63,11 @@ const showingFacet = computed(() => Boolean(facet.value) && cards.value.value ==
 
 const programs = computed<Program[]>(() => {
   const written = programsOfBrand(props.brandId);
-  const total = brand.value ? brandSlotCount(brand.value) : written.length;
-  const filler: Program[] = Array.from({ length: Math.max(total - written.length, 0) }, (_, i) => ({
-    id: `${props.brandId}-slot-${written.length + i + 1}`,
-    brandId: props.brandId,
-    name: '',
-    cost: '',
-    type: '',
-    rules: [],
-    flavour: '',
-    revealed: false,
-    /* A sealed slot is a hole in the grid, not a card: `set` only satisfies the
-       type and is never rendered, and the alts are "" because the slot is
-       decorative — there is no card here to describe. */
-    set: 'CORE',
-    art: { src: null, alt: '' },
-    cardArt: { src: null, alt: '' },
-  }));
   /* Facet cards lead, so filtering to them is a page that shortens rather than
      one that reshuffles. Display order only*/
-  const ordered = facet.value
+  return facet.value
     ? [...written.filter(isFacet), ...written.filter((p) => !isFacet(p))]
     : written;
-  return [...ordered, ...filler];
 });
 
 const shown = computed(() =>
@@ -95,7 +76,7 @@ const shown = computed(() =>
 
 const facetCount = computed(() => programs.value.filter(isFacet).length);
 
-const revealed = computed(() => shown.value.filter((p) => p.revealed).length);
+const announced = computed(() => brand.value?.announcedCount ?? null);
 
 const siblings = computed(() => {
   if (!faction.value) return { prev: null, next: null, index: 0, total: 0 };
@@ -112,7 +93,7 @@ const siblings = computed(() => {
   };
 });
 
-const cast = computed(() => characters.filter((c) => c.brandIds.includes(props.brandId)));
+const cast = computed(() => charactersOfBrand(props.brandId));
 
 
 const tags = (character: Character) =>
@@ -143,10 +124,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
       glow="100% 80% at 70% 6%"
       min-height="min(72dvh, 640px)"
     >
+      <!-- The faction is deliberately not a segment: no trail may name a
+           faction as a brand's parent. -->
       <Breadcrumbs
         :crumbs="[
           { label: t('ia.universe.label'), to: to('universe') },
-          ...(faction ? [{ label: faction.name, to: to('faction', { factionId: faction.id }) }] : []),
           { label: name },
         ]"
         :prev="siblings.prev"
@@ -241,8 +223,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </li>
         </ul>
 
-        <MonoLabel v-if="revealed < shown.length" tone="faint" class="brand__gap">
-          {{ revealed }} {{ t('brand.of') }} {{ shown.length }} {{ t('brand.revealed') }}
+        <MonoLabel v-if="announced && shown.length < announced" tone="faint" class="brand__gap">
+          {{ shown.length }} {{ t('brand.of') }} {{ announced }} {{ t('brand.revealed') }}
         </MonoLabel>
 
         <BandFoot

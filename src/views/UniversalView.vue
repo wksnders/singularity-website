@@ -16,7 +16,7 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
-import { brandById, brandSlotCount, characters } from '@/data/universe';
+import { brandById, characters, programsOfBrand } from '@/data/universe';
 import { to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
@@ -27,7 +27,8 @@ const sections = computed<SectionEntry[]>(() => [
 
 const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
 const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.value.personalBrandId) : null));
-const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value) : 0));
+const luxCards = computed(() => (luxBrand.value ? programsOfBrand(luxBrand.value.id) : []));
+const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
 </script>
 
 <template>
@@ -70,8 +71,8 @@ const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value)
             <p class="unv__epithet">{{ lux.epithet }}</p>
             <h3 class="unv__name">{{ lux.name }}</h3>
             <p class="unv__body">{{ t('universal.lux.body') }}</p>
-            <p v-if="luxSlots" class="unv__body">
-              {{ luxSlots }} {{ t('universal.lux.brandLine') }}
+            <p v-if="luxCards.length" class="unv__body">
+              {{ luxCards.length }} {{ t('universal.lux.brandLine') }}
             </p>
             <div class="l-row unv__gap">
               <UiButton :to="to('character', { characterId: lux.id })">
@@ -102,7 +103,7 @@ const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value)
         <div class="l-grid l-grid--wide unv__gap">
           <article class="unv__brand">
             <MonoLabel tone="faint">
-              LuX<template v-if="luxSlots"> · {{ luxSlots }} {{ t('faction.stats.programs') }}</template>
+              LuX<template v-if="luxCards.length"> · {{ luxCards.length }} {{ t('faction.stats.programs') }}</template>
             </MonoLabel>
             <h3 class="unv__brand-title">
               <BrandMark
@@ -114,10 +115,17 @@ const luxSlots = computed(() => (luxBrand.value ? brandSlotCount(luxBrand.value)
             </h3>
             <p class="unv__body">{{ t('universal.brands.luxBody') }}</p>
             <ul class="unv__slots">
-              <li v-for="n in luxSlots" :key="n">
-                {{ String(n).padStart(2, '0') }}
+              <li v-for="(program, i) in luxCards" :key="program.id">
+                {{ String(i + 1).padStart(2, '0') }}
               </li>
             </ul>
+            <MonoLabel
+              v-if="luxAnnounced && luxCards.length < luxAnnounced"
+              tone="faint"
+              class="unv__gap"
+            >
+              {{ luxCards.length }} {{ t('brand.of') }} {{ luxAnnounced }} {{ t('brand.revealed') }}
+            </MonoLabel>
           </article>
         </div>
 

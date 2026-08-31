@@ -255,7 +255,6 @@ const factionBrand = (
   name,
   icon: mark(id),
   kind: 'faction',
-  programCount: null,
   ...extra,
 });
 
@@ -284,7 +283,6 @@ export const brands: Brand[] = [
     name: 'Common',
     icon: mark('common'),
     kind: 'universal',
-    programCount: null,
   },
   {
     id: 'lux-vault',
@@ -294,7 +292,7 @@ export const brands: Brand[] = [
     kind: 'personal',
     unlock: 'challenges',
     /* Ten printed; the four not transcribed yet are held back deliberately. */
-    programCount: 10,
+    announcedCount: 10,
   },
 ];
 
@@ -1497,9 +1495,6 @@ export const programsOfBrand = (brandId: string) => programs.filter((p) => p.bra
 export const programById = (id: string) => programs.find((p) => p.id === id) ?? null;
 export const rogueAIById = (id: string) => rogueAIs.find((a) => a.id === id) ?? null;
 
-export const brandSlotCount = (brand: Brand) =>
-  brand.programCount ?? programsOfBrand(brand.id).length;
-
 export const printingsOf = (character: Character): Printing[] => [
   {
     id: 'standard',
@@ -1529,6 +1524,13 @@ export function resolvePrinting(character: Character, printing: Printing) {
   };
 }
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
+
+/** Who plays this brand. Matches `personalBrandId` as well as `brandIds` — a
+    vault's owner belongs in its own cast. */
+export const charactersOfBrand = (brandId: string) =>
+  characters.filter(
+    (c) => c.brandIds.includes(brandId) || c.personalBrandId === brandId,
+  );
 
 /** Any-faction characters are exempt from the faction filter, not excluded. (for now may change later) */
 export const charactersOfFaction = (factionId: string) =>

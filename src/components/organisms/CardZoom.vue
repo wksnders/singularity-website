@@ -4,6 +4,7 @@
  */
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import type { Art } from '@/data/types';
@@ -11,6 +12,7 @@ import type { Art } from '@/data/types';
 export interface ZoomRow {
   label: string;
   value: string;
+  to?: import('vue-router').RouteLocationRaw;
 }
 
 const props = defineProps<{
@@ -123,7 +125,10 @@ function onKeydown(event: KeyboardEvent): void {
             <dl class="c-zoom__rows">
               <div v-for="row in rows" :key="row.label" class="c-zoom__row">
                 <dt><MonoLabel tone="muted" as="span">{{ row.label }}</MonoLabel></dt>
-                <dd class="c-zoom__value">{{ row.value }}</dd>
+                <dd class="c-zoom__value">
+                  <BaseLink v-if="row.to" :to="row.to">{{ row.value }}</BaseLink>
+                  <template v-else>{{ row.value }}</template>
+                </dd>
               </div>
             </dl>
 

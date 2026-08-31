@@ -15,7 +15,8 @@ import type { Brand, Faction } from '@/data/types';
 defineProps<{
   brand: Brand;
   faction?: Faction | null;
-  /** e.g. "10 programs" — the count line under the name. */
+  descriptor?: string;
+  /** Derived count line, e.g. "12 cards · 3 characters play it". */
   note?: string;
 }>();
 </script>
@@ -31,6 +32,7 @@ defineProps<{
     </span>
     <span class="c-brand__body">
       <h3 class="c-brand__name">{{ brand.name }}</h3>
+      <span v-if="descriptor" class="c-brand__descriptor">{{ descriptor }}</span>
       <span v-if="note" class="c-brand__note">{{ note }}</span>
     </span>
   </BaseLink>
@@ -39,7 +41,7 @@ defineProps<{
 <style>
 .c-brand {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
   background: var(--color-surface);
@@ -80,6 +82,15 @@ defineProps<{
   font-size: var(--size-h3);
   font-weight: 400;
   overflow-wrap: anywhere;
+}
+
+.c-brand__descriptor {
+  display: block;
+  margin-top: var(--space-2);
+  max-width: 44ch;
+  font-size: var(--size-m);
+  line-height: 1.55;
+  color: var(--color-ink-soft);
 }
 
 .c-brand__note {

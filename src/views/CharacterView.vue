@@ -90,7 +90,6 @@ const active = computed(() => {
 const name = computed(() => metaString(doc.value, 'name', character.value?.name ?? ''));
 useDocumentTitle(() => name.value);
 
-
 const castPool = computed(() =>
   scopedFaction.value
     ? characters.filter(
@@ -98,6 +97,11 @@ const castPool = computed(() =>
       )
     : characters,
 );
+
+const poolLabel = computed(() => {
+  const scoped = scopedFaction.value ? factionById(scopedFaction.value) : null;
+  return scoped ? scoped.name : t('character.castLabel');
+});
 
 const siblings = computed(() => {
   const pool = castPool.value;
@@ -114,7 +118,7 @@ const siblings = computed(() => {
       label: next.name,
       to: to('character', { characterId: next.id }, { query: scopeQuery.value }),
     },
-    position: { label: t('character.castLabel'), index: index + 1, total: pool.length },
+    position: { label: poolLabel.value, index: index + 1, total: pool.length },
   };
 });
 
@@ -250,7 +254,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
       >
         <div class="char__copy l-wrap">
           <!-- No faction or brand segment: a segment must be a page this URL
-               truncates to. -->
+               truncates to, and neither membership is a parent. -->
           <Breadcrumbs
             :crumbs="[
               { label: t('ia.universe.label'), to: to('universe') },

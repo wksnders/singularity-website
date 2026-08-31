@@ -193,7 +193,6 @@ export const footerColumns: IaGroup[] = [
     items: [
       { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
       { key: 'universe.factions', to: to('universe', {}, { hash: '#factions' }) },
-      { key: 'universe.brands', to: to('brand', { brandId: 'endless-chain' }) },
       { key: 'universe.characters', to: to('characters') },
       { key: 'universe.cards', to: to('cards') },
       { key: 'universe.incursions', to: to('incursions') },

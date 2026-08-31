@@ -397,8 +397,8 @@
       "characters": "characters"
     },
     "brands": {
-      "title": "Brands",
-      "note": "Each brand: 10 programs + its own story"
+      "title": "Brands you'll see here",
+      "note": "A brand is a collection of programs that characters are able to use."
     },
     "cast": {
       "title": "Who fights for"
@@ -489,6 +489,10 @@
     "showLabel": "Show",
     "learnLink": "Learn how it plays",
     "unrevealed": "Unrevealed",
+    "shelf": {
+      "cards": "cards",
+      "cast": "characters play it"
+    },
     "of": "of",
     "revealed": "revealed",
     "exitPrograms": "See the programs →",
@@ -721,7 +725,7 @@
       "body": "[PLACEHOLDER — who LuX is. She slots into any faction's line-up without changing it, which is either a gift or a warning depending on who you ask.]",
       "brandLine": "programs in her personal brand, each opened by clearing a specific challenge.",
       "ctaPage": "LuX's page",
-      "ctaPrograms": "Her ten programs →"
+      "ctaPrograms": "Her programs →"
     },
     "brands": {
       "note": "Smaller than a faction brand",
@@ -1144,9 +1148,6 @@
       },
       "explore": {
         "label": "Explore"
-      },
-      "brands": {
-        "label": "Brands"
       },
       "characters": {
         "label": "All characters"

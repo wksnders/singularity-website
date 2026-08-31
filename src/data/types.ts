@@ -67,9 +67,9 @@ export interface Brand {
   kind: 'faction' | 'personal' | 'universal';
   /** How a personal brand's programs are earned. if they are earned. */
   unlock?: 'challenges';
-  /** The announced print run. null = unannounced, and `brandSlotCount()` counts
-      the cards instead. Never a guess: the gap renders as sealed slots. */
-  programCount: number | null;
+  /** The announced print run. Card counts are DERIVED from the programs that
+      exist; this only states the gap in words ("4 of 10 revealed") */
+  announcedCount?: number;
   facetSubType?: string;
 }
 

@@ -6,6 +6,7 @@
  * unrevealed program renders as a sealed slot, not an empty card.
  */
 import { computed } from 'vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import CardFace from '@/components/molecules/CardFace.vue';
@@ -17,6 +18,8 @@ import type { Program } from '@/data/types';
 const props = defineProps<{
   program: Program;
   brandLabel?: string;
+  /** Links the caption's brand line. */
+  brandTo?: import('vue-router').RouteLocationRaw;
   /** `brand.icon`. Falls back to the faction dot when the mark has not shipped. */
   brandIcon?: string | null;
   color?: string | null;
@@ -77,8 +80,14 @@ const lines = computed<CardLine[]>(() =>
       </MonoLabel>
       <h3 class="c-prog__name">{{ program.revealed ? program.name : t('cards.unnamed') }}</h3>
       <p v-if="brandLabel" class="c-prog__brand">
-        <BrandMark :icon="brandIcon" :name="brandLabel" :color="color" :size="20" />
-        {{ brandLabel }}
+        <BaseLink v-if="brandTo" :to="brandTo" class="c-prog__brand-link">
+          <BrandMark :icon="brandIcon" :name="brandLabel" :color="color" :size="20" />
+          {{ brandLabel }}
+        </BaseLink>
+        <template v-else>
+          <BrandMark :icon="brandIcon" :name="brandLabel" :color="color" :size="20" />
+          {{ brandLabel }}
+        </template>
       </p>
 
     </div>
@@ -147,6 +156,19 @@ const lines = computed<CardLine[]>(() =>
   gap: 7px;
   font-size: var(--size-mono-m);
   color: var(--color-ink-faint);
+}
+
+.c-prog__brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  color: inherit;
+}
+
+.c-prog__brand-link:hover,
+.c-prog__brand-link:focus-visible {
+  color: var(--color-accent-text);
 }
 
 .c-prog .c-prog__subtype {

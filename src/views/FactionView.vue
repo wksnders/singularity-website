@@ -15,7 +15,14 @@ import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { docHtml, getDoc, metaString, t } from '@/content';
-import { brandSlotCount, brandsOfFaction, characters, factionById, factions } from '@/data/universe';
+import {
+  brandsOfFaction,
+  characters,
+  charactersOfBrand,
+  factionById,
+  factions,
+  programsOfBrand,
+} from '@/data/universe';
 import { to } from '@/site/links';
 import type { Brand, Character } from '@/data/types';
 
@@ -32,8 +39,8 @@ const shortName = computed(() => metaString(doc.value, 'shortName', name.value))
 useDocumentTitle(() => name.value);
 
 const brands = computed(() => (faction.value ? brandsOfFaction(faction.value.id) : []));
-const programCount = computed(() =>
-  brands.value.reduce((total, brand) => total + brandSlotCount(brand), 0),
+const programTotal = computed(() =>
+  brands.value.reduce((total, brand) => total + programsOfBrand(brand.id).length, 0),
 );
 
 const cast = computed<Character[]>(() =>
@@ -65,7 +72,14 @@ const tags = (character: Character) =>
         .map((f) => ({ label: f.name, color: f.color }))
     : [{ label: t('universe.anyFaction'), color: null }];
 
-const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats.programs')}`;
+const brandDescriptor = (brand: Brand) =>
+  metaString(getDoc(`universe/brands/${brand.id}`), 'oneLiner', '');
+
+const brandNote = (brand: Brand) =>
+  [
+    `${programsOfBrand(brand.id).length} ${t('brand.shelf.cards')}`,
+    `${charactersOfBrand(brand.id).length} ${t('brand.shelf.cast')}`,
+  ].join(' · ');
 </script>
 
 <template>
@@ -94,28 +108,12 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
 
       <p class="faction__stats">
         <span>{{ brands.length }} {{ t('faction.stats.brands') }}</span>
-        <span>{{ programCount }} {{ t('faction.stats.programs') }}</span>
+        <span>{{ programTotal }} {{ t('faction.stats.programs') }}</span>
         <span>{{ cast.length }} {{ t('faction.stats.characters') }}</span>
       </p>
     </PageHero>
 
     <section class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <h2 class="faction__h2">{{ t('faction.brands.title') }}</h2>
-        <MonoLabel tone="faint">{{ t('faction.brands.note') }}</MonoLabel>
-        <div class="l-grid l-grid--wide faction__gap">
-          <BrandTile
-            v-for="brand in brands"
-            :key="brand.id"
-            :brand="brand"
-            :faction="faction"
-            :note="brandNote(brand)"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
         <h2 class="faction__h2">{{ t('faction.cast.title') }} {{ shortName }}</h2>
         <div class="l-grid l-grid--tiles faction__gap">
@@ -133,6 +131,23 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
       </div>
     </section>
 
+    <section class="l-band l-band--alt l-band--line-top">
+      <div class="l-wrap">
+        <h2 class="faction__h2">{{ t('faction.brands.title') }}</h2>
+        <MonoLabel tone="faint">{{ t('faction.brands.note') }}</MonoLabel>
+        <div class="l-grid l-grid--wide faction__gap">
+          <BrandTile
+            v-for="brand in brands"
+            :key="brand.id"
+            :brand="brand"
+            :faction="faction"
+            :descriptor="brandDescriptor(brand)"
+            :note="brandNote(brand)"
+          />
+        </div>
+      </div>
+    </section>
+
     <section class="l-band l-band--line-top">
       <div class="l-wrap l-grid l-grid--wide">
         <ContentCard
@@ -144,7 +159,7 @@ const brandNote = (brand: Brand) => `${brandSlotCount(brand)} ${t('faction.stats
         <ContentCard
           :to="to('cards', {}, { query: { faction: faction.id } })"
           :kicker="t('faction.exits.cardsKicker')"
-          :title="`${programCount} ${shortName} ${t('faction.stats.programs')}`"
+          :title="`${programTotal} ${shortName} ${t('faction.stats.programs')}`"
           :body="t('faction.exits.cardsBody')"
         />
       </div>

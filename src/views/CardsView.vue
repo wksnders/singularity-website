@@ -167,6 +167,7 @@ function clearAll(): void {
           <ProgramCard
             :program="program"
             :brand-label="brandOf(program)?.name"
+            :brand-to="to('brand', { brandId: program.brandId })"
             :brand-icon="brandOf(program)?.icon"
             :color="factionOf(program)?.color"
             @select="zoomed = program"
