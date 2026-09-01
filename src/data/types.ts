@@ -52,7 +52,7 @@ export interface Brand {
   name: string;
   /**
    * The brand mark: `/brands/<id>.png`, built by scripts/brand-icons.py from
-   * the masters in assets/brand-icons/. null while a brand does not exist
+   * the masters in private/brand-icons/. null while a brand has no mark.
    *
    * The mark is a SHAPE, not a colour swatch: each carries a unique glyph
    * inside a faction-coloured ring, which is why it may stand in for the
@@ -68,7 +68,7 @@ export interface Brand {
   /** How a personal brand's programs are earned. if they are earned. */
   unlock?: 'challenges';
   /** The announced print run. Card counts are DERIVED from the programs that
-      exist; this only states the gap in words ("4 of 10 revealed") */
+      exist; this only states the gap in words ("6 of 10 revealed"). */
   announcedCount?: number;
   facetSubType?: string;
 }
@@ -171,9 +171,6 @@ export interface Character {
   flavour: string;
 }
 
-/**
- * An Incursion boss.
- */
 /* Barrier ascending. Drives both the order of the try band and its grouping. */
 export type TryTier = 'free' | 'effort' | 'owned';
 
@@ -191,6 +188,7 @@ interface TryRouteFacts {
 export type TryRoute = TryRouteFacts &
   ({ outbound: OutboundKey; route?: never } | { route: { name: string; hash?: string }; outbound?: never });
 
+/** An Incursion boss. */
 export interface RogueAI {
   id: string;
   name: string;

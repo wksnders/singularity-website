@@ -17,7 +17,3 @@ export function renderMarkdown(key: string, source: string): string {
   cache.set(key, html);
   return html;
 }
-
-export function renderInline(source: string): string {
-  return md.renderInline(source);
-}

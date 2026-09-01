@@ -126,9 +126,9 @@ export interface FaqEntry {
   /** Position in the file. Only the sort reads it. */
   position: number;
   /**
-   * The answer is a 2023 campaign answer that has been rewritten but not
-   * reconfirmed with the owner. Editorial state — it is deliberately NOT
-   * rendered. See the launch-day switch.
+   * Editorial state, deliberately NOT rendered: a badge saying the studio is
+   * unsure sits on the answers a buyer checks before paying. `assertFaqShape()`
+   * is the only surface that names these records.
    */
   reconfirm: boolean;
 }

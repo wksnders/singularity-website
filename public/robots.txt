@@ -1,8 +1,8 @@
 # Singularity.exe — crawler policy
 #
-# PRE-LAUNCH: the site is live but its copy is not. 116 [PLACEHOLDER] strings
-# and every [ TBD ] slot are still in place, and placeholder lore indexed as
-# fact is worse than no index at all. So: nothing is crawled yet.
+# PRE-LAUNCH: the site is live but its copy is not. [PLACEHOLDER] strings and
+# [ TBD ] slots are still in place, and placeholder lore indexed as fact is
+# worse than no index at all. So: nothing is crawled yet.
 #
 # AT LAUNCH: delete the two Disallow lines below and uncomment `Allow: /`.
 # Leave /soon disallowed permanently — it is a holding page, not a destination.

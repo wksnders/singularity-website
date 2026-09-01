@@ -4,12 +4,12 @@
  * lives in the URL.
  *
  * Nothing on this page hard-codes a question, a group name or a band exit.
- * Questions are one markdown file each in `content/<locale>/faq/`; the group
- * taxonomy and its order are `faqGroups` in `site/faq.ts`. Reordering the page
- * is a reordering of that array.
+ * Questions are records in `content/<locale>/faq.json`, in page order; the
+ * group taxonomy and its order are `faqGroups` in `site/faq.ts`. Reordering
+ * the page is a reordering of one of those two.
  *
  * Every question id is a public URL (`#faq-<id>`) printed on nothing yet but
- * pasteable everywhere. Renaming a content file breaks every copy of its link.
+ * pasteable everywhere. Renaming an id breaks every copy of its link.
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { useRoute } from 'vue-router';

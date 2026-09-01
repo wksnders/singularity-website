@@ -1251,7 +1251,6 @@ export const rogueAIs: RogueAI[] = [
   },
 ];
 
-/** Core box + expansion 1 + Incursions all launch the same day. */
 /* ---------------------------------------------------------------------------
    WHAT IS IN A BOX. See the three-level note above `Box` in types.ts.
 

@@ -148,8 +148,3 @@ export function metaString(doc: Doc | null, key: string, fallback = ''): string 
   const value = doc?.meta[key];
   return typeof value === 'string' && value.trim() !== '' ? value : fallback;
 }
-
-export function metaList(doc: Doc | null, key: string): string[] {
-  const value = doc?.meta[key];
-  return Array.isArray(value) ? value : [];
-}
