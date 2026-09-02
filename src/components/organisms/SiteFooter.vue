@@ -104,7 +104,6 @@ import { game } from '@/data/universe';
   width: min(100%, 300px);
   height: auto;
   margin-top: var(--space-8);
-  opacity: 0.7;
 }
 
 .c-footer__legal {
