@@ -51,6 +51,7 @@ PLAN.md
 PLAN-*.md
 NOTES.md
 NOTES-*.md
+PORT-NOTES.md
 TODO.md
 SCRATCH*.md
 *-review.md
@@ -67,6 +68,7 @@ private/
 .ai/
 ai/
 scripts/spaces-upload/
+_to_delete/
 
 # The two negated files carry VITE_ASSET_BASE, a public URL the build needs.
 .env
