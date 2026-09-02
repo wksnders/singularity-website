@@ -6,6 +6,7 @@
  * SecondaryHero instead.
  */
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import type { ArtSource } from '@/components/atoms/ArtFrame.vue';
 import type { Art } from '@/data/types';
 
 withDefaults(
@@ -19,6 +20,7 @@ withDefaults(
     /** Radial glow origin, so no two heroes on the site look identical. */
     glow?: string;
     minHeight?: string;
+    sources?: ArtSource[];
   }>(),
   {
     placeholder: '[ key art ]',
@@ -32,7 +34,7 @@ withDefaults(
 <template>
   <section class="c-hero" :style="{ minHeight }">
     <div class="c-hero__art" :class="{ 'c-hero__art--drift': drift }">
-      <ArtFrame :art="art" ratio="auto" :placeholder="placeholder" eager />
+      <ArtFrame :art="art" ratio="auto" :placeholder="placeholder" :sources="sources" eager />
     </div>
     <div class="c-hero__glow" :style="{ '--glow-origin': glow }" aria-hidden="true" />
     <div class="c-hero__scrim" aria-hidden="true" />

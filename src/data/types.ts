@@ -44,6 +44,7 @@ export interface Faction {
   name: string;
   tagline: string;
   brandIds: string[];
+  environment: Art | null;
 }
 
 export interface Brand {

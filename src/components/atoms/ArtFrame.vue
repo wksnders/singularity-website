@@ -9,6 +9,11 @@
 import { asset } from '@/site/links';
 import type { Art } from '@/data/types';
 
+export interface ArtSource {
+  type: string;
+  srcset: string;
+}
+
 const props = withDefaults(
   defineProps<{
     art?: Art | null;
@@ -21,8 +26,18 @@ const props = withDefaults(
     eager?: boolean;
     /** `contain` for anything that must not be cropped — a printed card. */
     fit?: 'cover' | 'contain';
+    sources?: ArtSource[];
+    sizes?: string;
   }>(),
-  { ratio: '3 / 4', placeholder: '[ art pending ]', radius: 'none', eager: false, fit: 'cover' },
+  {
+    ratio: '3 / 4',
+    placeholder: '[ art pending ]',
+    radius: 'none',
+    eager: false,
+    fit: 'cover',
+    sources: () => [],
+    sizes: '100vw',
+  },
 );
 
 const src = (art: Art) => (art.src ? asset(art.src) : null);
@@ -35,16 +50,24 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
 
 <template>
   <div class="c-art" :style="{ aspectRatio: ratio, borderRadius: radiusVar() }">
-    <img
-      v-if="art && art.src"
-      class="c-art__img"
-      :src="src(art)!"
-      :alt="art.alt"
-      :loading="eager ? 'eager' : 'lazy'"
-      :fetchpriority="eager ? 'high' : 'auto'"
-      decoding="async"
-      :style="{ objectPosition: focal(art), objectFit: fit }"
-    />
+    <picture v-if="art && art.src">
+      <source
+        v-for="source in sources"
+        :key="source.type"
+        :type="source.type"
+        :srcset="source.srcset"
+        :sizes="sizes"
+      />
+      <img
+        class="c-art__img"
+        :src="src(art)!"
+        :alt="art.alt"
+        :loading="eager ? 'eager' : 'lazy'"
+        :fetchpriority="eager ? 'high' : 'auto'"
+        decoding="async"
+        :style="{ objectPosition: focal(art), objectFit: fit }"
+      />
+    </picture>
     <div v-else class="c-art__empty">
       <span class="c-art__caption">{{ placeholder }}</span>
     </div>
@@ -57,6 +80,10 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
   overflow: hidden;
   width: 100%;
   background: var(--color-surface);
+}
+
+.c-art picture {
+  display: contents;
 }
 
 .c-art__img {
