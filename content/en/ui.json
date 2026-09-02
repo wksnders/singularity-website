@@ -33,7 +33,8 @@
       "boardgamegeek": "BGG"
     },
     "buy": "Buy the box",
-    "buyShort": "Buy"
+    "buyShort": "Buy",
+    "logoAlt": "Singularity.exe"
   },
   "footer": {
     "publishedBy": "Published by"

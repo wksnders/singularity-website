@@ -14,6 +14,7 @@ import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
 import StatRow from '@/components/molecules/StatRow.vue';
+import SiteLockup from '@/components/molecules/SiteLockup.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
@@ -93,7 +94,7 @@ function scrollCast(direction: 1 | -1): void {
     glow="120% 80% at 20% 10%"
   >
     <MonoLabel tone="accent">{{ t('home.hero.kicker') }}</MonoLabel>
-    <h1 class="home__title">SINGULARITY<span class="home__title-suffix">.EXE</span></h1>
+    <h1 class="home__title"><SiteLockup /></h1>
     <p class="home__lede">{{ t('home.hero.lede') }}</p>
     <div class="home__cta l-row">
       <UiButton variant="primary" :link="outbound('buy')">{{ t('home.hero.ctaPlay') }}</UiButton>
@@ -325,14 +326,9 @@ function scrollCast(direction: 1 | -1): void {
 
 <style>
 .home__title {
-  font-size: var(--size-h1);
-  line-height: 0.94;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.home__title-suffix {
-  color: rgba(var(--rgb-ink), 0.42);
+  margin: 0;
+  font-size: 0;
+  line-height: 0;
 }
 
 .home__lede {

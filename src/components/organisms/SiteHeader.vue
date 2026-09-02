@@ -5,13 +5,20 @@
  */
 import MegaPanel from './MegaPanel.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import SiteMark from '@/components/atoms/SiteMark.vue';
 import { t } from '@/content';
 import { primaryNav } from '@/site/ia';
 import { outbound, to } from '@/site/links';
 import { useChrome } from '@/composables/useChrome';
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 
 const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, closeMega, toggleMenu } =
   useChrome();
+
+const route = useRoute();
+
+const markHidden = computed(() => route.name === 'home' && !scrolled.value);
 </script>
 
 <template>
@@ -21,11 +28,8 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
     @mouseleave="closeMega()"
   >
     <div class="c-nav__bar l-wrap">
-      <RouterLink :to="to('home')" class="c-nav__brand">
-        <span class="c-nav__mark" aria-hidden="true" />
-        <span class="c-nav__wordmark">
-          SINGULARITY<span class="c-nav__wordmark-suffix">.EXE</span>
-        </span>
+      <RouterLink :to="to('home')" class="c-nav__brand" :class="{ 'is-quiet': markHidden }">
+        <SiteMark />
       </RouterLink>
 
       <nav v-if="wide" class="c-nav__links" :aria-label="t('chrome.mainNav')">
@@ -122,24 +126,9 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
   color: var(--color-ink);
 }
 
-.c-nav__mark {
-  width: 14px;
-  height: 14px;
-  border-radius: var(--radius-pill);
-  background: var(--color-accent);
-  box-shadow: 0 0 14px 2px rgba(var(--rgb-accent), 0.75);
-}
-
-.c-nav__wordmark {
-  font-family: var(--font-display);
-  font-size: var(--size-m);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.c-nav__wordmark-suffix {
-  color: rgba(var(--rgb-ink), 0.5);
+.c-nav__brand.is-quiet {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .c-nav__links {
@@ -237,9 +226,9 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
 .c-nav__brand {
   display: flex;
   align-items: center;
-  gap: 10px;
   flex: 0 0 auto;
   color: var(--color-ink);
+  transition: opacity var(--dur-2) var(--ease-out);
 }
 
 @media (max-width: 899px) {
@@ -252,10 +241,6 @@ const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, clo
     min-width: 0;
   }
 
-  .c-nav__wordmark {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
   .c-nav__buy {
     padding-inline: var(--space-3);
