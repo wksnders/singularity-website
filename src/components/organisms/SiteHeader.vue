@@ -24,7 +24,11 @@ const markHidden = computed(() => route.name === 'home' && !scrolled.value);
 <template>
   <header
     class="c-nav"
-    :class="{ 'is-solid': scrolled, 'is-hidden': navHidden, 'is-mega': megaOpen !== null }"
+    :class="{
+      'is-solid': scrolled || megaOpen !== null,
+      'is-hidden': navHidden,
+      'is-mega': megaOpen !== null,
+    }"
     @mouseleave="closeMega()"
   >
     <div class="c-nav__bar l-wrap">
@@ -116,8 +120,13 @@ const markHidden = computed(() => route.name === 'home' && !scrolled.value);
   background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.55), transparent);
 }
 
-/* Otherwise this doubles with the open panel's own border-top. */
+/* Fill and blur track MegaPanel's: the bar sits directly on the open panel
+   and any difference reads as a seam. The border doubles with the panel's
+   own border-top. */
 .c-nav.is-mega {
+  background: rgba(var(--rgb-surface), 0.97);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom-color: transparent;
 }
 

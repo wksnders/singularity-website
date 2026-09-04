@@ -23,7 +23,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <template>
-  <nav class="c-crumbs" :aria-label="t('wayfinding.breadcrumb')">
+  <nav
+    class="c-crumbs"
+    :class="{ 'c-crumbs--compact': compactHops }"
+    :aria-label="t('wayfinding.breadcrumb')"
+  >
     <ol class="c-crumbs__list">
       <li v-for="(crumb, i) in crumbs" :key="i" class="c-crumbs__item">
         <BaseLink
@@ -146,5 +150,31 @@ const pad = (n: number) => String(n).padStart(2, '0');
   place-items: center;
   width: 44px;
   padding-inline: 0;
+}
+
+.c-crumbs--compact {
+  flex-wrap: nowrap;
+}
+
+.c-crumbs--compact .c-crumbs__list {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.c-crumbs--compact .c-crumbs__hops {
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  align-self: flex-start;
+}
+
+.c-crumbs--compact .c-crumbs__position {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-crumbs--compact .c-crumbs__hop {
+  flex: 0 0 auto;
 }
 </style>

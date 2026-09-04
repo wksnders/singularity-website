@@ -275,71 +275,73 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             compact-hops
           />
 
-          <p class="char__epithet">{{ epithet }}</p>
-          <h1 class="char__name">{{ name }}</h1>
+          <div class="char__copy-main">
+            <p class="char__epithet">{{ epithet }}</p>
+            <h1 class="char__name">{{ name }}</h1>
 
-          <div class="char__emblems">
-            <BaseLink
-              v-for="faction in memberships"
-              :key="faction.id"
-              :to="to('faction', { factionId: faction.id })"
-              class="char__emblem"
-              :style="{ '--faction': faction.color }"
-            >
-              <FactionDot :color="faction.color" :size="9" />
-              {{ faction.name }}
-            </BaseLink>
-            <span v-if="character.factionIds === 'any'" class="char__emblem char__emblem--any">
-              <FactionDot :color="null" :size="9" />
-              {{ t('universe.anyFaction') }}
-            </span>
-          </div>
-
-          <p class="char__quote">“{{ active.flavour }}”</p>
-
-          <dl class="char__facts">
-            <div>
-              <dt><MonoLabel tone="muted" as="span">{{ t('character.statHp') }}</MonoLabel></dt>
-              <dd class="char__hp">{{ character.hp }}</dd>
+            <div class="char__emblems">
+              <BaseLink
+                v-for="faction in memberships"
+                :key="faction.id"
+                :to="to('faction', { factionId: faction.id })"
+                class="char__emblem"
+                :style="{ '--faction': faction.color }"
+              >
+                <FactionDot :color="faction.color" :size="9" />
+                {{ faction.name }}
+              </BaseLink>
+              <span v-if="character.factionIds === 'any'" class="char__emblem char__emblem--any">
+                <FactionDot :color="null" :size="9" />
+                {{ t('universe.anyFaction') }}
+              </span>
             </div>
-            <div class="char__facts-brands">
-              <dt><MonoLabel tone="muted" as="span">{{ t('character.brandsLabel') }}</MonoLabel></dt>
-              <dd class="char__brand-list">
-                <BaseLink
-                  v-for="brand in playedBrands"
-                  :key="brand.id"
-                  :to="to('brand', { brandId: brand.id })"
-                  class="char__brand"
-                >
-                  <BrandMark
-                    :icon="brand.icon"
-                    :name="brand.name"
-                    :color="factionById(brand.factionId ?? '')?.color"
-                    :size="26"
-                  />
-                  {{ brand.name }}
-                </BaseLink>
-              </dd>
-            </div>
-          </dl>
 
-          <div class="char__card-row">
-            <CardFace
-              class="char__card-thumb"
-              sizes="72px"
-              :art="active.cardArt"
-              :placeholder="t('character.cardSlot')"
-              :lines="cardLines"
-              :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
-              @select="openCharacterCard()"
-            />
-            <div>
-              <MonoLabel tone="accent">{{ t('character.cardKicker') }}</MonoLabel>
-              <p class="char__card-cta">
-                <button type="button" class="char__linkish" @click="openCharacterCard()">
-                  {{ t('character.seeCardLarge') }} →
-                </button>
-              </p>
+            <p class="char__quote">“{{ active.flavour }}”</p>
+
+            <dl class="char__facts">
+              <div>
+                <dt><MonoLabel tone="muted" as="span">{{ t('character.statHp') }}</MonoLabel></dt>
+                <dd class="char__hp">{{ character.hp }}</dd>
+              </div>
+              <div class="char__facts-brands">
+                <dt><MonoLabel tone="muted" as="span">{{ t('character.brandsLabel') }}</MonoLabel></dt>
+                <dd class="char__brand-list">
+                  <BaseLink
+                    v-for="brand in playedBrands"
+                    :key="brand.id"
+                    :to="to('brand', { brandId: brand.id })"
+                    class="char__brand"
+                  >
+                    <BrandMark
+                      :icon="brand.icon"
+                      :name="brand.name"
+                      :color="factionById(brand.factionId ?? '')?.color"
+                      :size="26"
+                    />
+                    {{ brand.name }}
+                  </BaseLink>
+                </dd>
+              </div>
+            </dl>
+
+            <div class="char__card-row">
+              <CardFace
+                class="char__card-thumb"
+                sizes="72px"
+                :art="active.cardArt"
+                :placeholder="t('character.cardSlot')"
+                :lines="cardLines"
+                :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
+                @select="openCharacterCard()"
+              />
+              <div>
+                <MonoLabel tone="accent">{{ t('character.cardKicker') }}</MonoLabel>
+                <p class="char__card-cta">
+                  <button type="button" class="char__linkish" @click="openCharacterCard()">
+                    {{ t('character.seeCardLarge') }} →
+                  </button>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -562,8 +564,14 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   padding-block: calc(var(--nav-height) + var(--space-8)) var(--band-y);
+}
+
+.char__copy-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .char__art {
