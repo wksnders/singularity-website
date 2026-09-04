@@ -60,6 +60,7 @@ const lines = computed<CardLine[]>(() =>
     <CardFace
       v-if="program.revealed"
       class="c-prog__open"
+      sizes="200px"
       :art="program.cardArt"
       :placeholder="t('cards.artPlaceholder')"
       :lines="lines"

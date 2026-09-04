@@ -7,6 +7,7 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
 
 export interface ZoomRow {
@@ -113,7 +114,15 @@ function onKeydown(event: KeyboardEvent): void {
       <div class="c-zoom__shell">
         <div class="c-zoom__body">
           <div class="c-zoom__figure">
-            <ArtFrame :art="art" ratio="63 / 88" :placeholder="placeholder" radius="m" fit="contain" />
+            <ArtFrame
+              :art="art"
+              ratio="63 / 88"
+              :placeholder="placeholder"
+              radius="m"
+              fit="contain"
+              :sources="pictureSources(art?.src ?? null)"
+              sizes="(min-width: 1100px) 560px, min(100vw - 32px, 420px)"
+            />
           </div>
 
           <div class="c-zoom__meta">
@@ -198,6 +207,14 @@ function onKeydown(event: KeyboardEvent): void {
 .c-zoom__figure {
   flex: 0 0 auto;
   width: min(100%, 420px);
+}
+
+/* Portrait: 560px wide is 782px tall, so height runs out before width. Both
+   queries, or the card outgrows a short viewport and the rules scroll away. */
+@media (min-width: 1100px) and (min-height: 900px) {
+  .c-zoom__figure {
+    width: min(100%, 560px);
+  }
 }
 
 .c-zoom__meta {

@@ -21,23 +21,23 @@
         set's cards continue where the first stopped.
    ========================================================================== */
 
+import { CARD_ID, FACE_ID } from './cardIds';
 import type { Program, SetCode } from './types';
 
 const PROGRAM_ARTIST = 'Josh Bruce';
 
-/** Slug rule duplicated in private/card-import/card-art.py, which writes the files. */
-export const cardFace = (folder: 'programs' | 'characters', name: string): string =>
-  `/cards/${folder}/${name
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/['\u2019.]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')}.webp`;
+/** Rungs card-art.py writes. Changing this without rerunning it ships 404s. */
+export const CARD_WIDTHS = { avif: [420, 840, 1260, 1680], webp: [420, 840] };
 
-/** Widening this without re-running the import ships broken images, not placeholders. */
-export const hasCardFace = (set: SetCode, id: string): boolean =>
-  set === 'CORE' && id !== 'lux' && !id.startsWith('lux-vault');
+/**
+ * The <img> fallback, not the file most readers get — those pick a rung.
+ * null for a card with no printed id, which is a card with no face.
+ */
+export const cardFace = (dataId: string): string | null =>
+  hasCardFace(dataId) ? `/cards/${CARD_ID[dataId]}-840.webp` : null;
+
+/** Printed is not the same as scanned — four LuX Vault cards have no master. */
+export const hasCardFace = (dataId: string): boolean => FACE_ID.has(CARD_ID[dataId]);
 
 /** A card as written down. Id, art and reveal state are mechanical and are
     filled in by `brandCards`, so they cannot drift per entry. */
@@ -69,6 +69,7 @@ const brandCards = (
 ): Program[] =>
   cards.map((card, index) => ({
     id: `${brandId}-${String(start + index + 1).padStart(2, '0')}`,
+    cardId: CARD_ID[`${brandId}-${String(start + index + 1).padStart(2, '0')}`] ?? null,
     brandId,
     name: card.name,
     cost: String(card.cost),
@@ -83,7 +84,7 @@ const brandCards = (
        `src: null` draws the placeholder frame until the files land. */
     art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
     cardArt: {
-      src: hasCardFace(set, brandId) ? cardFace('programs', card.name) : null,
+      src: cardFace(`${brandId}-${String(start + index + 1).padStart(2, '0')}`),
       alt: `${card.name} card`,
       artist: PROGRAM_ARTIST,
     },

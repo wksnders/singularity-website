@@ -12,17 +12,22 @@
  * into one unpunctuated run.
  */
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import { pictureSources } from '@/site/links';
 import type { CardLine } from '@/site/cardText';
 import type { Art } from '@/data/types';
 
-defineProps<{
+const props = defineProps<{
   /** The printed card. Never an illustration. */
   art: Art;
   placeholder: string;
   /** The face, in printed order. */
   lines: CardLine[];
   actionLabel?: string;
+  /** How wide this face renders. Wrong here downloads the wrong rung. */
+  sizes?: string;
 }>();
+
+const sources = () => pictureSources(props.art.src);
 
 defineEmits<{ select: [] }>();
 </script>
@@ -37,7 +42,15 @@ defineEmits<{ select: [] }>();
       :class="{ 'is-action': actionLabel }"
       @click="actionLabel && $emit('select')"
     >
-      <ArtFrame :art="art" ratio="63 / 88" radius="s" fit="contain" :placeholder="placeholder" />
+      <ArtFrame
+        :art="art"
+        ratio="63 / 88"
+        radius="s"
+        fit="contain"
+        :placeholder="placeholder"
+        :sources="sources()"
+        :sizes="sizes ?? '160px'"
+      />
       <slot name="overlay" />
     </component>
     <dl class="l-sr-only">

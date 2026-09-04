@@ -34,10 +34,18 @@ import type {
   Video,
   WallpaperKind,
 } from './types';
-import { allPrograms } from './programs';
-import { cardFace, hasCardFace } from './programs';
+import { allPrograms, cardFace } from './programs';
+import { CARD_ID } from './cardIds';
 
 const noArt = { src: null, alt: '', artist: null };
+
+/** Rungs character-art.py writes. WebP stops low: alpha triples it. */
+export const ART_WIDTHS = { avif: [640, 1280, 1920, 2560], webp: [640, 1280] };
+
+/* Language dropped: one illustration serves every localisation. Card faces
+   keep the full id because those are language-specific. */
+const illustration = (kind: 'art' | 'scene', printedId: string) =>
+  `/characters/${kind}/${printedId.replace(/-[A-Z]{2}$/, '')}-1280.webp`;
 
 const CHARACTER_ARTIST = 'Héctor Sevilla Luján';
 
@@ -317,19 +325,59 @@ export const programs: Program[] = [...allPrograms];
    a record can be checked against it by eye without translating two shapes.
    -------------------------------------------------------------------------- */
 
+/* Scene-only alternates. `art` is skipped, never faked from the composite. */
+const ALT_WITHOUT_CUTOUT = new Set(['SC-037A-EN', 'SC-014A-EN', 'MQ-002A-EN']);
+
+/* A guest `name` is what makes resolvePrinting() report isReflavour. */
+const MIDDARA = (name: string) => ({ name, source: 'Middara', licensor: 'Succubus Publishing' });
+
+const altPrinting = (
+  id: string,
+  characterName: string,
+  guest?: { name: string; source: string; licensor: string },
+): Printing => ({
+  id,
+  label: 'ALT ART',
+  ...(guest ?? {}),
+  art: {
+    ...noArt,
+    src: ALT_WITHOUT_CUTOUT.has(id) ? null : illustration('art', id),
+    alt: `${guest?.name ?? characterName}, character art`,
+    artist: CHARACTER_ARTIST,
+  },
+  sceneArt: {
+    ...noArt,
+    src: illustration('scene', id),
+    alt: `${guest?.name ?? characterName} in their world`,
+    artist: CHARACTER_ARTIST,
+  },
+  cardArt: { ...noArt, alt: `${guest?.name ?? characterName} character card` },
+});
+
 /* Three art objects, derived from the name so an alt cannot describe the wrong
    person. Which surface may use which: the ART note in types.ts. */
 const character = (
-  input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds'>,
+  input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds' | 'cardId'>,
 ): Character => ({
   ...input,
-  art: { ...noArt, alt: `${input.name}, character art`, artist: CHARACTER_ARTIST },
-  sceneArt: { ...noArt, alt: `${input.name} in their world`, artist: CHARACTER_ARTIST },
+  cardId: CARD_ID[input.id] ?? null,
+  art: {
+    ...noArt,
+    src: illustration('art', CARD_ID[input.id]),
+    alt: `${input.name}, character art`,
+    artist: CHARACTER_ARTIST,
+  },
+  sceneArt: {
+    ...noArt,
+    src: illustration('scene', CARD_ID[input.id]),
+    alt: `${input.name} in their world`,
+    artist: CHARACTER_ARTIST,
+  },
   /* The alt names WHICH card; the wording is read from the hidden block beside
      the image, so the alt does not carry the rules. */
   cardArt: {
     ...noArt,
-    src: hasCardFace(input.set, input.id) ? cardFace('characters', input.name) : null,
+    src: cardFace(input.id),
     alt: `${input.name} character card`,
     artist: CHARACTER_ARTIST,
   },
@@ -354,6 +402,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hanbei',
+    printings: [altPrinting('SC-001A-EN', 'Hanbei', MIDDARA('Nightingale'))],
     order: 10,
     name: 'Hanbei',
     hp: 11,
@@ -474,6 +523,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ri-se',
+    printings: [altPrinting('FA-001A-EN', 'Ri • Se')],
     order: 450,
     name: 'Ri • Se',
     hp: 10,
@@ -489,6 +539,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'satellite-137',
+    printings: [altPrinting('SC-007A-EN', 'Satellite 137')],
     order: 70,
     name: 'Satellite 137',
     hp: 13,
@@ -519,6 +570,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'toshiro',
+    printings: [altPrinting('SC-009A-EN', 'Toshiro')],
     order: 90,
     name: 'Toshiro',
     hp: 10,
@@ -639,6 +691,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'kodama',
+    printings: [altPrinting('SC-014A-EN', 'Kodama')],
     order: 150,
     name: 'Kodama',
     hp: 9,
@@ -669,6 +722,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'o-mori',
+    printings: [altPrinting('DC-001A-EN', 'O-mori')],
     order: 480,
     name: 'O-mori',
     hp: 9,
@@ -684,6 +738,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'rekka',
+    printings: [altPrinting('SC-017A-EN', 'Rekka', MIDDARA('Rook'))],
     order: 170,
     name: 'Rekka',
     hp: 16,
@@ -699,6 +754,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'shred',
+    printings: [altPrinting('SC-018A-EN', 'Shred')],
     order: 180,
     name: 'Shred',
     hp: 9,
@@ -729,6 +785,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'voss',
+    printings: [altPrinting('DC-004A-EN', 'Voss')],
     order: 490,
     name: 'Voss',
     hp: 8,
@@ -819,6 +876,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hungry-and-hounds',
+    printings: [altPrinting('MB-002A-EN', 'Hungry & Hounds')],
     order: 510,
     name: 'Hungry & Hounds',
     hp: 8,
@@ -834,6 +892,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'overtoad',
+    printings: [altPrinting('SC-024A-EN', 'Overtoad')],
     order: 240,
     name: 'Overtoad',
     hp: 13,
@@ -924,6 +983,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'twisted-6',
+    printings: [altPrinting('SC-028A-EN', 'Twisted-6'), altPrinting('SC-028B-EN', 'Twisted-6', MIDDARA('Remi'))],
     order: 280,
     name: 'Twisted-6',
     hp: 9,
@@ -984,6 +1044,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'naix',
+    printings: [altPrinting('SC-032A-EN', '/naix')],
     order: 320,
     name: '/naix',
     hp: 8,
@@ -1059,6 +1120,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'joi',
+    printings: [altPrinting('SC-037A-EN', 'Joi')],
     order: 360,
     name: 'Joi',
     hp: 10,
@@ -1074,6 +1136,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'mastermind',
+    printings: [altPrinting('MQ-002A-EN', 'Mastermind')],
     order: 550,
     name: 'Mastermind',
     hp: 13,
@@ -1164,6 +1227,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'zakhi',
+    printings: [altPrinting('SC-040A-EN', 'Zakhi', MIDDARA('Zeke'))],
     order: 400,
     name: 'Zakhi',
     hp: 10,

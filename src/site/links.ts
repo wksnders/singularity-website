@@ -9,6 +9,8 @@
 import type { LocationQueryRaw, RouteLocationRaw } from 'vue-router';
 import { currentLocale, DEFAULT_LOCALE, LOCALE_ROUTE_PATTERN } from '@/i18n/locales';
 import { urls } from '@/data/universe';
+import { CARD_WIDTHS } from '@/data/programs';
+import { ART_WIDTHS } from '@/data/universe';
 import type { OutboundKey, TryRoute } from '@/data/types';
 
 const HAS_LOCALE_SEGMENT = LOCALE_ROUTE_PATTERN.length > 0;
@@ -79,6 +81,22 @@ const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE || import.meta.env.BASE_URL)
 
 export function asset(path: string): string {
   return path.startsWith('/') ? `${ASSET_BASE}${path}` : path;
+}
+
+const RUNGS: [string, { avif: number[]; webp: number[] }][] = [
+  ['/cards/', CARD_WIDTHS],
+  ['/characters/', ART_WIDTHS],
+];
+
+export function pictureSources(src: string | null): { type: string; srcset: string }[] {
+  const widths = src ? RUNGS.find(([prefix]) => src.startsWith(prefix))?.[1] : undefined;
+  const stem = src?.replace(/-\d+\.[a-z0-9]+$/, '');
+  if (!src || !widths || !stem || stem === src) return [];
+
+  return (['avif', 'webp'] as const).map((ext) => ({
+    type: `image/${ext}`,
+    srcset: widths[ext].map((w) => `${asset(`${stem}-${w}.${ext}`)} ${w}w`).join(', '),
+  }));
 }
 
 export function outbound(key: OutboundKey): ResolvedLink {

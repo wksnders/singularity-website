@@ -6,10 +6,11 @@
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
+import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     to: RouteLocationRaw;
     art?: Art | null;
@@ -22,15 +23,28 @@ withDefaults(
     /** One entry per faction membership — a dot beside every name. */
     tags?: { label: string; color?: string | null }[];
     ratio?: string;
+    /** How wide the tile renders. The default matches `.l-grid--tiles`. */
+    sizes?: string;
   }>(),
-  { ratio: '3 / 4', placeholder: '[ printed character card 63×88 ]' },
+  { ratio: '3 / 4', placeholder: '[ printed character card 63×88 ]', sizes: '240px' },
 );
+
+/* Resolves its own rungs so five views need not repeat it. */
+const sources = () => pictureSources(props.art?.src ?? null);
 </script>
 
 <template>
   <BaseLink :to="to" class="c-tile">
     <span class="c-tile__art" :style="{ '--faction': tags?.[0]?.color || undefined }">
-      <ArtFrame :art="art" :ratio="ratio" radius="m" fit="contain" :placeholder="placeholder" />
+      <ArtFrame
+        :art="art"
+        :ratio="ratio"
+        radius="m"
+        fit="contain"
+        :placeholder="placeholder"
+        :sources="sources()"
+        :sizes="sizes"
+      />
     </span>
     <span class="c-tile__body">
       <span v-if="badge" class="c-tile__badge">{{ badge }}</span>

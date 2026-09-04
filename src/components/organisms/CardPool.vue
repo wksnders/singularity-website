@@ -8,6 +8,7 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
@@ -190,6 +191,8 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
                 :placeholder="t('pool.cardPlaceholder')"
                 radius="s"
                 fit="contain"
+                :sources="pictureSources(card.cardArt.src)"
+                sizes="160px"
               />
             </button>
             <p v-if="isGrid" class="c-pool__tile-name">{{ card.name }}</p>

@@ -41,7 +41,7 @@ import {
   resolvePrinting,
   stories,
 } from '@/data/universe';
-import { outbound, to } from '@/site/links';
+import { pictureSources, outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
 
@@ -212,6 +212,8 @@ const cardLines = computed<CardLine[]>(() => {
   ].filter((line) => line.values.some(Boolean));
 });
 
+const SHOW_PRINTING_SOURCE = false;
+
 const zoomRows = computed<ZoomRow[]>(() => {
   const rows: ZoomRow[] = [
     { label: t('character.rowSet'), value: t(`cards.sets.${character.value?.set}`) },
@@ -222,7 +224,7 @@ const zoomRows = computed<ZoomRow[]>(() => {
     { label: t('character.rowPrinting'), value: active.value?.label ?? '' },
     { label: t('character.rowArtist'), value: artist.value },
   ];
-  if (active.value?.source) {
+  if (SHOW_PRINTING_SOURCE && active.value?.source) {
     const licensor = active.value.licensor ? ` · ${active.value.licensor}` : '';
     rows.push({ label: t('character.rowSource'), value: `${active.value.source}${licensor}` });
   }
@@ -321,6 +323,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           <div class="char__card-row">
             <CardFace
               class="char__card-thumb"
+              sizes="72px"
               :art="active.cardArt"
               :placeholder="t('character.cardSlot')"
               :lines="cardLines"
@@ -343,6 +346,8 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             <ArtFrame
               :art="active.sceneArt"
               :placeholder="t('character.sceneSlot')"
+              :sources="pictureSources(active.sceneArt.src)"
+              sizes="(max-width: 899px) 100vw, 48vw"
               eager
             />
           </div>
@@ -402,6 +407,8 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                   :placeholder="t('character.cardSlot')"
                   radius="m"
                   fit="contain"
+                  :sources="pictureSources(detailArt?.src ?? null)"
+                  sizes="320px"
                 />
                 <span class="char__panel-zoom" aria-hidden="true">
                   {{ t('character.enlarge') }}

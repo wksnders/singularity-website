@@ -10,7 +10,7 @@ import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { characters, factions } from '@/data/universe';
-import { resolveLink, to } from '@/site/links';
+import { pictureSources, resolveLink, to } from '@/site/links';
 import type { IaSection } from '@/site/ia';
 
 const props = defineProps<{ section: IaSection }>();
@@ -71,6 +71,8 @@ const columns = computed(() => {
             ratio="16 / 9"
             radius="m"
             :placeholder="t('chrome.featuredPlaceholder')"
+            :sources="pictureSources(featured.sceneArt.src)"
+            sizes="320px"
           />
           <span class="c-mega__scrim" />
           <span class="c-mega__name">{{ featured.name }}</span>
