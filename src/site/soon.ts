@@ -71,14 +71,6 @@ const DESTINATIONS: SoonDestination[] = [
     ],
   },
   {
-    id: 'press-kit',
-    kind: 'link',
-    also: [
-      { key: 'ia.community.press.label', to: to('community', {}, { hash: '#press' }) },
-      { key: 'ia.community.discord.label', to: to('community', {}, { hash: '#discord' }) },
-    ],
-  },
-  {
     id: 'news-post',
     kind: 'page',
     also: [{ key: 'ia.news.label', to: to('news') }],

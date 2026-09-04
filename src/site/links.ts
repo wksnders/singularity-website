@@ -83,9 +83,12 @@ export function asset(path: string): string {
   return path.startsWith('/') ? `${ASSET_BASE}${path}` : path;
 }
 
+const PRESS_WIDTHS = { avif: [560, 1080], webp: [560, 1080] };
+
 const RUNGS: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
   ['/characters/', ART_WIDTHS],
+  ['/press/covers/', PRESS_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): { type: string; srcset: string }[] {

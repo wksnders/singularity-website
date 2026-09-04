@@ -25,6 +25,7 @@ import type {
   OutboundUrls,
   PlayMode,
   Printing,
+  PressGroup,
   Product,
   Program,
   RogueAI,
@@ -1555,6 +1556,61 @@ export const newsCategories: NewsCategory[] = [
   { id: 'events', name: 'Events' },
   { id: 'errata', name: 'Errata' },
 ];
+
+/* press-assets.py writes these and fails if they drift. Do not hand-edit. */
+const pressCover = (id: string, alt: string, focal?: { x: number; y: number }): Art => ({
+  src: `/press/covers/${id}-560.webp`,
+  alt,
+  artist: null,
+  ...(focal ? { focal } : {}),
+});
+
+export const pressGroups: PressGroup[] = [
+  {
+    id: 'product-images',
+    state: 'ready',
+    files: 5,
+    size: '1920 × 1080',
+    formats: 'PNG / JPG',
+    zipBytes: 12355223,
+    cover: pressCover('product-images', 'The core set box, front and back, on a plain grey backdrop.'),
+    fit: 'cover',
+  },
+  {
+    id: 'key-art',
+    state: 'ready',
+    files: 3,
+    size: '1920 × 1080',
+    formats: 'PNG',
+    zipBytes: 8713546,
+    cover: pressCover('key-art', 'Four characters around a glowing table in a neon-lit room, with the Singularity.exe wordmark.'),
+    fit: 'cover',
+  },
+  {
+    id: 'banners',
+    state: 'ready',
+    files: 3,
+    size: '1500 × 500',
+    formats: 'PNG',
+    zipBytes: 3714524,
+    cover: pressCover('banners', 'A wall of screens behind the Singularity.exe wordmark.'),
+    fit: 'contain',
+  },
+  {
+    id: 'vertical',
+    state: 'ready',
+    files: 4,
+    size: '1080 × 1920',
+    formats: 'PNG',
+    zipBytes: 11700536,
+    cover: pressCover('vertical', 'Two characters mid-fight in a green jungle, wordmark at the top.', { x: 0.5, y: 0.22 }),
+    fit: 'cover',
+  },
+  { id: 'event-materials', state: 'empty', files: 0, size: null, formats: null, zipBytes: null, cover: null, fit: 'cover' },
+  { id: 'logos', state: 'pending', files: 0, size: null, formats: null, zipBytes: null, cover: null, fit: 'cover' },
+];
+
+export const pressKit = { files: 15, zipBytes: 36484373, href: '/press/singularity-exe-press-kit.zip' };
 
 export const wallpaperKinds: WallpaperKind[] = [
   { id: 'desktop', name: 'Desktop', size: '2560 × 1440' },

@@ -349,10 +349,6 @@
         "title": "There is no archive yet",
         "body": "Every post published so far fits on the news page."
       },
-      "press-kit": {
-        "title": "The press kit is not available yet",
-        "body": "Logos, key art and screenshots go in it once the art is final. The boilerplate and the fact sheet on the press band are ready to quote from today."
-      },
       "vote": {
         "title": "Past Convergences are not published yet",
         "body": "The first vote has not closed. The open vote is on the Story page."
@@ -1069,7 +1065,7 @@
     "hub": {
       "discord": "Rules desk, Incursion logs, deck lab — the room where questions get answered.",
       "wallpapers": "[ count TBD ] files · desktop · mobile · avatar",
-      "press": "ZIP · [ size TBD ] · no email required",
+      "press": "ZIP · 34.8 MB · no email required",
       "support": "Orders · refunds · missing components",
       "team": "Octothorpe · Salt Lake City · est. 2015"
     },
@@ -1092,7 +1088,40 @@
       "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. About 30 minutes per player. Zero randomness. Solo and co-op play ship in the Incursions box.",
       "crossover": "Crossover content with",
       "factSheet": "Fact sheet",
-      "exit": "Something else? Talk to support →"
+      "exit": "Something else? Talk to support →",
+      "intro": "Box renders and social templates, free to use in coverage. No email, no form, no approval step — credit Octothorpe.",
+      "kitMeta": "files · zip",
+      "zipVerb": "Download .zip",
+      "allFiles": "Every file, with sizes",
+      "copy": "Copy",
+      "copied": "Copied",
+      "pending": "[ pending — sixth card is the cap ]",
+      "groups": {
+        "product-images": {
+          "name": "Product images",
+          "body": "Box renders — core set, Terminal Incursions and the expansions, fronts, backs and inserts."
+        },
+        "key-art": {
+          "name": "Key art",
+          "body": "Landscape illustration with the wordmark in place — thumbnails, article headers, stream overlays."
+        },
+        "banners": {
+          "name": "Channel banners",
+          "body": "Wide crops that fit the usual profile and channel headers without re-cutting."
+        },
+        "vertical": {
+          "name": "Vertical — stories & reels",
+          "body": "Full-bleed 9:16 art for stories, reels and TikTok, with headroom left for captions."
+        },
+        "event-materials": {
+          "name": "Event materials",
+          "body": "Nothing here yet. Demo sheets and shelf material land in this card when they exist."
+        },
+        "logos": {
+          "name": "Logos & wordmark",
+          "body": "Not in this kit. The lockups exist — they came from the designer separately, so they still have to be folded in."
+        }
+      }
     },
     "facts": {
       "players": "Players",

@@ -311,6 +311,17 @@ export interface NewsCategory {
   name: string;
 }
 
+export interface PressGroup {
+  id: string;
+  state: 'ready' | 'empty' | 'pending';
+  files: number;
+  size: string | null;
+  formats: string | null;
+  zipBytes: number | null;
+  cover: Art | null;
+  fit: 'cover' | 'contain';
+}
+
 export interface WallpaperKind {
   id: string;
   name: string;

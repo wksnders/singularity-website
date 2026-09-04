@@ -2,7 +2,7 @@
 /**
  * COMMUNITY — five deep-linkable bands.
  */
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import JumpChip from '@/components/atoms/JumpChip.vue';
@@ -17,13 +17,47 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
-import { coreBox, game, teamGroups, teamOf, wallpaperKinds, wallpapers } from '@/data/universe';
+import {
+  coreBox,
+  game,
+  pressGroups,
+  pressKit,
+  teamGroups,
+  teamOf,
+  wallpaperKinds,
+  wallpapers,
+} from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
-import { outbound, soon, to } from '@/site/links';
+import { asset, outbound, pictureSources, to } from '@/site/links';
+import type { PressGroup } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
+const mb = (bytes: number) => `${(bytes / 1048576).toFixed(1)} MB`;
+
+const pressSources = (src: string | null) => pictureSources(src);
+
+const groupMeta = (group: PressGroup) => {
+  if (group.state === 'pending') return t('community.press.pending');
+  if (group.state === 'empty') return `0 ${t('community.wallpapers.count')}`;
+  return [`${group.files} ${t('community.wallpapers.count')}`, group.size, group.formats]
+    .filter(Boolean)
+    .join(' · ');
+};
+
+/* One source, so the page and the clipboard cannot disagree. */
+const boilerplate = computed(
+  () => `${game.name} ${t('community.press.boilerplateBody')}`,
+);
+
+const copied = ref(false);
+function copyBoilerplate() {
+  navigator.clipboard?.writeText(boilerplate.value).catch(() => {});
+  copied.value = true;
+  setTimeout(() => { copied.value = false; }, 1600);
+}
 const sections = computed<SectionEntry[]>(() => [
   { id: 'discord', label: t('community.sections.discord') },
   { id: 'wallpapers', label: t('community.sections.wallpapers') },
@@ -159,27 +193,65 @@ const factSheet = computed(() => [
     <div class="l-wrap">
       <SectionMarker id="press" :index="3" :total="5" :heading="t('community.sections.press')" />
 
-      <div class="l-grid l-grid--wide comm__gap">
-        <div class="comm__card">
-          <h3 class="comm__h3">{{ t('community.press.whatTitle') }}</h3>
-          <p class="comm__body">{{ t('community.press.whatBody') }}</p>
-          <UiButton :to="soon('#press-kit')" class="comm__gap">
+      <div class="comm__press-head">
+        <div class="comm__press-lede">
+          <p class="comm__body">{{ t('community.press.intro') }}</p>
+        </div>
+        <div class="comm__press-get">
+          <UiButton variant="primary" :href="asset(pressKit.href)">
             {{ t('community.press.cta') }}
           </UiButton>
-          <p class="comm__meta comm__gap">
-            {{ t('community.press.contact') }}
-            <a :href="`mailto:${game.enquiriesEmail}`">{{ game.enquiriesEmail }}</a>
-          </p>
+          <MonoLabel tone="faint">
+            {{ pressKit.files }} {{ t('community.press.kitMeta') }} · {{ mb(pressKit.zipBytes) }}
+          </MonoLabel>
         </div>
+      </div>
 
+      <ul class="l-grid l-grid--wide comm__gap comm__press-groups">
+        <li
+          v-for="group in pressGroups"
+          :key="group.id"
+          class="comm__press-card"
+          :class="{ 'is-waiting': group.state !== 'ready' }"
+        >
+          <div class="comm__press-cover" :class="{ 'is-empty': !group.cover }">
+            <ArtFrame
+              v-if="group.cover"
+              :art="group.cover"
+              ratio="16 / 9"
+              :fit="group.fit"
+              sizes="(min-width: 900px) 360px, 100vw"
+              :sources="pressSources(group.cover.src)"
+              :placeholder="t('community.press.pending')"
+            />
+          </div>
+          <div class="comm__press-body">
+            <h3 class="comm__h3">{{ t(`community.press.groups.${group.id}.name`) }}</h3>
+            <p class="comm__body comm__press-grow">{{ t(`community.press.groups.${group.id}.body`) }}</p>
+            <MonoLabel tone="faint">{{ groupMeta(group) }}</MonoLabel>
+            <UiButton v-if="group.zipBytes" :href="asset(`/press/${group.id}.zip`)">
+              {{ t('community.press.zipVerb') }} · {{ mb(group.zipBytes) }}
+            </UiButton>
+          </div>
+        </li>
+      </ul>
+
+      <div class="l-grid l-grid--wide comm__gap">
         <div class="comm__card">
-          <MonoLabel tone="faint">{{ t('community.press.boilerplate') }}</MonoLabel>
-          <p class="comm__body">
-            {{ game.name }} {{ t('community.press.boilerplateBody') }}
-          </p>
+          <div class="comm__press-row">
+            <MonoLabel tone="faint">{{ t('community.press.boilerplate') }}</MonoLabel>
+            <button type="button" class="comm__copy" @click="copyBoilerplate">
+              {{ copied ? t('community.press.copied') : t('community.press.copy') }}
+            </button>
+          </div>
+          <p class="comm__body">{{ boilerplate }}</p>
           <p class="comm__meta">
             {{ t('footer.publishedBy') }} {{ game.publisher }}.
             {{ t('community.press.crossover') }} {{ game.crossoverGame }}.
+          </p>
+          <p class="comm__meta comm__gap">
+            {{ t('community.press.contact') }}
+            <a :href="`mailto:${game.enquiriesEmail}`">{{ game.enquiriesEmail }}</a>
           </p>
         </div>
 
@@ -522,6 +594,92 @@ const factSheet = computed(() => [
   font-size: var(--size-mono-m);
   color: var(--color-ink-faint);
   white-space: nowrap;
+}
+
+.comm__press-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.comm__press-lede {
+  max-width: 56ch;
+}
+
+.comm__press-get {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.comm__press-groups {
+  list-style: none;
+  padding: 0;
+}
+
+.comm__press-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.comm__press-card.is-waiting {
+  border-style: dashed;
+  background: transparent;
+}
+
+.comm__press-cover.is-empty {
+  aspect-ratio: 16 / 9;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--color-line) 0 10px,
+    transparent 10px 20px
+  );
+}
+
+.comm__press-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex: 1;
+  padding: var(--space-4);
+}
+
+.comm__press-grow {
+  flex: 1;
+}
+
+.comm__press-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.comm__copy {
+  min-height: 36px;
+  padding-inline: 14px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  letter-spacing: 0.14em;
+  cursor: pointer;
+}
+
+.comm__copy:hover {
+  border-color: rgba(var(--rgb-accent), 0.7);
+  background: var(--color-accent-wash);
 }
 
 .comm__card {
