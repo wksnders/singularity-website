@@ -371,6 +371,10 @@ const character = (
     src: illustration('scene', input.cardId),
     alt: `${input.name} in their world`,
     artist: CHARACTER_ARTIST,
+    /* Heads sit high in some illustrations, so a centre crop cuts them off.
+       One default for all of them; a character that needs its own goes in that
+       character's own `character({ … })` call. */
+    focal: { x: 0.5, y: 0.3 },
   },
   /* The alt names WHICH card; the wording is read from the hidden block beside
      the image, so the alt does not carry the rules. */

@@ -583,8 +583,9 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
     border-bottom: 2px solid var(--faction);
   }
 
+ 
   .char__art-frame {
-    max-height: 62dvh;
+    aspect-ratio: 4 / 5;
   }
 }
 
