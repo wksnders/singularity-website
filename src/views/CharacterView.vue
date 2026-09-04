@@ -26,6 +26,7 @@ import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
 import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useMediaQuery } from '@/composables/useMediaQuery';
+import { useZoomUpgrade } from '@/composables/useZoomUpgrade';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import { expandIcons } from '@/site/cardText';
 import type { CardLine } from '@/site/cardText';
@@ -47,6 +48,8 @@ const props = defineProps<{ characterId: string }>();
 
 /* Wider than the nav's breakpoint: the picker needs room the nav does not. */
 const roomy = useMediaQuery('(min-width: 1120px)');
+
+const zoomed = useZoomUpgrade();
 
 const character = computed(() => characterById(props.characterId));
 const doc = computed(() => getDoc(`universe/characters/${props.characterId}`));
@@ -347,7 +350,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
               :art="active.sceneArt"
               :placeholder="t('character.sceneSlot')"
               :sources="pictureSources(active.sceneArt.src)"
-              sizes="(max-width: 899px) 100vw, 48vw"
+              :sizes="zoomed ? '2560px' : '(max-width: 899px) 100vw, 48vw'"
               eager
             />
           </div>

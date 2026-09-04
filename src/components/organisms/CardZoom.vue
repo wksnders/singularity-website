@@ -7,6 +7,7 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { savingData } from '@/composables/useZoomUpgrade';
 import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
 
@@ -28,6 +29,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{ close: [] }>();
 
+/* Two-stage: opening on the rung the tile already cached paints from cache,
+   and the top rung arrives after. Asking for it up front stalls the open. */
+const FIT_SIZES = '(min-width: 1100px) 560px, min(100vw - 32px, 420px)';
+const FULL_SIZES = '1680px';
+const full = ref(false);
+
 const dialog = ref<HTMLElement | null>(null);
 const closeButton = ref<HTMLButtonElement | null>(null);
 let lastFocused: HTMLElement | null = null;
@@ -48,8 +55,11 @@ watch(
       page?.setAttribute('aria-hidden', 'true');
       await nextTick();
       closeButton.value?.focus();
+      /* A frame late, so the upgrade never competes with the open. */
+      requestAnimationFrame(() => { full.value = !savingData(); });
       return;
     }
+    full.value = false;
     document.body.style.overflow = '';
     page?.removeAttribute('inert');
     page?.removeAttribute('aria-hidden');
@@ -121,7 +131,7 @@ function onKeydown(event: KeyboardEvent): void {
               radius="m"
               fit="contain"
               :sources="pictureSources(art?.src ?? null)"
-              sizes="(min-width: 1100px) 560px, min(100vw - 32px, 420px)"
+              :sizes="full ? FULL_SIZES : FIT_SIZES"
             />
           </div>
 
