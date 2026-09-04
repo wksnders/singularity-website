@@ -92,17 +92,28 @@ const markHidden = computed(() => route.name === 'home' && !scrolled.value);
   z-index: 50;
   border-bottom: 1px solid transparent;
   background: transparent;
-  backdrop-filter: blur(14px);
   transform: translateY(0);
   transition:
     background var(--dur-2) var(--ease-out),
     border-color var(--dur-2) var(--ease-linear),
+    backdrop-filter var(--dur-2) var(--ease-out),
     transform var(--dur-3) var(--ease-out);
 }
 
 .c-nav.is-solid {
   background: rgba(var(--rgb-bg), 0.88);
   border-bottom-color: var(--color-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.c-nav:not(.is-solid)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.55), transparent);
 }
 
 /* Otherwise this doubles with the open panel's own border-top. */
