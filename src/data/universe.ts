@@ -35,7 +35,6 @@ import type {
   WallpaperKind,
 } from './types';
 import { allPrograms, cardFace } from './programs';
-import { CARD_ID } from './cardIds';
 
 const noArt = { src: null, alt: '', artist: null };
 
@@ -357,19 +356,18 @@ const altPrinting = (
 /* Three art objects, derived from the name so an alt cannot describe the wrong
    person. Which surface may use which: the ART note in types.ts. */
 const character = (
-  input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds' | 'cardId'>,
+  input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds'>,
 ): Character => ({
   ...input,
-  cardId: CARD_ID[input.id] ?? null,
   art: {
     ...noArt,
-    src: illustration('art', CARD_ID[input.id]),
+    src: illustration('art', input.cardId),
     alt: `${input.name}, character art`,
     artist: CHARACTER_ARTIST,
   },
   sceneArt: {
     ...noArt,
-    src: illustration('scene', CARD_ID[input.id]),
+    src: illustration('scene', input.cardId),
     alt: `${input.name} in their world`,
     artist: CHARACTER_ARTIST,
   },
@@ -377,7 +375,7 @@ const character = (
      the image, so the alt does not carry the rules. */
   cardArt: {
     ...noArt,
-    src: cardFace(input.id),
+    src: cardFace(input.cardId),
     alt: `${input.name} character card`,
     artist: CHARACTER_ARTIST,
   },
@@ -387,6 +385,7 @@ const character = (
 export const characters: Character[] = [
   character({
     id: 'gargaunaut-prime',
+    cardId: 'FA-004C-EN',
     order: 420,
     name: 'Gargaunaut Prime',
     hp: 11,
@@ -402,6 +401,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hanbei',
+    cardId: 'SC-001C-EN',
     printings: [altPrinting('SC-001A-EN', 'Hanbei', MIDDARA('Nightingale'))],
     order: 10,
     name: 'Hanbei',
@@ -418,6 +418,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'iro',
+    cardId: 'SC-002C-EN',
     order: 20,
     name: 'Iro',
     hp: 9,
@@ -433,6 +434,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'kagemusha',
+    cardId: 'SC-003C-EN',
     order: 30,
     name: 'Kagemusha',
     hp: 8,
@@ -448,6 +450,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'magus',
+    cardId: 'SC-004C-EN',
     order: 40,
     name: 'Magus',
     hp: 10,
@@ -463,6 +466,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'mi-ko',
+    cardId: 'SC-005C-EN',
     order: 50,
     name: 'Mi-KO',
     hp: 8,
@@ -478,6 +482,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'onibaba',
+    cardId: 'SC-006C-EN',
     order: 60,
     name: 'Onibaba',
     hp: 10,
@@ -493,6 +498,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'piiko',
+    cardId: 'FA-002C-EN',
     order: 430,
     name: 'Piiko',
     hp: 9,
@@ -508,6 +514,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ral-kaid',
+    cardId: 'FA-003C-EN',
     order: 440,
     name: 'Ral Kaid',
     hp: 10,
@@ -523,6 +530,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ri-se',
+    cardId: 'FA-001C-EN',
     printings: [altPrinting('FA-001A-EN', 'Ri • Se')],
     order: 450,
     name: 'Ri • Se',
@@ -539,6 +547,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'satellite-137',
+    cardId: 'SC-007C-EN',
     printings: [altPrinting('SC-007A-EN', 'Satellite 137')],
     order: 70,
     name: 'Satellite 137',
@@ -555,6 +564,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'shiho-zenji',
+    cardId: 'SC-008C-EN',
     order: 80,
     name: 'Shiho Zenji',
     hp: 8,
@@ -570,6 +580,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'toshiro',
+    cardId: 'SC-009C-EN',
     printings: [altPrinting('SC-009A-EN', 'Toshiro')],
     order: 90,
     name: 'Toshiro',
@@ -586,6 +597,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'yama-uba',
+    cardId: 'SC-010C-EN',
     order: 100,
     name: 'Yama Uba',
     hp: 7,
@@ -601,6 +613,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'bronwyn',
+    cardId: 'DC-002C-EN',
     order: 460,
     name: 'Bronwyn',
     hp: 10,
@@ -616,6 +629,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'calamity',
+    cardId: 'SC-011C-EN',
     order: 110,
     name: 'Calamity',
     hp: 12,
@@ -631,6 +645,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'dugu-squad',
+    cardId: 'SC-012C-EN',
     order: 120,
     name: 'Dugu Squad',
     hp: 9,
@@ -646,6 +661,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'he4p',
+    cardId: 'DC-003C-EN',
     order: 470,
     name: 'He4p',
     hp: 7,
@@ -661,6 +677,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'j-kuma',
+    cardId: 'SC-013C-EN',
     order: 130,
     name: 'J-Kuma',
     hp: 12,
@@ -676,6 +693,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'jean-ok',
+    cardId: 'SC-016C-EN',
     order: 140,
     name: 'Jean O.K.',
     hp: 9,
@@ -691,6 +709,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'kodama',
+    cardId: 'SC-014C-EN',
     printings: [altPrinting('SC-014A-EN', 'Kodama')],
     order: 150,
     name: 'Kodama',
@@ -707,6 +726,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'moka',
+    cardId: 'SC-015C-EN',
     order: 160,
     name: 'Moka',
     hp: 11,
@@ -722,6 +742,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'o-mori',
+    cardId: 'DC-001C-EN',
     printings: [altPrinting('DC-001A-EN', 'O-mori')],
     order: 480,
     name: 'O-mori',
@@ -738,6 +759,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'rekka',
+    cardId: 'SC-017C-EN',
     printings: [altPrinting('SC-017A-EN', 'Rekka', MIDDARA('Rook'))],
     order: 170,
     name: 'Rekka',
@@ -754,6 +776,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'shred',
+    cardId: 'SC-018C-EN',
     printings: [altPrinting('SC-018A-EN', 'Shred')],
     order: 180,
     name: 'Shred',
@@ -770,6 +793,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'snap-dragon-lily',
+    cardId: 'SC-019C-EN',
     order: 190,
     name: 'Snap Dragon Lily',
     hp: 8,
@@ -785,6 +809,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'voss',
+    cardId: 'DC-004C-EN',
     printings: [altPrinting('DC-004A-EN', 'Voss')],
     order: 490,
     name: 'Voss',
@@ -801,6 +826,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'yvelette',
+    cardId: 'SC-020C-EN',
     order: 200,
     name: 'Yvelette',
     hp: 8,
@@ -816,6 +842,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'benobasa',
+    cardId: 'SC-021C-EN',
     order: 210,
     name: 'Benobasa',
     hp: 13,
@@ -831,6 +858,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'bliztron',
+    cardId: 'SC-022C-EN',
     order: 220,
     name: 'Bliztron',
     hp: 9,
@@ -846,6 +874,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'burger-808',
+    cardId: 'MB-003C-EN',
     order: 500,
     name: 'Burger 808',
     hp: 15,
@@ -861,6 +890,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ezplosio',
+    cardId: 'SC-023C-EN',
     order: 230,
     name: 'Ezplosio',
     hp: 7,
@@ -876,6 +906,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'hungry-and-hounds',
+    cardId: 'MB-002C-EN',
     printings: [altPrinting('MB-002A-EN', 'Hungry & Hounds')],
     order: 510,
     name: 'Hungry & Hounds',
@@ -892,6 +923,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'overtoad',
+    cardId: 'SC-024C-EN',
     printings: [altPrinting('SC-024A-EN', 'Overtoad')],
     order: 240,
     name: 'Overtoad',
@@ -908,6 +940,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'ritz',
+    cardId: 'MB-004C-EN',
     order: 520,
     name: 'Ritz',
     hp: 10,
@@ -923,6 +956,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'roxie-the-mallet',
+    cardId: 'SC-025C-EN',
     order: 250,
     name: 'Roxie the Mallet',
     hp: 11,
@@ -938,6 +972,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'sansho',
+    cardId: 'MB-001C-EN',
     order: 530,
     name: 'Sansho',
     hp: 9,
@@ -953,6 +988,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'scrapper',
+    cardId: 'SC-026C-EN',
     order: 260,
     name: 'Scrapper',
     hp: 9,
@@ -968,6 +1004,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'tonk0r',
+    cardId: 'SC-027C-EN',
     order: 270,
     name: 'Tonk0r',
     hp: 9,
@@ -983,6 +1020,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'twisted-6',
+    cardId: 'SC-028C-EN',
     printings: [altPrinting('SC-028A-EN', 'Twisted-6'), altPrinting('SC-028B-EN', 'Twisted-6', MIDDARA('Remi'))],
     order: 280,
     name: 'Twisted-6',
@@ -999,6 +1037,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'white-noise',
+    cardId: 'SC-029C-EN',
     order: 290,
     name: 'White Noise',
     hp: 13,
@@ -1014,6 +1053,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'zaximus-defender',
+    cardId: 'SC-030C-EN',
     order: 300,
     name: 'Zaximus Defender',
     hp: 8,
@@ -1029,6 +1069,7 @@ export const characters: Character[] = [
   }),
   character({
     id: '101',
+    cardId: 'SC-031C-EN',
     order: 310,
     name: '101',
     hp: 9,
@@ -1044,6 +1085,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'naix',
+    cardId: 'SC-032C-EN',
     printings: [altPrinting('SC-032A-EN', '/naix')],
     order: 320,
     name: '/naix',
@@ -1060,6 +1102,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'archidex',
+    cardId: 'SC-033C-EN',
     order: 330,
     name: 'Archidex',
     hp: 9,
@@ -1075,6 +1118,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'broker',
+    cardId: 'MQ-001C-EN',
     order: 540,
     name: 'Broker',
     hp: 8,
@@ -1090,6 +1134,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'cosma',
+    cardId: 'SC-034C-EN',
     order: 340,
     name: 'Cosma',
     hp: 13,
@@ -1105,6 +1150,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'grandmaster-hash',
+    cardId: 'SC-036C-EN',
     order: 350,
     name: 'Grandmaster Hash',
     hp: 10,
@@ -1120,6 +1166,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'joi',
+    cardId: 'SC-037C-EN',
     printings: [altPrinting('SC-037A-EN', 'Joi')],
     order: 360,
     name: 'Joi',
@@ -1136,6 +1183,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'mastermind',
+    cardId: 'MQ-002C-EN',
     printings: [altPrinting('MQ-002A-EN', 'Mastermind')],
     order: 550,
     name: 'Mastermind',
@@ -1152,6 +1200,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'null-constructor',
+    cardId: 'SC-038C-EN',
     order: 370,
     name: 'Null Constructor',
     hp: 10,
@@ -1167,6 +1216,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'que3n',
+    cardId: 'MQ-003C-EN',
     order: 560,
     name: 'Que3n',
     hp: 9,
@@ -1182,6 +1232,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'sector-probe',
+    cardId: 'SC-039C-EN',
     order: 380,
     name: 'Sector Probe',
     hp: 10,
@@ -1197,6 +1248,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'the-host',
+    cardId: 'MQ-004C-EN',
     order: 570,
     name: 'The Host',
     hp: 11,
@@ -1212,6 +1264,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'tori-daiyu',
+    cardId: 'SC-035C-EN',
     order: 390,
     name: 'Tori-Daiyu',
     hp: 10,
@@ -1227,6 +1280,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'zakhi',
+    cardId: 'SC-040C-EN',
     printings: [altPrinting('SC-040A-EN', 'Zakhi', MIDDARA('Zeke'))],
     order: 400,
     name: 'Zakhi',
@@ -1243,6 +1297,7 @@ export const characters: Character[] = [
   }),
   character({
     id: 'lux',
+    cardId: 'SC-041C-EN',
     order: 410,
     name: 'LuX',
     hp: 9,

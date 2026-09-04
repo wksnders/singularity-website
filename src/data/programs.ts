@@ -21,7 +21,6 @@
         set's cards continue where the first stopped.
    ========================================================================== */
 
-import { CARD_ID, FACE_ID } from './cardIds';
 import type { Program, SetCode } from './types';
 
 const PROGRAM_ARTIST = 'Josh Bruce';
@@ -33,16 +32,23 @@ export const CARD_WIDTHS = { avif: [420, 840, 1260, 1680], webp: [420, 840] };
  * The <img> fallback, not the file most readers get — those pick a rung.
  * null for a card with no printed id, which is a card with no face.
  */
-export const cardFace = (dataId: string): string | null =>
-  hasCardFace(dataId) ? `/cards/${CARD_ID[dataId]}-840.webp` : null;
+/* Printed is not the same as scanned. These four LuX Vault cards exist and
+   carry ids; no master was ever exported for them, so they have no face. */
+const WITHOUT_FACE = new Set(['SC-181P-EN', 'SC-182P-EN', 'SC-183P-EN', 'SC-184P-EN']);
 
-/** Printed is not the same as scanned — four LuX Vault cards have no master. */
-export const hasCardFace = (dataId: string): boolean => FACE_ID.has(CARD_ID[dataId]);
+export const hasCardFace = (cardId: string): boolean => !WITHOUT_FACE.has(cardId);
+
+/** The <img> fallback, not the file most readers get — those pick a rung. */
+export const cardFace = (cardId: string): string | null =>
+  hasCardFace(cardId) ? `/cards/${cardId}-840.webp` : null;
 
 /** A card as written down. Id, art and reveal state are mechanical and are
     filled in by `brandCards`, so they cannot drift per entry. */
 interface CardText {
   name: string;
+  /** Printed bottom-right on the card. Transcribed, never derived. Absent on a
+      parked card, which is why `brandCards` takes CardedText and not this. */
+  cardId?: string;
   /** Printed type line, without the sub-type. */
   type: string;
   /** "Totem", "Tag", "Food", "Mask", "Scroll". Absent on most cards. */
@@ -61,15 +67,18 @@ interface CardText {
  * previous group's `.length`, never a literal: a literal goes stale the moment
  * a card is added to the earlier set, and collides two ids silently.
  */
+/** A card that ships: it has been printed, so it has an id. */
+type CardedText = CardText & { cardId: string };
+
 const brandCards = (
   brandId: string,
   set: SetCode,
-  cards: CardText[],
+  cards: CardedText[],
   start = 0,
 ): Program[] =>
   cards.map((card, index) => ({
     id: `${brandId}-${String(start + index + 1).padStart(2, '0')}`,
-    cardId: CARD_ID[`${brandId}-${String(start + index + 1).padStart(2, '0')}`] ?? null,
+    cardId: card.cardId,
     brandId,
     name: card.name,
     cost: String(card.cost),
@@ -84,15 +93,16 @@ const brandCards = (
        `src: null` draws the placeholder frame until the files land. */
     art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
     cardArt: {
-      src: cardFace(`${brandId}-${String(start + index + 1).padStart(2, '0')}`),
+      src: cardFace(card.cardId),
       alt: `${card.name} card`,
       artist: PROGRAM_ARTIST,
     },
   }));
 
-const scrapBrigade: CardText[] = [
+const scrapBrigade: CardedText[] = [
   {
     name: 'Armor Up',
+    cardId: 'SC-157P-EN',
     type: 'Command',
     cost: 4,
     rules: ['Add 2 armor to each active character in target squad.'],
@@ -100,6 +110,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Rocket Crush',
+    cardId: 'SC-158P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 2 [P]. This character may remove 1 armor to deal 4 [P] instead.'],
@@ -107,6 +118,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Pass the Plate, Mate',
+    cardId: 'SC-159P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Add 2 armor to target character. When this program is used to reset, gain 1 armor.'],
@@ -114,6 +126,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Defrag',
+    cardId: 'SC-160P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Remove X armor from friendly characters, then deal X [P].'],
@@ -121,6 +134,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Scrap and Weld',
+    cardId: 'SC-161P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Redistribute armor in any way between friendly active characters.'],
@@ -128,6 +142,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Insta-mesh',
+    cardId: 'SC-162P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['[RCT]: When this character takes X damage, they gain X armor.'],
@@ -135,6 +150,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Mechanize',
+    cardId: 'SC-163P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['When this character activates a command, they gain 1 armor before that command resolves.'],
@@ -142,6 +158,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Forcefield of BOOM!',
+    cardId: 'SC-164P-EN',
     type: 'Patch: Self',
     cost: 7,
     rules: [
@@ -152,6 +169,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Crisis Engine',
+    cardId: 'SC-165P-EN',
     type: 'Patch: Self',
     cost: 5,
     rules: [
@@ -162,6 +180,7 @@ const scrapBrigade: CardText[] = [
   },
   {
     name: 'Magnetic Core',
+    cardId: 'SC-166P-EN',
     type: 'Patch: Any',
     cost: 4,
     rules: [
@@ -172,9 +191,10 @@ const scrapBrigade: CardText[] = [
   },
 ];
 
-const benobasasFist: CardText[] = [
+const benobasasFist: CardedText[] = [
   {
     name: 'Bass Drop Jutsu',
+    cardId: 'SC-057P-EN',
     type: 'Command',
     cost: 6,
     rules: ['Target squad loses 3 [H].'],
@@ -182,6 +202,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Dragon Feet',
+    cardId: 'SC-058P-EN',
     type: 'Command',
     cost: 4,
     rules: ['Deal 3 [P], then deal 2 [P] to a different target.'],
@@ -189,6 +210,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Stone Hands',
+    cardId: 'SC-059P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 2 [P], then deal 1 [P] to a different target.'],
@@ -196,6 +218,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Break Beats',
+    cardId: 'SC-060P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Deal 1 [P], then deal 1 [P] to a different target.'],
@@ -203,6 +226,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Combo Breaker',
+    cardId: 'SC-061P-EN',
     type: 'Patch: Ally',
     cost: 3,
     rules: ['When this character takes damage, you may add it to this instead, then if the damage on this patch is 3 or more, unattach it.'],
@@ -210,6 +234,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Show me your Moves',
+    cardId: 'SC-062P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['While this character has 7 or more [H], they have taunt.'],
@@ -217,6 +242,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: "Monarchy's Rumble",
+    cardId: 'SC-063P-EN',
     type: 'Patch: Any',
     cost: 6,
     rules: [
@@ -227,6 +253,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Pump it Up',
+    cardId: 'SC-064P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: [
@@ -237,6 +264,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: "Benobasa's Block!",
+    cardId: 'SC-065P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: ['[RCT]: When a command or [EXE] effect is activated or used, that command or [EXE] effect gets -4 [P] and -4 [A].'],
@@ -244,6 +272,7 @@ const benobasasFist: CardText[] = [
   },
   {
     name: 'Ora Ora',
+    cardId: 'SC-066P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['While this character has no other attached patches, they have taunt.'],
@@ -251,9 +280,10 @@ const benobasasFist: CardText[] = [
   },
 ];
 
-const chaosVerve: CardText[] = [
+const chaosVerve: CardedText[] = [
   {
     name: 'Sonic Flare',
+    cardId: 'SC-077P-EN',
     type: 'Command',
     cost: 7,
     rules: ['Target squad takes 1 [P], then suspend that squad. You may treat this as cost 1 when using it to reset.'],
@@ -261,6 +291,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Hyperwave',
+    cardId: 'SC-078P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Suspend the character with the lowest [H] in target squad. You may choose between ties.'],
@@ -268,6 +299,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Disco Hand Grenade',
+    cardId: 'SC-079P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Suspend target character, or deal 4 [A] to target suspended character.'],
@@ -275,6 +307,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Pyrotechnix',
+    cardId: 'SC-080P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Deal 1 [A] and 1 [P] to target character.'],
@@ -282,6 +315,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: '2nd Encore',
+    cardId: 'SC-081P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 1 [P] to each suspended character in target squad.'],
@@ -289,6 +323,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Amplitude',
+    cardId: 'SC-082P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 1 [A] to target enemy character. If the target is suspended, gain 1 virtual [RAM].'],
@@ -296,6 +331,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Psycho Graffiti',
+    cardId: 'SC-083P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['Each turn, the first command this character activates that targets a suspended character gets +1 [P] and +1 [A].'],
@@ -303,6 +339,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Doorway to Dreamland',
+    cardId: 'SC-084P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: [
@@ -313,6 +350,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: "Baq's Battery Backpack",
+    cardId: 'SC-085P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['[EXE]: Suspend this character, then gain 2 virtual [RAM].'],
@@ -320,6 +358,7 @@ const chaosVerve: CardText[] = [
   },
   {
     name: 'Infinite Youth',
+    cardId: 'SC-086P-EN',
     type: 'Patch: Self',
     cost: 1,
     rules: ['[EXE]: Gain 1 virtual [RAM].'],
@@ -327,9 +366,10 @@ const chaosVerve: CardText[] = [
   },
 ];
 
-const megaByte: CardText[] = [
+const megaByte: CardedText[] = [
   {
     name: 'Regurgitation',
+    cardId: 'MB-006P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Remove X byte tokens from patches attached to friendly characters, then deal X + 1 [P].'],
@@ -337,6 +377,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Second Helping',
+    cardId: 'MB-007P-EN',
     type: 'Command',
     cost: 2,
     rules: ['You may spend X additional [RAM] to attach up to X crashed Food patches to active characters in this squad.'],
@@ -344,6 +385,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Lunch Break',
+    cardId: 'MB-008P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: ['When this character consumes, this character heals itself by 2 [H]. Unattach this patch and ready this character, then you must swap them if able.'],
@@ -351,6 +393,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Iron Stomach',
+    cardId: 'MB-009P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['Patches attached to friendly characters get cost +1 for each byte token on them.'],
@@ -358,6 +401,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Last Byte',
+    cardId: 'MB-010P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: ['Patches attached to characters in this squad gain consume +1.'],
@@ -365,6 +409,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Shoyu ROM-In',
+    cardId: 'MB-011P-EN',
     type: 'Patch: Self',
     subType: 'Food',
     cost: 2,
@@ -373,6 +418,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Syntactic Sugar',
+    cardId: 'MB-012P-EN',
     type: 'Patch: Ally',
     subType: 'Food',
     cost: 2,
@@ -381,6 +427,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Uba Stew',
+    cardId: 'MB-013P-EN',
     type: 'Patch: Ally',
     subType: 'Food',
     cost: 3,
@@ -389,6 +436,7 @@ const megaByte: CardText[] = [
   },
   {
     name: 'Twisted Tacos',
+    cardId: 'MB-014P-EN',
     type: 'Patch: Ally',
     subType: 'Food',
     cost: 3,
@@ -400,6 +448,7 @@ const megaByte: CardText[] = [
   },
   {
     name: '3x3x3 Burger',
+    cardId: 'MB-015P-EN',
     type: 'Patch: Self',
     subType: 'Food',
     cost: 4,
@@ -411,9 +460,10 @@ const megaByte: CardText[] = [
   },
 ];
 
-const bloomAndNever: CardText[] = [
+const bloomAndNever: CardedText[] = [
   {
     name: 'Witch Dust',
+    cardId: 'SC-067P-EN',
     type: 'Command',
     cost: 5,
     rules: ['Heal target squad by 1 [H], then deal X [C]. X is equal to the amount of damage healed by this program.'],
@@ -421,6 +471,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Vines of Uruth',
+    cardId: 'SC-068P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Heal 2 [H].'],
@@ -428,6 +479,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Caustic Tincture',
+    cardId: 'SC-069P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Unattach target patch with cost 2 or less.'],
@@ -435,6 +487,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Tea of Discussion',
+    cardId: 'SC-070P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Heal 1 [H].'],
@@ -442,6 +495,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Acidic Core',
+    cardId: 'SC-071P-EN',
     type: 'Patch: Any',
     cost: 5,
     rules: ['During Update, this character takes 4 [C].'],
@@ -449,6 +503,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Fungal Possession',
+    cardId: 'SC-072P-EN',
     type: 'Patch: Any',
     cost: 4,
     rules: ["Programs on top of this character's stack may be activated by any other character."],
@@ -456,6 +511,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Lotus Hex',
+    cardId: 'SC-073P-EN',
     type: 'Patch: Any',
     cost: 4,
     rules: ['During Initialize, unattach a patch other than Lotus Hex from this character. If you cannot, this character takes 2 [C].'],
@@ -463,6 +519,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Putrid Blossoms',
+    cardId: 'SC-074P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['When this character activates a program they take 1 [C].'],
@@ -470,6 +527,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Viral Venom',
+    cardId: 'SC-075P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['During Update, this character takes 1 [C].'],
@@ -477,6 +535,7 @@ const bloomAndNever: CardText[] = [
   },
   {
     name: 'Catalyst',
+    cardId: 'SC-076P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: [
@@ -487,9 +546,10 @@ const bloomAndNever: CardText[] = [
   },
 ];
 
-const arkTotem: CardText[] = [
+const arkTotem: CardedText[] = [
   {
     name: 'Winds of Purity',
+    cardId: 'SC-047P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Unattach target patch with cost 3 + X or less. X is equal to all your active Totems.'],
@@ -497,6 +557,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'F0x Totem',
+    cardId: 'SC-048P-EN',
     type: 'Patch: Self',
     subType: 'Totem',
     cost: 1,
@@ -508,6 +569,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'H4re Totem',
+    cardId: 'SC-049P-EN',
     type: 'Patch: Self',
     subType: 'Totem',
     cost: 1,
@@ -519,6 +581,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'R4ven Totem',
+    cardId: 'SC-050P-EN',
     type: 'Patch: Self',
     subType: 'Totem',
     cost: 1,
@@ -530,6 +593,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Beaches of the Moon',
+    cardId: 'SC-051P-EN',
     type: 'Patch: Any',
     cost: 5,
     rules: [
@@ -540,6 +604,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Silt of the Swamp',
+    cardId: 'SC-052P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: [
@@ -550,6 +615,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Timber of the Taiga',
+    cardId: 'SC-053P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: [
@@ -560,6 +626,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Dust of the Desert',
+    cardId: 'SC-054P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: [
@@ -570,6 +637,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Sunlight of the Savanna',
+    cardId: 'SC-055P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: [
@@ -580,6 +648,7 @@ const arkTotem: CardText[] = [
   },
   {
     name: 'Drifting Gardens',
+    cardId: 'SC-056P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: [
@@ -590,9 +659,10 @@ const arkTotem: CardText[] = [
   },
 ];
 
-const feralesque: CardText[] = [
+const feralesque: CardedText[] = [
   {
     name: 'Natural Order',
+    cardId: 'SC-117P-EN',
     type: 'Command',
     cost: 3,
     rules: ['You may spend [RAM] equal to the number of active player squads. If you do, unattach all patches.'],
@@ -600,6 +670,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Ferocious Bite',
+    cardId: 'SC-118P-EN',
     type: 'Command',
     cost: 4,
     rules: ['The highest [H] character in target squad takes 5 [P]. You may choose between ties.'],
@@ -607,6 +678,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Maul',
+    cardId: 'SC-119P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 3 [P]. Then if the target has damage equal to or greater than its max [H], you may return this to the top of its origin stack.'],
@@ -614,6 +686,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Hunt the Weak',
+    cardId: 'SC-120P-EN',
     type: 'Command',
     cost: 1,
     rules: ['The lowest [H] character in target enemy squad takes 1 [P]. You may choose between ties. If that character has 4 or less [H], they take 2 [P] instead.'],
@@ -621,6 +694,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Irritant Scratch',
+    cardId: 'SC-121P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 1 [C].'],
@@ -628,6 +702,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Scarification',
+    cardId: 'SC-122P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: ['[RCT]: When this character takes damage, if their [H] is greater than 0, this character heals itself by 3 [H].'],
@@ -635,6 +710,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Ravening Swarm',
+    cardId: 'SC-123P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ["The first time this character takes [C] damage each turn, all active damaged characters in this character's squad take 1 [C], including this character."],
@@ -642,6 +718,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Tooth and Claw',
+    cardId: 'SC-124P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['If this character is damaged, this character cannot deactivate.'],
@@ -649,6 +726,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Counter Chomp',
+    cardId: 'SC-125P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['[RCT]: When a damage-dealing command targeting a friendly character has resolved, deal 3 [P] to the character that activated that command.'],
@@ -656,6 +734,7 @@ const feralesque: CardText[] = [
   },
   {
     name: 'Dive for the Bushes',
+    cardId: 'SC-126P-EN',
     type: 'Patch: Self',
     cost: 1,
     rules: ['[RCT]: When a command targets this character, choose a different friendly target for that command.'],
@@ -663,9 +742,10 @@ const feralesque: CardText[] = [
   },
 ];
 
-const deCrypt: CardText[] = [
+const deCrypt: CardedText[] = [
   {
     name: 'Corroded Stim Module',
+    cardId: 'DC-006P-EN',
     type: 'Command',
     cost: 2,
     rules: [
@@ -676,6 +756,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Decrepit Amulet',
+    cardId: 'DC-007P-EN',
     type: 'Command',
     cost: 2,
     rules: [
@@ -686,6 +767,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Essence Drain',
+    cardId: 'DC-008P-EN',
     type: 'Command',
     cost: 3,
     rules: [
@@ -696,6 +778,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Memory Failure',
+    cardId: 'DC-009P-EN',
     type: 'Command',
     cost: 2,
     rules: [
@@ -706,6 +789,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Necrotic Implement',
+    cardId: 'DC-010P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: [
@@ -716,6 +800,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Virus Injection',
+    cardId: 'DC-011P-EN',
     type: 'Patch: Any',
     cost: 7,
     rules: [
@@ -726,6 +811,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Shisha Sosei',
+    cardId: 'DC-012P-EN',
     type: 'Patch: Crashed Ally',
     cost: 3,
     rules: [
@@ -736,6 +822,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Deadly Transmission',
+    cardId: 'DC-013P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['During Update, this character takes 1 [C], then attach this to the enemy character with the most damage.'],
@@ -743,6 +830,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: 'Derelict Countermeasure',
+    cardId: 'DC-014P-EN',
     type: 'Patch: Self',
     cost: 4,
     rules: ['Undead characters may activate programs at cost -2 to a minimum of 1.'],
@@ -750,6 +838,7 @@ const deCrypt: CardText[] = [
   },
   {
     name: "Charon's Gate",
+    cardId: 'DC-015P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['During Update, you may move one damage from any target character to any friendly character.'],
@@ -757,9 +846,10 @@ const deCrypt: CardText[] = [
   },
 ];
 
-const infiniteDivine: CardText[] = [
+const infiniteDivine: CardedText[] = [
   {
     name: 'Transference',
+    cardId: 'SC-137P-EN',
     type: 'Command',
     cost: 8,
     rules: ['Exchange the damage on two target characters. If this character has 2 or less [H], this gets cost -4.'],
@@ -767,6 +857,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Procession of Stars',
+    cardId: 'SC-138P-EN',
     type: 'Command',
     cost: 6,
     rules: ['Deal 1 [P] three times. You may choose a different target for each.'],
@@ -774,6 +865,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Echoing Hymn',
+    cardId: 'SC-139P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Heal X [H]. X is the number of patches attached to the target.'],
@@ -781,6 +873,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Inscrutable Koan',
+    cardId: 'SC-140P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 2 [P]. If the target has damage equal to or greater than its [H], crash this program. Otherwise, heal that character by 2 [H].'],
@@ -788,6 +881,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Izanami Install',
+    cardId: 'SC-141P-EN',
     type: 'Command',
     cost: 1,
     rules: ['You may spend additional [RAM] equal to the cost of target crashed program. If you do, this character activates it.'],
@@ -795,6 +889,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Yin and Yang',
+    cardId: 'SC-142P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 0 [P] or heal 0 [H], then you may spend 1 additional [RAM] to deal 0 [P] or heal 0 [H].'],
@@ -802,6 +897,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Seven Gates Release',
+    cardId: 'SC-143P-EN',
     type: 'Patch: Ally',
     cost: 7,
     rules: [
@@ -812,6 +908,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Nechro Exhauriat',
+    cardId: 'SC-144P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['When this character deals X [P], this character heals itself by X - 1 [H].'],
@@ -819,6 +916,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Cascading Illumination',
+    cardId: 'SC-145P-EN',
     type: 'Patch: Any',
     cost: 1,
     rules: ['[RCT]: When this character is healed by X, heal X [H] to a different target.'],
@@ -826,6 +924,7 @@ const infiniteDivine: CardText[] = [
   },
   {
     name: 'Focus Soul',
+    cardId: 'SC-146P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ['[RCT]: When a command is activated, that command gets +X [P] or +X [H]. X is the number of crashed characters up to a maximum of 4.'],
@@ -833,9 +932,10 @@ const infiniteDivine: CardText[] = [
   },
 ];
 
-const onryokiNoh: CardText[] = [
+const onryokiNoh: CardedText[] = [
   {
     name: 'Hypnotic Hit',
+    cardId: 'SC-147P-EN',
     type: 'Command',
     cost: 7,
     rules: ['Deal 8 [P] to target character, then suspend that character.'],
@@ -843,6 +943,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Folded Steel Strike',
+    cardId: 'SC-148P-EN',
     type: 'Command',
     cost: 4,
     rules: ['Deal 4 [P]. This cannot be modified to have less than 4 [P].'],
@@ -850,6 +951,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: "Re'gine's Retribution",
+    cardId: 'SC-149P-EN',
     type: 'Command',
     cost: 4,
     rules: ['This character loses 2 [H], then deal 5 [P].'],
@@ -857,6 +959,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Bamboo Splitter',
+    cardId: 'SC-150P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Deal 1 [P]. If the target has 11 or more [H], deal 4 [P] instead.'],
@@ -864,6 +967,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Hungering Kunai',
+    cardId: 'SC-151P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 2 [P]. If the target has 4 or less [H], deal 4 [P] instead.'],
@@ -871,6 +975,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Needle Senbon',
+    cardId: 'SC-152P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal X + 2 [P]. X is the number of characters in this squad with stealth.'],
@@ -878,6 +983,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Sensu of Dusk',
+    cardId: 'SC-153P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -888,6 +994,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Flesh for Security',
+    cardId: 'SC-154P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -898,6 +1005,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Oni Shift',
+    cardId: 'SC-155P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: [
@@ -908,6 +1016,7 @@ const onryokiNoh: CardText[] = [
   },
   {
     name: 'Shadow Strike',
+    cardId: 'SC-156P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: [
@@ -918,9 +1027,10 @@ const onryokiNoh: CardText[] = [
   },
 ];
 
-const zodiacReliquary: CardText[] = [
+const zodiacReliquary: CardedText[] = [
   {
     name: 'Muramasa',
+    cardId: 'SC-167P-EN',
     type: 'Command',
     cost: 4,
     rules: ["You may lose 2 max [RAM]. If you do, deal 7 [P]. This program's cost cannot be modified."],
@@ -928,6 +1038,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Spirit Flask',
+    cardId: 'SC-168P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Heal 2 [H], then place a relic token on any target patch.'],
@@ -935,6 +1046,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Astral Tei-Bako',
+    cardId: 'SC-169P-EN',
     type: 'Patch: Ally',
     cost: 4,
     rules: [
@@ -945,6 +1057,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Amulet of Kill Process',
+    cardId: 'SC-170P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -955,6 +1068,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: "Sparrow's Imperial Seal",
+    cardId: 'SC-171P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: ['Other patches attached to this character cannot be targeted.'],
@@ -962,6 +1076,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Tome of Ancient Scripts',
+    cardId: 'SC-172P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -972,6 +1087,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Shining Moon Netsuke',
+    cardId: 'SC-173P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: [
@@ -982,6 +1098,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Skeleton Key',
+    cardId: 'SC-174P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: [
@@ -992,6 +1109,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Temple Bell Kotto',
+    cardId: 'SC-175P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: [
@@ -1002,6 +1120,7 @@ const zodiacReliquary: CardText[] = [
   },
   {
     name: 'Nightshade Needles',
+    cardId: 'SC-176P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: ['[EXE]: Deal 2 [P]. You may remove 1 relic token from target patch attached to a friendly character to give this +2 [P].'],
@@ -1009,9 +1128,10 @@ const zodiacReliquary: CardText[] = [
   },
 ];
 
-const forbiddenArchives: CardText[] = [
+const forbiddenArchives: CardedText[] = [
   {
     name: 'Inkstone',
+    cardId: 'FA-006P-EN',
     type: 'Command',
     cost: 1,
     rules: ['If the total number of patches attached to friendly characters is 3 or more, gain an ink token.'],
@@ -1019,6 +1139,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Shorthand Rec0rd',
+    cardId: 'FA-007P-EN',
     type: 'Command',
     cost: 5,
     rules: [
@@ -1029,6 +1150,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Agile Stroke',
+    cardId: 'FA-008P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -1039,6 +1161,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Stroke of Midnight',
+    cardId: 'FA-009P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: [
@@ -1049,6 +1172,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Dissolution Kana',
+    cardId: 'FA-010P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: [
@@ -1059,6 +1183,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Stroke of Genius',
+    cardId: 'FA-011P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -1069,6 +1194,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: "Engraver's Mark",
+    cardId: 'FA-012P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: [
@@ -1079,6 +1205,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Gilded Cryptek',
+    cardId: 'FA-013P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -1089,6 +1216,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Crackling Stroke',
+    cardId: 'FA-014P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: [
@@ -1099,6 +1227,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: "Revisionist's Stroke",
+    cardId: 'FA-015P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: [
@@ -1109,6 +1238,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'The Ironclad Chronicle',
+    cardId: 'FA-016P-EN',
     type: 'Command',
     subType: 'Scroll',
     cost: 3,
@@ -1120,6 +1250,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Codex of the Lost',
+    cardId: 'FA-017P-EN',
     type: 'Command',
     subType: 'Scroll',
     cost: 3,
@@ -1131,6 +1262,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Rec0rd Totem',
+    cardId: 'FA-018P-EN',
     type: 'Patch: Self',
     subType: 'Scroll Totem',
     cost: 3,
@@ -1142,6 +1274,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'Tale of Flowing Water',
+    cardId: 'FA-019P-EN',
     type: 'Command',
     subType: 'Scroll',
     cost: 3,
@@ -1153,6 +1286,7 @@ const forbiddenArchives: CardText[] = [
   },
   {
     name: 'The Forgotten Truth',
+    cardId: 'FA-020P-EN',
     type: 'Command',
     subType: 'Scroll',
     cost: 3,
@@ -1164,9 +1298,10 @@ const forbiddenArchives: CardText[] = [
   },
 ];
 
-const dataNation: CardText[] = [
+const dataNation: CardedText[] = [
   {
     name: 'Holo Kingdom',
+    cardId: 'SC-097P-EN',
     type: 'Command',
     cost: 6,
     rules: ["This character may immediately activate the top program of up to two tagged characters' stacks at cost 0 if those progams are cost X or less. X is your max [RAM] to a maximum of 7."],
@@ -1174,6 +1309,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Bit Trail',
+    cardId: 'SC-098P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 3 [A]. If the target is tagged, deal 4 [A] instead.'],
@@ -1181,6 +1317,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Hypothetical Scenario',
+    cardId: 'SC-099P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 0 [A]. If the target is tagged, deal 2 [A] instead.'],
@@ -1188,6 +1325,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Nexus Compiler',
+    cardId: 'SC-100P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Gain 1 virtual [RAM] for every tagged character up to a maximum of 2.'],
@@ -1195,6 +1333,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Systems Analysis',
+    cardId: 'SC-101P-EN',
     type: 'Command',
     cost: 1,
     rules: ["You may spend additional [RAM] equal to the cost of a command on top of target character's stack. If you do, this gains the effects of that command until it resolves. Select new valid targets for the effect, ignoring any cost modification."],
@@ -1202,6 +1341,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Data Tunnel',
+    cardId: 'SC-102P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['When this character targets a tagged character with a command, that command gets +2 [P] and +1 [A], then unattach all tags on all targeted characters.'],
@@ -1209,6 +1349,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Cryptographic Hex',
+    cardId: 'SC-103P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['This character cannot use [EXE] or [RCT] effects.'],
@@ -1216,6 +1357,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'TAG Theta',
+    cardId: 'SC-104P-EN',
     type: 'Patch: Any',
     subType: 'Tag',
     cost: 1,
@@ -1227,6 +1369,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'TAG Omega',
+    cardId: 'SC-105P-EN',
     type: 'Patch: Any',
     subType: 'Tag',
     cost: 1,
@@ -1238,6 +1381,7 @@ const dataNation: CardText[] = [
   },
   {
     name: 'Mirror Drive',
+    cardId: 'SC-106P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: ['[EXE]: Copy the [EXE] effect of target patch.'],
@@ -1245,9 +1389,10 @@ const dataNation: CardText[] = [
   },
 ];
 
-const hostileRewrite: CardText[] = [
+const hostileRewrite: CardedText[] = [
   {
     name: 'Internal Combustion',
+    cardId: 'SC-127P-EN',
     type: 'Command',
     cost: 6,
     rules: ['Deal 7 [A].'],
@@ -1255,6 +1400,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Hostile Conscription',
+    cardId: 'SC-128P-EN',
     type: 'Command',
     cost: 5,
     rules: ['Unattach target patch, then attach it to a different character ignoring any attachment restrictions.'],
@@ -1262,6 +1408,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Binary Dissonance',
+    cardId: 'SC-129P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Deal 2X [P]. X is the number of patches attached to the target.'],
@@ -1269,6 +1416,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Tear The Core',
+    cardId: 'SC-130P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Unattach target patch with cost 3 or less, then the character it was attached to takes X [P]. X is the cost of the target patch.'],
@@ -1276,6 +1424,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Spyder Virus',
+    cardId: 'SC-131P-EN',
     type: 'Patch: Any',
     cost: 5,
     rules: [
@@ -1286,6 +1435,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Overclock',
+    cardId: 'SC-132P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['Commands this character activates get cost -1 to a minimum of 1. When this patch is unattached, suspend this character.'],
@@ -1293,6 +1443,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Polar Flip',
+    cardId: 'SC-133P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['If this character has not taken damage this turn and would be healed by X [H], they take X [A] instead.'],
@@ -1300,6 +1451,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Sabotage',
+    cardId: 'SC-134P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ["When this character resolves a program, they lose X [H] and become suspended, then unattach this. X is that program's cost."],
@@ -1307,6 +1459,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Underclock',
+    cardId: 'SC-135P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['Commands this character activates get cost +1.'],
@@ -1314,6 +1467,7 @@ const hostileRewrite: CardText[] = [
   },
   {
     name: 'Kill Switch',
+    cardId: 'SC-136P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: ['When this character becomes suspended they take 3 [A], then unattach this.'],
@@ -1321,9 +1475,10 @@ const hostileRewrite: CardText[] = [
   },
 ];
 
-const endlessChain: CardText[] = [
+const endlessChain: CardedText[] = [
   {
     name: 'Memory Scream',
+    cardId: 'SC-107P-EN',
     type: 'Command',
     cost: 3,
     rules: ["Deal X [A]. X is the cost of the top program on target character's stack to a maximum of 9."],
@@ -1331,6 +1486,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Rotation 13',
+    cardId: 'SC-108P-EN',
     type: 'Command',
     cost: 3,
     rules: ["You may reorder target character's stack. When this targets a friendly character, it gets cost -1. When this resolves, return it to any position in its origin stack."],
@@ -1338,6 +1494,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Taze Mind',
+    cardId: 'SC-109P-EN',
     type: 'Command',
     cost: 3,
     rules: ['Cycle target character. If the cycled program has a cost of 2 or less, deal 3 [A] to that character.'],
@@ -1345,6 +1502,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Channel: RAW',
+    cardId: 'SC-110P-EN',
     type: 'Command',
     cost: 1,
     rules: ['You may spend X additional [RAM], then deal X [A].'],
@@ -1352,6 +1510,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Feedback Matrix',
+    cardId: 'SC-111P-EN',
     type: 'Patch: Any',
     cost: 4,
     rules: ['The first time each character is cycled each turn, they take 2 [A].'],
@@ -1359,6 +1518,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Domination Protocol',
+    cardId: 'SC-112P-EN',
     type: 'Patch: Any',
     cost: 4,
     rules: [
@@ -1369,6 +1529,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Ego Shackle',
+    cardId: 'SC-113P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: [
@@ -1379,6 +1540,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Razor Wire',
+    cardId: 'SC-114P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['Whenever this character would deactivate they take 4 [A] before deactivation.'],
@@ -1386,6 +1548,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Mutex',
+    cardId: 'SC-115P-EN',
     type: 'Patch: Any',
     cost: 2,
     rules: [
@@ -1396,6 +1559,7 @@ const endlessChain: CardText[] = [
   },
   {
     name: 'Spirit Chain',
+    cardId: 'SC-116P-EN',
     type: 'Patch: Any',
     cost: 1,
     rules: ['This character treats programs as cost +2 when resetting. When this character resets, unattach this.'],
@@ -1403,9 +1567,10 @@ const endlessChain: CardText[] = [
   },
 ];
 
-const masquerade: CardText[] = [
+const masquerade: CardedText[] = [
   {
     name: 'Danse Macabre',
+    cardId: 'MQ-006P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: [
@@ -1416,6 +1581,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Grand Ball',
+    cardId: 'MQ-007P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ["When an enemy character resolves a [MSK] effect during their Activation phase, you may place that Mask on the bottom of target enemy character's stack if they have not activated that Mask this turn."],
@@ -1423,6 +1589,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Mask of Endless Revelry',
+    cardId: 'MQ-008P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1434,6 +1601,7 @@ const masquerade: CardText[] = [
   },
   {
     name: "Mask of Selecta's Purge",
+    cardId: 'MQ-009P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1445,6 +1613,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Mask of the Silent Name',
+    cardId: 'MQ-010P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1456,6 +1625,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Mask of Broken Cephalons',
+    cardId: 'MQ-011P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1467,6 +1637,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Mask of the Demon Machine',
+    cardId: 'MQ-012P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1478,6 +1649,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Mask of Tabula Rasa',
+    cardId: 'MQ-013P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1489,6 +1661,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Tempting Invitation',
+    cardId: 'MQ-014P-EN',
     type: 'Command',
     cost: 3,
     rules: ["Deal X - 1 [A]. X is equal to the number of programs in the target character's stack."],
@@ -1496,6 +1669,7 @@ const masquerade: CardText[] = [
   },
   {
     name: 'Drifting Shadows',
+    cardId: 'MQ-015P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['When this character is targeted by a command, [EXE] effect, or [RCT] effect, cancel that program, then unattach this patch.'],
@@ -1503,9 +1677,10 @@ const masquerade: CardText[] = [
   },
 ];
 
-const commonCore: CardText[] = [
+const commonCore: CardedText[] = [
   {
     name: 'Decode',
+    cardId: 'SC-087P-EN',
     type: 'Command',
     cost: 4,
     rules: ['Unattach target patch or patches with a total cost 4 of or less. You may treat this as cost 2 when using it to reset.'],
@@ -1513,6 +1688,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Daze Memory',
+    cardId: 'SC-088P-EN',
     type: 'Command',
     cost: 4,
     rules: ['Suspend target character.'],
@@ -1520,6 +1696,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'End Process',
+    cardId: 'SC-089P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Cycle target character.'],
@@ -1527,6 +1704,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Jab',
+    cardId: 'SC-090P-EN',
     type: 'Command',
     cost: 2,
     rules: ['Deal 2 [P].'],
@@ -1534,6 +1712,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Backhand',
+    cardId: 'SC-091P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 1 [P].'],
@@ -1541,6 +1720,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Bit Shift',
+    cardId: 'SC-092P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Deal 1 [A].'],
@@ -1548,6 +1728,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Trim the Line',
+    cardId: 'SC-093P-EN',
     type: 'Command',
     cost: 1,
     rules: ['You may spend X additional [RAM] equal to the cost of target patch. If you do, unattach it.'],
@@ -1555,6 +1736,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Wall Hacks',
+    cardId: 'SC-094P-EN',
     type: 'Patch: Ally',
     cost: 1,
     rules: ['[EXE]: Ready target character that was activated this turn.'],
@@ -1562,6 +1744,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Restore',
+    cardId: 'SC-095P-EN',
     type: 'Patch: Any',
     cost: 3,
     rules: ['[EXE]: This character may heal itself by 3 [H], then suspend this character.'],
@@ -1569,6 +1752,7 @@ const commonCore: CardText[] = [
   },
   {
     name: 'Glitch Pact',
+    cardId: 'SC-096P-EN',
     type: 'Patch: Self',
     cost: 3,
     rules: ['During Initialize, gain 1 virtual [RAM] and this character loses 1 [H].'],
@@ -1576,9 +1760,10 @@ const commonCore: CardText[] = [
   },
 ];
 
-const commonEx1: CardText[] = [
+const commonEx1: CardedText[] = [
   {
     name: 'Back from the Brink',
+    cardId: 'DC-005P-EN',
     type: 'Patch: Ally',
     cost: 3,
     rules: ["[RCT]: When this character would crash due to taking damage, instead, set this character's [H] to 1."],
@@ -1586,6 +1771,7 @@ const commonEx1: CardText[] = [
   },
   {
     name: 'S.P.4.4.M.',
+    cardId: 'MB-005P-EN',
     type: 'Patch: Self',
     subType: 'Food',
     cost: 2,
@@ -1594,6 +1780,7 @@ const commonEx1: CardText[] = [
   },
   {
     name: 'Softcopy Scroll',
+    cardId: 'FA-005P-EN',
     type: 'Command',
     cost: 3,
     rules: [
@@ -1604,6 +1791,7 @@ const commonEx1: CardText[] = [
   },
   {
     name: 'Blank Mask',
+    cardId: 'MQ-005P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 1,
@@ -1614,9 +1802,10 @@ const commonEx1: CardText[] = [
 
 /* Printed set code is LUX. Recorded as CORE, the box these ship in. */
 
-const luxVault: CardText[] = [
+const luxVault: CardedText[] = [
   {
     name: 'Fur L0W',
+    cardId: 'SC-182P-EN',
     type: 'Patch: Ally',
     cost: 2,
     rules: ["[RCT]: When this character's squad is targeted by a command, suspend this character and this character ignores all effects of that command."],
@@ -1625,6 +1814,7 @@ const luxVault: CardText[] = [
   },
   {
     name: 'Cat Tales',
+    cardId: 'SC-181P-EN',
     type: 'Command',
     cost: 1,
     rules: ['Target character loses 1 [H] if they have an attached patch of cost 3 or more.'],
@@ -1633,6 +1823,7 @@ const luxVault: CardText[] = [
   },
   {
     name: 'Nine Lives',
+    cardId: 'SC-183P-EN',
     type: 'Patch: Self',
     cost: 2,
     rules: ["[RCT]: When this character would crash due to taking damage, instead, set this character's [H] to 1."],
@@ -1641,6 +1832,7 @@ const luxVault: CardText[] = [
   },
   {
     name: 'Canned 2NA',
+    cardId: 'SC-184P-EN',
     type: 'Patch: Self',
     subType: 'Food',
     cost: 2,
@@ -1650,6 +1842,7 @@ const luxVault: CardText[] = [
   },
   {
     name: 'MT. Scroll Box',
+    cardId: 'SC-185P-EN',
     type: 'Command',
     cost: 4,
     rules: [
@@ -1661,6 +1854,7 @@ const luxVault: CardText[] = [
   },
   {
     name: 'Mask of the Locked Heart',
+    cardId: 'SC-186P-EN',
     type: 'Command',
     subType: 'Mask',
     cost: 2,
@@ -1703,6 +1897,7 @@ export const allPrograms: Program[] = [
 /* Not one of Forbidden Archives' fifteen cards. */
 export const libraryZone: CardText = {
   name: 'Library',
+  cardId: 'FA-021Z-EN',
   type: 'Zone',
   cost: 0,//doesnt have a cost.
   rules: ['(Reminder: You may have up to 8 ink tokens. Programs activated from the Library return to the Library.)'],

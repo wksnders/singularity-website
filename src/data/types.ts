@@ -76,7 +76,7 @@ export interface Brand {
 
 export interface Program {
   /** The id printed on the card. Every asset URL is named for it. */
-  cardId: string | null;
+  cardId: string;
   id: string;
   brandId: string;
   name: string;
@@ -136,7 +136,7 @@ export interface Printing {
 export interface Character {
   id: string;
   /** The id printed on the card. Every asset URL is named for it. */
-  cardId: string | null;
+  cardId: string;
   /* What "12 of 57" counts. In tens so an insert does not renumber the rest;
      never from the name, which translates and would renumber per locale.
      Display order, not print order — they disagree at Jean O.K. and Tori-Daiyu. */
