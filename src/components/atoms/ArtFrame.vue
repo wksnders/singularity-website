@@ -28,6 +28,7 @@ const props = withDefaults(
     fit?: 'cover' | 'contain';
     sources?: ArtSource[];
     sizes?: string;
+    focal?: { x: number; y: number };
   }>(),
   {
     ratio: '3 / 4',
@@ -42,8 +43,10 @@ const props = withDefaults(
 
 const src = (art: Art) => (art.src ? asset(art.src) : null);
 
-const focal = (art: Art) =>
-  art.focal ? `${art.focal.x * 100}% ${art.focal.y * 100}%` : '50% 50%';
+const objectPosition = (art: Art) => {
+  const point = props.focal ?? art.focal;
+  return point ? `${point.x * 100}% ${point.y * 100}%` : '50% 50%';
+};
 
 const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.radius})`);
 </script>
@@ -65,7 +68,7 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
         :loading="eager ? 'eager' : 'lazy'"
         :fetchpriority="eager ? 'high' : 'auto'"
         decoding="async"
-        :style="{ objectPosition: focal(art), objectFit: fit }"
+        :style="{ objectPosition: objectPosition(art), objectFit: fit }"
       />
     </picture>
     <div v-else class="c-art__empty">

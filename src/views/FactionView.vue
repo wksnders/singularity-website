@@ -23,7 +23,7 @@ import {
   factions,
   programsOfBrand,
 } from '@/data/universe';
-import { asset, to } from '@/site/links';
+import { environmentSources, to } from '@/site/links';
 import type { Brand, Character } from '@/data/types';
 
 const props = defineProps<{ factionId: string }>();
@@ -80,19 +80,12 @@ const brandNote = (brand: Brand) =>
     `${programsOfBrand(brand.id).length} ${t('brand.shelf.cards')}`,
     `${charactersOfBrand(brand.id).length} ${t('brand.shelf.cast')}`,
   ].join(' · ');
-/* The plate ships as three files: a WebP pair the browser picks between by
-   viewport, and the JPEG in `environment.src` that every browser can load.
-   Widths, not densities — the hero is full-bleed, so viewport is what decides. */
-const environmentSources = computed(() => {
-  const id = faction.value?.id;
-  if (!faction.value?.environment || !id) return [];
-  return [
-    {
-      type: 'image/webp',
-      srcset: `${asset(`/environments/${id}-1600.webp`)} 1600w, ${asset(`/environments/${id}-2400.webp`)} 2400w`,
-    },
-  ];
-});
+
+const heroSources = computed(() =>
+  faction.value?.environment ? environmentSources(faction.value.id) : [],
+);
+
+const HERO_FOCAL = { x: 0.5, y: 0.58 };
 </script>
 
 <template>
@@ -103,7 +96,8 @@ const environmentSources = computed(() => {
   >
     <PageHero
       :art="faction.environment"
-      :sources="environmentSources"
+      :sources="heroSources"
+      :focal="HERO_FOCAL"
       :placeholder="t('faction.hero.artPlaceholder')"
       :pending-note="faction.environment ? undefined : t('faction.hero.pending')"
       glow="110% 80% at 76% 8%"

@@ -21,6 +21,7 @@ withDefaults(
     glow?: string;
     minHeight?: string;
     sources?: ArtSource[];
+    focal?: { x: number; y: number };
   }>(),
   {
     placeholder: '[ key art ]',
@@ -34,7 +35,14 @@ withDefaults(
 <template>
   <section class="c-hero" :style="{ minHeight }">
     <div class="c-hero__art" :class="{ 'c-hero__art--drift': drift }">
-      <ArtFrame :art="art" ratio="auto" :placeholder="placeholder" :sources="sources" eager />
+      <ArtFrame
+        :art="art"
+        ratio="auto"
+        :placeholder="placeholder"
+        :sources="sources"
+        :focal="focal"
+        eager
+      />
     </div>
     <div class="c-hero__glow" :style="{ '--glow-origin': glow }" aria-hidden="true" />
     <div class="c-hero__scrim" aria-hidden="true" />

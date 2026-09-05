@@ -210,7 +210,12 @@ export const modes: PlayMode[] = [
   { id: 'incursions', name: 'Incursions (co-op & solo)', players: '1\u20134' },
 ];
 
-const plate = (id: string): Art => ({ src: `/environments/${id}-1600.jpg`, alt: '' });
+/** `focalX` crops the 4/3 shelf tiles only. The Faction hero overrides it. */
+const plate = (id: string, focalX: number): Art => ({
+  src: `/environments/${id}-1600.jpg`,
+  alt: '',
+  focal: { x: focalX, y: 0.5 },
+});
 
 export const factions: Faction[] = [
   {
@@ -220,7 +225,7 @@ export const factions: Faction[] = [
     name: 'Monarchy of Boom',
     tagline: 'Rock, roll, and rebellion.',
     brandIds: ['scrap-brigade', 'benobasas-fist', 'chaos-verve', 'mega-byte'],
-    environment: plate('monarchy-of-boom'),
+    environment: plate('monarchy-of-boom', 0.6),
   },
   {
     id: 'hana-mori',
@@ -229,7 +234,7 @@ export const factions: Faction[] = [
     name: 'Hana Mori',
     tagline: 'The real world is out there, somewhere.',
     brandIds: ['bloom-and-never', 'ark-totem', 'feralesque', 'de-crypt'],
-    environment: plate('hana-mori'),
+    environment: plate('hana-mori', 0.38),
   },
   {
     id: 'celestial-shogunate',
@@ -238,7 +243,7 @@ export const factions: Faction[] = [
     name: 'Celestial Shogunate',
     tagline: 'Let others chase power. We chase preservation.',
     brandIds: ['infinite-divine', 'onryoki-noh', 'zodiac-reliquary', 'forbidden-archives'],
-    environment: plate('celestial-shogunate'),
+    environment: plate('celestial-shogunate', 0.78),
   },
   {
     id: 'subnet-86',
@@ -247,7 +252,7 @@ export const factions: Faction[] = [
     name: 'Subnet 86',
     tagline: 'Prisons have patterns. And patterns crack.',
     brandIds: ['data-nation', 'hostile-rewrite', 'endless-chain', 'masquerade'],
-    environment: plate('subnet-86'),
+    environment: plate('subnet-86', 0.7),
   },
 ];
 

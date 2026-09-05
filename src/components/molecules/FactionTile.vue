@@ -1,16 +1,21 @@
 <script setup lang="ts">
 /**
- * A faction tile: art, a scrim, then the name with its identifier dot and a
- * 2px faction edge. Used on Home and on the Universe hub — the two places the
- * whole faction shelf appears.
+ * A faction tile: the faction's environment plate, a scrim, then the name with
+ * its identifier dot and a 2px faction edge. Used on Home and on the Universe
+ * hub — the two places the whole faction shelf appears.
  */
+import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
-import { to } from '@/site/links';
+import { environmentSources, to } from '@/site/links';
 import type { Faction } from '@/data/types';
 
-defineProps<{ faction: Faction; placeholder: string }>();
+const props = defineProps<{ faction: Faction; placeholder: string }>();
+
+const sources = computed(() =>
+  props.faction.environment ? environmentSources(props.faction.id) : [],
+);
 </script>
 
 <template>
@@ -20,7 +25,13 @@ defineProps<{ faction: Faction; placeholder: string }>();
     :style="{ '--faction': faction.color, '--faction-text': faction.colorText }"
   >
     <span class="c-faction__art">
-      <ArtFrame :art="null" ratio="4 / 3" :placeholder="placeholder" />
+      <ArtFrame
+        :art="faction.environment"
+        ratio="4 / 3"
+        :placeholder="placeholder"
+        :sources="sources"
+        sizes="(min-width: 900px) 360px, 100vw"
+      />
       <span class="c-faction__scrim" aria-hidden="true" />
     </span>
     <span class="c-faction__body">
@@ -56,7 +67,12 @@ defineProps<{ faction: Faction; placeholder: string }>();
 .c-faction__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(var(--rgb-bg-alt), 0.95) 0%, rgba(var(--rgb-bg-alt), 0.1) 70%);
+  background: linear-gradient(
+    to top,
+    var(--color-surface-raised) 0%,
+    rgba(var(--rgb-surface-raised), 0.5) 20%,
+    rgba(var(--rgb-bg), 0.16) 62%
+  );
 }
 
 .c-faction__body {

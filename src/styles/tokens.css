@@ -1,8 +1,8 @@
 /* ============================================================================
    TOKENS — the only place raw values live.
    Identity: "Afterlight" (locked Aug 2026). Six colour ROLES + one accent.
-   Faction colours are NEVER tokens: they are data
-   and arrive as --faction / --faction-text on a scoped element.
+   Faction colours are NEVER tokens: they are data, and arrive as
+   --faction / --faction-text on a scoped element.
    ========================================================================== */
 
 :root {
@@ -17,6 +17,7 @@
   --rgb-bg: 7, 7, 15;
   --rgb-bg-alt: 10, 10, 20;
   --rgb-surface: 16, 16, 28;
+  --rgb-surface-raised: 18, 18, 30;
   --rgb-ink: 242, 241, 250;
   --rgb-accent: 221, 228, 255;
   --rgb-on-accent: 10, 7, 21;

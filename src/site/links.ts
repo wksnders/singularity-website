@@ -102,6 +102,22 @@ export function pictureSources(src: string | null): { type: string; srcset: stri
   }));
 }
 
+/**
+ * Only the JPEG is named in data (`Faction.environment.src`); the WebP pair is
+ * derived from the id here. Upload the three together or the WebP 404s in the
+ * browsers that pick it while the JPEG keeps loading everywhere else.
+ */
+export function environmentSources(id: string): { type: string; srcset: string }[] {
+  return [
+    {
+      type: 'image/webp',
+      srcset: [1600, 2400]
+        .map((w) => `${asset(`/environments/${id}-${w}.webp`)} ${w}w`)
+        .join(', '),
+    },
+  ];
+}
+
 export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
   if (!href) return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
