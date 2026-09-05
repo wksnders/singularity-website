@@ -4,7 +4,7 @@
  * emblem per membership (multi-faction is canon), art owning the right half on
  * desktop, and the brand's programs as a strip that exits to the gallery.
  */
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -23,13 +23,20 @@ import CardPool from '@/components/organisms/CardPool.vue';
 import type { PoolCard, PoolGroup } from '@/components/organisms/CardPool.vue';
 import CardZoom from '@/components/organisms/CardZoom.vue';
 import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
+import StackBuilder, { slotButtonId } from '@/components/organisms/StackBuilder.vue';
+import type { StackSlot } from '@/components/organisms/StackBuilder.vue';
 import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useMediaQuery } from '@/composables/useMediaQuery';
+import { useStack } from '@/composables/useStack';
+import type { StackChange } from '@/composables/useStack';
 import { useZoomUpgrade } from '@/composables/useZoomUpgrade';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import { expandIcons } from '@/site/cardText';
 import type { CardLine } from '@/site/cardText';
+import type { Program } from '@/data/types';
+import { seedsFor, SLOT_KEYS, STACK_SIZE } from '@/data/starterStacks';
+import type { StackSeed } from '@/data/starterStacks';
 import {
   brandById,
   chapters,
@@ -37,7 +44,7 @@ import {
   characters,
   factionById,
   printingsOf,
-  programById,
+  programBySlug,
   programsOfBrand,
   resolvePrinting,
   stories,
@@ -46,8 +53,8 @@ import { pictureSources, outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
 
-/* Wider than the nav's breakpoint: the picker needs room the nav does not. */
-const roomy = useMediaQuery('(min-width: 1120px)');
+/* Where a 320px panel and a 148px-minimum rail still fit side by side. */
+const roomy = useMediaQuery('(min-width: 720px)');
 
 const zoomed = useZoomUpgrade();
 
@@ -56,6 +63,21 @@ const doc = computed(() => getDoc(`universe/characters/${props.characterId}`));
 const hasLore = computed(() => Boolean(docHtml(doc.value)));
 
 const epithet = computed(() => metaString(doc.value, 'epithet', character.value?.epithet ?? ''));
+
+/* The lore's own first paragraph, not a second string to keep in step with it. */
+const loreTeaser = computed(() => {
+  const body = doc.value?.body ?? '';
+  const first = body
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .find((block) => block && !block.startsWith('#') && !block.startsWith('>'));
+  if (!first) return '';
+  return first
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+});
 
 const memberships = computed(() =>
   character.value && Array.isArray(character.value.factionIds)
@@ -153,7 +175,7 @@ const groups = computed<PoolGroup[]>(() =>
       linkLabel: `${t('character.aboutBrand')} ${brand.name} →`,
       note: brand.id === 'common' ? t('character.commonNote') : null,
       cards: programsOfBrand(brand.id).map((program) => ({
-        id: program.id,
+        slug: program.slug,
         name: program.name,
         brandId: brand.id,
         brandName: brand.name,
@@ -166,28 +188,200 @@ const groups = computed<PoolGroup[]>(() =>
 const galleryQuery = computed(() => ({ brand: poolBrands.value.map((b) => b.id).join(',') }));
 
 
+/* ---- BUILD THEIR STACK --------------------------------------------------*/
+
+const poolPrograms = computed(() => poolBrands.value.flatMap((brand) => programsOfBrand(brand.id)));
+
+const seeds = computed(() => seedsFor(props.characterId));
+
+const {
+  programs: stackPrograms,
+  count: stackCount,
+  dropped: stackDropped,
+  seedId: stackSeedId,
+  armed,
+  fromLink: stackFromLink,
+  has: inStack,
+  arm,
+  chooseInto,
+  clearSlot,
+  load: loadStack,
+  clear: clearStack,
+} = useStack({
+  characterId: () => props.characterId,
+  pool: () => poolPrograms.value,
+  seeds: () => seeds.value,
+});
+
+const building = ref(false);
+const say = ref('');
+
+watch(
+  stackFromLink,
+  (linked) => {
+    if (!linked) return;
+    building.value = true;
+    arm();
+  },
+  { immediate: true },
+);
+
+const slotLabel = (index: number) => t(`character.slots.${SLOT_KEYS[index]}`);
+
+const stackSlots = computed<StackSlot[]>(() =>
+  SLOT_KEYS.map((key, index) => ({
+    key,
+    index,
+    label: slotLabel(index),
+    program: stackPrograms.value[index] ?? null,
+    armed: armed.value === index,
+  })),
+);
+
+/* A pick can change the stack in two places at once — one slot filled,
+   another emptied — and this line is the only place either is reported. */
+function announce(change: StackChange | null): void {
+  if (!change) return;
+  const n = stackCount.value;
+  const total = STACK_SIZE;
+  switch (change.kind) {
+    case 'added':
+      say.value = t(
+        change.from === undefined ? 'character.sayAdded' : 'character.sayMoved',
+        {
+          name: change.program.name,
+          slot: slotLabel(change.slot).toLowerCase(),
+          from: change.from === undefined ? '' : slotLabel(change.from).toLowerCase(),
+          n,
+          total,
+        },
+      );
+      break;
+    case 'replaced':
+      say.value = t(
+        change.from === undefined ? 'character.sayReplaced' : 'character.sayMovedOver',
+        {
+          name: change.program.name,
+          gone: change.gone.name,
+          slot: slotLabel(change.slot).toLowerCase(),
+          from: change.from === undefined ? '' : slotLabel(change.from).toLowerCase(),
+          n,
+          total,
+        },
+      );
+      break;
+    case 'removed':
+      say.value = t('character.sayRemoved', {
+        name: change.program.name,
+        slot: slotLabel(change.slot).toLowerCase(),
+        n,
+        total,
+      });
+      break;
+    case 'loaded':
+      say.value = t('character.sayLoaded', {
+        deck: change.seed.deckName,
+        programs: stackPrograms.value
+          .filter((program): program is NonNullable<typeof program> => Boolean(program))
+          .map((program) => program.name)
+          .join(', '),
+      });
+      break;
+    case 'cleared':
+      say.value = t('character.sayCleared', { total });
+      break;
+  }
+}
+
+function toggleBuilding(): void {
+  building.value = !building.value;
+  say.value = '';
+  if (!building.value) {
+    arm(null);
+    return;
+  }
+  /* The panel belongs to the armed slot from here, so a program left selected
+     from browsing would sit in it claiming to be the target. */
+  selected.value = null;
+  arm();
+  void nextTick(() => document.getElementById('stack')?.focus({ preventScroll: true }));
+}
+
+function armSlot(index: number): void {
+  arm(index);
+  void nextTick(() => {
+    const anchor = document.getElementById('pool-top');
+    if (!anchor) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    anchor.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
+  });
+}
+
+function choose(id: string): void {
+  announce(chooseInto(id));
+}
+
+/* The only path that restores focus: the × that was pressed is inside the
+   subtree this removes, so focus would otherwise fall to the body. */
+function clear(index: number): void {
+  announce(clearSlot(index));
+  void nextTick(() =>
+    document.getElementById(slotButtonId(index))?.focus({ preventScroll: true }),
+  );
+}
+
+const putLabel = computed(() =>
+  armed.value === null ? '' : t('character.poolPutIn', { slot: slotLabel(armed.value) }),
+);
+
+function loadSeed(seed: StackSeed): void {
+  announce(loadStack(seed));
+}
+
+
 const selected = ref<PoolCard | null>(null);
 const face = ref<'card' | 'art'>('card');
 const zoomOpen = ref(false);
 
+/* The zoom and the panel must show the same card, and `selected` is not it:
+   while building the panel reads the armed slot. Null is the character's. */
+const zoomSubject = ref<{ program: Program; brandName: string } | null>(null);
+
+function openZoom(program: Program | null, brandName = ''): void {
+  zoomSubject.value = program ? { program, brandName } : null;
+  zoomOpen.value = true;
+}
+
 function pick(card: PoolCard): void {
+  if (building.value) {
+    choose(card.slug);
+    return;
+  }
   selected.value = card;
-  if (!roomy.value) zoomOpen.value = true;
+  const program = programBySlug(card.slug);
+  if (!roomy.value && program) openZoom(program, card.brandName);
 }
 
 function openCharacterCard(): void {
   selected.value = null;
-  zoomOpen.value = true;
+  openZoom(null);
 }
+
+const panelProgram = computed(() => {
+  if (building.value) return armedProgram.value;
+  return selected.value ? programBySlug(selected.value.slug) : null;
+});
+
+const panelBrandName = computed(() => {
+  const program = panelProgram.value;
+  if (!program) return '';
+  return brandById(program.brandId)?.name ?? '';
+});
 
 const detailArt = computed(() => {
   if (selected.value) return selected.value.cardArt;
   return face.value === 'art' ? active.value?.sceneArt : active.value?.cardArt;
 });
-
-const zoomedProgram = computed(() =>
-  selected.value ? programById(selected.value.id) : null,
-);
 
 const detailKicker = computed(() =>
   selected.value
@@ -197,7 +391,42 @@ const detailKicker = computed(() =>
 
 const detailName = computed(() => (selected.value ? selected.value.name : active.value?.name));
 
-const artist = computed(() => detailArt.value?.artist || t('character.artistSlot'));
+/* Per surface, never shared*/
+const artistOf = (art?: { artist?: string | null } | null) =>
+  art?.artist || t('character.artistSlot');
+
+/* ---- THE READING PANEL ---------------------------------------------------*/
+
+const armedProgram = computed(() =>
+  building.value && armed.value !== null ? (stackPrograms.value[armed.value] ?? null) : null,
+);
+
+const panelHasCard = computed(() => !building.value || armedProgram.value !== null);
+
+const panelArt = computed(() => {
+  if (building.value) return armedProgram.value?.cardArt ?? null;
+  return detailArt.value ?? null;
+});
+
+const panelName = computed(() => {
+  if (!building.value) return detailName.value;
+  return armedProgram.value?.name ?? '';
+});
+
+const panelKicker = computed(() => {
+  if (!building.value) return detailKicker.value;
+  const label = armed.value === null ? '' : slotLabel(armed.value);
+  return t('character.panelOfTheStack', { slot: label });
+});
+
+/* Two strings: "replacing what is there" is a lie on an empty slot. */
+const fillingNote = computed(() => {
+  if (armed.value === null) return '';
+  const slot = slotLabel(armed.value).toLowerCase();
+  return armedProgram.value
+    ? t('character.fillingNoteFull', { slot })
+    : t('character.fillingNote', { slot });
+});
 
 const cardLines = computed<CardLine[]>(() => {
   const c = character.value;
@@ -225,7 +454,7 @@ const zoomRows = computed<ZoomRow[]>(() => {
       value: playedBrands.value.map((b) => b.name).join(' · '),
     },
     { label: t('character.rowPrinting'), value: active.value?.label ?? '' },
-    { label: t('character.rowArtist'), value: artist.value },
+    { label: t('character.rowArtist'), value: artistOf(detailArt.value) },
   ];
   if (SHOW_PRINTING_SOURCE && active.value?.source) {
     const licensor = active.value.licensor ? ` · ${active.value.licensor}` : '';
@@ -324,24 +553,16 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
               </div>
             </dl>
 
-            <div class="char__card-row">
-              <CardFace
-                class="char__card-thumb"
-                sizes="72px"
-                :art="active.cardArt"
-                :placeholder="t('character.cardSlot')"
-                :lines="cardLines"
-                :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
-                @select="openCharacterCard()"
-              />
-              <div>
-                <MonoLabel tone="accent">{{ t('character.cardKicker') }}</MonoLabel>
-                <p class="char__card-cta">
-                  <button type="button" class="char__linkish" @click="openCharacterCard()">
-                    {{ t('character.seeCardLarge') }} →
-                  </button>
-                </p>
-              </div>
+            <div class="char__hero-foot">
+              <p v-if="loreTeaser" class="char__lore-teaser">{{ loreTeaser }}</p>
+              <p class="char__hero-exits">
+                <BaseLink v-if="hasLore" :to="{ hash: '#lore' }" class="char__hero-exit">
+                  {{ t('character.continueReading') }} <span aria-hidden="true">↓</span>
+                </BaseLink>
+                <BaseLink :to="{ hash: '#cards' }" class="char__hero-exit">
+                  {{ t('character.seeTheirCard') }} <span aria-hidden="true">↓</span>
+                </BaseLink>
+              </p>
             </div>
           </div>
         </div>
@@ -357,7 +578,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             />
           </div>
           <div class="char__art-foot">
-            <MonoLabel tone="muted">{{ t('character.artBy') }} {{ active.sceneArt.artist || t('character.artistSlot') }}</MonoLabel>
+            <MonoLabel tone="muted">{{ t('character.artBy') }} {{ artistOf(active.sceneArt) }}</MonoLabel>
             <div v-if="printings.length > 1" class="char__printings">
               <MonoLabel tone="faint" as="span">{{ t('character.printings') }}</MonoLabel>
               <div role="group" :aria-label="t('character.printings')" class="char__printing-chips">
@@ -382,73 +603,164 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 
       <section id="cards" tabindex="-1" class="l-band l-band--line-top">
         <div class="l-wrap">
-          <SectionMarker
-            id="cards"
-            :index="1"
-            :total="sectionTotal"
-            :heading="t('character.poolTitle')"
-          />
-          <div class="char__pool-head">
-            <p class="char__pool-note">{{ t('character.poolNote') }}</p>
-            <div class="char__customize">
-              <UiButton :to="to('soon', {}, { hash: '#stack-builder' })">
-                {{ t('character.customize') }} →
-              </UiButton>
-              <MonoLabel tone="muted">{{ t('character.stackLabel') }}</MonoLabel>
-            </div>
+          <div class="char__band-head">
+            <SectionMarker
+              id="cards"
+              :index="1"
+              :total="sectionTotal"
+              :heading="building ? t('character.buildTitle') : t('character.poolTitle')"
+            />
+            <UiButton
+              class="char__customize"
+              :aria-expanded="building"
+              aria-controls="stack"
+              @click="toggleBuilding()"
+            >
+              {{ building ? t('character.customizeDone') : t('character.customize') }}
+              <span aria-hidden="true">{{ building ? '×' : '→' }}</span>
+            </UiButton>
           </div>
 
-          <CardPool :groups="groups" :selected-id="selected?.id ?? null" @select="pick">
+          <p v-if="building" class="char__pool-note">
+            {{ t('character.buildNote', { name }) }}
+            <BaseLink :to="to('learn', {}, { hash: '#paths' })">
+              {{ t('character.buildRulesExit') }} →
+            </BaseLink>
+          </p>
+          <p v-else class="char__pool-note">{{ t('character.poolNote', { name }) }}</p>
+
+          <StackBuilder
+            v-show="building"
+            :slots="stackSlots"
+            :count="stackCount"
+            :seeds="seeds"
+            :seed-id="stackSeedId"
+            :dropped="stackDropped"
+            :say="say"
+            @choose="armSlot"
+            @remove="clear"
+            @load="loadSeed"
+            @clear="announce(clearStack())"
+          >
+            <template #owner>
+              <CardFace
+                sizes="210px"
+                :art="active.cardArt"
+                :placeholder="t('character.cardSlot')"
+                :lines="cardLines"
+                :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
+                @select="openCharacterCard()"
+              >
+                <template #overlay>
+                  <span class="char__zoom-badge" aria-hidden="true">
+                    {{ t('character.enlarge') }}
+                  </span>
+                </template>
+              </CardFace>
+            </template>
+          </StackBuilder>
+
+          <!-- What an armed slot scrolls to; its margin clears the nav. -->
+          <div id="pool-top" class="char__pool-anchor" />
+
+          <CardPool :groups="groups" :selected-id="selected?.slug ?? null" @select="pick">
             <template v-if="roomy" #panel>
               <button
+                v-if="panelHasCard"
                 type="button"
                 class="char__panel-card"
-                :aria-label="`${t('character.enlarge')}: ${detailName}`"
-                @click="zoomOpen = true"
+                :aria-label="`${t('character.enlarge')}: ${panelName}`"
+                @click="openZoom(panelProgram, panelBrandName)"
               >
                 <ArtFrame
-                  :art="detailArt ?? null"
+                  :art="panelArt ?? null"
                   ratio="63 / 88"
                   :placeholder="t('character.cardSlot')"
                   radius="m"
                   fit="contain"
-                  :sources="pictureSources(detailArt?.src ?? null)"
+                  :sources="pictureSources(panelArt?.src ?? null)"
                   sizes="320px"
                 />
-                <span class="char__panel-zoom" aria-hidden="true">
+                <span class="char__zoom-badge" aria-hidden="true">
                   {{ t('character.enlarge') }}
                 </span>
               </button>
-              <MonoLabel :tone="selected ? 'muted' : 'accent'" class="char__panel-kicker">
-                {{ detailKicker }}
+              <div v-else class="char__panel-empty">
+                <MonoLabel tone="accent" as="p">{{ t('character.panelEmpty') }}</MonoLabel>
+              </div>
+
+              <MonoLabel :tone="building ? 'accent' : 'muted'" class="char__panel-kicker">
+                {{ panelKicker }}
               </MonoLabel>
-              <h3 class="char__panel-name">{{ detailName }}</h3>
-              <MonoLabel tone="faint" class="char__panel-artist">
-                {{ t('character.artBy') }} {{ artist }}
+              <h3 v-if="panelName" class="char__panel-name">{{ panelName }}</h3>
+              <MonoLabel v-if="panelHasCard" tone="faint" class="char__panel-artist">
+                {{ t('character.artBy') }} {{ artistOf(panelArt) }}
               </MonoLabel>
 
-              <FaceToggle v-if="!selected" v-model="face" />
+              <FaceToggle v-if="!building" v-model="face" />
 
-              <p class="char__panel-link">
-                <BaseLink v-if="selected" :to="to('cards', {}, { query: galleryQuery })">
-                  {{ t('character.openInGallery') }} →
-                </BaseLink>
-                <BaseLink v-else :to="to('cards', {}, { hash: '#anatomy' })">
+              <template v-else>
+                <MonoLabel tone="faint" as="p" class="char__filling-label">
+                  {{ t('character.filling') }}
+                </MonoLabel>
+                <div
+                  class="char__filling"
+                  role="group"
+                  :aria-label="t('character.fillingAria')"
+                >
+                  <button
+                    v-for="slot in stackSlots"
+                    :key="slot.key"
+                    type="button"
+                    class="char__filling-slot"
+                    :aria-pressed="slot.armed"
+                    :aria-label="t('character.fillingSlotAria', { slot: slot.label.toLowerCase() })"
+                    @click="arm(slot.index)"
+                  >
+                    {{ slot.label }}
+                  </button>
+                </div>
+                <p class="char__panel-hint">{{ fillingNote }}</p>
+              </template>
+
+              <p v-if="!building && !selected" class="char__panel-link">
+                <BaseLink :to="to('cards', {}, { hash: '#anatomy' })">
                   {{ t('character.cardAnatomy') }} →
                 </BaseLink>
               </p>
 
-              <p v-if="selected" class="char__panel-link">
-                <button type="button" class="char__linkish" @click="selected = null">
-                  ← {{ t('character.backToCard') }}
-                </button>
-              </p>
+              <template v-if="!building && selected">
+                <p class="char__panel-link">
+                  <BaseLink :to="to('cards', {}, { query: galleryQuery })">
+                    {{ t('character.openInGallery') }} →
+                  </BaseLink>
+                </p>
+                <p class="char__panel-link">
+                  <button type="button" class="char__linkish" @click="selected = null">
+                    ← {{ t('character.backToCard', { name }) }}
+                  </button>
+                </p>
+              </template>
+            </template>
+
+            <template v-if="building" #card="{ card }">
+              <MonoLabel tone="accent" class="char__pick">
+                {{ inStack(card.slug) ? t('character.poolInStack') : putLabel }}
+              </MonoLabel>
             </template>
 
             <template #foot>
-              <BaseLink :to="to('cards', {}, { query: galleryQuery })" class="char__pool-exit">
-                {{ t('character.galleryExit') }} →
-              </BaseLink>
+              <div class="char__pool-foot">
+                <p class="char__squad-note">{{ t('character.squadNote') }}</p>
+                <span class="char__pool-exits">
+                  <BaseLink :to="to('learn', {}, { hash: '#paths' })" class="char__pool-exit">
+                    {{ t('character.squadExit') }} →
+                  </BaseLink>
+                  <BaseLink :to="to('cards', {}, { query: galleryQuery })" class="char__pool-exit">
+                    {{ t('character.galleryExit') }} →
+                  </BaseLink>
+                </span>
+              </div>
             </template>
           </CardPool>
         </div>
@@ -507,7 +819,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
     </div>
 
     <CardZoom
-      :open="zoomOpen && !selected"
+      :open="zoomOpen && !zoomSubject"
       :kicker="detailKicker"
       :name="detailName ?? ''"
       :art="detailArt ?? active.cardArt"
@@ -529,9 +841,9 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
     </CardZoom>
 
     <ProgramZoom
-      :open="zoomOpen && Boolean(selected)"
-      :program="zoomedProgram"
-      :brand-name="selected?.brandName ?? ''"
+      :open="zoomOpen && Boolean(zoomSubject)"
+      :program="zoomSubject?.program ?? null"
+      :brand-name="zoomSubject?.brandName ?? ''"
       @close="zoomOpen = false"
     >
       <template #links>
@@ -552,6 +864,109 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 </template>
 
 <style>
+.char__hero-foot {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line-strong);
+}
+
+.char__lore-teaser {
+  max-width: 56ch;
+  font-size: var(--size-body);
+  line-height: 1.7;
+  color: var(--color-ink-muted);
+}
+
+.char__hero-exits {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
+}
+
+/* Both exits are 44px targets, not only the one that reads as a button. */
+.char__hero-exit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--size-field);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.char__band-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.char__customize {
+  flex: 0 0 auto;
+}
+
+.char__pool-anchor {
+  scroll-margin-top: calc(var(--scroll-offset) + var(--space-6));
+}
+
+.char__panel-empty {
+  aspect-ratio: 63 / 88;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  border: 1px dashed rgba(var(--rgb-accent), 0.4);
+  border-radius: var(--radius-m);
+  background: rgba(var(--rgb-accent), 0.05);
+  text-align: center;
+}
+
+.char__panel-hint {
+  margin-top: var(--space-2);
+  font-size: var(--size-m);
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+
+.char__filling-label {
+  margin-top: var(--space-4);
+}
+
+.char__filling {
+  margin-top: var(--space-2);
+  display: flex;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.char__filling-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: 10px;
+  border: 0;
+  border-left: 1px solid var(--color-line-strong);
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.char__filling-slot:first-child {
+  border-left: 0;
+}
+
+.char__filling-slot[aria-pressed='true'] {
+  background: rgba(var(--rgb-accent), 0.2);
+  color: var(--color-ink);
+}
+
 .char__hero {
   display: flex;
   flex-wrap: wrap-reverse;
@@ -753,30 +1168,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   white-space: nowrap;
 }
 
-.char__card-row {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-line);
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.char__card-thumb {
-  flex: 0 0 auto;
-  width: 72px;
-  padding: 0;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-s);
-  overflow: hidden;
-  background: transparent;
-  cursor: zoom-in;
-}
-
-.char__card-cta {
-  margin-top: var(--space-2);
-}
-
 .char__linkish {
   padding: 0;
   border: 0;
@@ -789,26 +1180,11 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   cursor: pointer;
 }
 
-.char__pool-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-8);
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
 .char__pool-note {
   max-width: 62ch;
   font-size: var(--size-body);
   line-height: 1.65;
   color: var(--color-ink-soft);
-}
-
-.char__customize {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
 }
 
 .char__panel-card {
@@ -829,7 +1205,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   border-color: rgba(var(--rgb-accent), 0.55);
 }
 
-.char__panel-zoom {
+.char__zoom-badge {
   position: absolute;
   right: var(--space-2);
   bottom: var(--space-2);
@@ -843,8 +1219,8 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   color: var(--color-accent-text);
 }
 
-.char__panel-card:hover .char__panel-zoom,
-.char__panel-card:focus-visible .char__panel-zoom {
+button:hover > .char__zoom-badge,
+button:focus-visible > .char__zoom-badge {
   color: var(--color-ink-bright);
 }
 
@@ -878,6 +1254,33 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 .char__lore-exit {
   font-size: var(--size-body);
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.char__pool-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.char__squad-note {
+  max-width: 52ch;
+  font-size: var(--size-m);
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.char__pick {
+  margin-top: 6px;
+}
+
+.char__pool-exits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  align-items: center;
 }
 
 .char__lore-exit {

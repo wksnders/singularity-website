@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
  * The pool as a picker: small tiles choose, one large card reads.
+ *
  */
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
@@ -13,7 +14,7 @@ import type { Art } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
 export interface PoolCard {
-  id: string;
+  slug: string;
   name: string;
   brandId: string;
   brandName: string;
@@ -32,24 +33,15 @@ export interface PoolGroup {
   cards: PoolCard[];
 }
 
-const props = defineProps<{
+defineProps<{
   groups: PoolGroup[];
   selectedId: string | null;
 }>();
 
 const emit = defineEmits<{ select: [card: PoolCard] }>();
 
-const facet = ref<string | null>(null);
 const rove = ref<Record<string, number>>({});
 const rails = ref<Record<string, HTMLElement | null>>({});
-
-const total = computed(() => props.groups.reduce((sum, g) => sum + g.cards.length, 0));
-const shown = computed(() =>
-  props.groups.filter((group) => !facet.value || facet.value === group.id),
-);
-const shownCount = computed(() => shown.value.reduce((sum, g) => sum + g.cards.length, 0));
-
-const isGrid = computed(() => facet.value !== null);
 
 function tabIndexFor(group: PoolGroup, index: number): number {
   return index === (rove.value[group.id] ?? 0) ? 0 : -1;
@@ -96,40 +88,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
     </div>
 
     <div class="c-pool__main">
-      <div class="c-pool__facets" role="group" :aria-label="t('pool.filterLabel')">
-        <button
-          type="button"
-          class="c-pool__facet"
-          :aria-pressed="facet === null"
-          @click="facet = null"
-        >
-          <span class="c-pool__dot" aria-hidden="true" />
-          {{ t('pool.allBrands') }}
-          <span class="c-pool__facet-count">{{ total }}</span>
-        </button>
-        <button
-          v-for="group in groups"
-          :key="group.id"
-          type="button"
-          class="c-pool__facet"
-          :aria-pressed="facet === group.id"
-          @click="facet = facet === group.id ? null : group.id"
-        >
-          <span
-            class="c-pool__dot"
-            aria-hidden="true"
-            :style="group.color ? { background: group.color } : undefined"
-          />
-          {{ group.name }}
-          <span class="c-pool__facet-count">{{ group.cards.length }}</span>
-        </button>
-      </div>
-
-      <MonoLabel v-if="facet" tone="muted" class="c-pool__count" aria-live="polite">
-        {{ shownCount }} {{ t('pool.ofTotal') }} {{ total }} {{ t('pool.programsShown') }}
-      </MonoLabel>
-
-      <div v-for="group in shown" :key="group.id" class="c-pool__group">
+      <div v-for="group in groups" :key="group.id" class="c-pool__group">
         <div
           class="c-pool__head"
           :style="group.color ? { '--group-color': group.color } : undefined"
@@ -140,7 +99,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
             <MonoLabel tone="muted" as="span">{{ group.cards.length }}</MonoLabel>
           </div>
           <div class="c-pool__head-tools">
-            <span v-if="!isGrid" class="c-pool__arrows">
+            <span class="c-pool__arrows">
               <button
                 type="button"
                 class="c-pool__arrow"
@@ -166,20 +125,19 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
         <ul
           :ref="(el) => (rails[group.id] = el as HTMLElement | null)"
-          class="c-pool__tiles"
-          :class="isGrid ? 'c-pool__tiles--grid' : 'c-pool__tiles--rail'"
+          class="c-pool__tiles c-pool__tiles--rail"
           :aria-label="`${group.name} ${t('pool.programs')}`"
           @keydown="onRoveKey($event, group.id)"
         >
-          <li v-for="(card, index) in group.cards" :key="card.id">
+          <li v-for="(card, index) in group.cards" :key="card.slug">
             <!-- One of these is chosen at a time, so aria-current. aria-pressed
                  would announce every tile as an independent toggle. -->
             <button
               type="button"
               data-tile
               class="c-pool__tile"
-              :class="{ 'is-current': card.id === selectedId }"
-              :aria-current="card.id === selectedId ? 'true' : undefined"
+              :class="{ 'is-current': card.slug === selectedId }"
+              :aria-current="card.slug === selectedId ? 'true' : undefined"
               :aria-label="card.name"
               :title="card.name"
               :tabindex="tabIndexFor(group, index)"
@@ -192,10 +150,11 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
                 radius="s"
                 fit="contain"
                 :sources="pictureSources(card.cardArt.src)"
-                sizes="160px"
+                sizes="200px"
               />
             </button>
-            <p v-if="isGrid" class="c-pool__tile-name">{{ card.name }}</p>
+            <p class="c-pool__tile-name">{{ card.name }}</p>
+            <slot name="card" :card="card" />
           </li>
         </ul>
       </div>
@@ -216,8 +175,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   align-items: flex-start;
 }
 
-/* The slot is empty below the picker's breakpoint, where the panel would be
-   off-screen. */
+/* Empty below the panel's breakpoint, where it would be off screen. */
 .c-pool__panel:empty {
   display: none;
 }
@@ -233,50 +191,6 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 .c-pool__main {
   flex: 1 1 420px;
   min-width: 0;
-}
-
-.c-pool__facets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.c-pool__facet {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 40px;
-  padding-inline: 14px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink);
-  font-size: var(--size-m);
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.c-pool__facet[aria-pressed='true'] {
-  border-color: rgba(var(--rgb-accent), 0.55);
-  background: var(--color-accent-wash);
-}
-
-.c-pool__dot {
-  width: 8px;
-  height: 8px;
-  flex: 0 0 auto;
-  border-radius: var(--radius-pill);
-  background: rgba(var(--rgb-ink), 0.35);
-}
-
-.c-pool__facet-count {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  color: var(--color-ink-soft);
-}
-
-.c-pool__count {
-  margin-top: var(--space-3);
 }
 
 .c-pool__group {
@@ -367,13 +281,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
 .c-pool__tiles--rail > li {
   flex: 0 0 auto;
-  width: 104px;
-}
-
-.c-pool__tiles--grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 18px var(--space-3);
+  width: 148px;
 }
 
 .c-pool__tile {
@@ -397,7 +305,8 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   margin-top: var(--space-2);
   font-size: var(--size-s);
   line-height: 1.45;
-  color: var(--color-ink-soft);
+  color: var(--color-ink-muted);
+  overflow-wrap: anywhere;
 }
 
 .c-pool__foot:not(:empty) {

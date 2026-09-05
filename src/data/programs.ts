@@ -15,10 +15,14 @@
         why an unannounced card is simply absent rather than `revealed: false`.
         An absent card leaves no slot behind: card counts are derived from this
         file, and `Brand.announcedCount` only states the gap in words.
-     4. Ids are `<brandId>-NN` in printed order and are a CONTRACT: errata cite
-        them in `affectedProgramIds` (content/en/news/). Append, never reorder.
-        A brand printed across two sets keeps ONE run of numbers, so the second
-        set's cards continue where the first stopped.
+     4. TWO IDENTITIES, AND THEY ARE NOT INTERCHANGEABLE. `cardId` is printed
+        on the card and carries the locale (`-EN`), so errata cite it in
+        `affectedProgramIds` (content/en/news/) — an errata applies to a
+        printed card, and the same card in another language is a different
+        printing. `id` is the public URL identity, the name made safe, which
+        is why it is derived from the English name and never from a
+        translation: `?card=` and `?stack=` must name the same cards in every
+        locale. Neither is positional, so inserting a card renumbers nothing.
    ========================================================================== */
 
 import type { Program, SetCode } from './types';
@@ -62,22 +66,26 @@ interface CardText {
   unlock?: string;
 }
 
-/**
- * `start` continues a brand's numbering across sets — see rule 4. Pass the
- * previous group's `.length`, never a literal: a literal goes stale the moment
- * a card is added to the earlier set, and collides two ids silently.
- */
 /** A card that ships: it has been printed, so it has an id. */
 type CardedText = CardText & { cardId: string };
 
-const brandCards = (
-  brandId: string,
-  set: SetCode,
-  cards: CardedText[],
-  start = 0,
-): Program[] =>
-  cards.map((card, index) => ({
-    id: `${brandId}-${String(start + index + 1).padStart(2, '0')}`,
+/**
+ * The name, made safe for an address bar. Apostrophes are dropped rather than
+ * hyphenated, so "Re'gine's Retribution" is `regines-retribution` and not
+ * `re-gine-s-retribution`.
+ */
+const slugify = (name: string): string =>
+  name
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['\u2018\u2019]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const brandCards = (brandId: string, set: SetCode, cards: CardedText[]): Program[] =>
+  cards.map((card) => ({
+    slug: slugify(card.name),
     cardId: card.cardId,
     brandId,
     name: card.name,
@@ -1865,6 +1873,24 @@ const luxVault: CardedText[] = [
 ];
 
 /* Gallery order follows `brands[]` in universe.ts. */
+/* Two ways this file can be wrong that a type cannot catch, because both ids
+   are derived: a name that slugs to the same URL as another card's, and a
+   printed id entered twice. Either would make one card unreachable. */
+function assertProgramIds(): void {
+  if (import.meta.env.PROD) return;
+  const seen = new Map<string, string>();
+  for (const program of allPrograms) {
+    const clash = seen.get(program.slug);
+    if (clash) console.warn(`[programs] "${program.name}" and "${clash}" both slug to "${program.slug}".`);
+    seen.set(program.slug, program.name);
+  }
+  const cards = new Set<string>();
+  for (const program of allPrograms) {
+    if (cards.has(program.cardId)) console.warn(`[programs] duplicate printed id ${program.cardId}.`);
+    cards.add(program.cardId);
+  }
+}
+
 export const allPrograms: Program[] = [
   ...brandCards('scrap-brigade', 'CORE', scrapBrigade),
   ...brandCards('benobasas-fist', 'CORE', benobasasFist),
@@ -1883,9 +1909,10 @@ export const allPrograms: Program[] = [
   ...brandCards('endless-chain', 'CORE', endlessChain),
   ...brandCards('masquerade', 'EX1', masquerade),
   ...brandCards('common', 'CORE', commonCore),
-  ...brandCards('common', 'EX1', commonEx1, commonCore.length),
+  ...brandCards('common', 'EX1', commonEx1),
   ...brandCards('lux-vault', 'CORE', luxVault),
 ];
+assertProgramIds();
 
 /* ============================================================================
    PARKED — printed cards that are not programs. Exported so the text is not

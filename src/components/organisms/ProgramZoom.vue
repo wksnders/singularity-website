@@ -22,7 +22,7 @@ const face = ref<'card' | 'art'>('card');
 
 /* Carried across, a card can open showing something other than the card. */
 watch(
-  () => props.program?.id,
+  () => props.program?.slug,
   () => {
     face.value = 'card';
   },

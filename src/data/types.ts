@@ -75,9 +75,18 @@ export interface Brand {
 }
 
 export interface Program {
-  /** The id printed on the card. Every asset URL is named for it. */
+  /**
+   * URL identity: the printed name made safe. Derived from the ENGLISH name
+   * and never from a translation, because a filter param has to name the same
+   * card in every locale. There is deliberately no field called `id` here —
+   * a card has two identities and neither of them is the default one.
+   */
+  slug: string;
+  /**
+   * The id printed on the card. Language-specific — the `-EN` is the locale —
+   * so it is what errata cite and what every asset URL is named for.
+   */
   cardId: string;
-  id: string;
   brandId: string;
   name: string;
   cost: string;

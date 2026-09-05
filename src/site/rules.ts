@@ -222,7 +222,7 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
   const cards = new Map(
     [...programs]
       .sort((a, b) => b.name.length - a.name.length)
-      .map((p): [string, string] => [p.name, p.id]),
+      .map((p): [string, string] => [p.name, p.slug]),
   );
 
   const label = new Map(sources.map((s) => [s.id, bareOf(s.title)]));

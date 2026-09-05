@@ -10,7 +10,7 @@ import RuleText from '@/components/molecules/RuleText.vue';
 import { t } from '@/content';
 import { expandIcons } from '@/site/cardText';
 import { brandNameOf } from '@/site/rules';
-import { programById } from '@/data/universe';
+import { programBySlug } from '@/data/universe';
 import type { RuleBlock, RuleEntry } from '@/site/rules';
 
 const props = defineProps<{ entry: RuleEntry; copied: boolean }>();
@@ -44,7 +44,7 @@ function cardsIn(blocks: RuleBlock[]): string[] {
   return [...new Set(names)].filter((id) => open.value.has(id));
 }
  
-const card = (id: string) => programById(id);
+const card = (id: string) => programBySlug(id);
 
 const factLine = (id: string) => {
   const program = card(id);

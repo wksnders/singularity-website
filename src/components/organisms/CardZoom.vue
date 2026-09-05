@@ -2,11 +2,12 @@
 /**
  * The card at reading size
  */
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { useModal } from '@/composables/useModal';
 import { savingData } from '@/composables/useZoomUpgrade';
 import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
@@ -35,67 +36,26 @@ const FIT_SIZES = '(min-width: 1100px) 560px, min(100vw - 32px, 420px)';
 const FULL_SIZES = '1680px';
 const full = ref(false);
 
-const dialog = ref<HTMLElement | null>(null);
 const closeButton = ref<HTMLButtonElement | null>(null);
-let lastFocused: HTMLElement | null = null;
 
-const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const { dialog, onKeydown } = useModal({
+  open: () => props.open,
+  close: () => emit('close'),
+  initialFocus: () => closeButton.value,
+});
 
 watch(
   () => props.open,
-  async (open) => {
-    /* Teleported to <body>, so inerting the page does not inert the dialog. */
-    const page = document.getElementById('main');
-    if (open) {
-      lastFocused = document.activeElement as HTMLElement | null;
-      document.body.style.overflow = 'hidden';
-      /* `inert` removes the page from the accessibility tree, so the
-         aria-hidden is for browsers without it. */
-      page?.setAttribute('inert', '');
-      page?.setAttribute('aria-hidden', 'true');
-      await nextTick();
-      closeButton.value?.focus();
-      /* A frame late, so the upgrade never competes with the open. */
-      requestAnimationFrame(() => { full.value = !savingData(); });
+  (open) => {
+    if (!open) {
+      full.value = false;
       return;
     }
-    full.value = false;
-    document.body.style.overflow = '';
-    page?.removeAttribute('inert');
-    page?.removeAttribute('aria-hidden');
-    if (lastFocused?.isConnected) lastFocused.focus();
-    lastFocused = null;
+    /* A frame late, so the upgrade never competes with the open. */
+    requestAnimationFrame(() => { full.value = !savingData(); });
   },
 );
 
-onBeforeUnmount(() => {
-  if (!props.open) return;
-  document.body.style.overflow = '';
-  const page = document.getElementById('main');
-  page?.removeAttribute('inert');
-  page?.removeAttribute('aria-hidden');
-});
-
-function onKeydown(event: KeyboardEvent): void {
-  if (event.key === 'Escape') {
-    emit('close');
-    return;
-  }
-  if (event.key !== 'Tab' || !dialog.value) return;
-  const items = Array.from(dialog.value.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-    (el) => el.offsetParent !== null || el === document.activeElement,
-  );
-  if (!items.length) return;
-  const first = items[0];
-  const last = items[items.length - 1];
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
-}
 </script>
 
 <template>

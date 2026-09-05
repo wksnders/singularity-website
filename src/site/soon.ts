@@ -85,15 +85,6 @@ const DESTINATIONS: SoonDestination[] = [
     kind: 'page',
     also: [{ key: 'ia.story.convergence.label', to: to('story', {}, { hash: '#convergence' }) }],
   },
-  {
-    id: 'stack-builder',
-    kind: 'page',
-    also: [
-      { key: 'ia.universe.cards.label', to: to('cards') },
-      { key: 'ia.universe.characters.label', to: to('characters') },
-      { key: 'ia.learn.modes.label', to: to('learn', {}, { hash: '#modes' }) },
-    ],
-  },
 ];
 
 const FALLBACK_ALSO: SoonAlso[] = [

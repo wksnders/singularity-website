@@ -115,7 +115,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
             </h3>
             <p class="unv__body">{{ t('universal.brands.luxBody') }}</p>
             <ul class="unv__slots">
-              <li v-for="(program, i) in luxCards" :key="program.id">
+              <li v-for="(program, i) in luxCards" :key="program.slug">
                 {{ String(i + 1).padStart(2, '0') }}
               </li>
             </ul>

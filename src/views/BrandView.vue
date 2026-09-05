@@ -210,7 +210,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </p>
 
         <ul class="l-grid l-grid--cards brand__gap">
-          <li v-for="program in shown" :key="program.id">
+          <li v-for="program in shown" :key="program.slug">
             <ProgramCard
               branded
               :program="program"

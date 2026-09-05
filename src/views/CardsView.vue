@@ -163,7 +163,7 @@ function clearAll(): void {
       <p class="cards__note">{{ t('cardsPage.textNote') }}</p>
 
       <ul v-if="shown.length" class="l-grid l-grid--cards cards__gap">
-        <li v-for="program in shown" :key="program.id">
+        <li v-for="program in shown" :key="program.slug">
           <ProgramCard
             :program="program"
             :brand-label="brandOf(program)?.name"

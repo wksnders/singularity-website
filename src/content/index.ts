@@ -89,13 +89,19 @@ function lookup(tree: StringTree | undefined, key: string): string | undefined {
 /**
  * A UI string. Falls back to English, then to the key itself so a missing
  * translation is visible in the layout instead of collapsing it.
+ *
+ * `vars` fills `{name}` placeholders.
  */
-export function t(key: string): string {
+export function t(key: string, vars?: Record<string, string | number>): string {
   const hit = lookup(strings[currentLocale.value], key) ?? lookup(strings[DEFAULT_LOCALE], key);
   if (hit === undefined && import.meta.env.DEV) {
     console.warn(`[content] missing string: ${key}`);
   }
-  return hit ?? key;
+  const value = hit ?? key;
+  if (!vars) return value;
+  return value.replace(/\{(\w+)\}/g, (whole, name: string) =>
+    name in vars ? String(vars[name]) : whole,
+  );
 }
 
 /**
