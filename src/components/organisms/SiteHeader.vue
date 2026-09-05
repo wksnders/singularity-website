@@ -13,19 +13,33 @@ import { useChrome } from '@/composables/useChrome';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 
-const { wide, scrolled, navHidden, megaOpen, menuOpen, openMega, toggleMega, closeMega, toggleMenu } =
-  useChrome();
+const {
+  wide,
+  scrolled,
+  pastHeroLogo,
+  navHidden,
+  megaOpen,
+  menuOpen,
+  openMega,
+  toggleMega,
+  closeMega,
+  toggleMenu,
+} = useChrome();
 
 const route = useRoute();
 
-const markHidden = computed(() => route.name === 'home' && !scrolled.value);
+/* Home opens on the full lockup, so the fill and the mark share one moment:
+   both wait for it to scroll away. Every other page has nothing to clear. */
+const onHome = computed(() => route.name === 'home');
+const solid = computed(() => (onHome.value ? pastHeroLogo.value : scrolled.value));
+const markHidden = computed(() => onHome.value && !solid.value);
 </script>
 
 <template>
   <header
     class="c-nav"
     :class="{
-      'is-solid': scrolled || megaOpen !== null,
+      'is-solid': solid || megaOpen !== null,
       'is-hidden': navHidden,
       'is-mega': megaOpen !== null,
     }"

@@ -10,9 +10,12 @@ import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 const WIDE_QUERY = '(min-width: 900px)';
 const SOLID_AT = 80;
 const RETRACT_AFTER = 240;
+/* A fraction of the viewport, not pixels: it tracks the home hero's logo. */
+const PAST_HERO_LOGO = 0.38;
 
 const wide = ref(false);
 const scrolled = ref(false);
+const pastHeroLogo = ref(false);
 const navHidden = ref(false);
 const megaOpen = ref<string | null>(null);
 const menuOpen = ref(false);
@@ -33,6 +36,7 @@ function onMedia(): void {
 function onScroll(): void {
   const y = Math.max(0, window.scrollY);
   scrolled.value = y > SOLID_AT;
+  pastHeroLogo.value = y > window.innerHeight * PAST_HERO_LOGO;
   const down = y > lastY + 6;
   const up = y < lastY - 6;
   if (down && y > RETRACT_AFTER && !menuOpen.value && !megaOpen.value) navHidden.value = true;
@@ -76,6 +80,7 @@ export function useChrome() {
   return {
     wide: readonly(wide),
     scrolled: readonly(scrolled),
+    pastHeroLogo: readonly(pastHeroLogo),
     navHidden: readonly(navHidden),
     megaOpen: readonly(megaOpen),
     menuOpen,
