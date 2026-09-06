@@ -14,13 +14,13 @@ import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandsOfFaction,
   characters,
-  charactersOfBrand,
   factionById,
   factions,
   programsOfBrand,
 } from '@/data/universe';
+import { brandOneLiner, brandRowNote } from '@/site/brands';
 import { environmentSources, to } from '@/site/links';
-import type { Brand, Character } from '@/data/types';
+import type { Character } from '@/data/types';
 
 const props = defineProps<{ factionId: string }>();
 
@@ -66,15 +66,6 @@ const tags = (character: Character) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }))
     : [{ label: t('universe.anyFaction'), color: null }];
-
-const brandDescriptor = (brand: Brand) =>
-  metaString(getDoc(`universe/brands/${brand.id}`), 'oneLiner', '');
-
-const brandNote = (brand: Brand) =>
-  [
-    `${programsOfBrand(brand.id).length} ${t('brand.shelf.cards')}`,
-    `${charactersOfBrand(brand.id).length} ${t('brand.shelf.cast')}`,
-  ].join(' · ');
 
 const heroSources = computed(() =>
   faction.value?.environment ? environmentSources(faction.value.id) : [],
@@ -145,8 +136,8 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
             :key="brand.id"
             :brand="brand"
             :faction="faction"
-            :descriptor="brandDescriptor(brand)"
-            :note="brandNote(brand)"
+            :descriptor="brandOneLiner(brand)"
+            :note="brandRowNote(brand)"
           />
         </div>
       </div>

@@ -4,6 +4,10 @@ export interface SectionEntry {
   /** Unique per row; `id` repeats when one target sits under several groups. */
   key?: string;
   label: string;
+  /** Rail label, where the full one would wrap. */
+  short?: string;
+  /** Faction tone for the chip's dot: data, never a token. */
+  color?: string | null;
 
   accent?: boolean;
   group?: string;

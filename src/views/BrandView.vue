@@ -119,10 +119,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
       glow="100% 80% at 70% 6%"
       min-height="min(72dvh, 640px)"
     >
-      <!-- Breadcrumbs must not name the faction as the brand's parent. -->
+      <!-- The faction is not a segment: faction-less brands have none. -->
       <Breadcrumbs
         :crumbs="[
           { label: t('ia.universe.label'), to: to('universe') },
+          { label: t('brands.hero.crumb'), to: to('brands') },
           { label: name },
         ]"
         :prev="siblings.prev"

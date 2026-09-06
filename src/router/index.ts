@@ -32,6 +32,12 @@ const routes: RouteRecordRaw[] = [
     props: true,
   },
   {
+    path: path('universe/brands'),
+    name: 'brands',
+    component: () => import('@/views/BrandsView.vue'),
+    meta: { titleKey: 'meta.brands' },
+  },
+  {
     path: path('universe/brands/:brandId'),
     name: 'brand',
     component: () => import('@/views/BrandView.vue'),

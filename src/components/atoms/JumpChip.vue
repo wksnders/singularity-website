@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import BaseLink from './BaseLink.vue';
+import FactionDot from './FactionDot.vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';
 
@@ -10,6 +11,7 @@ defineProps<{
   index?: string;
   current?: boolean;
   accent?: boolean;
+  color?: string | null;
 }>();
 </script>
 
@@ -21,6 +23,7 @@ defineProps<{
     :class="{ 'is-current': current, 'is-accent': accent }"
     :aria-current="current ? 'true' : undefined"
   >
+    <FactionDot v-if="color" :color="color" />
     <span v-if="index" class="c-jump__index">{{ index }}</span>
     <slot />
   </BaseLink>

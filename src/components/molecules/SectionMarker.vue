@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Section ids are public URLs; never rename them.
+import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 
 defineProps<{
@@ -7,6 +8,7 @@ defineProps<{
   index: number;
   total: number;
   heading: string;
+  color?: string | null;
 }>();
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -17,6 +19,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <span class="c-marker__rule" aria-hidden="true" />
     <MonoLabel tone="faint" class="c-marker__count">{{ pad(index) }} / {{ pad(total) }}</MonoLabel>
     <div class="c-marker__head">
+      <FactionDot v-if="color" :color="color" :size="12" />
       <h2 class="c-marker__heading">{{ heading }}</h2>
     </div>
   </div>

@@ -3,6 +3,7 @@
     "home": "Singularity.exe — a deterministic card game by Octothorpe",
     "universe": "The universe — Singularity.exe",
     "characters": "Characters — Singularity.exe",
+    "brands": "Brands — Singularity.exe",
     "cards": "Card gallery — Singularity.exe",
     "incursions": "Incursions — Singularity.exe",
     "universal": "Universal — Singularity.exe",
@@ -505,6 +506,31 @@
     "sayMoved": "{name} moved from the {from} slot to the {slot} slot. {n} of {total} chosen.",
     "sayMovedOver": "{name} moved from the {from} slot to the {slot} slot, replacing {gone}. {n} of {total} chosen."
   },
+  "brands": {
+    "hero": {
+      "crumb": "Brands",
+      "title": "Every brand in the game",
+      "lede": "Every program your squad plays comes from a brand. Listed below and grouped by faction"
+    },
+    "count": "{count} brands",
+    "stat": {
+      "perFaction": "{count} per faction",
+      "universal": "{count} universal",
+      "cards": "{count} programs"
+    },
+    "universal": {
+      "title": "Universal"
+    },
+    "condition": {
+      "anySquad": "Plays in any squad, whatever the faction.",
+      "unlock": {
+        "challenges": "{count} programs, each one opened by a challenge."
+      }
+    },
+    "exitFaction": "Inside {name} →",
+    "exitUniversal": "The characters willing to work with anyone →",
+    "exitAnyFaction": "Every any-faction card →"
+  },
   "brand": {
     "hero": {
       "artPlaceholder": "[ brand key art — wide ]",
@@ -528,7 +554,11 @@
     "unrevealed": "Unrevealed",
     "shelf": {
       "cards": "cards",
-      "cast": "characters play it"
+      "cast": "characters play it",
+      "castOne": "character plays it",
+      "revealed": "{written} of {announced} programs revealed",
+      "everySquad": "every squad plays them",
+      "alone": "{name} alone plays them"
     },
     "of": "of",
     "revealed": "revealed",
@@ -1215,6 +1245,9 @@
       "label": "Universe",
       "factions": {
         "label": "Factions"
+      },
+      "brands": {
+        "label": "Brands"
       },
       "explore": {
         "label": "Explore"

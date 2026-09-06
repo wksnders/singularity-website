@@ -180,6 +180,8 @@ export const footerColumns: IaGroup[] = [
     items: [
       { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
       { key: 'universe.factions', to: to('universe', {}, { hash: '#factions' }) },
+      /* Footer only: the missing primaryNav, mega and mobile rows are deliberate. */
+      { key: 'universe.brands', to: to('brands') },
       { key: 'universe.characters', to: to('characters') },
       { key: 'universe.cards', to: to('cards') },
       { key: 'universe.incursions', to: to('incursions') },

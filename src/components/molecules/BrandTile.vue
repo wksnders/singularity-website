@@ -9,6 +9,8 @@ defineProps<{
   brand: Brand;
   faction?: Faction | null;
   descriptor?: string;
+  /** Why a brand sits outside the faction lines; universal and personal brands only. */
+  condition?: string;
 
   note?: string;
 }>();
@@ -26,6 +28,7 @@ defineProps<{
     <span class="c-brand__body">
       <h3 class="c-brand__name">{{ brand.name }}</h3>
       <span v-if="descriptor" class="c-brand__descriptor">{{ descriptor }}</span>
+      <span v-if="condition" class="c-brand__condition">{{ condition }}</span>
       <span v-if="note" class="c-brand__note">{{ note }}</span>
     </span>
   </BaseLink>
@@ -84,6 +87,14 @@ defineProps<{
   font-size: var(--size-m);
   line-height: 1.55;
   color: var(--color-ink-soft);
+}
+
+.c-brand__condition {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--size-s);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
 }
 
 .c-brand__note {

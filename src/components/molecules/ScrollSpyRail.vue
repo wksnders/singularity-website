@@ -62,7 +62,7 @@ const heading = (i: number) =>
         :aria-current="active === section.id ? 'true' : undefined"
       >
         <span v-if="!grouped" class="c-rail__index">{{ pad(i + 1) }}</span>
-        <span class="c-rail__label">{{ section.label }}</span>
+        <span class="c-rail__label">{{ section.short ?? section.label }}</span>
       </a>
     </template>
   </nav>

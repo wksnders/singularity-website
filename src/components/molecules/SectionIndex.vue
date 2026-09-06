@@ -20,6 +20,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         :to="{ hash: `#${section.id}` }"
         :index="pad(i + 1)"
         :accent="section.accent"
+        :color="section.color"
       >
         {{ section.label }}
       </JumpChip>

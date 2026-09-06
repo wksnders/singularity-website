@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/* One exit only per band foot; the mobile-only up-link targets the #on-this-page anchor rendered by the view's section index. */
+/* The mobile-only up-link targets the #on-this-page anchor rendered by the view's section index. */
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import type { RouteLocationRaw } from 'vue-router';
@@ -10,7 +10,10 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
 
 <template>
   <div class="c-bandfoot">
-    <UiButton variant="quiet" :to="to" :link="link">{{ label }}</UiButton>
+    <div class="c-bandfoot__exits">
+      <UiButton variant="quiet" :to="to" :link="link">{{ label }}</UiButton>
+      <slot />
+    </div>
     <a class="c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
   </div>
 </template>
@@ -23,6 +26,13 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
   gap: var(--space-4) var(--space-6);
   align-items: center;
   justify-content: space-between;
+}
+
+.c-bandfoot__exits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  align-items: center;
 }
 
 .c-bandfoot__up {
