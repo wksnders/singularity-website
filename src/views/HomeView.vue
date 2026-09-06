@@ -23,9 +23,10 @@ import {
   factionById,
   factions,
   game,
+  keyArt,
   modes,
 } from '@/data/universe';
-import { outbound, to } from '@/site/links';
+import { environmentSources, outbound, to } from '@/site/links';
 import type { Stat } from '@/site/stats';
 
 const pitchStats = computed<Stat[]>(() => [
@@ -80,8 +81,9 @@ function scrollCast(direction: 1 | -1): void {
 <template>
   <PageHero
     drift
+    :art="keyArt.home.art"
+    :sources="environmentSources(keyArt.home.id)"
     :placeholder="t('home.hero.placeholder')"
-    :pending-note="t('home.hero.pending')"
     glow="120% 80% at 20% 10%"
   >
     <MonoLabel tone="accent">{{ t('home.hero.kicker') }}</MonoLabel>

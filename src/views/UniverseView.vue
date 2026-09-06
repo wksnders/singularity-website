@@ -14,9 +14,9 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { characters, factionById, factions, game } from '@/data/universe';
+import { characters, factionById, factions, game, keyArt } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
-import { to } from '@/site/links';
+import { environmentSources, to } from '@/site/links';
 import type { Character } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
@@ -117,13 +117,13 @@ function clearAll(): void {
         <p class="universe__body">{{ t('universe.world.body1') }}</p>
 
         <ArtFrame
-          :art="null"
-          ratio="21 / 9"
+          :art="keyArt.world.art"
+          :sources="environmentSources(keyArt.world.id)"
+          ratio="3 / 1"
           radius="l"
           class="universe__plate"
           :placeholder="t('universe.world.platePlaceholder')"
         />
-        <MonoLabel tone="faint">{{ t('universe.world.platePending') }}</MonoLabel>
 
         <p class="universe__body">{{ t('universe.world.body2') }}</p>
         <p class="universe__body">{{ t('universe.world.body3') }}</p>

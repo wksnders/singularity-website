@@ -178,6 +178,13 @@ const plate = (id: string, focalX: number): Art => ({
   focal: { x: focalX, y: 0.5 },
 });
 
+const keyPlate = (id: string) => ({ id, art: plate(id, 0.5) });
+
+export const keyArt = {
+  home: keyPlate('home-hero'),
+  world: keyPlate('autumn-network'),
+};
+
 export const factions: Faction[] = [
   {
     id: 'monarchy-of-boom',
