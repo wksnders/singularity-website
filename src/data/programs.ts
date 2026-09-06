@@ -64,6 +64,11 @@ const brandCards = (brandId: string, set: SetCode, cards: CardedText[]): Program
     set,
 
     art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
+    sceneArt: {
+      src: null,
+      alt: `${card.name}, program art with its background`,
+      artist: PROGRAM_ARTIST,
+    },
     cardArt: {
       src: cardFace(card.cardId),
       alt: `${card.name} card`,

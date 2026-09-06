@@ -60,8 +60,10 @@ export interface Program {
   unlock?: string;
   /** Unrevealed programs render as a sealed slot, not as an empty card. */
   revealed: boolean;
-  /** ILLUSTRATION — the program's art alone, no card frame around it. */
+  /** ILLUSTRATION — the program's art alone, no background and no card frame. */
   art: Art;
+  /** SCENE — the illustration on its printed background, without the card frame. */
+  sceneArt: Art;
   /** CARD — the whole printed card. What the gallery shows. */
   cardArt: Art;
 
