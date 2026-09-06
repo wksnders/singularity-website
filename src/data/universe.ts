@@ -303,7 +303,12 @@ const altPrinting = (
     alt: `${guest?.name ?? characterName} in their world`,
     artist: CHARACTER_ARTIST,
   },
-  cardArt: { ...noArt, alt: `${guest?.name ?? characterName} character card` },
+  cardArt: {
+    ...noArt,
+    src: cardFace(id),
+    alt: `${guest?.name ?? characterName} character card`,
+    artist: CHARACTER_ARTIST,
+  },
 });
 
 /* Three art objects derived from the name so an alt cannot describe the wrong person; which surface may use which is the ART note in types.ts. */
