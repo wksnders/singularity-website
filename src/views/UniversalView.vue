@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * UNIVERSAL — the non-faction area: LuX and her personal brand.
- *
- * A band is added here when its contents are public
- */
+// This area is non-faction only; a band appears here only once its contents are public.
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';

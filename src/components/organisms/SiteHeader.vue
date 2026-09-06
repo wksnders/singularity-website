@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * The site bar. Faction dots inside the Universe panel are the ONLY faction
- * colour anywhere in chrome.
- */
+// Faction dots in the Universe mega panel are the only faction colour anywhere in chrome.
 import MegaPanel from './MegaPanel.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import SiteMark from '@/components/atoms/SiteMark.vue';
@@ -28,8 +25,6 @@ const {
 
 const route = useRoute();
 
-/* Home opens on the full lockup, so the fill and the mark share one moment:
-   both wait for it to scroll away. Every other page has nothing to clear. */
 const onHome = computed(() => route.name === 'home');
 const solid = computed(() => (onHome.value ? pastHeroLogo.value : scrolled.value));
 const markHidden = computed(() => onHome.value && !solid.value);
@@ -73,8 +68,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
             ▾
           </button>
 
-          <!-- Two constraints on this spot: the panel follows its own trigger,
-               and it exists while closed for `aria-controls` to resolve. -->
+          <!-- The panel must sit inside its own trigger's span and stay mounted while closed so `aria-controls` resolves. -->
           <MegaPanel
             v-if="section.mega"
             v-show="megaOpen === section.key"
@@ -134,9 +128,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
   background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.55), transparent);
 }
 
-/* Fill and blur track MegaPanel's: the bar sits directly on the open panel
-   and any difference reads as a seam. The border doubles with the panel's
-   own border-top. */
+/* Fill and blur must match MegaPanel's or the bar reads as a seam on the open panel, and this border doubles the panel's own border-top. */
 .c-nav.is-mega {
   background: rgba(var(--rgb-surface), 0.97);
   backdrop-filter: blur(18px);

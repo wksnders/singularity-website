@@ -9,7 +9,6 @@ const md = new MarkdownIt({
 
 const cache = new Map<string, string>();
 
-/** Rendered once per document, then memoised for the life of the page. */
 export function renderMarkdown(key: string, source: string): string {
   const hit = cache.get(key);
   if (hit !== undefined) return hit;

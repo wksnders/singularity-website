@@ -1,7 +1,6 @@
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
-/* For behaviour CSS cannot express — rendering something else, not styling it
-   differently. `useChrome` owns the shared `wide`; this is per component. */
+/* For behaviour CSS cannot express, not styling: `useChrome` owns the shared `wide`, this is per-component. */
 export function useMediaQuery(query: string) {
   const matches = ref(false);
   let media: MediaQueryList | null = null;

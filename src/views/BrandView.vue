@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * BRAND — three bands: the brand's own story (a brand is a body of work, not a
- * colour swatch), its programs as printed cards with their wording as text,
- * and the characters who play it.
- */
+
 import { computed, ref } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
@@ -63,8 +59,7 @@ const showingFacet = computed(() => Boolean(facet.value) && cards.value.value ==
 
 const programs = computed<Program[]>(() => {
   const written = programsOfBrand(props.brandId);
-  /* Facet cards lead, so filtering to them is a page that shortens rather than
-     one that reshuffles. Display order only*/
+  /* Facet-first ordering is display only. */
   return facet.value
     ? [...written.filter(isFacet), ...written.filter((p) => !isFacet(p))]
     : written;
@@ -124,8 +119,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       glow="100% 80% at 70% 6%"
       min-height="min(72dvh, 640px)"
     >
-      <!-- The faction is deliberately not a segment: no trail may name a
-           faction as a brand's parent. -->
+      <!-- Breadcrumbs must not name the faction as the brand's parent. -->
       <Breadcrumbs
         :crumbs="[
           { label: t('ia.universe.label'), to: to('universe') },
@@ -297,7 +291,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   align-items: center;
 }
 
-/* No frame, no faction underline: the mark carries its own coloured ring. */
 .brand__mark {
   display: flex;
   flex: 0 0 auto;

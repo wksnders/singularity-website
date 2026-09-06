@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * One glossary term: class eyebrow → term → rules → example → related → copy.
- *
- * Never an accordion. Every entry stays in the DOM so find-in-page can reach it.
- */
+// Entries never collapse into an accordion; every entry stays in the DOM so find-in-page can reach it.
 import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import RuleText from '@/components/molecules/RuleText.vue';

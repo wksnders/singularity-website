@@ -1,12 +1,5 @@
 <script setup lang="ts">
-/**
- * ONE empty state, two variants:
- * - default:   nothing here at this address — a bad URL, or a slot with no
- *              published content behind it. Left-aligned, sits in the flow.
- * - noResults: the reader's filter or search found nothing. Centred, and
- *              carries a clear-filters action.
- * Never a shrug: each variant says what to do next.
- */
+// Copy for every variant must tell the reader what to do next, not just report emptiness.
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 

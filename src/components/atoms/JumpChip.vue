@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * A JUMP chip: square-ish, mono, uppercase — it navigates. The costume split
- * from FilterChip is load-bearing, not decoration.
- */
+
 import BaseLink from './BaseLink.vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';

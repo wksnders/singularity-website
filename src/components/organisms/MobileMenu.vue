@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * Mobile navigation is a full sheet, not a dropdown: every section, plus the
- * jump chips that make in-page sections reachable from anywhere on the site.
- */
+
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -15,9 +12,7 @@ import { useChrome } from '@/composables/useChrome';
 
 const { menuOpen, toggleMenu } = useChrome();
 
-/* The sheet covers the whole viewport, so it is a modal and has to behave like
-   one: focus goes in, stays in, and comes back out to whatever opened it.
-   Escape is already handled globally in useChrome. */
+/* Full-viewport modal: focus must be trapped in the sheet and restored on close; Escape is handled globally in useChrome. */
 const sheet = ref<HTMLElement | null>(null);
 const closeButton = ref<HTMLElement | null>(null);
 let lastFocused: HTMLElement | null = null;
@@ -69,8 +64,7 @@ watch(menuOpen, async (open) => {
   lastFocused = null;
 });
 
-/* Links in the sheet call toggleMenu(); the browser back button does not, and
-   without this the sheet sits open over a page nobody asked for. */
+/* Back-button navigation never calls toggleMenu(), so the sheet must close on route change. */
 const route = useRoute();
 watch(
   () => route.fullPath,

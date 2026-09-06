@@ -1,15 +1,4 @@
-/* ============================================================================
-   GitHub Pages has no server-side rewrite, so a deep link like
-   /universe/cards asks for a file that does not exist and Pages answers with
-   404.html — without changing the URL in the address bar.
-
-   Shipping the SPA shell as 404.html therefore makes every route work on a
-   cold load, and vue-router reads the intact URL and renders the right page.
-   Without this, only "/" survives a refresh, and every anchor and filter param
-   in PORT-NOTES rule 5 stops being a shareable contract.
-
-   Node builtins only — this is a build step, not a dependency.
-   ========================================================================== */
+/* dist/404.html must stay a copy of index.html: GitHub Pages has no server-side rewrite, so deep links are served 404.html with the URL intact and vue-router resolves the route. */
 
 import { copyFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';

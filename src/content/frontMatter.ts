@@ -1,7 +1,4 @@
-/* ============================================================================
-   Front matter — a ~40 line parser instead of a dependency.
-   Supports: strings, numbers, booleans, inline arrays [a, b] and dash lists.
-   ========================================================================== */
+// Front-matter values parse only as strings, numbers, booleans, inline arrays [a, b] or dash lists; content/** authoring is limited to these forms.
 
 export type MetaValue = string | number | boolean | string[];
 export type Meta = Record<string, MetaValue>;

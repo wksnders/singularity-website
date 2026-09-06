@@ -1,16 +1,5 @@
 <script setup lang="ts">
-/**
- * FAQ — six bands of questions, one accordion row each, with a search that
- * lives in the URL.
- *
- * Nothing on this page hard-codes a question, a group name or a band exit.
- * Questions are records in `content/<locale>/faq.json`, in page order; the
- * group taxonomy and its order are `faqGroups` in `site/faq.ts`. Reordering
- * the page is a reordering of one of those two.
- *
- * Every question id is a public URL (`#faq-<id>`) printed on nothing yet but
- * pasteable everywhere. Renaming an id breaks every copy of its link.
- */
+/* Each question id is the public URL #faq-<id>: renaming an id in content/<locale>/faq.json breaks every link already pasted. */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -34,23 +23,17 @@ import type { SectionEntry } from '@/site/sections';
 const route = useRoute();
 const searchId = useId();
 
-/* `?q=` is a URL contract from the mock, and a searched FAQ is a page worth
-   sending to someone. useQueryFilter owns the router.replace. */
 const query = useQueryFilter('q');
 
 const entries = computed(() => faqEntries());
 const searchField = ref<HTMLInputElement | null>(null);
 
-/* The field is driven by a local ref, not by the query param it writes to.
-   Binding the input straight to the URL means every keystroke waits on a
-   router.replace before the value comes back, and the caret jumps. The watch
-   is what keeps the back button working. */
+/* The field binds to a local ref, not to the query param it writes: routing every keystroke through router.replace makes the caret jump. */
 const draft = ref(query.value.value ?? '');
 watch(
   () => query.value.value,
   (next) => {
-    /* Compared trimmed, because the URL carries the trimmed value: matching on
-       the raw one would eat the space the reader just typed between words. */
+
     const incoming = next ?? '';
     if (incoming !== draft.value.trim()) draft.value = incoming;
   },
@@ -67,7 +50,7 @@ const re = computed(() => matcher(terms.value));
 
 const matches = (entry: FaqEntry) => terms.value.every((word) => entry.haystack.includes(word));
 
-/** Groups in page order, each with the questions that survive the search. */
+/* t() answers a miss with the key itself, so a group with no `standfirst` key in content would print the raw key. */
 const bands = computed(() =>
   faqGroups
     .map((group, i) => ({
@@ -76,9 +59,7 @@ const bands = computed(() =>
       index: i + 1,
       label: t(`faq.groups.${group.id}.label`),
       short: t(`faq.groups.${group.id}.short`),
-      /* Empty for five of the six, and empty on purpose: t() answers a miss
-         with the key itself, so a group with no `standfirst` key at all would
-         print "faq.groups.box.standfirst" at the top of its band. */
+
       standfirst: t(`faq.groups.${group.id}.standfirst`),
       exitLabel: t(`faq.groups.${group.id}.exit`),
       items: entries.value.filter((e) => e.group === group.id && matches(e)),
@@ -89,8 +70,6 @@ const bands = computed(() =>
 const total = computed(() => bands.value.reduce((n, band) => n + band.items.length, 0));
 const noResults = computed(() => searching.value && total.value === 0);
 
-/* A group with no hits is dropped from the index rather than greyed out: the
-   count line already says how many matched, and JumpChip has no dead state. */
 const sections = computed<SectionEntry[]>(() =>
   bands.value.map((band) => ({
     id: band.id,
@@ -98,14 +77,11 @@ const sections = computed<SectionEntry[]>(() =>
   })),
 );
 
-/** The line under each band's heading: hits while filtering, size otherwise. */
 function bandCount(n: number): string {
   if (!searching.value) return `${n} ${t('faq.count.questions')}`;
   return `${n} ${n === 1 ? t('faq.count.match') : t('faq.count.matches')}`;
 }
 
-/* t() has no interpolation, so the count is composed here. If interpolation
-   ever lands, this collapses into one key. */
 const countLabel = computed(() => {
   if (noResults.value) return t('faq.count.none');
   if (searching.value) {
@@ -115,10 +91,6 @@ const countLabel = computed(() => {
   return `${entries.value.length} ${t('faq.count.questions')} · ${faqGroups.length} ${t('faq.count.groups')}`;
 });
 
-/* ---------------------------------------------------------------- open state
-   Several things can open a row — a search hit, expand-all, a pasted link, or
-   being first on the page. Closing one writes that choice down and it sticks,
-   with one exception noted in isOpen(). */
 const opened = ref(new Set<string>());
 const closed = ref(new Set<string>());
 const expandAll = ref(false);
@@ -127,8 +99,7 @@ const linked = ref<string | null>(null);
 const firstId = computed(() => bands.value[0]?.items[0]?.id ?? null);
 
 function isOpen(entry: FaqEntry): boolean {
-  /* Searching outranks a remembered close: a hit the reader cannot read is
-     the same as no hit at all. */
+
   if (searching.value) return true;
   if (closed.value.has(entry.id)) return false;
   if (opened.value.has(entry.id)) return true;
@@ -157,11 +128,7 @@ function toggleAll(): void {
   linked.value = null;
 }
 
-/* ------------------------------------------------------------------- anchors
-   A pasted #faq-<id> must open its row, clear the nav and take focus — on cold
-   load and on every later hashchange in the same tab. Focus does the scrolling:
-   base.css puts scroll-margin-top on every [id], so the browser lands it below
-   the nav without a second calculation here. */
+/* A pasted #faq-<id> opens its row and takes focus; focus is what scrolls, because base.css sets scroll-margin-top on every [id]. */
 async function applyHash(): Promise<void> {
   const hash = route.hash.replace(/^#/, '');
   if (!hash.startsWith('faq-')) return;
@@ -170,19 +137,15 @@ async function applyHash(): Promise<void> {
 
   linked.value = id;
   closed.value = new Set([...closed.value].filter((other) => other !== id));
-  /* A pasted link outranks a stale search: without this the linked row is
-     filtered out of the DOM and the link resolves to nothing. */
+  /* A stale search must be cleared first: a filtered-out row is not in the DOM for the link to reach. */
   if (draft.value) search('');
 
   await nextTick();
   document.getElementById(`faq-${id}`)?.focus();
 }
 
-/** `/` focuses the search, the way a search-first page is expected to behave. */
 function onKeydown(event: KeyboardEvent): void {
-  /* Modified presses belong to the browser and to assistive tech — Ctrl+/ and
-     Cmd+/ are shortcuts somewhere, and a page-level key handler that swallows
-     them is the kind of thing nobody reports, they just stop using the app. */
+  /* Never swallow modified presses: Ctrl+/ and Cmd+/ belong to the browser and to assistive tech. */
   if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
   const target = event.target as HTMLElement | null;
   if (target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable)) {
@@ -208,14 +171,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
 watch(() => route.hash, applyHash);
 
-/* ------------------------------------------------------------------ per-item */
 const question = (entry: FaqEntry) => segments(entry.question, re.value);
 const answer = (entry: FaqEntry) => markHtml(entry.answerHtml, re.value);
 
-/**
- * Which words only matched a keyword. Saying so is the difference between a
- * result that looks wrong and one that explains itself.
- */
 function matchNote(entry: FaqEntry): string {
   if (!searching.value) return '';
   const hidden = terms.value.filter((word) => !entry.text.includes(word));
@@ -302,8 +260,7 @@ const routing = [
     </div>
   </SecondaryHero>
 
-  <!-- Remounted when the visible set changes: the rail observes its sections
-       once, on mount, so a changed list would leave it spying on stale ids. -->
+  <!-- Keyed to remount: ScrollSpyRail observes its sections once on mount, so a changed list leaves it spying on stale ids. -->
   <ScrollSpyRail :key="sections.map((s) => s.id).join(',')" :sections="sections" />
 
   <section v-if="noResults" class="l-band">
@@ -316,9 +273,7 @@ const routing = [
         :action-label="t('faq.empty.clear')"
         @action="clearSearch()"
       />
-      <!-- EmptyState carries one action, and clearing the search is not an
-           answer to the question that missed. The three routes the copy names
-           sit beside it. -->
+
       <div class="l-row faq__routes">
         <UiButton variant="quiet" :to="to('rules')">
           {{ t('faq.empty.rules') }}
@@ -363,8 +318,7 @@ const routing = [
           :open="isOpen(entry)"
           @toggle="onToggle(entry, $event)"
         >
-          <!-- A summary takes phrasing content OR one heading, not both, so the
-               chevron is a ::after rather than a second child element. -->
+          <!-- A summary takes phrasing content or one heading, not both, so the chevron is a ::after and not a child element. -->
           <summary class="faq__summary">
             <h3 class="faq__question">
               <template v-for="part in question(entry)" :key="part.key"
@@ -375,8 +329,7 @@ const routing = [
           </summary>
 
           <div class="faq__answer">
-            <!-- v-html, like MarkdownBlock: the source is a file in this repo,
-                 plus <mark> this page inserted. Never user input. -->
+            <!-- v-html is safe only because the source is repo content plus this page's own <mark>: never user input. -->
             <div class="c-prose faq__prose" v-html="answer(entry)" />
 
             <MonoLabel v-if="matchNote(entry)" tone="faint" class="faq__note">
@@ -512,7 +465,6 @@ const routing = [
   color: var(--color-accent-text);
 }
 
-/* Pulled up under SectionMarker, which owns the gap below the heading. */
 .faq__bandhead {
   margin-top: calc(var(--space-6) * -1);
   margin-bottom: var(--space-6);

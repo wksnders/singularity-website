@@ -1,15 +1,5 @@
 <script setup lang="ts">
-/**
- * STORY — chapters, and only chapters. Four bands: the chapter shelf, the
- * five-minute recap with per-chapter anchors (#ch-01, #ch-02 — public URLs),
- * the story graph (nodes are published stories, pins are derived from each
- * story's cast list, so it stays correct as chapters are added), and the
- * Convergence vote.
- *
- * This page does NOT sell anything. A chapter may have no product behind it at
- * all, and the editions differ by content rather than by story — box contents
- * belong wherever `products[]` is rendered.
- */
+// Per-chapter recap anchors `#ch-01` are public URLs, so keep the two-digit `pad()` format.
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
@@ -27,7 +17,6 @@ import { chapters, characterById, factionById, stories } from '@/data/universe';
 import { soon, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
-/** Move to data when the first vote is scheduled. */
 const voteOpen = true;
 
 const sections = computed<SectionEntry[]>(() => [
@@ -54,7 +43,6 @@ const leadHasNarrative = computed(() => Boolean(docHtml(chapterDoc(lead.value.id
 
 const statusLabel = (status: string) => t(`story.status.${status}`);
 
-/** Graph columns follow the story, one column per chapter. */
 const graph = computed(() =>
   chapters.map((chapter) => ({
     chapter,

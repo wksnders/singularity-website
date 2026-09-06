@@ -1,12 +1,5 @@
 <script setup lang="ts">
-/**
- * A real form: visible label, one field, a submit that reports back.
- *
- * There is no list provider yet, so the form is CLOSED: the field and the
- * button are disabled and the note says so. It never claims to have sent
- * anything it did not send. `formEndpoints.newsletter` in the data file is the
- * one switch — see the contract documented beside it before flipping it.
- */
+// Submission stays disabled until `formEndpoints.newsletter` (src/data/universe.ts) holds an endpoint, so the form never claims to have sent what it did not send.
 import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
@@ -20,8 +13,7 @@ const open = computed(() => Boolean(formEndpoints.newsletter));
 const emit = defineEmits<{ submit: [string] }>();
 
 function onSubmit(): void {
-  /* Closed forms cannot report success. The button is disabled too; this is
-     the belt to that pair of braces (Enter in a text field also submits). */
+  // Enter in a text field submits even while the button is disabled, so the closed form needs this guard too.
   if (!open.value) return;
   done.value = true;
   emit('submit', email.value);
@@ -56,7 +48,6 @@ function onSubmit(): void {
       </button>
     </div>
 
-    <!-- Not a defect message: a reserved slot admitting the gap, like [ TBD ]. -->
     <p v-if="!open" id="newsletter-closed" class="c-newsletter__closed">
       {{ t('newsletter.closed') }}
     </p>
@@ -122,8 +113,7 @@ function onSubmit(): void {
   cursor: pointer;
 }
 
-/* Closed state: quieted with existing ink/line roles rather than opacity, so
-   the text keeps a known contrast ratio instead of an unpredictable one. */
+/* Disabled state is quieted with ink/line color roles rather than opacity, to keep a known contrast ratio. */
 .c-newsletter__input:disabled,
 .c-newsletter__submit:disabled {
   border-color: var(--color-line);

@@ -1,11 +1,5 @@
 <script setup lang="ts">
-/**
- * Every image on the site goes through here.
- * - Reserves its aspect ratio before the file loads, so nothing shifts.
- * - Falls back to a striped placeholder with a mono caption naming the art
- *   that belongs there, which is what the site shows until the renders land.
- * - alt comes from data. Decorative art passes alt: "".
- */
+// Decorative art passes alt: ""; all other alt text comes from the data record.
 import { asset } from '@/site/links';
 import type { Art } from '@/data/types';
 
@@ -17,9 +11,9 @@ export interface ArtSource {
 const props = withDefaults(
   defineProps<{
     art?: Art | null;
-    /** CSS aspect-ratio, e.g. "3 / 4". */
+
     ratio?: string;
-    /** Caption shown while the art is missing. */
+
     placeholder?: string;
     radius?: 's' | 'm' | 'l' | 'none';
     /** One eager image per page: the hero. */

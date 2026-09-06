@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * A program at reading size. The one enlarged view: gallery, brand page, pool.
- */
+
 import { computed, ref, watch } from 'vue';
 import FaceToggle from '@/components/atoms/FaceToggle.vue';
 import CardZoom from '@/components/organisms/CardZoom.vue';
@@ -20,7 +18,6 @@ defineEmits<{ close: [] }>();
 
 const face = ref<'card' | 'art'>('card');
 
-/* Carried across, a card can open showing something other than the card. */
 watch(
   () => props.program?.slug,
   () => {
@@ -50,8 +47,7 @@ const rows = computed<ZoomRow[]>(() => {
 </script>
 
 <template>
-  <!-- Never v-if this: CardZoom's scroll lock and inert hang off a watcher on
-       `open`, which a component that mounts already-open never fires. -->
+  <!-- Never v-if this: CardZoom's scroll lock and inert engage from its watcher on `open`, which never fires if it mounts already open. -->
   <CardZoom
     :open="open && Boolean(program)"
     :kicker="brandName"

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * Card class 2 of 3 — the FRAMELESS art tile. Art, then the caption BELOW it.
- * No text over the art, and dont crop: it frames a printed card.
- */
+/* Art is never cropped or overlaid with text: the tile frames a printed card. */
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
@@ -15,21 +12,20 @@ const props = withDefaults(
     to: RouteLocationRaw;
     art?: Art | null;
     placeholder?: string;
-    /** Rendered above the name, per the character wireframe. */
+
     epithet?: string;
     name: string;
-    /** Mono badge above the epithet. */
+
     badge?: string;
-    /** One entry per faction membership — a dot beside every name. */
+
     tags?: { label: string; color?: string | null }[];
     ratio?: string;
-    /** How wide the tile renders. The default matches `.l-grid--tiles`. */
+
     sizes?: string;
   }>(),
   { ratio: '3 / 4', placeholder: '[ printed character card 63×88 ]', sizes: '240px' },
 );
 
-/* Resolves its own rungs so five views need not repeat it. */
 const sources = () => pictureSources(props.art?.src ?? null);
 </script>
 

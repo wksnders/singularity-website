@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** The card or the art, never both. */
+
 import { t } from '@/content';
 
 defineProps<{ modelValue: 'card' | 'art' }>();

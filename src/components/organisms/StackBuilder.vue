@@ -1,15 +1,10 @@
 <script lang="ts">
-/** The control a slot's focus returns to. Exported: the view restores focus
-    to it after clearing, and a second copy of this string would be a contract
-    no type checks. */
+/** Exported so the character view can restore focus to a slot's button by id after clearing. */
 export const slotButtonId = (index: number) => `slot-btn-${index}`;
 </script>
 
 <script setup lang="ts">
-/**
- * BUILD THEIR STACK : a mode on the character page's card band, not a page of
- * its own. 
- */
+
 import { onBeforeUnmount, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -48,7 +43,7 @@ const emit = defineEmits<{
 const copied = ref(false);
 let revert: ReturnType<typeof setTimeout> | undefined;
 
-/* The address is the only memory a stack has, so this is the save button. */
+/* A stack's only memory is its address, so copying the link is the save. */
 function copyLink(): void {
   const url = new URL(window.location.href);
   url.hash = 'stack';

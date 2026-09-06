@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * CARD GALLERY — the printed card is the image; its wording is data. Search
- * reads the wording, which is the whole point: a rules lookup mid-game has to
- * find text, not a picture.
- */
+
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -59,21 +55,13 @@ const factionOf = (program: Program) => {
 function matches(program: Program): boolean {
   const active = faction.value.value;
   const brand = brandOf(program);
-  /* "Universal" is every brand with no faction — personal AND universal. Test
-     `factionId`, not `kind`, or one of the two silently disappears. */
+  /* "Universal" is every brand with no `factionId` — test `factionId`, not `kind`, or personal brands drop out of that filter. */
   const factionOk =
     !active || (active === 'universal' ? !brand?.factionId : brand?.factionId === active);
   const brandOk =
     !brandScope.values.value.length || brandScope.values.value.includes(program.brandId);
   const query = search.value.trim().toLowerCase();
-  /* EVERY printed slot except flavour — name, cost, type, sub-type, rules,
-     Endian Key, brand, set. Flavour is decoration and would drown a rules
-     lookup in prose that says nothing about how the card plays.
-
-     Numbers are indexed WITH their label — "cost 2", never a bare 2 — because a
-     bare number matches every rules line containing it. Rules join with a space
-     so a phrase spanning two printed lines is still findable, and
-     `searchHaystack` indexes the spoken form of each icon. */
+  /* Flavour is deliberately unsearchable, and numbers are indexed with their label ("cost 2") so a bare number cannot match every rules line. */
   const haystack = searchHaystack([
     program.name,
     program.type,
@@ -90,7 +78,7 @@ function matches(program: Program): boolean {
 
 const shown = computed(() => programs.filter(matches));
 
-/** The card's slots, in the order the anatomy diagram walks them. */
+/** Slot order must match the printed 1-8 numbering of the anatomy diagram below. */
 const anatomy = computed(() =>
   ['name', 'cost', 'art', 'type', 'rules', 'flavour', 'brand', 'set'].map((key, index) => ({
     index: index + 1,

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * W5 — the foot of a band: exactly ONE exit, plus a mobile-only route back to
- * the section index. Two exits at the bottom of a band is a dead end wearing a
- * hat: the reader picks neither.
- */
+/* One exit only per band foot; the mobile-only up-link targets the #on-this-page anchor rendered by the view's section index. */
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import type { RouteLocationRaw } from 'vue-router';
@@ -37,7 +33,6 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
   color: var(--color-ink-faint);
 }
 
-/* The index is always visible on desktop; this shortcut is for small screens. */
 @media (min-width: 900px) {
   .c-bandfoot__up {
     display: none;

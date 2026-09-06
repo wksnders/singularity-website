@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * HOME - a lobby, not a page. Hero, then the modules marked A–I below, in that
- * order. Nine is a ceiling, not a target, and G holds the only filled CTA below
- * the fold.
- */
+/* Module order below the hero is fixed and the count is a ceiling, not a target: adding one is an editorial decision. */
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -38,10 +34,7 @@ const pitchStats = computed<Stat[]>(() => [
   { label: t('home.pitch.solo'), value: t('home.pitch.soloValue') },
 ]);
 
-/**
- * Opens on one character per faction, then runs the rest of the roster.
- * Capped for page weight
- */
+/* Capped for page weight. */
 const ROTATOR_MAX = 20;
 
 const rotatorCast = computed(() => {
@@ -62,8 +55,7 @@ const factionTags = (character: (typeof characters)[number]) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
-/* The newest PUBLISHED chapter, which is not necessarily the newest product —
-   that is the whole point of keeping the two arrays apart. */
+/* The newest PUBLISHED chapter, deliberately not the newest product. */
 const currentChapter = computed(
   () => [...chapters].reverse().find((c) => c.status === 'published') ?? chapters[0],
 );
@@ -71,7 +63,6 @@ const currentChapterTitle = computed(() =>
   metaString(getDoc(`story/${currentChapter.value.id}`), 'title', currentChapter.value.title),
 );
 
-/** News is a conditional module: it only earns space while it is fresh. */
 const latestNews = computed(() =>
   getDocs('news/')
     .sort((a, b) => String(b.meta.date ?? '').localeCompare(String(a.meta.date ?? '')))
@@ -103,9 +94,7 @@ function scrollCast(direction: 1 | -1): void {
     <p class="home__hero-secondary">
       <BaseLink :to="to('learn', {}, { hash: '#try' })">{{ t('home.hero.secondary') }} →</BaseLink>
     </p>
-    <!-- "1–4" alone does not tell anyone solo is supported, so the modes are
-         named beside it. Four items is the ceiling before this wraps on a
-         phone. -->
+    <!-- The modes are named beside the player count because "1-4" alone does not say solo is supported; four items is the ceiling before this wraps on a phone. -->
     <p class="home__hero-stats">
       <span>{{ game.players }} {{ t('home.hero.players') }}</span>
       <span>{{ t('home.hero.modes') }}</span>
@@ -113,8 +102,7 @@ function scrollCast(direction: 1 | -1): void {
     </p>
   </PageHero>
 
-  <!-- A0 · the offer. The page's one filled buy button is in the hero above,
-       so this bar's action is a text link. -->
+  <!-- The page's one filled buy button is in the hero, so this bar's action stays a text link. -->
   <section class="home__offer">
     <h2 class="l-sr-only">{{ t('home.offer.title') }}</h2>
     <p class="l-wrap home__offer-line">
@@ -131,7 +119,6 @@ function scrollCast(direction: 1 | -1): void {
     </p>
   </section>
 
-  <!-- A · pitch and ways to play -->
   <section class="l-band">
     <div class="l-wrap l-split">
       <div class="l-split__main">
@@ -161,7 +148,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- B · the claim + trailer -->
   <section class="l-band l-band--line-top l-band--line-bottom home__claim">
     <div class="l-wrap l-wrap--reading home__center">
       <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
@@ -177,7 +163,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- C · cast rotator -->
   <section class="l-band">
     <div class="l-wrap home__rotator-head">
       <div>
@@ -210,7 +195,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- D · faction shelf -->
   <section class="l-band l-band--alt l-band--line-top">
     <div class="l-wrap">
       <MonoLabel tone="accent">{{ t('home.factions.kicker') }}</MonoLabel>
@@ -226,7 +210,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- E · Incursions -->
   <section class="l-band l-band--line-top home__incursions">
     <div class="l-wrap">
       <span class="home__threat">{{ t('home.incursions.badge') }}</span>
@@ -243,7 +226,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- F · current chapter -->
   <section id="story" class="l-band">
     <div class="l-wrap">
       <MonoLabel tone="accent">{{ t('home.chapter.kicker') }}</MonoLabel>
@@ -268,7 +250,7 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- G · ways in — the only filled CTA below the fold -->
+  <!-- Holds the only filled CTA below the fold. -->
   <section id="learn" class="l-band l-band--alt l-band--line-top">
     <div class="l-wrap">
       <h2 class="home__h2">{{ t('home.ways.title') }}</h2>
@@ -284,7 +266,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- H · news 3-up -->
   <section v-if="latestNews.length" id="news" class="l-band">
     <div class="l-wrap">
       <div class="home__news-head">
@@ -304,7 +285,6 @@ function scrollCast(direction: 1 | -1): void {
     </div>
   </section>
 
-  <!-- I · Discord + newsletter -->
   <section id="community" class="l-band l-band--line-top">
     <div class="l-wrap l-split">
       <div class="l-split__main">
@@ -362,8 +342,7 @@ function scrollCast(direction: 1 | -1): void {
   color: var(--color-ink-soft);
 }
 
-/* Announcement bar, not a band: it holds one line and its height is set by the
-   44px tap target inside it, so it never takes --band-y padding. */
+/* Height is set by the 44px tap target inside, so this bar never takes --band-y padding. */
 .home__offer {
   border-top: 1px solid rgba(var(--rgb-accent), 0.2);
   border-bottom: 1px solid rgba(var(--rgb-accent), 0.2);

@@ -1,10 +1,3 @@
-/* ============================================================================
-   Link helpers.
-
-   `to()` carries the active locale so no component has to know about locales.
-   `outbound()` resolves an external key to a real URL when there is one and to
-   /soon when there is not, so launch day is a data edit.
-   ========================================================================== */
 
 import type { LocationQueryRaw, RouteLocationRaw } from 'vue-router';
 import { currentLocale, DEFAULT_LOCALE, LOCALE_ROUTE_PATTERN } from '@/i18n/locales';
@@ -20,10 +13,7 @@ export function to(
   params: Record<string, string> = {},
   extra: { hash?: string; query?: LocationQueryRaw } = {},
 ): RouteLocationRaw {
-  /* `params` is a GETTER, and that is load-bearing. ia.ts and soon.ts call to()
-     at MODULE level, so reading currentLocale eagerly would freeze the locale at
-     import time and every nav, panel, sheet and footer link would lose its
-     prefix the day a second language lands. */
+  /* `params` is a getter because ia.ts and soon.ts call to() at module level; reading currentLocale eagerly would freeze the locale at import time. */
   return {
     name,
     get params() {
@@ -56,27 +46,13 @@ export interface ResolvedLink {
   external: boolean;
 }
 
-/**
- * A destination written in a DATA file. Never a URL, and never a hand-written
- * link to /soon in place of an outbound key: a key stops saying "soon" the day
- * `urls` gains one, a hand-written link never does.
- */
+/** A destination written in a data file: use an outbound key, never a literal URL and never a hand-written /soon link, so the link goes live the day `urls` gains an entry. */
 export interface LinkSpec {
   to?: RouteLocationRaw;
   outbound?: OutboundKey;
 }
 
-/**
- * Join a root-relative `public/` path to wherever public files are served from.
- * A bare "/brands/x.png" from a data file is correct on localhost and a 404 on
- * the live site — the worst kind of bug, because dev never sees it. Absolute
- * URLs pass through.
- *
- * This is the ONLY place that decides the host, so VITE_ASSET_BASE moves every
- * file under public/ to a CDN without touching a data file or a component. Set
- * it only once those files are actually uploaded: it is a promise about where
- * they are, and a wrong one 404s art everywhere at once.
- */
+/** The only place the asset host is decided: set VITE_ASSET_BASE only once every file under public/ is actually served from there, or every asset 404s at once. */
 const ASSET_BASE = (import.meta.env.VITE_ASSET_BASE || import.meta.env.BASE_URL).replace(/\/$/, '');
 
 export function asset(path: string): string {
@@ -85,14 +61,14 @@ export function asset(path: string): string {
 
 const PRESS_WIDTHS = { avif: [560, 1080], webp: [560, 1080] };
 
-const RUNGS: [string, { avif: number[]; webp: number[] }][] = [
+const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
   ['/characters/', ART_WIDTHS],
   ['/press/covers/', PRESS_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): { type: string; srcset: string }[] {
-  const widths = src ? RUNGS.find(([prefix]) => src.startsWith(prefix))?.[1] : undefined;
+  const widths = src ? WIDTHS_BY_PREFIX.find(([prefix]) => src.startsWith(prefix))?.[1] : undefined;
   const stem = src?.replace(/-\d+\.[a-z0-9]+$/, '');
   if (!src || !widths || !stem || stem === src) return [];
 
@@ -102,11 +78,7 @@ export function pictureSources(src: string | null): { type: string; srcset: stri
   }));
 }
 
-/**
- * Only the JPEG is named in data (`Faction.environment.src`); the WebP pair is
- * derived from the id here. Upload the three together or the WebP 404s in the
- * browsers that pick it while the JPEG keeps loading everywhere else.
- */
+/** Data names only the JPEG (`Faction.environment.src`); the WebP pair is derived from the id, so upload all three or the WebP 404s. */
 export function environmentSources(id: string): { type: string; srcset: string }[] {
   return [
     {
@@ -122,8 +94,7 @@ export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
   if (!href) return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
 
-  /* Files we serve ourselves stay `external` on purpose: BaseLink then opens
-     them in a new tab, so a 60MB download never navigates the page away. */
+  /* Files we serve ourselves stay `external` so BaseLink opens them in a new tab and a large download never navigates the page away. */
   return { href: asset(href), external: true };
 }
 
@@ -131,15 +102,12 @@ export function soon(hash: string): RouteLocationRaw {
   return to('soon', {}, { hash });
 }
 
-/* `external` so BaseLink renders an anchor at all: an href with external false
-   falls through its template to plain text. */
+/* `external` is required or BaseLink renders the href as plain text instead of an anchor. */
 export function mailTo(address: string): ResolvedLink {
   return { href: `mailto:${address}`, external: true };
 }
 
-/* Renderers go through this rather than reading `spec.to`, which on an
-   `outbound` row is undefined BaseLink degrades that to plain text, so the
-   link goes missing without erroring. */
+/* Renderers must call this rather than read `spec.to`, which is undefined on an outbound row and silently degrades to plain text. */
 export function resolveLink(spec: LinkSpec): ResolvedLink {
   return spec.outbound ? outbound(spec.outbound) : { to: spec.to, external: false };
 }

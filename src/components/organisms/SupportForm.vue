@@ -1,24 +1,10 @@
 <script setup lang="ts">
-/**
- * Support triages before it collects: rules questions go to the FAQ and
- * Discord, and this form is for orders, refunds and missing pieces only.
- * Every field has a visible label.
- *
- * There is no support endpoint yet, so the form is CLOSED: the fields are
- * disabled and the note says so. Someone reporting a missing component must
- * never be told "sent" by a form that dropped the message.
- * `formEndpoints.support` in the data file is the one switch — see the
- * contract documented beside it before flipping it.
- *
- * "Sent" requires a 2xx this code read back. Every other outcome is an error
- * that points at the mailto fallback.
- */
+/* Closed until `formEndpoints.support` is set; "sent" is claimed only on a 2xx this code read back. */
 import { computed, ref } from 'vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import { t } from '@/content';
 import { formEndpoints, game } from '@/data/universe';
 
-/** `done` and `error` are terminal: nothing clears them on a timer. */
 type Status = 'idle' | 'sending' | 'done' | 'error';
 
 const status = ref<Status>('idle');
@@ -36,12 +22,10 @@ const TIMEOUT_MS = 15000;
 
 async function onSubmit(): Promise<void> {
   const target = endpoint.value;
-  /* Closed forms cannot report success — see NewsletterForm for the same note.
-     The `sending` half is not redundant with the disabled button: Enter in a
-     text field submits without asking the button. */
+  /* The `sending` guard is not redundant with the disabled button: Enter in a text field submits without it. */
   if (!target || sending.value) return;
 
-  /* Tripped: drop it here rather than spend a submission on it. */
+  /* Anti-spam honeypot: `trap` (the hidden `.c-support__aux` field) must stay present and hidden — a non-empty value means a bot. */
   if (trap.value !== '') {
     status.value = 'error';
     return;
@@ -56,17 +40,13 @@ async function onSubmit(): Promise<void> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        /* Without this some providers answer a redirect to their own
-           thank-you page instead of a status this code can read. */
+        /* Without this some providers answer with a redirect to their own thank-you page instead of a status this code can read. */
         Accept: 'application/json',
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
 
-    /* `fetch` resolves for a 500 as readily as for a 200, so the try/catch
-       does not cover this and a server error would otherwise reach the `done`
-       branch. `mode: 'no-cors'` would make `ok` unreadable and put it back. */
     if (!response.ok) throw new Error(`support endpoint answered ${response.status}`);
 
     emit('submit', form.value);
@@ -81,9 +61,7 @@ async function onSubmit(): Promise<void> {
 
 <template>
   <form class="c-support" :class="{ 'c-support--sending': sending }" @submit.prevent="onSubmit">
-    <!-- One fieldset gates every control at once, so a new field can never be
-         added and left live while the form is closed. It gates the in-flight
-         state too: fields edited mid-send would be wiped by the reset. -->
+
     <fieldset class="c-support__set" :disabled="!open || sending" :aria-busy="sending">
       <div class="c-support__grid">
         <p class="c-support__field">
@@ -137,8 +115,7 @@ async function onSubmit(): Promise<void> {
       </div>
     </fieldset>
 
-    <!-- The way out stays OUTSIDE the fieldset: while the form is closed this
-         is the only real route to a human, so it must never be disabled. -->
+    <!-- The mailto fallback stays outside the fieldset: while the form is closed it is the only route to a human, so it must never be disabled. -->
     <p class="c-support__fallback">
       {{ t('support.fallback') }}
       <a v-if="game.supportEmail" :href="`mailto:${game.supportEmail}`">{{ game.supportEmail }}</a>
@@ -149,8 +126,7 @@ async function onSubmit(): Promise<void> {
 
     <p v-if="status === 'done'" role="status" class="c-support__done">{{ t('support.done') }}</p>
 
-    <!-- role="alert", not "status": this one has to interrupt, because the
-         message is lost and the mailto above is now the only route. -->
+    <!-- role="alert", not "status": the message is lost, so the failure has to interrupt. -->
     <p v-if="status === 'error'" role="alert" class="c-support__error">{{ t('support.error') }}</p>
   </form>
 </template>
@@ -161,7 +137,6 @@ async function onSubmit(): Promise<void> {
   gap: var(--space-4);
 }
 
-/* A fieldset used purely as a gate: no border, no padding, no layout of its own. */
 .c-support__set {
   display: grid;
   gap: var(--space-4);
@@ -205,7 +180,6 @@ async function onSubmit(): Promise<void> {
   line-height: 1.5;
 }
 
-/* `display: none` is important */
 .c-support__aux {
   display: none;
 }
@@ -238,8 +212,7 @@ async function onSubmit(): Promise<void> {
   color: var(--color-ink-faint);
 }
 
-/* Closed state: quieted with existing ink/line roles rather than opacity, so
-   the text keeps a known contrast ratio instead of an unpredictable one. */
+/* Closed state is quieted with ink/line tokens rather than opacity so the text keeps a known contrast ratio. */
 .c-support__set:disabled .c-support__input {
   border-color: var(--color-line);
   color: var(--color-ink-faint);
@@ -253,8 +226,6 @@ async function onSubmit(): Promise<void> {
   cursor: not-allowed;
 }
 
-/* In flight the controls are disabled by the same fieldset and inherit the
-   closed look. Only the cursor has to disagree: this one is a wait. */
 .c-support--sending .c-support__set:disabled .c-support__input,
 .c-support--sending .c-support__set:disabled .c-support__submit {
   cursor: progress;
@@ -277,10 +248,6 @@ async function onSubmit(): Promise<void> {
   font-size: var(--size-m);
 }
 
-/* `--rgb-threat` is the Incursions accent, borrowed here for want of a UI
-   alert role in the palette. A second alert state should add that token
-   rather than borrow again. Colour carries none of the meaning: the text
-   states it and role="alert" announces it. */
 .c-support__error {
   padding: var(--space-3) 14px;
   border: 1px solid rgba(var(--rgb-threat), 0.5);

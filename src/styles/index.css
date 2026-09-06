@@ -1,26 +1,4 @@
-/* ============================================================================
-   Singularity.exe — stylesheet entry point.
-
-   HOW CSS IS ORGANISED HERE
-   1. tokens.css   — every raw value (colour, type, space, motion). Nothing else
-                     in the codebase may contain a hex code or a magic number.
-   2. base.css     — element defaults and the accessibility contract
-                     (focus rings, scroll-margin, reduced motion).
-   3. layout.css   — layout objects (`l-` prefix): wrap, band, grid, split.
-   4. Components   — each component owns its BEM block in its own .vue file's
-                     <style> tag (deliberately NOT scoped: BEM already
-                     namespaces it, and unscoped styles survive the wrapper
-                     changes that come with translation and new pages).
-
-   NAMING: BEM, with a one-letter namespace.
-     l-  layout object        .l-band, .l-wrap
-     c-  component block      .c-card, .c-card__title, .c-card--faction
-     is-/has- state           .c-chip.is-active
-
-   FACTION COLOUR is never a token or a class. It is data: a scoped element
-   sets `--faction` / `--faction-text` inline from the data file, so a new
-   faction needs no CSS at all.
-   ========================================================================== */
+/* Import order is the cascade order: tokens.css must load before base.css and layout.css, which consume its custom properties. */
 
 @import './tokens.css';
 @import './base.css';

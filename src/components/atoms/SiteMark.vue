@@ -1,10 +1,5 @@
 <script setup lang="ts">
-/**
- * The file is authored BLACK and inverted here, so the same file serves print
- * and light sheets unchanged.
- *
- * `.exe` badge smudges below 60px
- */
+/* singularity-logo-flat.svg must be authored black: .c-sitemark inverts it so one file serves print and light sheets. */
 import { t } from '@/content';
 import { asset } from '@/site/links';
 

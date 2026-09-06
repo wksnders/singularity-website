@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * INCURSIONS: the public co-op lore page.
- */
+
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';

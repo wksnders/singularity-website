@@ -1,16 +1,12 @@
 <script setup lang="ts">
-/**
- *
- * The two files are cut on the SAME size canvas.
- *
- */
+/* The wordmark and badge images must be cut on the same size canvas; the badge is overlaid on top at the same width. */
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { t } from '@/content';
 import { useMediaQuery } from '@/composables/useMediaQuery';
 import { asset } from '@/site/links';
 
 const SIGN_DELAY = 1200;
-/* A reader who never scrolls still gets the full name. */
+
 const FALLBACK = 4000;
 const CUES = ['scroll', 'pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
 

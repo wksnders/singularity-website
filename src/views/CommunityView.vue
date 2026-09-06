@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * COMMUNITY — five deep-linkable bands.
- */
+
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -101,7 +99,6 @@ const factSheet = computed(() => [
     <h1 class="comm__title">{{ t('community.hero.title') }}</h1>
     <p class="comm__lede">{{ t('community.hero.lede') }}</p>
 
-    <!-- Weighted hub index: Discord is the destination most people want. -->
     <nav id="on-this-page" class="comm__hub" :aria-label="t('wayfinding.onThisPage')">
       <a href="#discord" class="comm__hub-card comm__hub-card--wide">
         <MonoLabel tone="faint">01 {{ t('community.sections.discord') }}</MonoLabel>
@@ -396,7 +393,6 @@ const factSheet = computed(() => [
   font-size: var(--size-h3);
 }
 
-/* Portrait beside the name, never above it. The artists sit a size larger. */
 .comm__roster {
   margin-top: var(--space-6);
   display: grid;
@@ -435,7 +431,6 @@ const factSheet = computed(() => [
   color: var(--color-ink-muted);
 }
 
-/* No portraits here, so each name is a ruled row instead of a card. */
 .comm__team-group--friends .comm__roster {
   grid-template-columns: repeat(auto-fill, minmax(min(272px, 100%), 1fr));
   gap: 0 var(--space-7);

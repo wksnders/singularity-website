@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * A faction tile: the faction's environment plate, a scrim, then the name with
- * its identifier dot and a 2px faction edge. Used on Home and on the Universe
- * hub — the two places the whole faction shelf appears.
- */
+
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';

@@ -1,10 +1,5 @@
 <script setup lang="ts">
-/**
- * The art-first hero used on Home, Faction and Character: full-bleed art, a
- * scrim heavy enough to carry type at 4.5:1 against the lightest overlapped
- * pixel, and the copy in the bottom-left. Art pages get this; index pages get
- * SecondaryHero instead.
- */
+// Scrim must stay dark enough for hero copy to hold 4.5:1 against the lightest overlapped art pixel.
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import type { ArtSource } from '@/components/atoms/ArtFrame.vue';
 import type { Art } from '@/data/types';
@@ -13,11 +8,11 @@ withDefaults(
   defineProps<{
     art?: Art | null;
     placeholder?: string;
-    /** Mono note naming the art that is still missing. */
+
     pendingNote?: string;
-    /** Slow drift on the art. Disabled under reduced motion by base.css. */
+
     drift?: boolean;
-    /** Radial glow origin, so no two heroes on the site look identical. */
+
     glow?: string;
     minHeight?: string;
     sources?: ArtSource[];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Card class 1 of 3 — the content card: a surface, a label, a title, a line. */
+
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -10,7 +10,7 @@ import type { ResolvedLink } from '@/site/links';
 withDefaults(
   defineProps<{
     to?: RouteLocationRaw;
-    /** Use for outbound destinations that may or may not be live yet. */
+
     link?: ResolvedLink;
     kicker?: string;
     title: string;
@@ -18,7 +18,7 @@ withDefaults(
     art?: Art | null;
     placeholder?: string;
     ratio?: string;
-    /** The one filled card in a group — used once per screen at most. */
+
     featured?: boolean;
     current?: boolean;
   }>(),

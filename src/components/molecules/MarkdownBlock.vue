@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * Rendered markdown from content/<locale>/. The only place the site uses
- * v-html: the source is our own repository files, never user input.
- */
+// v-html here is safe only because the markdown source is repository files in content/<locale>/, never user input.
 import { computed } from 'vue';
 import { docHtml, getDoc } from '@/content';
 

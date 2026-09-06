@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * Click-to-play video. Never autoplays, never plays on load, captions on.
- * With no video id yet it says so honestly instead of pretending to buffer —
- * the mechanism is what has to exist before launch, not the file.
- */
+/* Click-to-play only: the iframe mounts on a user gesture and cc_load_policy=1 keeps captions on by default. */
 import { ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -22,10 +18,7 @@ const props = withDefaults(
 
 const playing = ref(false);
 
-/* youtube-nocookie.com, not youtube.com: the privacy-enhanced host sets no
-   tracking cookie until playback actually starts. Since the player is
-   click-to-play, nobody who merely loads a page with a video on it is tracked
-   at all — which is what keeps this side of a consent banner. */
+/* Keep the youtube-nocookie host: it sets no tracking cookie until playback starts, which is what keeps this out of consent-banner scope. */
 const src = () =>
   `https://www.youtube-nocookie.com/embed/${props.youTubeId}?autoplay=1&cc_load_policy=1`;
 </script>

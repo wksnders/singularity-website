@@ -1,17 +1,4 @@
-/* ============================================================================
-   THE data file. Adding a character, brand, faction, box, product or chapter =
-   adding an entry here. Pages never hard-code any of this — the faction count
-   in particular is data, and the roster is expected to grow, so nothing may
-   assume it is fixed.
-
-   `boxes`, `products` and `chapters` are three SEPARATE arrays and must stay
-   that way. A box holds components, a product is a way to pay for one or more
-   boxes, a chapter is story that rides in boxes. See the long note above `Box`
-   in types.ts before merging any two of them.
-
-   [PLACEHOLDER] marks invented text awaiting real copy. Anything user-visible
-   here is a FALLBACK: content/<locale>/**.md of the matching slug overrides it.
-   ========================================================================== */
+/* THE data file: adding a faction, brand, character, box, product or chapter means adding an entry here, nothing may assume the counts are fixed, boxes/products/chapters must stay three SEPARATE arrays (see the note above Box in types.ts), [PLACEHOLDER] marks invented copy, and any user-visible string here is only a fallback that content/<locale> markdown of the matching slug overrides. */
 
 import type {
   Art,
@@ -42,8 +29,7 @@ const noArt = { src: null, alt: '', artist: null };
 /** Rungs character-art.py writes. WebP stops low: alpha triples it. */
 export const ART_WIDTHS = { avif: [640, 1280, 1920, 2560], webp: [640, 1280] };
 
-/* Language dropped: one illustration serves every localisation. Card faces
-   keep the full id because those are language-specific. */
+/* The locale suffix is stripped because one illustration serves every localisation; card faces keep the full id because those are language-specific. */
 const illustration = (kind: 'art' | 'scene', printedId: string) =>
   `/characters/${kind}/${printedId.replace(/-[A-Z]{2}$/, '')}-1280.webp`;
 
@@ -55,40 +41,25 @@ export const game = {
   studioCity: 'Salt Lake City',
   publisher: 'Panda',
   crossoverGame: 'Middara',
-  /* The GAME's range across every mode, which is why it starts at 1 — solo is
-     Incursions, and Incursions is a separate product. Never render this as
-     what is in the core box; which box gets you solo is a purchase question. */
+  /* The whole game's range across every mode, starting at 1 because solo is Incursions, a separate product: never render this as what the core box contains. */
   players: '1\u20134',
-  /** Its own field even though it reads the same as `players`: Incursions is a
-      separate box, so the two are not the same claim. */
+  /** Its own field: Incursions is a separate box, so this is not the same claim as `players`. */
   incursionsPlayers: '1\u20134',
   playTime: '30 min per player',
-  /* No price here: three editions at three prices, so a single `game.price`
-     would silently become the site's answer for all of them. It lives on
-     `products[]`. */
+  /* No price here: three editions at three prices, so price lives on `products[]`. */
   releaseDate: null as string | null,
-  /* The store is the authority on shipping — regions, dates and surcharges all
-     change there without warning. Keep this null and link out; do not mirror a
-     region list the site cannot keep true. */
+  /* The store is the authority on shipping, so keep this null and link out rather than mirror a region list the site cannot keep true. */
   shipsTo: null as string | null,
   ageRating: '14+',
   supportEmail: 'singularity-support@octothorpe.com' as string | null,
-  /* Press, trade and licensing share one inbox. The split a reader needs is
-     support or not-support, and each surface labels this one for its context. */
+  /* Press, trade and licensing share this one inbox; each surface labels it for its own context. */
   enquiriesEmail: 'singularity-press@octothorpe.com',
   trailerYouTubeId: '_eyxoFI4F-8',
   rulesUpdated: '2026-08-16' as string | null,
   copyrightYear: 2026,
 };
 
-/**
- * Both CLOSED: while these are null the forms render disabled and say why,
- * because a form that answers "sent" and drops the message is worse than none.
- *
- * Opening one is TWO steps and never just the first: put the endpoint here,
- * AND make the component POST to it and report the real result. `SupportForm`
- * has step 2 already; its `url` must answer with CORS headers.
- */
+/** Null keeps these forms rendered disabled and saying why; opening one means putting the endpoint here AND making the component POST it and report the real result, which `SupportForm` already does provided its `url` answers with CORS headers. */
 export const formEndpoints = {
   newsletter: null as string | null,
   support: null as FormEndpoint | null,
@@ -98,26 +69,16 @@ export const formEndpoints = {
 export const urls: OutboundUrls = {
   buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/rewards#/section/rewards',
   printAndPlay: '/downloads/singularity-competitive-print-and-play.zip',
-  /* Steam Workshop: "Singularity.exe Preview 2-Player" (Octothorpe Games).
-
-     THIS URL WILL NOT CHANGE — the same item is updated to the full game around
-     ship, so only the copy goes stale. What says "preview" is the `tts` route's
-     `caveatKey` below, and clearing it is the launch-day edit. */
+  /* This Workshop item id will not change: the same item becomes the full game at ship, and the "preview" wording lives in the `tts` route's `caveatKey` below. */
   tabletopSimulator: 'https://steamcommunity.com/sharedfiles/filedetails/?id=2968522499',
-  /* Absolute on purpose: these two are cached immutable, so they must not
-     follow VITE_ASSET_BASE when its prefix moves. Revising one means uploading
-     under a new prefix and editing this line — overwriting the object leaves
-     caches serving the old document for a year. */
+  /* Absolute on purpose: these two are cached immutable and must not follow VITE_ASSET_BASE, so revising one means uploading under a new prefix and editing this line. */
   rulebook:
     'https://octothorpe-singularity-website.sfo3.cdn.digitaloceanspaces.com/v1/downloads/singularity-core-rulebook.pdf',
-  /* The lookup document, offered BESIDE the rules page — never instead of it.
-     The searchable HTML reference is still priority 1; when it ships, this PDF
-     stays as the download next to it. */
+  /* The lookup document, offered BESIDE the rules page and never instead of it. */
   rulesReference:
     'https://octothorpe-singularity-website.sfo3.cdn.digitaloceanspaces.com/v1/downloads/singularity-core-reference.pdf',
   discord: 'https://discord.com/invite/XBRfaufKsk',
-  /* Channel, not a video: the trailer and the how-to-plays embed by id from
-     game.trailerYouTubeId and videos[]. This is the "more from us" link. */
+  /* A channel, not a video: the trailer and how-to-plays embed by id from game.trailerYouTubeId and videos[]. */
   youtube: 'https://www.youtube.com/@octothorpegames',
   instagram: 'https://www.instagram.com/octothorpegames/',
   twitter: 'https://twitter.com/PlaySingularity',
@@ -256,11 +217,7 @@ export const factions: Faction[] = [
   },
 ];
 
-/**
- * Derived from the id rather than stored, so a mark can never point at the
- * wrong brand and an unbuilt one 404s instead of showing the wrong picture.
- * Opt-in per brand: null renders the faction dot instead.
- */
+/** Derived from the id rather than stored, so a mark can never point at the wrong brand and an unbuilt one 404s; null opts a brand out and renders the faction dot instead. */
 const mark = (id: string) => `/brands/${id}.png`;
 const rogueBrand = (id: string) => `/rogue-ai/${id}.png`;
 
@@ -316,19 +273,9 @@ export const brands: Brand[] = [
   },
 ];
 
-/* Card text is DATA, not pixels, so the gallery can be searched, read aloud,
-   linked by errata and translated. The cards live in programs.ts and are
-   re-exported here so every import site stays `@/data/universe`. Read that
-   file's header before editing a card: its typos are the printed ones. */
+/* Card text is DATA, not pixels, so it stays searchable, linkable by errata and translatable; the cards live in programs.ts and are re-exported here so every import site stays `@/data/universe`, whose header notes that a card's typos are the printed ones. */
 export const programs: Program[] = [...allPrograms];
 
-/* ---------------------------------------------------------------------------
-   THE CAST.
-
-   Field order matches the internal sheet. Name · HP · Faction · Sub Faction ·
-   Brand 1-3 · Set · Card Text · Ability Name · Flavor Title · Flavor Text  
-   a record can be checked against it by eye without translating two shapes.
-   -------------------------------------------------------------------------- */
 
 /* Scene-only alternates. `art` is skipped, never faked from the composite. */
 const ALT_WITHOUT_CUTOUT = new Set(['SC-037A-EN', 'SC-014A-EN', 'MQ-002A-EN']);
@@ -359,8 +306,7 @@ const altPrinting = (
   cardArt: { ...noArt, alt: `${guest?.name ?? characterName} character card` },
 });
 
-/* Three art objects, derived from the name so an alt cannot describe the wrong
-   person. Which surface may use which: the ART note in types.ts. */
+/* Three art objects derived from the name so an alt cannot describe the wrong person; which surface may use which is the ART note in types.ts. */
 const character = (
   input: Omit<Character, 'art' | 'sceneArt' | 'cardArt' | 'storyIds'>,
 ): Character => ({
@@ -376,13 +322,10 @@ const character = (
     src: illustration('scene', input.cardId),
     alt: `${input.name} in their world`,
     artist: CHARACTER_ARTIST,
-    /* Heads sit high in some illustrations, so a centre crop cuts them off.
-       One default for all of them; a character that needs its own goes in that
-       character's own `character({ … })` call. */
+    /* Heads sit high in some illustrations, so a centre crop cuts them off; a character needing its own focal sets it in its own character() call. */
     focal: { x: 0.5, y: 0.3 },
   },
-  /* The alt names WHICH card; the wording is read from the hidden block beside
-     the image, so the alt does not carry the rules. */
+  /* The alt names WHICH card; the card's wording is read from the hidden block beside the image, so the alt does not carry the rules. */
   cardArt: {
     ...noArt,
     src: cardFace(input.cardId),
@@ -1325,10 +1268,7 @@ export const characters: Character[] = [
   /* Written in faction blocks, READ in `order`. Moving a row changes nothing. */
 ].sort((a, b) => a.order - b.order);
 
-/**
- * Dev-only. Catches a typo'd brand id and a `factionIds` that disagrees with
- * the character's brands both of which render a plausible wrong page.
- */
+/** Dev-only: catches a typo'd brand id or a `factionIds` that disagrees with the character's brands, both of which render a plausible wrong page. */
 function assertCharacterShape(): void {
   if (import.meta.env.PROD) return;
   const seen = new Set<string>();
@@ -1340,7 +1280,6 @@ function assertCharacterShape(): void {
     if (orders.has(c.order)) console.warn(`[universe] duplicate character order ${c.order}.`);
     orders.add(c.order);
 
-    /* all brands included */
     const fromBrands: string[] = [];
     for (const brandId of [...c.brandIds, ...(c.personalBrandId ? [c.personalBrandId] : [])]) {
       const brand = brands.find((b) => b.id === brandId);
@@ -1374,8 +1313,7 @@ function assertCharacterShape(): void {
 }
 assertCharacterShape();
 
-/* Rogue AIs sit outside the faction system and have their own color that is 
-    reserved for incursions. */
+/* Rogue AIs sit outside the faction system and use their own color, reserved for incursions. */
 export const rogueAIs: RogueAI[] = [
   { id: 'calebrena', name: 'Calebrena', art: { ...noArt }, brand: rogueBrand('calebrena') },
   { id: 'invader', name: 'Invader', art: { ...noArt }, brand: rogueBrand('invader') },
@@ -1387,13 +1325,7 @@ export const rogueAIs: RogueAI[] = [
   },
 ];
 
-/* ---------------------------------------------------------------------------
-   WHAT IS IN A BOX. See the three-level note above `Box` in types.ts.
-
-   Only the core box is described today. The others exist but have not been
-   named to the site, and inventing names here would put fictional products in
-   front of buyers.
-   -------------------------------------------------------------------------- */
+/* Only the core box is described today: the others exist but have not been named to the site, and inventing names here would put fictional products in front of buyers (see the three-level note above Box in types.ts). */
 export const boxes: Box[] = [
   {
     id: 'core-box',
@@ -1403,16 +1335,7 @@ export const boxes: Box[] = [
   },
 ];
 
-/* ---------------------------------------------------------------------------
-   WHAT YOU BUY.
-
-   Prices here are CAMPAIGN pricing, not MSRP, and the storefront is the
-   authority on price and shipping both. When they diverge, fix them here and
-   never in a template.
-
-   A box that starts selling on its own gains a PRODUCT whose `boxIds` is that
-   one box. Never a flag on the box.
-   -------------------------------------------------------------------------- */
+/* Prices here are CAMPAIGN pricing, not MSRP, and the storefront is the authority on price and shipping, so fix them here and never in a template; a box that starts selling on its own gains a PRODUCT whose boxIds is that one box, never a flag on the box. */
 export const products: Product[] = [
   {
     id: 'core-edition',
@@ -1448,22 +1371,13 @@ export const products: Product[] = [
     boxCount: null,
     boxIds: [],
     extras: [],
-    /* Sold out and genuinely undecided. This wording commits to nothing on
-       purpose: "may not be reprinted" is the fact, and anything warmer than it
-       reads as a promise. Do not soften it to "not currently available". */
+    /* Deliberate wording: "may not be reprinted" is the fact and anything warmer reads as a promise, so do not soften it to "not currently available". */
     note: 'Sold out. It may not be reprinted.',
     buyUrl: null,
   },
 ];
 
-/**
- * `boxCount` is the claim, `boxIds` how much of it we can spell. UNDER-listing
- * is legal and is today's state; over-listing and dangling ids are bugs.
- *
- * Tighten the first check to strict equality once the six are named: an edition
- * claiming six and listing five renders a plausible wrong page, and nothing
- * else would notice.
- */
+/** `boxCount` is the claim and `boxIds` how much of it we can spell: under-listing is legal and is today's state, while over-listing and dangling ids are bugs. */
 function assertProductShape(): void {
   if (import.meta.env.PROD) return;
   for (const { boxCount, boxIds, id } of products) {
@@ -1486,17 +1400,10 @@ assertProductShape();
 
 /** The core SKU. Never index products[] by position. */
 export const coreProduct = products.find((p) => p.id === 'core-edition') ?? products[0];
-/** The box those fact strips actually describe. */
+
 export const coreBox = boxes.find((b) => b.id === 'core-box') ?? boxes[0];
 
-/* ---------------------------------------------------------------------------
-   WHAT YOU READ. The chapter number drives the `#ch-01` anchors, which are
-   public URL contracts.
-
-   `boxIds` is empty on all three: which box carries which chapter is an OPEN
-   QUESTION, and guessing would print a purchase claim. Empty renders "no box
-   attached", which is also what a story-only release looks like.
-   -------------------------------------------------------------------------- */
+/* The chapter number drives the public `#ch-01` anchors; `boxIds` is empty on all three because which box carries which chapter is unsettled and guessing would print a purchase claim. */
 export const chapters: Chapter[] = [
   {
     id: 'chapter-01',
@@ -1635,16 +1542,8 @@ export const wallpapers = [
   { id: 'wall-04', kind: 'avatar', file: null as string | null },
 ];
 
-/* Studio credit lives in one band on Community; per-artwork credit is
-   `art.artist`, filled by the two art factories. */
-/* The printed campaign credits, in printed order. Matt Anderson and Alex
-   Johnstone are each credited twice under different titles; here they are one
-   person with both titles joined, so the grid shows fifteen people not seventeen.
-
-   Names are set as printed. The diacritics in Héctor Sevilla Luján and João
-   Guisado are part of the spelling. "Box Server
-   Illustration" and "Singularity Logo" credit artefacts rather than people, and
-   are the credits' own wording rather than typos to fix. */
+/* Studio credit lives in one band on Community; per-artwork credit is `art.artist`, filled by the two art factories. */
+/* The printed campaign credits in printed order: names, diacritics and artefact-style roles like "Box Server Illustration" are set as printed and are not typos to fix, and the two people credited twice are joined into one row each so the grid shows fifteen people not seventeen. */
 export const team = [
   { id: 'team-matt-anderson', group: 'studio', name: 'Matt Anderson', role: 'Game and Creative Director · Design Director, Art Director, and Narrative Lead' },
   { id: 'team-alex-johnstone', group: 'studio', name: 'Alex Johnstone', role: 'Product Developer and Production Manager · Visual Identity Lead and Graphic Designer' },
@@ -1668,7 +1567,6 @@ export const team = [
 export const teamGroups = ['studio', 'artists', 'friends'] as const;
 export const teamOf = (group: string) => team.filter((member) => member.group === group);
 
-/* ---------------------------------------------------------------- lookups */
 
 export const factionById = (id: string) => factions.find((f) => f.id === id) ?? null;
 export const brandById = (id: string) => brands.find((b) => b.id === id) ?? null;
@@ -1696,8 +1594,7 @@ export const printingsOf = (character: Character): Printing[] => [
   ...(character.printings ?? []),
 ];
 
-/* A rename is what separates a different face from a re-skin, so it alone sets
-   `isReflavour`: new art is not a new identity. */
+/* A rename, not new art, is what separates a different face from a re-skin, so it alone sets `isReflavour`. */
 export function resolvePrinting(character: Character, printing: Printing) {
   return {
     id: printing.id,
@@ -1715,14 +1612,13 @@ export function resolvePrinting(character: Character, printing: Printing) {
 }
 export const brandsOfFaction = (factionId: string) => brands.filter((b) => b.factionId === factionId);
 
-/** Who plays this brand. Matches `personalBrandId` as well as `brandIds` — a
-    vault's owner belongs in its own cast. */
+/** Who plays this brand: matches `personalBrandId` as well as `brandIds`, so a vault's owner belongs in its own cast. */
 export const charactersOfBrand = (brandId: string) =>
   characters.filter(
     (c) => c.brandIds.includes(brandId) || c.personalBrandId === brandId,
   );
 
-/** Any-faction characters are exempt from the faction filter, not excluded. (for now may change later) */
+/** Any-faction characters are exempt from the faction filter, not excluded. */
 export const charactersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds === 'any' || c.factionIds.includes(factionId));
 

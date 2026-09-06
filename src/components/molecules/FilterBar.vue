@@ -1,17 +1,11 @@
 <script setup lang="ts">
-/**
- * The filter bar: chips from data (never a hard-coded faction list), an
- * optional search field, and a live result count announced to screen readers.
- * Deliberately NOT sticky — below 600px the nav owns the only sticky slot.
- */
+// Chips must come from data, and this bar is deliberately not sticky: the fixed site header already owns the pinned slot.
 import { computed, useId } from 'vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
 import { t } from '@/content';
 import type { FilterOption } from '@/site/filters';
 
-/* Must not be derived from any translated string: a space or non-ASCII
-   character makes the id invalid and silently unlinks the label from the
-   input. useId() is locale-independent and unique per instance. */
+/* The input id must come from useId(), never a translated string: a space or non-ASCII character invalidates it and silently unlinks the label. */
 const searchId = useId();
 
 const props = defineProps<{

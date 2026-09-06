@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * UNIVERSE HUB — six deep-linkable bands (world · factions · characters ·
- * universal · incursions · cards) plus a lexicon appendix, which sits outside
- * the numbering.
- */
+
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -91,7 +87,7 @@ function matchesSearch(character: Character): boolean {
 }
 
 const shownCast = computed(() => characters.filter((c) => matchesFaction(c) && matchesSearch(c)));
-/** The hub shows a taste of the cast; the index page shows all of it. */
+
 const castPreview = computed(() => shownCast.value.slice(0, 9));
 
 const universal = computed(() => characters.filter((c) => c.factionIds === 'any').slice(0, 3));

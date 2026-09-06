@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * One mega panel shell, four panels. One level deep, always: factions but
- * never brands, tracks but never rule sections.
- */
+// Mega panels stay one level deep: factions but never brands, tracks but never rule sections.
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -19,8 +16,7 @@ const featured = computed(() => characters[0] ?? null);
 const groups = computed(() => props.section.mega ?? []);
 const hasFeatured = computed(() => Boolean(props.section.featuredCharacter && featured.value));
 
-/* Never a fixed track in the stylesheet: a group past the count wraps to a
-   second row silently, instead of failing where anyone would see it. */
+// Column track is computed rather than fixed in the stylesheet so a group past the count wraps to a second row.
 const columns = computed(() => {
   const track = groups.value.map(() => 'minmax(0, 1fr)');
   if (hasFeatured.value) track.push('minmax(0, 1.2fr)');
@@ -83,8 +79,7 @@ const columns = computed(() => {
 </template>
 
 <style>
-/* Positions against `.c-nav`, not the item it is nested in — giving
-   `.c-nav__item` a position of its own moves the panel onto the chevron. */
+/* Positions against `.c-nav`: giving `.c-nav__item` a position of its own moves the panel onto the chevron. */
 .c-mega {
   position: absolute;
   inset-inline: 0;

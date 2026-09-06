@@ -1,10 +1,5 @@
 <script setup lang="ts">
-/**
- * The hero for index and reading pages (Universe, Story, Learn, News,
- * Community). No art drop zone: a tinted diagonal field plus a mono note, so
- * these pages never look like a broken image. Each page passes a different
- * glow origin.
- */
+/* Deliberately has no art slot so these pages never render a broken image. */
 withDefaults(defineProps<{ glow?: string; note?: string }>(), {
   glow: '90% 70% at 80% 0%',
 });

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * NEWS — one band, so it is deliberately exempt from the section index. It gets
- * a lead post and date groups instead. Posts are markdown files: front matter
- * carries title, date, category and lead flag.
- */
+/** News is one band and is deliberately exempt from the section index; posts are markdown under content/ with front matter carrying title, date, category and lead. */
 import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -24,19 +20,7 @@ const filterOptions = computed<FilterOption[]>(() =>
   newsCategories.map((c) => ({ id: c.id, label: c.name })),
 );
 
-/**
- * Future-dated posts do not appear. Without this a post dated next month is
- * live the moment it is committed, which makes the `date` field decorative
- * and turns an embargo into an accident.
- *
- * NOTE this hides a post; it does NOT keep it secret. Every markdown file in
- * content/ is bundled into the JS whether or not a view renders it, so a
- * genuinely embargoed post must stay out of the repo until its date. This
- * filter is scheduling, not secrecy.
- *
- * Dates are compared as YYYY-MM-DD strings in the visitor's local day, so a
- * post appears on its date everywhere rather than at one timezone's midnight.
- */
+/** Posts dated after today are hidden: this is scheduling, not secrecy, since every content/ markdown file ships in the bundle regardless, and dates compare as local-day YYYY-MM-DD strings. */
 const today = new Date();
 const todayKey = [
   today.getFullYear(),
@@ -61,7 +45,6 @@ const shown = computed(() => {
 const lead = computed(() => shown.value.find((post) => post.meta.lead === true) ?? shown.value[0] ?? null);
 const others = computed(() => shown.value.filter((post) => post !== lead.value));
 
-/** Relative groups, not month names: the feed is small and reads better this way. */
 function group(post: Doc): 'thisMonth' | 'earlier' {
   const date = new Date(String(post.meta.date ?? ''));
   const now = new Date();
@@ -119,8 +102,7 @@ const kicker = (post: Doc) =>
 
       <template v-if="groupedOthers.length">
         <div v-for="bucket in groupedOthers" :key="bucket.key" class="news__group">
-          <!-- Date groups are hidden while a filter is active: the count line
-               already says what is being shown. -->
+
           <h3 v-if="!category.value.value" class="news__group-title">
             {{ t(`news.groups.${bucket.key}`) }}
           </h3>

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * FACTION — the one page where a faction takes the whole page over. Colour
- * arrives as --faction / --faction-text from data: no faction gets CSS of its
- * own. Brands carry their own stories, not just card lists.
- */
+/** The one page a faction takes over whole; --faction / --faction-text come from data records, never per-faction CSS. */
 import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -51,7 +47,6 @@ const cast = computed<Character[]>(() =>
     : [],
 );
 
-/** Lateral hops: the spine walks sideways through the factions. */
 const neighbours = computed(() => {
   const index = factions.findIndex((f) => f.id === props.factionId);
   if (index < 0) return { prev: null, next: null, position: null };

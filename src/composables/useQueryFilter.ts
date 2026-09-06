@@ -1,8 +1,4 @@
-/* ============================================================================
-   Filter state lives in the URL. `?faction=`, `?category=`, `?kind=` are public
-   contracts from the mock and must survive every refactor: a filtered index is
-   a shareable page.
-   ========================================================================== */
+/* Query keys (`?faction=`, `?category=`, `?kind=`, ...) are published URL contracts: renaming one breaks every existing shared link. */
 
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -20,10 +16,7 @@ export function useQueryFilter(param: string) {
     const query = { ...route.query };
     if (next) query[param] = next;
     else delete query[param];
-    /* The hash is carried explicitly. `replace({ query })` drops it, which on
-       a page where the reader arrived at a deep link would silently throw the
-       anchor away the first time they touched a filter and the address bar
-       would stop matching the page they are looking at. */
+    /* Pass `hash` explicitly; `router.replace({ query })` drops it and loses the reader's deep-link anchor. */
     void router.replace({ query, hash: route.hash });
   }
 

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-/**
- * The brand shelf tile, used wherever a faction's brands are listed together.
- *
- * The mark IS the brand's art, so the tile leads with it rather than reserving
- * a wide art slot. Sits beside FactionTile: same faction edge, same hover, one
- * row up from EntityTile. A brand with no shipped mark falls back to the
- * faction dot, so the grid never develops a hole while art is pending.
- */
+
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import { to } from '@/site/links';
@@ -16,7 +9,7 @@ defineProps<{
   brand: Brand;
   faction?: Faction | null;
   descriptor?: string;
-  /** Derived count line, e.g. "12 cards · 3 characters play it". */
+
   note?: string;
 }>();
 </script>

@@ -1,12 +1,5 @@
-/* ============================================================================
-   ONE PAGE LOCK, SHARED BY EVERY DIALOG. Two dialogs that each set
-   `body.overflow` and `#main[inert]` fight over them: whichever closes second
-   wins, and closing the first re-enables a page the second is still covering.
-   The count here is what makes the lock survive an overlap.
-
-   `#main` is what goes inert, not `<body>`, because every dialog teleports to
-   `<body>` — inerting the body would inert the dialog with it.
-   ========================================================================== */
+/* The page lock is ref-counted so overlapping dialogs cannot unlock the page early. */
+/* `#main` goes inert rather than `<body>`, because every dialog teleports into `<body>`. */
 
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 
@@ -19,8 +12,7 @@ function setLock(on: boolean): void {
   if (on) {
     if (locks++ > 0) return;
     document.body.style.overflow = 'hidden';
-    /* `inert` takes the page out of the accessibility tree; the aria-hidden is
-       for browsers that do not have it yet. */
+    /* aria-hidden mirrors `inert` for browsers that do not support `inert`. */
     page?.setAttribute('inert', '');
     page?.setAttribute('aria-hidden', 'true');
     return;
@@ -35,7 +27,7 @@ function setLock(on: boolean): void {
 export function useModal(options: {
   open: () => boolean;
   close: () => void;
-  /** Focused when the dialog opens. */
+
   initialFocus: () => HTMLElement | null | undefined;
 }) {
   const dialog = ref<HTMLElement | null>(null);
@@ -70,9 +62,7 @@ export function useModal(options: {
       return;
     }
     if (event.key !== 'Tab' || !dialog.value) return;
-    /* `getClientRects`, not `offsetParent`: that is null for anything
-       `position: fixed`, which silently drops a fixed close button out of the
-       cycle the moment focus leaves it. */
+    /* `getClientRects`, not `offsetParent`: `offsetParent` is null for `position: fixed`. */
     const items = Array.from(dialog.value.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
       (el) => el.getClientRects().length > 0,
     );

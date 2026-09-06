@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * A reserved slot for a fact that exists but has not been given to us yet
- * (price, release date, rating marks). Visible on purpose: an empty layout
- * hides the gap, a dashed [ TBD ] admits it.
- */
+// Unsettled commercial facts (price, release date, ratings) must render as a visible [ TBD ] placeholder, never hidden or guessed.
 defineProps<{ value?: string | null }>();
 </script>
 

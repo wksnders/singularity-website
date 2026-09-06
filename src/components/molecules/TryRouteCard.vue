@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * One way into the game, with its price of entry on the card that makes the
- * offer rather than at the destination.
- */
+// Each try route states its price of entry on the card, not at the destination.
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import { t } from '@/content';

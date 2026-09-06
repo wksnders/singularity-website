@@ -1,29 +1,7 @@
-/* ============================================================================
-   PROGRAM CARD TEXT — the printed cards, as data.
-
-   Four rules, in the order they are easy to break:
-
-     1. TRANSCRIBE, DO NOT EDIT. These strings are the printed wording, typos
-        and all ("a total cost 4 of or less" on Decode; "progams" on Holo
-        Kingdom; "concience" on Oni Shift; "heal itself 1 by [H]" on Crackling
-        Stroke). A string that reads differently from the box makes this file a
-        second, wrong rulebook. Fix the print run first.
-     2. `rules` is one entry per printed line. Joining them invents punctuation
-        the card does not have.
-     3. Nothing internal goes in this file. It ships in the JS bundle and is
-        readable in devtools, so "in this file" means published — which is also
-        why an unannounced card is simply absent rather than `revealed: false`.
-        An absent card leaves no slot behind: card counts are derived from this
-        file, and `Brand.announcedCount` only states the gap in words.
-     4. TWO IDENTITIES, AND THEY ARE NOT INTERCHANGEABLE. `cardId` is printed
-        on the card and carries the locale (`-EN`), so errata cite it in
-        `affectedProgramIds` (content/en/news/) — an errata applies to a
-        printed card, and the same card in another language is a different
-        printing. `id` is the public URL identity, the name made safe, which
-        is why it is derived from the English name and never from a
-        translation: `?card=` and `?stack=` must name the same cards in every
-        locale. Neither is positional, so inserting a card renumbers nothing.
-   ========================================================================== */
+// Reference spec: docs/architecture/modules.md#programs
+// Transcribe the printed wording exactly, typos and all; an edited string makes this file a second, wrong rulebook.
+// This ships in the JS bundle and is readable in devtools, so nothing internal goes here: an unannounced card is simply absent, never `revealed: false`.
+// `cardId` is the printed, locale-bearing id errata cite in `affectedProgramIds`; `id` is the public URL identity, derived from the English name so `?card=` and `?stack=` name the same cards in every locale.
 
 import type { Program, SetCode } from './types';
 
@@ -32,26 +10,18 @@ const PROGRAM_ARTIST = 'Josh Bruce';
 /** Rungs card-art.py writes. Changing this without rerunning it ships 404s. */
 export const CARD_WIDTHS = { avif: [420, 840, 1260, 1680], webp: [420, 840] };
 
-/**
- * The <img> fallback, not the file most readers get — those pick a rung.
- * null for a card with no printed id, which is a card with no face.
- */
-/* Printed is not the same as scanned. These four LuX Vault cards exist and
-   carry ids; no master was ever exported for them, so they have no face. */
+/* These four LuX Vault cards are printed and carry ids, but no art master was ever exported, so they have no face. */
 const WITHOUT_FACE = new Set(['SC-181P-EN', 'SC-182P-EN', 'SC-183P-EN', 'SC-184P-EN']);
 
 export const hasCardFace = (cardId: string): boolean => !WITHOUT_FACE.has(cardId);
 
-/** The <img> fallback, not the file most readers get — those pick a rung. */
 export const cardFace = (cardId: string): string | null =>
   hasCardFace(cardId) ? `/cards/${cardId}-840.webp` : null;
 
-/** A card as written down. Id, art and reveal state are mechanical and are
-    filled in by `brandCards`, so they cannot drift per entry. */
+/** A card as written down; id, art and reveal state are filled in by `brandCards`, never per entry. */
 interface CardText {
   name: string;
-  /** Printed bottom-right on the card. Transcribed, never derived. Absent on a
-      parked card, which is why `brandCards` takes CardedText and not this. */
+  /** Printed bottom-right, transcribed and never derived; absent on a parked card, which is why `brandCards` takes CardedText. */
   cardId?: string;
   /** Printed type line, without the sub-type. */
   type: string;
@@ -66,14 +36,9 @@ interface CardText {
   unlock?: string;
 }
 
-/** A card that ships: it has been printed, so it has an id. */
 type CardedText = CardText & { cardId: string };
 
-/**
- * The name, made safe for an address bar. Apostrophes are dropped rather than
- * hyphenated, so "Re'gine's Retribution" is `regines-retribution` and not
- * `re-gine-s-retribution`.
- */
+/** Apostrophes are dropped rather than hyphenated, so "Re'gine's Retribution" is `regines-retribution` — these slugs are published URLs. */
 const slugify = (name: string): string =>
   name
     .normalize('NFKD')
@@ -97,8 +62,7 @@ const brandCards = (brandId: string, set: SetCode, cards: CardedText[]): Program
     ...(card.unlock ? { unlock: card.unlock } : {}),
     revealed: true,
     set,
-    /* Not interchangeable — see the ART COMES IN LAYERS note in types.ts.
-       `src: null` draws the placeholder frame until the files land. */
+
     art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
     cardArt: {
       src: cardFace(card.cardId),
@@ -1873,9 +1837,7 @@ const luxVault: CardedText[] = [
 ];
 
 /* Gallery order follows `brands[]` in universe.ts. */
-/* Two ways this file can be wrong that a type cannot catch, because both ids
-   are derived: a name that slugs to the same URL as another card's, and a
-   printed id entered twice. Either would make one card unreachable. */
+/* Both ids are derived, so a duplicate slug or a duplicate printed id would leave one card unreachable. */
 function assertProgramIds(): void {
   if (import.meta.env.PROD) return;
   const seen = new Map<string, string>();
@@ -1914,10 +1876,7 @@ export const allPrograms: Program[] = [
 ];
 assertProgramIds();
 
-/* ============================================================================
-   PARKED — printed cards that are not programs. Exported so the text is not
-   lost; nothing renders any of it. not added to `allPrograms`.
-
+/* PARKED — printed cards that are not programs, deliberately exported so the text is not lost; nothing renders any of it and none of it is added to `allPrograms`.
    TODO — each needs a type and a surface of its own.
    ========================================================================== */
 
@@ -1931,8 +1890,7 @@ export const libraryZone: CardText = {
   flavour: '',
 };
 
-/* Architech Designs. Set `INC` and brand Architech Design on every one, so neither is
-   stored per entry — `CardText` carries neither field. */
+/* Every one is set `INC` and brand Architech Design, so neither is stored per entry — `CardText` carries neither field. */
 export const architechDesigns: CardText[] = [
   {
     name: 'Treasure Cache',
@@ -2034,7 +1992,7 @@ export const architechDesigns: CardText[] = [
 
 export interface EnvironmentCard {
   name: string;
-  /** The named ability, e.g. "Fog of War". */
+
   ability: string;
   /** Exact printed rules text. */
   rules: string;

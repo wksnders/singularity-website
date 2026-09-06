@@ -8,8 +8,7 @@ import {
 import { LOCALE_ROUTE_PATTERN, setLocale } from '@/i18n/locales';
 import { t } from '@/content';
 
-/* Locale prefix: absent while English is the only language, and switched on by
-   adding a code to LOCALES. Public anchors and query params never change. */
+/* Locale prefix appears only once a code is added to LOCALES; public anchors and query params never change either way. */
 const prefix = LOCALE_ROUTE_PATTERN ? `/:locale(${LOCALE_ROUTE_PATTERN})?` : '';
 const path = (segment: string) => (segment ? `${prefix}/${segment}` : `${prefix}/`);
 
@@ -146,18 +145,7 @@ router.afterEach(async (target, from) => {
   const key = target.meta.titleKey;
   document.title = typeof key === 'string' ? t(key) : 'Singularity.exe';
 
-  /* Focus follows navigation. In a single-page app the page is replaced without
-     the browser resetting focus, so a keyboard or screen-reader user who
-     follows a link stays parked wherever they were and hears nothing. Moving
-     focus to <main> (which already carries tabindex="-1") is what a document
-     load would have done.
-
-     Three navigations must NOT take focus:
-     - the cold load: the reader has not asked to go anywhere yet;
-     - a hash target: scrollBehavior owns those, and the anchor is the target;
-     - a same-path change: useQueryFilter writes ?faction= with router.replace
-       on every keystroke in the search box, and stealing focus there would make
-       the field impossible to type in. */
+  /* Move focus to <main> (tabindex="-1") so keyboard and screen-reader users land on the new page, except on cold load, on a hash target (scrollBehavior owns those), and on a same-path change, where useQueryFilter's router.replace would steal focus mid-keystroke. */
   if (from === START_LOCATION) return;
   if (target.hash) return;
   if (target.path === from.path) return;

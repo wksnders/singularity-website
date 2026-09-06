@@ -1,27 +1,5 @@
-/* ============================================================================
-   FAQ — the group taxonomy and the link table.
-
-   Two things live here and nothing else:
-
-   1. GROUPS, in page order. The array's order IS the order of the bands, and
-      the ordinals ("01 / 06") are computed from its length. Reordering the
-      page is a reordering of this array.
-   2. LINK KEYS. A question may carry one link out. Front matter names a key
-      from the table below; this file resolves it to a route. Targets are not
-      writable from `content/`, so translating a question can never repoint it
-      at a page that does not exist.
-
-   The questions themselves are `content/<locale>/faq.json` — one ordered list
-   of records, because that is what they are: a sentence with an id, a group,
-   some search aliases and at most one link. Array order is page order within a
-   group. An `id` is a public URL (`#faq-<id>`) under rule 5; renaming one
-   breaks every link anyone has ever pasted.
-
-   An answer that outgrows a sentence names a markdown file instead
-   (`"body": "faq/contents"` → `content/<locale>/faq/contents.md`). That is the
-   exception, not the direction of travel: forty-two files of six-line front
-   matter wrapped around one sentence each is what this replaced.
-   ========================================================================== */
+// Reference spec: docs/architecture/modules.md#faq
+// A question `id` is a public URL (`#faq-<id>`): renaming one breaks every link already pasted.
 
 import type { RouteLocationRaw } from 'vue-router';
 import { docHtml, getCollection, getDoc, t } from '@/content';
@@ -32,7 +10,7 @@ import type { LinkSpec, ResolvedLink } from '@/site/links';
 export interface FaqGroup {
   /** Public anchor for the band. Never renamed. */
   id: string;
-  /** Exit link at the foot of the band. */
+
   exit: LinkSpec;
 }
 
@@ -46,18 +24,10 @@ export const faqGroups: FaqGroup[] = [
   { id: 'help', exit: { to: to('learn') } },
 ];
 
-/**
- * Every destination a question is allowed to link to.
- *
- * A key resolves lazily, on read, for the reason spelled out in `links.ts`:
- * `to()` returns a params getter so the locale is resolved at render. Building
- * the map eagerly at module level would be fine today and would freeze the
- * locale the day a second language lands.
- */
+/** Keys resolve lazily on read: an eager map would freeze the locale the day a second language lands. */
 const LINK_TARGETS: Record<string, () => RouteLocationRaw | ResolvedLink> = {
   buy: () => outbound('buy'),
-  /* Not a typo: contents, price and compatibility are all the store's, so the
-     five questions that ask for any of them exit to the same place `buy` does. */
+  /* Deliberate duplicate: contents, price and compatibility are all the store's, so those questions exit where `buy` does. */
   products: () => outbound('buy'),
   enquiries: () => mailTo(game.enquiriesEmail),
   rulesReference: () => to('rules'),
@@ -74,11 +44,7 @@ const LINK_TARGETS: Record<string, () => RouteLocationRaw | ResolvedLink> = {
   press: () => to('community', {}, { hash: '#press' }),
 };
 
-/**
- * Resolve a front-matter `linkKey`. An unknown key returns null rather than
- * throwing: a typo in a content file should cost the reader one link, not the
- * page. `assertFaqShape()` names it in the console in dev.
- */
+/** An unknown key returns null, so a content typo costs one link rather than the page. */
 function linkTarget(key: string): RouteLocationRaw | ResolvedLink | null {
   return LINK_TARGETS[key]?.() ?? null;
 }
@@ -96,9 +62,9 @@ export interface FaqSource {
   question: string;
   /** The answer, inline. Exactly one of answer / body / sourceKey. */
   answer?: string;
-  /** Slug of a markdown file, for an answer that needs more than a sentence. */
+
   body?: string;
-  /** A ui.json key, for an answer that must stay identical to another page. */
+
   sourceKey?: string;
   link?: { key: string; label: string };
   keywords?: string[];
@@ -113,30 +79,23 @@ export interface FaqEntry {
   question: string;
   /** Rendered markdown. Trusted: the source is a file in this repository. */
   answerHtml: string;
-  /** Lowercased question + answer, tags stripped. What the reader can see. */
+
   text: string;
-  /** `text` plus the keywords. What a search actually matches against. */
+
   haystack: string;
   keywords: string[];
   link: FaqLink | null;
-  /** Kept so the dev assertion can tell "no link" from "link key misspelt". */
+
   linkKey: string;
-  /** Kept for the same reason: a `body` that resolved to nothing. */
+
   bodySlug: string;
-  /** Position in the file. Only the sort reads it. */
+
   position: number;
-  /**
-   * Editorial state, deliberately NOT rendered: a badge saying the studio is
-   * unsure sits on the answers a buyer checks before paying. `assertFaqShape()`
-   * is the only surface that names these records.
-   */
+  /** Editorial state, deliberately never rendered to readers. */
   reconfirm: boolean;
 }
 
-/* The one answer that comes from ui.json rather than markdown is interpolated
-   into HTML, so it is escaped on the way in. Markdown bodies go through
-   markdown-it, which does this itself; a bare ui string does not, and a
-   translator writing "art & writing" should not be able to break the page. */
+/* A ui.json answer is interpolated into HTML raw, so it is escaped here; markdown bodies are escaped by markdown-it. */
 const ESCAPES: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
@@ -145,7 +104,6 @@ const ESCAPES: Record<string, string> = {
 };
 const escapeHtml = (value: string) => value.replace(/[&<>"]/g, (c) => ESCAPES[c]);
 
-/** Rendered markdown minus its tags, for search. */
 function plain(html: string): string {
   return html
     .replace(/<[^>]*>/g, ' ')
@@ -154,23 +112,15 @@ function plain(html: string): string {
     .trim();
 }
 
-/** Three ways to supply an answer, each with a reason. Exactly one applies. */
 function answerHtmlOf(source: FaqSource): string {
-  /* Shared with another page — /community#team shows the same statement, and
-     two copies of a claim about AI is two things to keep in step. */
+  /* Same statement as /community#team; two copies of the AI claim is two things to keep in step. */
   if (source.sourceKey) return `<p>${escapeHtml(t(source.sourceKey))}</p>`;
-  /* Longer than a sentence: a list, or more than one paragraph. */
+
   if (source.body) return docHtml(getDoc(source.body));
   return source.answer ? `<p>${escapeHtml(source.answer)}</p>` : '';
 }
 
-/**
- * Every question, in page order: group order from `faqGroups`, then the order
- * the records sit in the file.
- *
- * Call this inside a `computed`. It reads the active locale, so a component
- * that cached the result at setup would keep serving English after a switch.
- */
+/** Call this inside a `computed`: it reads the active locale, so a setup-time cache keeps serving the old language. */
 export function faqEntries(): FaqEntry[] {
   const groupOrder = new Map(faqGroups.map((group, i) => [group.id, i]));
 
@@ -200,7 +150,7 @@ export function faqEntries(): FaqEntry[] {
               ...(isResolvedLink(target) ? { link: target } : { to: target }),
             },
       reconfirm: source.reconfirm === true,
-      /* File position, kept only to make the sort stable across groups. */
+
       position: i,
     };
   });
@@ -216,13 +166,7 @@ function isResolvedLink(value: RouteLocationRaw | ResolvedLink): value is Resolv
   return typeof value === 'object' && value !== null && 'external' in value;
 }
 
-/**
- * Dev-only shape check, in the spirit of `assertCharacterShape()`. Nothing
- * type-checks a JSON file, and every failure below is silent at runtime: an
- * unknown `group` drops a question off the site with no error, a mistyped
- * `link.key` quietly removes its one route out, and a `body` pointing at a
- * file that does not exist renders an empty answer under a real question.
- */
+/** Dev-only: every shape error in `faq.json` is silent at runtime, so this is the only place it surfaces. */
 export function assertFaqShape(entries: FaqEntry[]): void {
   if (!import.meta.env.DEV) return;
 

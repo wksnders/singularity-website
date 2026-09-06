@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * Rules reference `rules.json`.
- */
+
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -39,8 +37,7 @@ const cls = useQueryFilter('class');
 const searchField = ref<HTMLInputElement | null>(null);
 const stickyField = ref<HTMLInputElement | null>(null);
 
-/* Driven by a local ref, not by the param it writes to: binding straight to the
-   URL makes every keystroke wait on a router.replace and the caret jumps. */
+/* Bound to a local draft ref, not the query param: writing the URL on every keystroke waits on router.replace and jumps the caret. */
 const draft = ref(query.value.value ?? '');
 watch(
   () => query.value.value,
@@ -74,7 +71,6 @@ const letters = computed(() => rulesLetters(hits.value));
 const total = computed(() => hits.value.length);
 const noResults = computed(() => total.value === 0);
 
-/** Counts per class */
 const classes = computed(() =>
   CLASS_ORDER.map((name) => ({
     name,
@@ -101,7 +97,6 @@ const sections = computed<SectionEntry[]>(() =>
   ),
 );
 
-/* t() has no interpolation, so the count is composed here. */
 const countLabel = computed(() => {
   if (noResults.value) return t('rules.count.none');
   const noun = total.value === 1 ? t('rules.count.term') : t('rules.count.terms');
@@ -111,7 +106,6 @@ const countLabel = computed(() => {
 
 const updated = computed(() => game.rulesUpdated);
 
-/* ------------------------------------------------------------- hit stepping */
 const hitIds = computed(() => hits.value.map((entry) => entry.id));
 const cursor = ref(0);
 watch(hitIds, () => (cursor.value = 0));
@@ -129,7 +123,6 @@ function jump(id: string): void {
   target.focus({ preventScroll: true });
 }
 
-/* -------------------------------------------------------------------- keys */
 function onKeydown(event: KeyboardEvent): void {
   /* Modified presses belong to the browser and to assistive tech. */
   if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
@@ -147,19 +140,14 @@ function clearSearch(): void {
   searchField.value?.focus();
 }
 
-/* A pasted #<id> outranks a stale search, which would otherwise have filtered
-   its entry out of the DOM and left the link resolving to nothing.
-
-   The scroll has to be explicit. The router's scrollBehavior runs before this
-   lazy route has rendered an entry, so its target does not exist yet, and
-   focus() does not scroll a tabindex="-1" article. */
+/* A pasted #<id> clears an active search and scrolls explicitly: the router's scrollBehavior runs before this lazy route has rendered the entry, and focus() will not scroll a tabindex="-1" article. */
 async function applyHash(): Promise<void> {
   const id = route.hash.replace(/^#/, '');
   if (!id || !all.value.some((entry) => entry.id === id)) return;
   if (draft.value) search('');
   if (activeClass.value) cls.set(null);
   await nextTick();
-  /* Wait for the fonts. */
+
   await document.fonts?.ready; 
   jump(id);
 }
@@ -310,8 +298,7 @@ watch(() => route.hash, applyHash);
     </div>
   </div>
 
-  <!-- Remounted when the visible set changes: the rail observes its sections
-       once, on mount, so a changed list would leave it spying on stale ids. -->
+  <!-- Keyed so a changed section list remounts the rail, which observes its sections only on mount. -->
   <ScrollSpyRail :key="sections.map((s) => s.key).join(',')" :sections="sections" />
 
   <section v-if="noResults" class="l-band">
@@ -334,8 +321,7 @@ watch(() => route.hash, applyHash);
 
   <section v-for="band in letters" :id="band.id" :key="band.id" tabindex="-1" class="rules__band">
     <div class="l-wrap">
-      <!-- Not aria-hidden: that would step a screen reader from the page h1
-           straight to a term's h3 with no band between them. -->
+      <!-- Not aria-hidden: it would step a screen reader from the page h1 straight to a term's h3 with no band between them. -->
       <h2 class="rules__letter">
         <span aria-hidden="true">{{ band.letter }}</span>
         <span class="l-sr-only">{{ t('rules.letterGroup') }} {{ band.letter }}</span>

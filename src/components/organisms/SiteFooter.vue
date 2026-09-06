@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * The footer is the sitemap of record: every section, and every deep-linkable
- * in-page anchor, rendered from the same IA array as the nav. It also carries
- * the publisher credits.
- */
+// The footer is the sitemap of record: every section and every deep-linkable in-page anchor must be listed in footerColumns.
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';

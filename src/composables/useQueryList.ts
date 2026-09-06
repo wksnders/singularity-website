@@ -1,6 +1,4 @@
-/* 
-   `useQueryFilter` for several values at once: `?brand=scrap-brigade,common`.
-   Same URL-is-the-state contract, same rules about the param being public.*/
+// List query params are comma-separated in the URL (?brand=scrap-brigade,common); the separator is a published-link contract.
 
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

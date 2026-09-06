@@ -1,19 +1,6 @@
-/* ============================================================================
-   TOKENS — the only place raw values live.
-   Identity: "Afterlight" (locked Aug 2026). Six colour ROLES + one accent.
-   Faction colours are NEVER tokens: they are data, and arrive as
-   --faction / --faction-text on a scoped element.
-   ========================================================================== */
 
 :root {
-  /* Channels ------------------------------------------------------------- */
-  /* The same seven colours as below, as raw R,G,B channels. They exist for one
-     reason: a component that needs a colour at some OTHER alpha — a hover wash,
-     a scrim, a hairline — can write rgba(var(--rgb-ink), 0.07) instead of
-     restating the colour. Alpha is a ratio the use site is allowed to choose;
-     the colour itself is not. Keep each triplet in step with its hex.
-     (Relative colour syntax, rgb(from …), would remove the duplication, but a
-     border that silently vanishes on an older browser is not worth it.) */
+  /* These triplets deliberately duplicate the hexes below (rgb(from …) is not safe on older browsers), so keep each one in step with its hex. */
   --rgb-bg: 7, 7, 15;
   --rgb-bg-alt: 10, 10, 20;
   --rgb-surface: 16, 16, 28;
@@ -23,23 +10,17 @@
   --rgb-on-accent: 10, 7, 21;
   --rgb-threat: 192, 73, 113;
 
-  /* Surfaces ------------------------------------------------------------- */
   --color-bg: #07070f;
   --color-bg-alt: #0a0a14;
   --color-surface: #10101c;
   --color-surface-raised: #12121e;
 
-  /* Ink ------------------------------------------------------------------ */
-  /* Pure white, brighter than --color-ink, and used for exactly one thing: the
-     hover state of a link or quiet button, where the lift has to be felt
-     without changing the hue. Not a body-text colour. */
   --color-ink-bright: #ffffff;
   --color-ink: #f2f1fa;
   --color-ink-muted: rgba(242, 241, 250, 0.72);
   --color-ink-soft: rgba(242, 241, 250, 0.62);
   --color-ink-faint: rgba(242, 241, 250, 0.45);
 
-  /* Accent (ice) --------------------------------------------------------- */
   --color-accent: #dde4ff;
   --color-accent-text: #c6d0f7;
   --color-accent-wash: rgba(221, 228, 255, 0.14);
@@ -47,17 +28,14 @@
   --glow-accent: 0 0 24px rgba(221, 228, 255, 0.35);
   --glow-accent-strong: 0 0 40px rgba(221, 228, 255, 0.4);
 
-  /* Incursions threat accent (outside the faction system) ---------------- */
   --color-threat: #c04971;
   --color-threat-text: #e58ba6;
 
-  /* Lines & scrims ------------------------------------------------------- */
   --color-line: rgba(242, 241, 250, 0.1);
   --color-line-strong: rgba(242, 241, 250, 0.18);
   --color-line-dashed: rgba(242, 241, 250, 0.25);
   --scrim-bottom: linear-gradient(to top, rgba(7, 7, 15, 0.95) 0%, rgba(7, 7, 15, 0.1) 70%);
 
-  /* Type ----------------------------------------------------------------- */
   --font-display: 'Unbounded', 'Space Grotesk', sans-serif;
   --font-body: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -67,11 +45,7 @@
   --size-mono-m: 0.75rem;
   --size-s: 0.8125rem;
   --size-m: 0.875rem;
-  /* Every input, textarea and search field. NOTE: 0.9375rem is 15px, and iOS
-     Safari zooms the viewport whenever a focused field is under 16px — so the
-     search box and both forms will jump on an iPhone. Raising this to 1rem
-     fixes it, but that is a visual decision, not a refactor, so it is left as
-     it was found and flagged here. */
+  /* iOS Safari zooms the viewport when a focused field's font-size is under 16px, so this 15px value makes the search box and both forms jump on iPhone. */
   --size-field: 0.9375rem;
   --size-body: 1rem;
   --size-body-l: 1.0625rem;
@@ -80,7 +54,6 @@
   --size-h1: clamp(1.5rem, 7.6vw, 5.75rem);
   --track-mono: 0.16em;
 
-  /* Space (base 4) ------------------------------------------------------- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -94,29 +67,22 @@
   --band-y: clamp(56px, 9vw, 96px);
   --band-y-tight: clamp(24px, 4vw, 36px);
 
-  /* Layout --------------------------------------------------------------- */
   --width-content: 1120px;
   --width-reading: 680px;
   --gutter: 20px;
   --nav-height: 64px;
 
-  /* Scroll-spy rail. It sits in the margin OUTSIDE the content column, so the
-     width at which it fits is a derived number, not a taste one:
-       --width-content + 2 × (--rail-width + --rail-gap) = 1488px
-     ScrollSpyRail carries that figure in its matchMedia query. If either value
-     below changes, recompute it there — the comment in that file says so too. */
+  /* ScrollSpyRail's matchMedia query hard-codes --width-content + 2 × (--rail-width + --rail-gap) = 1488px; recompute it there if either value below changes. */
   --rail-width: 160px;
   --rail-gap: 24px;
-  /* Wayfinding: every anchor target clears the retracting nav by this much. */
+
   --scroll-offset: 96px;
 
-  /* Radius --------------------------------------------------------------- */
   --radius-s: 8px;
   --radius-m: 14px;
   --radius-l: 20px;
   --radius-pill: 999px;
 
-  /* Motion — 4 durations, 3 curves. No bounce. ---------------------------- */
   --dur-1: 120ms;
   --dur-2: 200ms;
   --dur-3: 320ms;
@@ -125,11 +91,10 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-linear: linear;
 
-  /* Depth (glow, not shadow, on dark) ------------------------------------ */
   --elevation-1: 0 0 0 1px var(--color-line);
   --elevation-2: 0 24px 60px rgba(0, 0, 0, 0.6);
 
-  /* Any element with no faction scope falls back to neutral identity. */
+  /* --faction / --faction-text are supplied at runtime by faction-scoped elements; these are the no-faction fallbacks. */
   --faction: rgba(242, 241, 250, 0.35);
   --faction-text: var(--color-ink-muted);
 }

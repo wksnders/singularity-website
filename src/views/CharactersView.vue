@@ -1,10 +1,6 @@
 <script setup lang="ts">
-/**
- * CHARACTERS — the full cast index. Faction filter (in the URL), search over
- * name, epithet and ability, and a live count. Characters with no faction are
- * exempt from the filter rather than excluded by it. TODO: should we offer a 
- * way to exclude them, question for design research.
- */
+// Characters with no faction are exempt from the faction filter rather than excluded by it.
+// TODO: should we offer a way to exclude them, question for design research.
 import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
@@ -45,7 +41,6 @@ const tags = (character: Character) =>
         .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
         .map((f) => ({ label: f.name, color: f.color }));
 
-/** Brands are a printed slot on the card, so they are searchable too. */
 const brandNames = (character: Character) =>
   [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
     .map((id) => brandById(id)?.name)
@@ -64,10 +59,7 @@ function matches(character: Character): boolean {
       ? character.factionIds === 'any'
       : character.factionIds === 'any' || character.factionIds.includes(active));
   const query = search.value.trim().toLowerCase();
-  /* Every printed slot except flavour, same rule as the card gallery: name,
-     epithet, health, ability, the brands they play, set. Health is indexed WITH
-     its label — "health 11", never a bare 11 — because a bare number matches
-     every ability line containing it. */
+  /* Health is indexed with its label ("health 11"), never a bare number, which would match every ability line containing it. */
   const haystack = searchHaystack([
     character.name,
     character.epithet,

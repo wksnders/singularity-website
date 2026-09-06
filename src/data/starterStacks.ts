@@ -1,47 +1,21 @@
-/* ============================================================================
-   PUBLISHED STARTER STACKS — the preassembled decks and deck lists printed in
-   the Learn to Play book (pp.30-33), as site data. The character page seeds a
-   builder from them; Learn lists them whole.
-
-   Three rules:
-
-     1. STACK SIZE IS PRINTED, NOT INVENTED. `SLOT_KEYS` is the whole of it:
-        three positions, in the book's own words. `STACK_SIZE` is its length,
-        so a rules change is one edit here and never a literal 3 in copy.
-     2. ORDER IS SIGNIFICANT. `programSlugs[0]` is the TOP of the stack, as
-        numbered in the book. Never sort or de-duplicate for tidiness: the
-        sequence is the content. A slot with no card is `null` in place, never
-        a shorter array.
-     3. PROGRAMS ARE REFERENCED BY `slug`, not by printed name and not by
-        `cardId`. By slug because these are the same twelve decks in every
-        language, and `cardId` carries the locale. By slug and not by name
-        because a name is a string that has to match another file exactly —
-        which it did not, for a whole day, over the difference between a
-        typographic apostrophe and a straight one.
-   ========================================================================== */
+// programSlugs holds the book's printed order: index 0 is the top slot, an empty slot stays null in place, and programs are referenced by slug because cardId is locale-specific.
 
 import { characters, programBySlug, programsOfBrand } from './universe';
 
-/** The book's own words for the three positions, top first. */
 export const SLOT_KEYS = ['top', 'middle', 'bottom'] as const;
 
 export type SlotKey = (typeof SLOT_KEYS)[number];
 
 export const STACK_SIZE = SLOT_KEYS.length;
 
-/**
- * Brands whose stacks follow an extra construction rule this builder does not
- * implement. `assertStarterStacks` holds it true that no published stack uses
- * one; if a seed for one ever lands, the exception copy is owed before it can
- * ship.
- */
+// No published stack may use a special-construction brand; the exception copy is owed before such a seed can ship.
 export const SPECIAL_CONSTRUCTION_BRAND_IDS = ['forbidden-archives'];
 
 export type DeckKind = 'starter' | 'list';
 
 export interface DeckStack {
   characterId: string;
-  /** One entry per slot, top first. */
+
   programSlugs: string[];
 }
 

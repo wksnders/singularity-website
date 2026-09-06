@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * The one link primitive. Internal routes keep the locale prefix, outbound
- * URLs open in a new tab, and an unresolved destination degrades to plain text
- * rather than a dead anchor.
- */
+/* Internal destinations must arrive already locale-prefixed from @/site/links; this component adds no prefix. */
 import { computed } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';

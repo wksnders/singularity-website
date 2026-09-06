@@ -1,24 +1,11 @@
-/* ============================================================================
-   THE information architecture — one array.
-
-   Header nav, mega panels, mobile sheet, footer sitemap and breadcrumbs all
-   render from this. Adding a page means adding an entry here and a route;
-   nothing else in the codebase lists site sections.
-
-   Labels are i18n keys (`ia.<key>.label` / `.note` in content/<locale>/ui.json).
-
-   This array is the site's PUBLIC surface, and it is curated, not automatic:
-   a route existing is not a reason to list it. Adding an entry here is an
-   editorial decision, not a mechanical one — ask first.
-   ========================================================================== */
+/* Curated, editorial list: a route existing is not a reason to add an entry here. */
 
 import type { RouteLocationRaw } from 'vue-router';
 import { to } from '@/site/links';
 import type { LinkSpec } from '@/site/links';
 
-/** One nav row. Its destination follows the `LinkSpec` rule in site/links.ts. */
 export interface IaItem extends LinkSpec {
-  /** i18n key root — resolves to ia.<key>.label and ia.<key>.note. */
+  /** i18n key root: resolves to ia.<key>.label and ia.<key>.note in content/<locale>/ui.json. */
   key: string;
   /** Show the second line in mega panels. */
   note?: boolean;
@@ -34,7 +21,7 @@ export interface IaGroup {
 export interface IaSection {
   key: string;
   to: RouteLocationRaw;
-  /** Desktop dropdown columns. Absent = a flat link (News). */
+  /** Absent = a flat link (News); present = desktop dropdown columns. */
   mega?: IaGroup[];
   /** Right-hand art column in the mega panel. */
   featuredCharacter?: boolean;

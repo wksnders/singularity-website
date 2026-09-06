@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** W1 — the index in the page header. Numbered mono chips that navigate. */
+
 import JumpChip from '@/components/atoms/JumpChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';

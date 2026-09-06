@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * CHARACTER — the door into the lore. Epithet above the name, one faction
- * emblem per membership (multi-faction is canon), art owning the right half on
- * desktop, and the brand's programs as a strip that exits to the gallery.
- */
+/* A character may hold several faction memberships; the hero shows one emblem per membership. */
 import { computed, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -64,10 +60,11 @@ const hasLore = computed(() => Boolean(docHtml(doc.value)));
 
 const epithet = computed(() => metaString(doc.value, 'epithet', character.value?.epithet ?? ''));
 
-/* The lore's own first paragraph, not a second string to keep in step with it. */
 const loreTeaser = computed(() => {
   const body = doc.value?.body ?? '';
   const first = body
+    /* Docs are CRLF: normalise line endings before splitting paragraphs. */
+    .replace(/\r\n?/g, '\n')
     .split(/\n{2,}/)
     .map((block) => block.trim())
     .find((block) => block && !block.startsWith('#') && !block.startsWith('>'));
@@ -87,8 +84,7 @@ const memberships = computed(() =>
     : [],
 );
 
-/* Honoured only for a faction this character belongs to: unchecked, any id in
-   any URL becomes a claim about any character. */
+/* A ?faction= id in the URL is honoured only when this character belongs to that faction. */
 const route = useRoute();
 const scopedFaction = computed(() => {
   const id = route.query.faction;
@@ -188,7 +184,6 @@ const groups = computed<PoolGroup[]>(() =>
 const galleryQuery = computed(() => ({ brand: poolBrands.value.map((b) => b.id).join(',') }));
 
 
-/* ---- BUILD THEIR STACK --------------------------------------------------*/
 
 const poolPrograms = computed(() => poolBrands.value.flatMap((brand) => programsOfBrand(brand.id)));
 
@@ -238,8 +233,7 @@ const stackSlots = computed<StackSlot[]>(() =>
   })),
 );
 
-/* A pick can change the stack in two places at once — one slot filled,
-   another emptied — and this line is the only place either is reported. */
+/* One pick can fill one slot and empty another; this is the only place either is announced. */
 function announce(change: StackChange | null): void {
   if (!change) return;
   const n = stackCount.value;
@@ -300,8 +294,7 @@ function toggleBuilding(): void {
     arm(null);
     return;
   }
-  /* The panel belongs to the armed slot from here, so a program left selected
-     from browsing would sit in it claiming to be the target. */
+
   selected.value = null;
   arm();
   void nextTick(() => document.getElementById('stack')?.focus({ preventScroll: true }));
@@ -321,8 +314,7 @@ function choose(id: string): void {
   announce(chooseInto(id));
 }
 
-/* The only path that restores focus: the × that was pressed is inside the
-   subtree this removes, so focus would otherwise fall to the body. */
+/* The pressed remove button sits inside the subtree this clears, so focus must be restored here. */
 function clear(index: number): void {
   announce(clearSlot(index));
   void nextTick(() =>
@@ -343,8 +335,6 @@ const selected = ref<PoolCard | null>(null);
 const face = ref<'card' | 'art'>('card');
 const zoomOpen = ref(false);
 
-/* The zoom and the panel must show the same card, and `selected` is not it:
-   while building the panel reads the armed slot. Null is the character's. */
 const zoomSubject = ref<{ program: Program; brandName: string } | null>(null);
 
 function openZoom(program: Program | null, brandName = ''): void {
@@ -391,11 +381,10 @@ const detailKicker = computed(() =>
 
 const detailName = computed(() => (selected.value ? selected.value.name : active.value?.name));
 
-/* Per surface, never shared*/
+/* Artist credit is per art surface, never shared between them. */
 const artistOf = (art?: { artist?: string | null } | null) =>
   art?.artist || t('character.artistSlot');
 
-/* ---- THE READING PANEL ---------------------------------------------------*/
 
 const armedProgram = computed(() =>
   building.value && armed.value !== null ? (stackPrograms.value[armed.value] ?? null) : null,
@@ -487,8 +476,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
         }"
       >
         <div class="char__copy l-wrap">
-          <!-- No faction or brand segment: a segment must be a page this URL
-               truncates to, and neither membership is a parent. -->
+          <!-- Breadcrumb segments must be pages this URL truncates to; faction and brand are not. -->
           <Breadcrumbs
             :crumbs="[
               { label: t('ia.universe.label'), to: to('universe') },
@@ -660,7 +648,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             </template>
           </StackBuilder>
 
-          <!-- What an armed slot scrolls to; its margin clears the nav. -->
           <div id="pool-top" class="char__pool-anchor" />
 
           <CardPool :groups="groups" :selected-id="selected?.slug ?? null" @select="pick">

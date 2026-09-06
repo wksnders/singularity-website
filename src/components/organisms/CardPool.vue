@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * The pool as a picker: small tiles choose, one large card reads.
- *
- */
+
 import { ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -47,8 +44,7 @@ function tabIndexFor(group: PoolGroup, index: number): number {
   return index === (rove.value[group.id] ?? 0) ? 0 : -1;
 }
 
-/* One tab stop per group; arrows, Home and End move within it. Without this the
-   pool is one tab stop per card between the chips and the section's exit. */
+/* One tab stop per group: arrows, Home and End rove focus within it, otherwise every card is a tab stop. */
 function onRoveKey(event: KeyboardEvent, groupId: string): void {
   const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
   if (!keys.includes(event.key)) return;
@@ -130,8 +126,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
           @keydown="onRoveKey($event, group.id)"
         >
           <li v-for="(card, index) in group.cards" :key="card.slug">
-            <!-- One of these is chosen at a time, so aria-current. aria-pressed
-                 would announce every tile as an independent toggle. -->
+            <!-- Only one tile is chosen at a time, so aria-current; aria-pressed would announce every tile as an independent toggle. -->
             <button
               type="button"
               data-tile
@@ -175,7 +170,6 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   align-items: flex-start;
 }
 
-/* Empty below the panel's breakpoint, where it would be off screen. */
 .c-pool__panel:empty {
   display: none;
 }
@@ -268,7 +262,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 .c-pool__tiles--rail {
   display: flex;
   gap: 10px;
-  /* Trailing space so the next tile PEEKS. dims the last tile. */
+
   padding: 0 56px var(--space-1) 0;
   overflow-x: auto;
   scroll-snap-type: x proximity;

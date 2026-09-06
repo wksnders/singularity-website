@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * W3 — the section marker that opens every band: hairline, NN / TOTAL, and the
- * heading. Section ids are public URLs. They are never renamed.
- */
+// Section ids are public URLs; never rename them.
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 
 defineProps<{

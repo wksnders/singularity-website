@@ -1,19 +1,10 @@
 <script setup lang="ts">
-/**
- * W2 — the scroll-spy rail. Desktop only, and only once the margin outside the
- * 1120px content column is genuinely wide enough to hold it. The nav owns the
- * single sticky slot on mobile.
- */
+// Desktop-only: on narrower viewports the site nav, not this rail, carries section wayfinding.
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { t } from '@/content';
 import type { SectionEntry } from '@/site/sections';
 
-/**
- * Derived, not chosen: --width-content + 2 × (--rail-width + --rail-gap)
- *                      = 1120 + 2 × (160 + 24) = 1488.
- * Change either token in tokens.css and this number moves with it. Below it the
- * rail overlaps the copy it indexes.
- */
+// 1488px = --width-content + 2 * (--rail-width + --rail-gap) from tokens.css; below it the rail overlaps the content column.
 const FITS_QUERY = '(min-width: 1488px)';
 
 const props = defineProps<{ sections: SectionEntry[] }>();

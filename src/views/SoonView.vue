@@ -1,10 +1,5 @@
 <script setup lang="ts">
-/**
- * /soon — reached by every link whose destination is not built or not live.
- * It says which of the two it is, and always names what IS open on the same
- * subject. A reader can hit this page several times in one visit; it must
- * never be the same shrug twice.
- */
+// Also mounted as the not-found catch-all route, so this page's copy is the 404 page too.
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';

@@ -1,18 +1,10 @@
-/* ============================================================================
-   /soon — the honest not-yet page.
-
-   Two kinds of destination, and the difference matters to a reader:
-   - `page`: we are writing it (rules reference, a chapter, a news post)
-   - `link`: it exists but is not live yet (buy, Discord, TTS, print & play)
-   Every entry also names what IS available on the same subject, so one visit
-   never dead-ends. Only listed, public destinations belong here.
-   ========================================================================== */
+/* Every destination's `also` must list only live, public destinations, so a /soon visit never dead-ends. */
 
 import { to } from '@/site/links';
 import type { LinkSpec } from '@/site/links';
 
 export interface SoonAlso extends LinkSpec {
-  /** i18n key for the label, reusing the IA keys where they fit. */
+  /** Must be an existing i18n key; IA label keys are reused where they fit. */
   key: string;
 }
 
@@ -53,15 +45,14 @@ const DESTINATIONS: SoonDestination[] = [
     id: 'learn-track',
     kind: 'page',
     also: [
-      /* Only real destinations here: an `also` list that bounces back to
-         /soon is the dead end this page exists to avoid. */
+
       { key: 'ia.learn.modes.label', to: to('learn', {}, { hash: '#modes' }) },
       { key: 'ia.learn.videos.label', to: to('learn', {}, { hash: '#videos' }) },
       { key: 'ia.universe.cards.label', to: to('cards') },
     ],
   },
   {
-    /* The videos are made, not written — so `link`, not `page`. */
+
     id: 'video',
     kind: 'link',
     also: [

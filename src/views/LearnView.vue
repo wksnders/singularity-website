@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * LEARN — the most linked-to page on the site, so it carries the full
- * wayfinding kit. Zero randomness raises the bar on the rules, which is why the
- * reference is a first-class citizen here and not a PDF at the bottom.
- */
+
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -224,7 +220,7 @@ const rulesHub = [
   border-radius: var(--radius-l);
 }
 
-/* Co-op is a headline seller: it gets the threat edge, not a faction colour. */
+/* Co-op mode takes the threat edge, never a faction colour. */
 .learn__mode--coop {
   border-bottom: 2px solid var(--color-threat);
 }

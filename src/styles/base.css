@@ -1,6 +1,3 @@
-/* ============================================================================
-   BASE — reset + element defaults. No component styles here.
-   ========================================================================== */
 
 *,
 *::before,
@@ -88,8 +85,7 @@ img {
   scroll-margin-top: var(--scroll-offset);
 }
 
-/* Set by MobileMenu while the sheet is open: the page behind a modal must not
-   scroll away underneath it. */
+/* Set by MobileMenu while the sheet is open; the page behind the modal must not scroll. */
 body.is-menu-open {
   overflow: hidden;
 }

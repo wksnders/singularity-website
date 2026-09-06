@@ -1,12 +1,5 @@
 <script setup lang="ts">
-/**
- * P4 — the breadcrumb spine on lore pages, with lateral hops (previous/next
- * faction, brand or character). 44px targets: this is the main way a reader
- * walks sideways through the universe.
- *
- * Mount it only where there is an ancestor to name: a lone crumb with no `to`
- * is a navigation landmark with nothing to navigate to.
- */
+// Mount only where a crumb has an ancestor to link (a `to`-less lone crumb is an empty nav landmark), and keep the 44px hop targets.
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
 import type { Crumb } from '@/site/sections';

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * A FILTER chip: pill shaped, sentence case, aria-pressed, stays on the page.
- * Deliberately unlike JumpChip (square, mono, numbered, navigates) — a reader
- * must be able to tell "this filters" from "this takes me somewhere".
- */
+// Must stay visually distinct from JumpChip (pill, sentence case, aria-pressed) so a filter never reads as navigation.
 defineProps<{
   active: boolean;
   color?: string | null;

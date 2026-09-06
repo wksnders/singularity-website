@@ -61,29 +61,29 @@ COLOURS_BY_SLUG = {"lux-vault": 160}
 
 # master display name -> brand id in src/data/universe.ts
 SLUGS = {
-    # Monarchy of Boom
+
     "Scrap Brigade": "scrap-brigade",
     "Benobasa's Fist": "benobasas-fist",
     "Chaos Verve": "chaos-verve",
     "Mega Byte": "mega-byte",
-    # Hana Mori
+
     "Bloom and Never": "bloom-and-never",
     "Ark Totem": "ark-totem",
     "Feralesque": "feralesque",
     "De-Crypt": "de-crypt",
-    # Celestial Shogunate
+
     "Infinite Divine": "infinite-divine",
     "Onryoki Noh": "onryoki-noh",
     "Zodiac Reliquary": "zodiac-reliquary",
     "Forbidden Archives": "forbidden-archives",
-    # Subnet 86
+
     "Data Nation": "data-nation",
     "Hostile Rewrite": "hostile-rewrite",
     "Endless Chain": "endless-chain",
     "Masquerade": "masquerade",
-    # Personal
+
     "Lux": "lux-vault",
-    # Universal
+
     "Common": "common",
 }
 

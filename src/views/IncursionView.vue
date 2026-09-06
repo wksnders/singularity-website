@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * INCURSION details.
- */
+
 import { computed } from 'vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';

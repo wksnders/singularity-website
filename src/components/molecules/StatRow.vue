@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** The stat row that sells the box: players · length · solo · age. */
+
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import type { Stat } from '@/site/stats';

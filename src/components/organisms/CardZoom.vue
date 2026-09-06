@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * The card at reading size
- */
+
 import { ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -30,8 +28,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ close: [] }>();
 
-/* Two-stage: opening on the rung the tile already cached paints from cache,
-   and the top rung arrives after. Asking for it up front stalls the open. */
+/* Open at the sizes rung the tile already cached so the first paint comes from cache; the full rung is fetched after. */
 const FIT_SIZES = '(min-width: 1100px) 560px, min(100vw - 32px, 420px)';
 const FULL_SIZES = '1680px';
 const full = ref(false);
@@ -179,8 +176,7 @@ watch(
   width: min(100%, 420px);
 }
 
-/* Portrait: 560px wide is 782px tall, so height runs out before width. Both
-   queries, or the card outgrows a short viewport and the rules scroll away. */
+/* Both queries are required: at 560px wide the card is 782px tall, so a short viewport pushes the rules off screen. */
 @media (min-width: 1100px) and (min-height: 900px) {
   .c-zoom__figure {
     width: min(100%, 560px);

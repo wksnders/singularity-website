@@ -1,10 +1,5 @@
 <script setup lang="ts">
-/**
- * Card class 3 of 3 — a printed program card, plus its brand caption.
- *
- * The face itself is `CardFace`: image and wording together, always. An
- * unrevealed program renders as a sealed slot, not an empty card.
- */
+// Sealed programs are editorial: sealedLabel locks are never tracked state.
 import { computed } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
@@ -18,30 +13,24 @@ import type { Program } from '@/data/types';
 const props = defineProps<{
   program: Program;
   brandLabel?: string;
-  /** Links the caption's brand line. */
+
   brandTo?: import('vue-router').RouteLocationRaw;
-  /** `brand.icon`. Falls back to the faction dot when the mark has not shipped. */
+
   brandIcon?: string | null;
   color?: string | null;
-  /** Sealed-in-the-box programs: locks are editorial, never tracked state. */
+
   sealedLabel?: string;
-  /** Show the printed sub-type above the name. */
+
   branded?: boolean;
 }>();
 
 defineEmits<{ select: [] }>();
 
-/** Sub-type sits on the printed type line, not in a row of its own. */
 const typeLine = computed(() =>
   props.program.subType ? `${props.program.type} · ${props.program.subType}` : props.program.type,
 );
 
-/**
- * The whole printed face, in printed order — everything a reader who cannot see
- * the card would otherwise lose. Name and brand are omitted only because the
- * visible caption below already carries them. A card prints `unlock` or
- * `flavour`, never both.
- */
+// These lines are the card's screen-reader-only text, in printed order; a card prints unlock or flavour, never both.
 const lines = computed<CardLine[]>(() =>
   [
     { label: t('cards.cost'), values: [props.program.cost] },

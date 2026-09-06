@@ -1,16 +1,11 @@
-/* ============================================================================
-   Chrome state: one composable, shared by header and mobile sheet.
-
-   `wide` is matchMedia rather than a CSS breakpoint because the desktop nav and
-   the mobile sheet are separate components, not one component restyled.
-   ========================================================================== */
+// Shared chrome state: `wide` is a matchMedia ref because the desktop nav and mobile sheet are separate components; per-component queries use useMediaQuery.
 
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
 const WIDE_QUERY = '(min-width: 900px)';
 const SOLID_AT = 80;
 const RETRACT_AFTER = 240;
-/* A fraction of the viewport, not pixels: it tracks the home hero's logo. */
+
 const PAST_HERO_LOGO = 0.38;
 
 const wide = ref(false);

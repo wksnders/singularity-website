@@ -1,21 +1,5 @@
-/* ============================================================================
-   CONTENT — markdown files and UI strings, with English fallback.
-
-   content/
-     en/
-       ui.json                     every short UI string (nav, chips, labels)
-       faq.json                    a collection: records with a prose field
-       home/hero.md                long-form prose, front matter + body
-       universe/factions/<id>.md   entity copy: name, tagline, story
-   Adding a language = copying the folder and translating it. There is no
-   i18n dependency: a missing key or file falls back to English, per item.
-
-   Markdown or JSON? Markdown when the prose is the point and the metadata is
-   a header on it. JSON when it is the other way round — a list of records that
-   happen to contain a sentence, where reading the whole set at once is how it
-   gets edited. A record that outgrows its sentence names a markdown file
-   instead of carrying one; see `faq.json`'s `body`.
-   ========================================================================== */
+// Content lives at content/<locale>/ mirroring the English tree, and a missing key, record or file falls back to English per item.
+// Reference spec: docs/architecture/modules.md#content-index
 
 import { currentLocale, DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
 import { parseFrontMatter, type Meta } from './frontMatter';
@@ -42,9 +26,7 @@ const rawStrings = import.meta.glob('../../content/*/ui.json', {
   import: 'default',
 }) as Record<string, StringTree>;
 
-/* Collections: any other JSON under content/<locale>/. ui.json matches this
-   glob too and is simply never asked for by name — it has its own accessor
-   because it is a string tree, not a list of records. */
+/* Collections are any JSON under content/<locale>/ keyed by filename, so renaming a content file renames its getCollection() key; ui.json matches too but is reached only through t(). */
 const rawCollections = import.meta.glob('../../content/*/*.json', {
   eager: true,
   import: 'default',
@@ -86,12 +68,7 @@ function lookup(tree: StringTree | undefined, key: string): string | undefined {
   return typeof node === 'string' ? node : undefined;
 }
 
-/**
- * A UI string. Falls back to English, then to the key itself so a missing
- * translation is visible in the layout instead of collapsing it.
- *
- * `vars` fills `{name}` placeholders.
- */
+/** UI string: falls back to English, then to the key itself so a missing translation stays visible; `vars` fills `{name}` placeholders. */
 export function t(key: string, vars?: Record<string, string | number>): string {
   const hit = lookup(strings[currentLocale.value], key) ?? lookup(strings[DEFAULT_LOCALE], key);
   if (hit === undefined && import.meta.env.DEV) {
@@ -104,15 +81,7 @@ export function t(key: string, vars?: Record<string, string | number>): string {
   );
 }
 
-/**
- * A JSON collection by filename, English first and the active locale layered
- * over it by `id`.
- *
- * Whole-file fallback is what markdown does, and it is wrong here: one
- * untranslated record would take the other forty-one with it. English supplies
- * the roster AND the order. the order is editorial and the ids are public
- * anchors, so neither is a translator's to change.
- */
+/** JSON collection by filename: English supplies the roster and its editorial order, the active locale overrides per record by `id`, and those ids are public anchors a translation must not change. */
 export function getCollection<T extends { id: string }>(name: string): T[] {
   const base = (collections[DEFAULT_LOCALE]?.[name] as T[] | undefined) ?? [];
   if (currentLocale.value === DEFAULT_LOCALE) return base;
@@ -124,12 +93,10 @@ export function getCollection<T extends { id: string }>(name: string): T[] {
   return base.map((item) => byId.get(item.id) ?? item);
 }
 
-/** A markdown document by slug, current locale first, then English. */
 export function getDoc(slug: string): Doc | null {
   return docs[currentLocale.value]?.[slug] ?? docs[DEFAULT_LOCALE]?.[slug] ?? null;
 }
 
-/** Every document under a slug prefix, e.g. "news/". */
 export function getDocs(prefix: string): Doc[] {
   const merged: Record<string, Doc> = {};
   for (const [slug, doc] of Object.entries(docs[DEFAULT_LOCALE] ?? {})) {
@@ -143,13 +110,11 @@ export function getDocs(prefix: string): Doc[] {
   return Object.values(merged);
 }
 
-/** Rendered HTML body of a document (memoised). */
 export function docHtml(doc: Doc | null): string {
   if (!doc) return '';
   return renderMarkdown(`${doc.locale}/${doc.slug}`, doc.body);
 }
 
-/** A front-matter string, with a fallback for content that has not landed. */
 export function metaString(doc: Doc | null, key: string, fallback = ''): string {
   const value = doc?.meta[key];
   return typeof value === 'string' && value.trim() !== '' ? value : fallback;

@@ -1,24 +1,14 @@
-/* ============================================================================
-   RULES REFERENCE — the glossary in `content/<locale>/rules.json`.
-
-   Every `id` is a public URL (`/learn/rules#crash`)
-   ========================================================================== */
+/* Every entry `id` is a published URL fragment (`/learn/rules#crash`): renaming one breaks every printed and pasted link. */
 
 import { getCollection } from '@/content';
 import { expandIcons, matchesQuery } from '@/site/cardText';
 import { brandById, programs } from '@/data/universe';
 import type { Program } from '@/data/types';
 
-/** Not a glossary term: the page renders it as the standfirst. */
 export const INTRO_ID = 'using-the-rules-reference';
 
 export type BlockKind = 'text' | 'note' | 'rule' | 'example';
 
-/**
- * The shelves an entry sits on. The eyebrow, the class filter and the rail's
- * groups all read it, so a wrong value silently mis-files the term.
- *
- */
 export type RuleClass =
   | 'procedure'
   | 'states'
@@ -32,20 +22,14 @@ export interface RuleSource {
   title: string;
   cls: RuleClass[];
   pointer?: boolean;
-  /** Player-speak from other games. Matches search, not displayed. */
+  /** Aliases are search synonyms only, never displayed. */
   aliases?: string[];
   related?: string[];
-  /**
-   * Present ONLY where this record's text is not the print run's — two records
-   * carry a correction Claude made, and both need an editor. The rest is
-   * transcribed verbatim and verified word-for-word against the PDF, so it
-   * carries nothing. Deleting the field is how you mark it done.
-   */
+
   todo?: string;
   blocks: { kind: BlockKind; text: string; items?: string[] }[];
 }
 
-/** a card name renders as a button. */
 export interface RuleSeg {
   key: number;
   kind: 'text' | 'token' | 'ref' | 'card' | 'guide';
@@ -67,12 +51,12 @@ export interface RuleBlock extends RuleLine {
 export interface RuleEntry {
   id: string;
   title: string;
-  /** Printed from the title, e.g. "[AMB]". Empty for most terms. */
+
   token: string;
-  /** The sort key. */
+
   bare: string;
   cls: RuleClass[];
-  /** A redirect stub; `redirect` carries the target. */
+
   pointer: boolean;
   letter: string;
   blocks: RuleBlock[];
@@ -84,8 +68,6 @@ export interface RuleEntry {
 
 const NEVER_LINK = new Set(['may', 'when', 'then', 'deal', 'lose', 'remove', 'spend', 'cycle']);
 
-/** Where the document spells a cross-reference differently from the title it
-    points at. Key is the spelling in the text, value is the printed title. */
 const REF_ALIASES: Record<string, string> = {
   'moving damage and other tokens': 'moving damage or other tokens',
   'initialize & update': 'initialize and update',
@@ -106,11 +88,11 @@ interface Span {
 }
 
 interface LinkCtx {
-  /** title (lowercased) → entry id, longest first. */
+
   refs: Map<string, string>;
   tokens: Map<string, string>;
   cards: Map<string, string>;
-  /** Own id*/
+
   self: string;
   linked: Set<string>;
 }
@@ -134,7 +116,7 @@ function collect(text: string, ctx: LinkCtx): Span[] {
 
   for (const [name, id] of ctx.refs) {
     if (id === ctx.self) continue;
-    /* After "see", always. Elsewhere only for multi-word titles. */
+
     const seeable = new RegExp(`(?:\\bsee\\s+(?:the\\s+)?['‘"]?)(${escapeRe(name)})`, 'gi');
     let linkedHere = ctx.linked.has(id);
     for (const m of text.matchAll(seeable)) {
@@ -171,7 +153,6 @@ function collect(text: string, ctx: LinkCtx): Span[] {
   return spans.sort((a, b) => a.s - b.s);
 }
 
-/** Split one run by the search terms, carrying its decoration onto each piece. */
 function pieces(text: string, re: RegExp | null, base: Omit<Span, 's' | 'e'>, out: RuleSeg[]): void {
   const push = (value: string, hit: boolean) => {
     if (value) out.push({ key: out.length, kind: base.kind, text: value, hit, word: base.word, target: base.target });
@@ -196,11 +177,6 @@ function segment(text: string, ctx: LinkCtx, re: RegExp | null): RuleSeg[] {
 
 let warned = false;
 
-/**
- * Every entry, sorted by term.
- *
- * Call this inside a `computed`: it reads the active locale
- */
 export function rulesEntries(terms: string[] = []): RuleEntry[] {
   const sources = [...getCollection<RuleSource>('rules')].sort((a, b) =>
     a.id === INTRO_ID ? -1 : b.id === INTRO_ID ? 1 : bareOf(a.title).localeCompare(bareOf(b.title)),
@@ -268,7 +244,7 @@ export const matchesRule = (entry: RuleEntry, terms: string[]) =>
   terms.every((term) => matchesQuery(entry.haystack, term));
 
 export interface RuleLetter {
-  /** Public anchor for the band: `#letter-a`. */
+
   id: string;
   letter: string;
   entries: RuleEntry[];
@@ -294,12 +270,7 @@ export const CLASS_ORDER: RuleClass[] = [
   'timing',
 ];
 
-/**
- * Dev-only shape check, like `assertFaqShape()`. Nothing type-checks a JSON
- * file and every failure here is silent at runtime: a duplicate id makes one
- * anchor unreachable, a dangling `related` renders a chip that goes nowhere,
- * and a card name that no longer matches quietly stops expanding.
- */
+/** Dev-only: ids must be unique and every `related` id must resolve to a real entry, or anchors and chips break silently. */
 export function assertRulesShape(entries: RuleEntry[]): void {
   if (!import.meta.env.DEV || warned) return;
   warned = true;

@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * The faction identifier. Colour never travels alone — a dot always sits
- * beside the faction's name, so the meaning survives colour blindness.
- * An any-faction character gets the hollow ring instead.
- */
+// Colour alone never conveys faction: the dot is aria-hidden, so callers must render the faction name beside it.
 withDefaults(defineProps<{ color?: string | null; size?: number }>(), { size: 8 });
 </script>
 
