@@ -85,7 +85,12 @@ onBeforeUnmount(() => clearTimeout(revert));
             </MonoLabel>
           </button>
         </div>
-        <button v-if="count" type="button" class="c-stack__clear" @click="emit('clear')">
+        <button
+          v-if="seeds.length && count"
+          type="button"
+          class="c-stack__clear"
+          @click="emit('clear')"
+        >
           {{ t('character.stackClear') }}
         </button>
       </div>

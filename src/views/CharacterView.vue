@@ -300,16 +300,6 @@ function toggleBuilding(): void {
   void nextTick(() => document.getElementById('stack')?.focus({ preventScroll: true }));
 }
 
-function armSlot(index: number): void {
-  arm(index);
-  void nextTick(() => {
-    const anchor = document.getElementById('pool-top');
-    if (!anchor) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    anchor.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
-  });
-}
-
 function choose(id: string): void {
   announce(chooseInto(id));
 }
@@ -321,10 +311,6 @@ function clear(index: number): void {
     document.getElementById(slotButtonId(index))?.focus({ preventScroll: true }),
   );
 }
-
-const putLabel = computed(() =>
-  armed.value === null ? '' : t('character.poolPutIn', { slot: slotLabel(armed.value) }),
-);
 
 function loadSeed(seed: StackSeed): void {
   announce(loadStack(seed));
@@ -357,17 +343,6 @@ function openCharacterCard(): void {
   openZoom(null);
 }
 
-const panelProgram = computed(() => {
-  if (building.value) return armedProgram.value;
-  return selected.value ? programBySlug(selected.value.slug) : null;
-});
-
-const panelBrandName = computed(() => {
-  const program = panelProgram.value;
-  if (!program) return '';
-  return brandById(program.brandId)?.name ?? '';
-});
-
 const detailArt = computed(() => {
   if (selected.value) return selected.value.cardArt;
   return face.value === 'art' ? active.value?.sceneArt : active.value?.cardArt;
@@ -386,33 +361,51 @@ const artistOf = (art?: { artist?: string | null } | null) =>
   art?.artist || t('character.artistSlot');
 
 
-const armedProgram = computed(() =>
-  building.value && armed.value !== null ? (stackPrograms.value[armed.value] ?? null) : null,
+const panelProgram = computed(() =>
+  building.value
+    ? armed.value !== null
+      ? (stackPrograms.value[armed.value] ?? null)
+      : null
+    : selected.value
+      ? programBySlug(selected.value.slug)
+      : null,
 );
 
-const panelHasCard = computed(() => !building.value || armedProgram.value !== null);
-
-const panelArt = computed(() => {
-  if (building.value) return armedProgram.value?.cardArt ?? null;
-  return detailArt.value ?? null;
+const panelBrandName = computed(() => {
+  const program = panelProgram.value;
+  return program ? (brandById(program.brandId)?.name ?? '') : '';
 });
 
-const panelName = computed(() => {
-  if (!building.value) return detailName.value;
-  return armedProgram.value?.name ?? '';
-});
+const panelHasCard = computed(() => !building.value || panelProgram.value !== null);
+
+const panelArt = computed(() =>
+  building.value ? (panelProgram.value?.cardArt ?? null) : (detailArt.value ?? null),
+);
+
+/* Only the character's card is captioned. A program's name is printed on the
+   face above it, and the panel is showing that face. */
+const panelName = computed(() =>
+  !building.value && !panelProgram.value ? detailName.value : '',
+);
 
 const panelKicker = computed(() => {
-  if (!building.value) return detailKicker.value;
-  const label = armed.value === null ? '' : slotLabel(armed.value);
-  return t('character.panelOfTheStack', { slot: label });
+  if (building.value && !panelProgram.value) {
+    const slot = armed.value === null ? '' : slotLabel(armed.value);
+    return t('character.panelOfTheStack', { slot });
+  }
+  return `${t('character.artBy')} ${artistOf(panelArt.value)}`;
 });
+
+/* The name is not rendered for a program, so the control has to carry it. */
+const panelZoomLabel = computed(
+  () => `${t('character.enlarge')}: ${panelProgram.value?.name ?? name.value}`,
+);
 
 /* Two strings: "replacing what is there" is a lie on an empty slot. */
 const fillingNote = computed(() => {
   if (armed.value === null) return '';
   const slot = slotLabel(armed.value).toLowerCase();
-  return armedProgram.value
+  return panelProgram.value
     ? t('character.fillingNoteFull', { slot })
     : t('character.fillingNote', { slot });
 });
@@ -589,7 +582,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
         </div>
       </section>
 
-      <section id="cards" tabindex="-1" class="l-band l-band--line-top">
+      <section id="cards" tabindex="-1" class="l-band">
         <div class="l-wrap">
           <div class="char__band-head">
             <SectionMarker
@@ -625,7 +618,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             :seed-id="stackSeedId"
             :dropped="stackDropped"
             :say="say"
-            @choose="armSlot"
+            @choose="arm"
             @remove="clear"
             @load="loadSeed"
             @clear="announce(clearStack())"
@@ -648,15 +641,13 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             </template>
           </StackBuilder>
 
-          <div id="pool-top" class="char__pool-anchor" />
-
           <CardPool :groups="groups" :selected-id="selected?.slug ?? null" @select="pick">
             <template v-if="roomy" #panel>
               <button
                 v-if="panelHasCard"
                 type="button"
                 class="char__panel-card"
-                :aria-label="`${t('character.enlarge')}: ${panelName}`"
+                :aria-label="panelZoomLabel"
                 @click="openZoom(panelProgram, panelBrandName)"
               >
                 <ArtFrame
@@ -680,9 +671,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 {{ panelKicker }}
               </MonoLabel>
               <h3 v-if="panelName" class="char__panel-name">{{ panelName }}</h3>
-              <MonoLabel v-if="panelHasCard" tone="faint" class="char__panel-artist">
-                {{ t('character.artBy') }} {{ artistOf(panelArt) }}
-              </MonoLabel>
 
               <FaceToggle v-if="!building" v-model="face" />
 
@@ -731,8 +719,8 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             </template>
 
             <template v-if="building" #card="{ card }">
-              <MonoLabel tone="accent" class="char__pick">
-                {{ inStack(card.slug) ? t('character.poolInStack') : putLabel }}
+              <MonoLabel v-if="inStack(card.slug)" tone="accent" class="char__pick">
+                {{ t('character.poolInStack') }}
               </MonoLabel>
             </template>
 
@@ -753,7 +741,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
         </div>
       </section>
 
-      <section v-if="hasLore" id="lore" tabindex="-1" class="l-band l-band--line-top">
+      <section v-if="hasLore" id="lore" tabindex="-1" class="l-band">
         <div class="l-wrap">
           <SectionMarker
             id="lore"
@@ -892,10 +880,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 
 .char__customize {
   flex: 0 0 auto;
-}
-
-.char__pool-anchor {
-  scroll-margin-top: calc(var(--scroll-offset) + var(--space-6));
 }
 
 .char__panel-empty {
@@ -1209,10 +1193,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 button:hover > .char__zoom-badge,
 button:focus-visible > .char__zoom-badge {
   color: var(--color-ink-bright);
-}
-
-.char__panel-artist {
-  margin-top: var(--space-2);
 }
 
 .char__panel-kicker {

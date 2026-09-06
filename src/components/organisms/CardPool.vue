@@ -148,7 +148,6 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
                 sizes="200px"
               />
             </button>
-            <p class="c-pool__tile-name">{{ card.name }}</p>
             <slot name="card" :card="card" />
           </li>
         </ul>
@@ -293,14 +292,6 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 .c-pool__tile.is-current {
   border-color: rgba(var(--rgb-accent), 0.55);
   box-shadow: 0 0 24px var(--color-accent-wash);
-}
-
-.c-pool__tile-name {
-  margin-top: var(--space-2);
-  font-size: var(--size-s);
-  line-height: 1.45;
-  color: var(--color-ink-muted);
-  overflow-wrap: anywhere;
 }
 
 .c-pool__foot:not(:empty) {
