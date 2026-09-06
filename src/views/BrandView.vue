@@ -48,7 +48,7 @@ const quoteBy = computed(() => metaString(doc.value, 'quoteBy'));
 const sections = computed<SectionEntry[]>(() => [
   { id: 'story', label: t('brand.sections.story') },
   { id: 'programs', label: t('brand.sections.programs') },
-  { id: 'cast', label: t('brand.sections.cast') },
+  { id: 'characters', label: t('brand.sections.cast') },
 ]);
 
 const facet = computed(() => brand.value?.facetSubType ?? null);
@@ -229,9 +229,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </section>
 
-    <section id="cast" tabindex="-1" class="l-band l-band--line-top">
+    <section id="characters" tabindex="-1" class="l-band l-band--line-top">
       <div class="l-wrap">
-        <SectionMarker id="cast" :index="3" :total="3" :heading="t('brand.sections.cast')" />
+        <SectionMarker id="characters" :index="3" :total="3" :heading="t('brand.sections.cast')" />
         <div v-if="cast.length" class="l-grid l-grid--tiles brand__gap">
           <EntityTile
             v-for="character in cast"

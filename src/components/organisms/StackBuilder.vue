@@ -9,7 +9,6 @@ import { onBeforeUnmount, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
-import { STACK_SIZE } from '@/data/starterStacks';
 import type { StackSeed } from '@/data/starterStacks';
 import type { Program } from '@/data/types';
 import { pictureSources } from '@/site/links';
@@ -94,9 +93,6 @@ onBeforeUnmount(() => clearTimeout(revert));
           {{ t('character.stackClear') }}
         </button>
       </div>
-      <MonoLabel tone="muted" as="p" class="c-stack__count">
-        {{ t('character.stackCount', { n: count, total: STACK_SIZE }) }}
-      </MonoLabel>
     </div>
 
     <div class="c-stack__row">
@@ -168,7 +164,6 @@ onBeforeUnmount(() => clearTimeout(revert));
             @click.stop="emit('choose', slot.index)"
           >
             <span class="c-stack__choose-box" aria-hidden="true">+</span>
-            <span class="c-stack__choose-label">{{ t('character.slotChoose') }}</span>
           </button>
         </li>
       </ol>
@@ -274,9 +269,6 @@ onBeforeUnmount(() => clearTimeout(revert));
   color: var(--color-ink);
 }
 
-.c-stack__count {
-  white-space: nowrap;
-}
 
 .c-stack__row {
   margin-top: var(--space-4);
@@ -428,15 +420,6 @@ onBeforeUnmount(() => clearTimeout(revert));
   line-height: 1;
 }
 
-.c-stack__choose-label {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-}
 
 .c-stack__choose:hover .c-stack__choose-box {
   border-color: var(--color-accent);

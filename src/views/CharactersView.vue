@@ -22,7 +22,7 @@ import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
-  { id: 'cast', label: t('characters.sections.cast') },
+  { id: 'characters', label: t('characters.sections.cast') },
 ]);
 
 const faction = useQueryFilter('faction');
@@ -100,9 +100,9 @@ function clearAll(): void {
 
   <ScrollSpyRail :sections="sections" />
 
-  <section id="cast" tabindex="-1" class="l-band">
+  <section id="characters" tabindex="-1" class="l-band">
     <div class="l-wrap">
-      <SectionMarker id="cast" :index="1" :total="1" :heading="t('characters.sections.cast')" />
+      <SectionMarker id="characters" :index="1" :total="1" :heading="t('characters.sections.cast')" />
       <MonoLabel tone="faint">{{ t('characters.note') }}</MonoLabel>
 
       <FilterBar

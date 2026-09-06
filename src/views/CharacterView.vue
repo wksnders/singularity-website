@@ -99,6 +99,13 @@ const scopeQuery = computed(() =>
 
 const printingId = ref('standard');
 
+/* The chips sit under the art, switching to an alt art brings them to the top of the page so they can view the new art */
+function choosePrinting(id: string): void {
+  printingId.value = id;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+}
+
 const printings = computed(() => (character.value ? printingsOf(character.value) : []));
 
 const active = computed(() => {
@@ -569,7 +576,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                   type="button"
                   class="char__printing"
                   :aria-pressed="printing.id === active.id"
-                  @click="printingId = printing.id"
+                  @click="choosePrinting(printing.id)"
                 >
                   {{ printing.label }}
                 </button>
@@ -741,7 +748,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
         </div>
       </section>
 
-      <section v-if="hasLore" id="lore" tabindex="-1" class="l-band">
+      <section v-if="hasLore" id="lore" tabindex="-1" class="l-band l-band--line-top">
         <div class="l-wrap">
           <SectionMarker
             id="lore"

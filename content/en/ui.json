@@ -33,7 +33,7 @@
       "twitter": "X",
       "boardgamegeek": "BGG"
     },
-    "buy": "Buy the box",
+    "buy": "Buy the Box",
     "buyShort": "Buy",
     "logoAlt": "Singularity.exe"
   },
@@ -105,17 +105,17 @@
     },
     "factions": {
       "note": "Brands and programs per faction",
-      "exit": "Meet the cast →"
+      "exit": "Meet the characters →"
     },
     "characters": {
-      "note": "The full cast",
+      "note": "Every character",
       "count": "characters",
       "searchLabel": "Search by name or epithet",
       "searchPlaceholder": "Start typing a name…",
       "emptyTitle": "Nobody here by that name",
       "emptyBody": "Check the spelling, try another faction, or clear the search.",
       "revealNote": "More revealed with every set",
-      "exitIndex": "The full cast index →",
+      "exitIndex": "The full character index →",
       "exit": "The characters who're happy to work with anyone to achieve their goals →"
     },
     "universal": {
@@ -265,11 +265,11 @@
       "link": "How it works"
     },
     "cast": {
-      "kicker": "The cast",
-      "title": "The cast",
+      "kicker": "The characters",
+      "title": "The characters",
       "prev": "Previous characters",
       "next": "More characters",
-      "link": "Browse the full cast"
+      "link": "Browse every character"
     },
     "factions": {
       "kicker": "The factions",
@@ -294,7 +294,7 @@
     "ways": {
       "title": "Ways in",
       "buy": {
-        "title": "Buy the box",
+        "title": "Buy the Box",
         "body": "Core set, expansion and Incursions — all launching day one. No random boosters, ever."
       }
     },
@@ -359,14 +359,14 @@
   "characters": {
     "hero": {
       "crumb": "Characters",
-      "title": "The whole cast",
-      "lede": "The cast spreads across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
-      "pending": "[ CAST LINE-UP ART — PENDING ]"
+      "title": "Every character",
+      "lede": "The characters spread across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
+      "pending": "[ CHARACTER LINE-UP ART — PENDING ]"
     },
     "sections": {
-      "cast": "Browse the cast"
+      "cast": "Browse the characters"
     },
-    "note": "The full cast",
+    "note": "Every character",
     "everyone": "Everyone",
     "searchLabel": "Search name, epithet, health, ability or brand",
     "searchPlaceholder": "Start typing…",
@@ -374,7 +374,7 @@
     "incursion": "Incursion",
     "anyFactionBadge": "Playable in any faction",
     "emptyTitle": "Nobody here by that name",
-    "emptyBody": "Check the spelling, or clear the filters to see the whole cast.",
+    "emptyBody": "Check the spelling, or clear the filters to see every character.",
     "exitUniversal": "The characters who're happy to work with anyone to achieve their goals →",
     "exitUniverse": "Back to the Universe →"
   },
@@ -428,8 +428,8 @@
     "noStoriesTitle": "Not in a published chapter yet",
     "noStoriesBody": "They have not turned up in a published chapter yet.",
     "missingTitle": "No character at that address",
-    "missingBody": "The full cast is in the index.",
-    "castLabel": "Cast",
+    "missingBody": "Every character is in the index.",
+    "castLabel": "Characters",
     "brandsLabel": "Brands",
     "cardSlot": "[ printed character card 63×88 ]",
     "sceneSlot": "[ scene art — as printed, without the rules text ]",
@@ -566,7 +566,7 @@
     "exitGallery": "Every program in the gallery →",
     "exitFaction": "Back to",
     "noCastTitle": "No characters revealed for this brand yet",
-    "noCastBody": "The cast arrives with the chapters. Watch News, or the story pages.",
+    "noCastBody": "The characters arrive with the chapters. Watch News, or the story pages.",
     "missingTitle": "That brand is not published yet",
     "missingBody": "Every faction has its own brands. The published ones are on their faction pages."
   },
@@ -839,16 +839,16 @@
       "exit": "See who is in each story →"
     },
     "graph": {
-      "note": "Stories × cast",
+      "note": "Stories × characters",
       "lede": "Every published story, in release order, with the characters who appear in it pinned to it. Tap a pin to see who they are, then go straight to their page.",
       "storyKicker": "Story",
-      "cast": "Cast",
+      "cast": "Characters",
       "linePlaceholder": "[PLACEHOLDER — one line on what happens.]",
       "noPin": "No pin selected — tap a character below",
       "details": "Details",
       "clear": "Clear",
       "emptyColumn": "Stories appear here as the set lands",
-      "derivedNote": "The graph is built from the cast list on each story — nothing is placed by hand, so it stays right as chapters are added. [ a map-art reading of the same graph is still under consideration ]",
+      "derivedNote": "The graph is built from the character list on each story — nothing is placed by hand, so it stays right as chapters are added. [ a map-art reading of the same graph is still under consideration ]",
       "exit": "Help decide what happens next →"
     },
     "convergence": {
