@@ -169,7 +169,8 @@ onBeforeUnmount(() => clearTimeout(revert));
       </ol>
     </div>
 
-    <p class="c-stack__say" aria-live="polite">{{ say }}</p>
+    <!-- Announced, never shown: the slots themselves are the visible record of a change. -->
+    <p class="l-sr-only" aria-live="polite">{{ say }}</p>
 
     <p v-if="dropped" class="c-stack__dropped">
       {{
@@ -426,13 +427,6 @@ onBeforeUnmount(() => clearTimeout(revert));
   color: var(--color-ink);
 }
 
-.c-stack__say {
-  margin-top: var(--space-3);
-  min-height: 1.2em;
-  font-size: var(--size-s);
-  line-height: 1.5;
-  color: var(--color-ink-soft);
-}
 
 .c-stack__dropped {
   margin-top: var(--space-2);

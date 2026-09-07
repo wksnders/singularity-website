@@ -617,6 +617,23 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           </p>
           <p v-else class="char__pool-note">{{ t('character.poolNote', { name }) }}</p>
 
+          <div v-if="!roomy && !building" class="char__own-card">
+            <CardFace
+              sizes="210px"
+              :art="active.cardArt"
+              :placeholder="t('character.cardSlot')"
+              :lines="cardLines"
+              :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
+              @select="openCharacterCard()"
+            >
+              <template #overlay>
+                <span class="char__zoom-badge" aria-hidden="true">
+                  {{ t('character.enlarge') }}
+                </span>
+              </template>
+            </CardFace>
+          </div>
+
           <StackBuilder
             v-show="building"
             :slots="stackSlots"
@@ -1163,6 +1180,11 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   font-size: var(--size-body);
   line-height: 1.65;
   color: var(--color-ink-soft);
+}
+
+.char__own-card {
+  margin-top: var(--space-6);
+  max-width: 210px;
 }
 
 .char__panel-card {
