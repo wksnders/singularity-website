@@ -63,6 +63,7 @@ const PRESS_WIDTHS = { avif: [560, 1080], webp: [560, 1080] };
 
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
+  ['/programs/', CARD_WIDTHS],
   ['/characters/', ART_WIDTHS],
   ['/press/covers/', PRESS_WIDTHS],
 ];

@@ -28,7 +28,7 @@ watch(
 const blankArt = { src: null, alt: '' };
 
 const art = computed(() =>
-  face.value === 'art' ? props.program?.art : props.program?.cardArt,
+  face.value === 'art' ? props.program?.sceneArt : props.program?.cardArt,
 );
 
 const rows = computed<ZoomRow[]>(() => {

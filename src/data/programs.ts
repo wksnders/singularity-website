@@ -18,6 +18,20 @@ export const hasCardFace = (cardId: string): boolean => !WITHOUT_FACE.has(cardId
 export const cardFace = (cardId: string): string | null =>
   hasCardFace(cardId) ? `/cards/${cardId}-840.webp` : null;
 
+const WITHOUT_ART = new Set(['SC-145P-EN']);
+
+const WITHOUT_SCENE = new Set([
+  'SC-181P-EN',
+  'SC-182P-EN',
+  'SC-183P-EN',
+  'SC-184P-EN',
+  'SC-185P-EN',
+  'SC-186P-EN',
+]);
+
+const illustration = (kind: 'art' | 'scene', cardId: string, absent: Set<string>): string | null =>
+  absent.has(cardId) ? null : `/programs/${kind}/${cardId.replace(/-[A-Z]{2}$/, '')}-840.webp`;
+
 /** A card as written down; id, art and reveal state are filled in by `brandCards`, never per entry. */
 interface CardText {
   name: string;
@@ -63,9 +77,13 @@ const brandCards = (brandId: string, set: SetCode, cards: CardedText[]): Program
     revealed: true,
     set,
 
-    art: { src: null, alt: `${card.name}, program art`, artist: PROGRAM_ARTIST },
+    art: {
+      src: illustration('art', card.cardId, WITHOUT_ART),
+      alt: `${card.name}, program art`,
+      artist: PROGRAM_ARTIST,
+    },
     sceneArt: {
-      src: null,
+      src: illustration('scene', card.cardId, WITHOUT_SCENE),
       alt: `${card.name}, program art with its background`,
       artist: PROGRAM_ARTIST,
     },

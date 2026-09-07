@@ -350,9 +350,13 @@ function openCharacterCard(): void {
   openZoom(null);
 }
 
+const selectedProgram = computed(() =>
+  selected.value ? programBySlug(selected.value.slug) : null,
+);
+
 const detailArt = computed(() => {
-  if (selected.value) return selected.value.cardArt;
-  return face.value === 'art' ? active.value?.sceneArt : active.value?.cardArt;
+  const subject = selectedProgram.value ?? active.value;
+  return face.value === 'art' ? subject?.sceneArt : subject?.cardArt;
 });
 
 const detailKicker = computed(() =>
@@ -373,9 +377,7 @@ const panelProgram = computed(() =>
     ? armed.value !== null
       ? (stackPrograms.value[armed.value] ?? null)
       : null
-    : selected.value
-      ? programBySlug(selected.value.slug)
-      : null,
+    : selectedProgram.value,
 );
 
 const panelBrandName = computed(() => {
