@@ -829,8 +829,16 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   align-items: center;
 }
 
+/* The marks are white on transparency, so each needs an opaque plate to occlude the one behind it. */
+.char__brand-marks > * {
+  background: var(--color-bg);
+  border-radius: 50%;
+  padding: 3px;
+  box-sizing: content-box;
+}
+
 .char__brand-marks > * + * {
-  margin-left: -4px;
+  margin-left: -8px;
 }
 
 .char__hero-foot {
