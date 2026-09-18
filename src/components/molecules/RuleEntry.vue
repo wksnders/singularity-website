@@ -1,25 +1,16 @@
 <script setup lang="ts">
 // Entries never collapse into an accordion; every entry stays in the DOM so find-in-page can reach it.
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import { t } from '@/content';
-import { expandIcons } from '@/site/cardText';
-import { brandNameOf } from '@/site/rules';
-import { programBySlug } from '@/data/universe';
 import type { RuleBlock, RuleEntry } from '@/site/rules';
 
 const props = defineProps<{ entry: RuleEntry; copied: boolean }>();
-defineEmits<{ copy: [] }>();
 
-const open = ref(new Set<string>());
+/* THE PAGE OWNS THE DIALOG, not this entry: a modal inside a list item would be inside what it inerts. The id travels up; `RulesView` opens the card. */
+defineEmits<{ copy: []; card: [slug: string] }>();
 
-function toggle(id: string): void {
-  const next = new Set(open.value);
-  if (!next.delete(id)) next.add(id);
-  open.value = next;
-}
- 
 const chunks = computed(() => {
   const out: { key: number; kind: 'rules' | 'note' | 'example'; blocks: RuleBlock[] }[] = [];
   for (const block of props.entry.blocks) {
@@ -32,22 +23,6 @@ const chunks = computed(() => {
   return out;
 });
 
-function cardsIn(blocks: RuleBlock[]): string[] {
-  const names = blocks
-    .flatMap((b) => [b.segs, ...b.items].flat())
-    .filter((s) => s.kind === 'card')
-    .map((s) => s.target as string);
-  return [...new Set(names)].filter((id) => open.value.has(id));
-}
- 
-const card = (id: string) => programBySlug(id);
-
-const factLine = (id: string) => {
-  const program = card(id);
-  if (!program) return '';
-  const brand = brandNameOf(program);
-  return [program.type, `${t('cards.cost')} ${program.cost}`, brand].filter(Boolean).join(' · ');
-};
 </script>
 
 <template>
@@ -79,33 +54,21 @@ const factLine = (id: string) => {
       <template v-for="chunk in chunks" :key="chunk.key">
         <ul v-if="chunk.kind === 'rules'" class="c-rule__list">
           <li v-for="(block, b) in chunk.blocks" :key="b" class="c-rule__line">
-            <RuleText :segs="block.segs" @card="toggle" />
+            <RuleText :segs="block.segs" @card="$emit('card', $event)" />
             <ul v-if="block.items.length" class="c-rule__sub">
-              <li v-for="(item, n) in block.items" :key="n"><RuleText :segs="item" @card="toggle" /></li>
+              <li v-for="(item, n) in block.items" :key="n"><RuleText :segs="item" @card="$emit('card', $event)" /></li>
             </ul>
           </li>
         </ul>
 
         <p v-else-if="chunk.kind === 'note'" class="c-rule__note">
-          <RuleText :segs="chunk.blocks[0].segs" @card="toggle" />
+          <RuleText :segs="chunk.blocks[0].segs" @card="$emit('card', $event)" />
         </p>
 
         <div v-else class="c-rule__example">
           <MonoLabel tone="accent">{{ t('rules.example') }}</MonoLabel>
-          <p class="c-rule__example-body"><RuleText :segs="chunk.blocks[0].segs" @card="toggle" /></p>
+          <p class="c-rule__example-body"><RuleText :segs="chunk.blocks[0].segs" @card="$emit('card', $event)" /></p>
 
-          <div v-for="id in cardsIn(chunk.blocks)" :key="id" class="c-rule__card">
-            <div class="c-rule__card-head">
-              <strong>{{ card(id)?.name }}</strong>
-              <MonoLabel tone="faint">{{ factLine(id) }}</MonoLabel>
-            </div>
-            <p v-for="(line, i) in card(id)?.rules ?? []" :key="i" class="c-rule__card-rule">
-              {{ expandIcons(line) }}
-            </p>
-            <button type="button" class="c-rule__card-close" @click="toggle(id)">
-              {{ t('rules.cardClose') }}
-            </button>
-          </div>
         </div>
       </template>
 
@@ -240,42 +203,6 @@ const factLine = (id: string) => {
   font-size: var(--size-body);
   line-height: 1.7;
   color: var(--color-ink);
-}
-
-.c-rule__card {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-s);
-  background: var(--color-bg);
-}
-
-.c-rule__card-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-  align-items: baseline;
-}
-
-.c-rule__card-rule {
-  margin-top: var(--space-2);
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--color-ink-muted);
-}
-
-.c-rule__card-close {
-  margin-top: var(--space-3);
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
 }
 
 .c-rule__related {

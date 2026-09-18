@@ -13,6 +13,8 @@ const props = withDefaults(
     art?: Art | null;
 
     ratio?: string;
+    /** Let the image keep its own uncropped shape. `ratio` still applies while `src` is null, or an empty drop zone collapses; the cost is layout shift as each image lands. */
+    natural?: boolean;
 
     placeholder?: string;
     radius?: 's' | 'm' | 'l' | 'none';
@@ -26,6 +28,7 @@ const props = withDefaults(
   }>(),
   {
     ratio: '3 / 4',
+    natural: false,
     placeholder: '[ art pending ]',
     radius: 'none',
     eager: false,
@@ -43,10 +46,16 @@ const objectPosition = (art: Art) => {
 };
 
 const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.radius})`);
+
+const loose = () => props.natural && Boolean(props.art?.src);
 </script>
 
 <template>
-  <div class="c-art" :style="{ aspectRatio: ratio, borderRadius: radiusVar() }">
+  <div
+    class="c-art"
+    :class="{ 'c-art--natural': loose() }"
+    :style="{ aspectRatio: loose() ? undefined : ratio, borderRadius: radiusVar() }"
+  >
     <picture v-if="art && art.src">
       <source
         v-for="source in sources"
@@ -87,6 +96,11 @@ const radiusVar = () => (props.radius === 'none' ? '0' : `var(--radius-${props.r
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* No reserved box: the image is in flow and its own height is the frame's. `overflow: hidden` stays on `.c-art`, or the radius stops clipping the corners. */
+.c-art--natural .c-art__img {
+  height: auto;
 }
 
 .c-art__empty {

@@ -2,7 +2,15 @@
 
 import { t } from '@/content';
 
-defineProps<{ modelValue: 'card' | 'art' }>();
+/* Labels are per-surface: the database calls the other face ART, the zoom calls it ART ONLY. */
+withDefaults(
+  defineProps<{
+    modelValue: 'card' | 'art';
+    cardLabel?: string;
+    artLabel?: string;
+  }>(),
+  { cardLabel: undefined, artLabel: undefined },
+);
 defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
 </script>
 
@@ -14,7 +22,7 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
       :aria-pressed="modelValue === 'card'"
       @click="$emit('update:modelValue', 'card')"
     >
-      {{ t('character.faceCard') }}
+      {{ cardLabel ?? t('character.faceCard') }}
     </button>
     <button
       type="button"
@@ -22,7 +30,7 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
       :aria-pressed="modelValue === 'art'"
       @click="$emit('update:modelValue', 'art')"
     >
-      {{ t('character.faceArt') }}
+      {{ artLabel ?? t('character.faceArt') }}
     </button>
   </div>
 </template>

@@ -114,6 +114,8 @@ const learn: IaSection = {
       items: [
         { key: 'learn.reference', to: to('rules'), note: true },
         { key: 'learn.errata', to: to('soon', {}, { hash: '#errata' }), note: true },
+        /* The database's second door: a reader mid-game looks for it here, not under Universe. */
+        { key: 'learn.cardDb', to: to('cards'), note: true },
         { key: 'learn.competition', to: to('soon', {}, { hash: '#competition' }), note: true },
         { key: 'learn.faq', to: to('faq'), note: true },
       ],

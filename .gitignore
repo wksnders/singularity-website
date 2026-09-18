@@ -61,6 +61,13 @@ SCRATCH*.md
 *.ai.md
 *.private.md
 
+check-card-art.mjs
+match-card-scenes.mjs
+card-art-check.html
+card-scene-match.txt
+prune-orphans.txt
+prune-retired.txt
+
 # Catch-all working directories
 notes/
 scratch/

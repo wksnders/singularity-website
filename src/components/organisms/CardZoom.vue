@@ -28,14 +28,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{ close: [] }>();
 
-/* Open at the sizes rung the tile already cached so the first paint comes from cache; the full rung is fetched after. */
-const FIT_SIZES = '(min-width: 1100px) 560px, min(100vw - 32px, 420px)';
+/* Open at the rung the tile already cached so the first paint comes from cache. THE FIT RUNG MUST NOT CLAIM 560px: that figure also needs a tall viewport, which `sizes` cannot express, so claiming it over-fetches on short ones. */
+const FIT_SIZES = 'min(100vw - 32px, 420px)';
 const FULL_SIZES = '1680px';
 const full = ref(false);
 
 const closeButton = ref<HTMLButtonElement | null>(null);
 
-const { dialog, onKeydown } = useModal({
+const { dialog } = useModal({
   open: () => props.open,
   close: () => emit('close'),
   initialFocus: () => closeButton.value,
@@ -64,9 +64,9 @@ watch(
       role="dialog"
       aria-modal="true"
       :aria-label="name"
-      @keydown="onKeydown"
     >
-      <div class="c-zoom__backdrop" @click="emit('close')" />
+      <!-- Decorative only: the shell below covers the viewport and paints over this, so a handler here could never fire. -->
+      <div class="c-zoom__backdrop" />
 
       <button
         ref="closeButton"
@@ -78,9 +78,12 @@ watch(
         <span aria-hidden="true">&times;</span>
       </button>
 
-      <div class="c-zoom__shell">
-        <div class="c-zoom__body">
+      <!-- CLICK-OUTSIDE LIVES HERE, not on the backdrop: this element is what a click on the dark area lands on. `.self` keeps clicks on the card from closing it. -->
+      <div class="c-zoom__shell" @click.self="emit('close')">
+        <!-- The body is centred and capped at 900px, so at wide sizes the dark area either side of the card is the body's own box. -->
+        <div class="c-zoom__body" @click.self="emit('close')">
           <div class="c-zoom__figure">
+            <!-- THE STAGE IS ALWAYS 63/88, FOR BOTH FACES, so the controls below it never move. `contain` letterboxes rather than crops; do not pass `natural` here. -->
             <ArtFrame
               :art="art"
               ratio="63 / 88"
@@ -90,6 +93,7 @@ watch(
               :sources="pictureSources(art?.src ?? null)"
               :sizes="full ? FULL_SIZES : FIT_SIZES"
             />
+            <slot name="figure" />
           </div>
 
           <div class="c-zoom__meta">

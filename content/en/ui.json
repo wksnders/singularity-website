@@ -572,20 +572,17 @@
   },
   "cardsPage": {
     "hero": {
-      "title": "Every card, in full",
-      "lede": "See every card as it is printed — and search the words on it, because those are held as text too.",
+      "title": "Every printed card",
+      "lede": "Every character, program, Architech Design and Environment across the core set, expansion 1 and Terminal Incursions. Viewable as the printed card, or as the art alone.",
       "pending": "[ CARD SPREAD ART — PENDING ]"
     },
     "sections": {
       "gallery": "Browse the cards",
       "anatomy": "Anatomy of a card"
     },
-    "count": "cards",
-    "countNote": "Revealed so far",
-    "searchLabel": "Search name, cost, type, rules, brand or set",
-    "textNote": "Each card is shown as the printed card. Its wording is stored separately as text — so search reads it, errata can link to it, and a screen reader can speak it.",
-    "emptyTitle": "No card here by that name yet",
-    "emptyBody": "Try a different word, or clear the filters.",
+    "searchLabel": "Search cards",
+    "emptyTitle": "Nothing here matches that",
+    "emptyBody": "Card wording is transcribed exactly as printed, so try a shorter phrase — or clear the filters.",
     "anatomyNote": "63 × 88 mm",
     "anatomyBody": "Every program card carries the same eight slots. The gallery shows you the card itself — the printed card is the whole of what you read. Its wording is also held as text, so search finds the words, errata can point at a card, and a screen reader can speak one.",
     "sleeves": "63 × 88 mm · standard sleeves",
@@ -626,7 +623,81 @@
         "body": "Collector info: which box, which slot."
       }
     },
-    "brandScope": "Brands"
+    "searchPlaceholder": "Search a name, a keyword, the words on a card…",
+    "face": {
+      "art": "Art",
+      "card": "Printed card"
+    },
+    "zoomFace": {
+      "card": "The card",
+      "art": "Art only"
+    },
+    "sortLabel": "Sort",
+    "sorts": {
+      "printed": "Printed order",
+      "name": "Name",
+      "cost": "Cost"
+    },
+    "facets": {
+      "type": "Type",
+      "faction": "Faction",
+      "box": "Box",
+      "brand": "Brand",
+      "printed": "Printed type",
+      "cost": "Cost"
+    },
+    "facetAria": {
+      "type": "Filter by card type",
+      "faction": "Filter by faction",
+      "box": "Filter by box",
+      "brand": "Filter by brand",
+      "printed": "Filter by printed type",
+      "cost": "Filter by cost"
+    },
+    "kinds": {
+      "characters": "Characters",
+      "programs": "Programs",
+      "architech": "Architech Designs",
+      "environments": "Environments"
+    },
+    "boxes": {
+      "CORE": "Core box",
+      "EX1": "Expansion 1",
+      "INC": "Terminal Incursions"
+    },
+    "moreFilters": "More filters · Brand · Printed type · Cost ▾",
+    "fewerFilters": "Fewer filters ▴",
+    "countOne": "1 card",
+    "countMany": "cards",
+    "countFiltered": "Filtered",
+    "slots": {
+      "card": "[ printed card ]",
+      "character": "[ character art ]",
+      "environment": "[ environment plate ]",
+      "art": "[ art ]"
+    },
+    "openCard": "Open",
+    "stats": {
+      "access": "Brand access",
+      "printing": "Printing"
+    },
+    "noErrata": "No errata affects this card.",
+    "exit": {
+      "character": "Full character page",
+      "brand": "About the brand",
+      "incursions": "How Incursions play",
+      "rules": "How the board works, in the rules"
+    },
+    "exitKeywords": "Keywords in the rules reference",
+    "footnote": "{shown} of {total} printed cards are transcribed",
+    "missingTitle": "That card isn't in the database",
+    "missingBody": "It may be unrevealed, or the link may be out of date. Everything printed so far is below.",
+    "missingDismiss": "Dismiss",
+    "kindOne": {
+      "character": "Character card",
+      "program": "Program"
+    },
+    "printings": "Printings"
   },
   "incursion": {
     "hero": {
@@ -1356,6 +1427,10 @@
       "errata": {
         "label": "Errata & rulings",
         "note": "Dated changelog"
+      },
+      "cardDb": {
+        "label": "Card database",
+        "note": "Every printed card, searchable"
       },
       "competition": {
         "label": "Competition rules",

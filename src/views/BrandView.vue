@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -11,14 +11,17 @@ import EntityTile from '@/components/molecules/EntityTile.vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ProgramCard from '@/components/molecules/ProgramCard.vue';
+import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
-import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
+import CardDetail from '@/components/organisms/CardDetail.vue';
+import { useCardParam } from '@/composables/useCardParam';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { hasSubType } from '@/site/cardText';
+import { cardBySlug } from '@/site/cards';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import {
   brandById,
@@ -90,7 +93,6 @@ const siblings = computed(() => {
 
 const cast = computed(() => charactersOfBrand(props.brandId));
 
-
 const tags = (character: Character) =>
   Array.isArray(character.factionIds)
     ? character.factionIds
@@ -99,7 +101,9 @@ const tags = (character: Character) =>
         .map((f) => ({ label: f.name, color: f.color }))
     : [{ label: t('universe.anyFaction'), color: null }];
 
-const zoomed = ref<Program | null>(null);
+/* `isKnown` means EXISTS, not "is in the list on screen": a facet filter must not turn an open card into a missing one. */
+const card = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
+const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) : null));
 
 const pad = (n: number) => String(n).padStart(2, '0');
 </script>
@@ -180,6 +184,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     <section id="programs" tabindex="-1" class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
+        <MissingCardNote :slug="card.missing.value" @dismiss="card.dismissMissing()" />
         <SectionMarker id="programs" :index="2" :total="3" :heading="t('brand.sections.programs')" />
         <MonoLabel v-if="!facet" tone="faint">
           {{ programs.length }} {{ t('brand.cardsNote') }}
@@ -213,7 +218,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               :brand-icon="brand.icon"
               :color="faction?.color"
               :sealed-label="t('brand.unrevealed')"
-              @select="zoomed = program"
+              @select="card.openCard(program.slug)"
             />
           </li>
         </ul>
@@ -257,20 +262,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </section>
 
-    <ProgramZoom
-      :open="Boolean(zoomed)"
-      :program="zoomed"
-      :brand-name="name"
-      @close="zoomed = null"
-    >
-      <template #links>
-        <p class="brand__zoom-link">
-          <BaseLink :to="to('cards', {}, { query: { brand: brandId } })">
-            {{ t('character.openInGallery') }} →
-          </BaseLink>
-        </p>
-      </template>
-    </ProgramZoom>
+    <CardDetail
+      :open="card.open.value"
+      :row="activeRow"
+      :printing="card.printing.value"
+      @close="card.close()"
+      @printing="card.setPrinting($event)"
+    />
   </div>
 
   <section v-else class="l-band">
@@ -320,10 +318,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   align-items: center;
 }
 
-.brand__zoom-link {
-  margin-top: var(--space-5);
-}
-
 .brand__facet-note {
   margin-top: var(--space-4);
   max-width: 60ch;
@@ -370,6 +364,5 @@ const pad = (n: number) => String(n).padStart(2, '0');
   letter-spacing: var(--track-mono);
   color: var(--color-ink-soft);
 }
-
 
 </style>

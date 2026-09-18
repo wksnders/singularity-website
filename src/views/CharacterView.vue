@@ -14,14 +14,14 @@ import CardFace from '@/components/molecules/CardFace.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
+import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import CardPool from '@/components/organisms/CardPool.vue';
 import type { PoolCard, PoolGroup } from '@/components/organisms/CardPool.vue';
-import CardZoom from '@/components/organisms/CardZoom.vue';
-import ProgramZoom from '@/components/organisms/ProgramZoom.vue';
+import CardDetail from '@/components/organisms/CardDetail.vue';
 import StackBuilder, { slotButtonId } from '@/components/organisms/StackBuilder.vue';
 import type { StackSlot } from '@/components/organisms/StackBuilder.vue';
-import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
+import { useCardParam } from '@/composables/useCardParam';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useMediaQuery } from '@/composables/useMediaQuery';
 import { useStack } from '@/composables/useStack';
@@ -29,8 +29,8 @@ import type { StackChange } from '@/composables/useStack';
 import { useZoomUpgrade } from '@/composables/useZoomUpgrade';
 import { docHtml, getDoc, metaString, t } from '@/content';
 import { expandIcons } from '@/site/cardText';
+import { cardBySlug } from '@/site/cards';
 import type { CardLine } from '@/site/cardText';
-import type { Program } from '@/data/types';
 import { seedsFor, SLOT_KEYS, STACK_SIZE } from '@/data/starterStacks';
 import type { StackSeed } from '@/data/starterStacks';
 import {
@@ -96,12 +96,13 @@ const scopeQuery = computed(() =>
   scopedFaction.value ? { faction: scopedFaction.value } : undefined,
 );
 
+/* ONE printing selector, and it is the URL: the hero's chips and the zoom's chips are the same control, and a second local ref would let them disagree. */
+const cardParam = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
+const printingId = computed(() => cardParam.printing.value ?? 'standard');
 
-const printingId = ref('standard');
-
-/* The chips sit under the art, switching to an alt art brings them to the top of the page so they can view the new art */
+/* The chips sit under the art, so switching brings the reader back to the top — otherwise the thing that changed is off screen above them. */
 function choosePrinting(id: string): void {
-  printingId.value = id;
+  cardParam.setPrinting(id);
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
 }
@@ -150,7 +151,6 @@ const siblings = computed(() => {
   };
 });
 
-
 const playedBrands = computed(() => {
   const c = character.value;
   if (!c) return [];
@@ -188,9 +188,8 @@ const groups = computed<PoolGroup[]>(() =>
   }),
 );
 
+/* `?brand=` takes a comma-separated list because a pool spans several brands. The split lives in `matchesFacet` and the two must stay in step, or this link lands on an empty gallery. */
 const galleryQuery = computed(() => ({ brand: poolBrands.value.map((b) => b.id).join(',') }));
-
-
 
 const poolPrograms = computed(() => poolBrands.value.flatMap((brand) => programsOfBrand(brand.id)));
 
@@ -323,17 +322,11 @@ function loadSeed(seed: StackSeed): void {
   announce(loadStack(seed));
 }
 
-
 const selected = ref<PoolCard | null>(null);
 const face = ref<'card' | 'art'>('card');
-const zoomOpen = ref(false);
-
-const zoomSubject = ref<{ program: Program; brandName: string } | null>(null);
-
-function openZoom(program: Program | null, brandName = ''): void {
-  zoomSubject.value = program ? { program, brandName } : null;
-  zoomOpen.value = true;
-}
+const zoomedRow = computed(() =>
+  cardParam.slug.value ? cardBySlug(cardParam.slug.value) : null,
+);
 
 function pick(card: PoolCard): void {
   if (building.value) {
@@ -342,12 +335,13 @@ function pick(card: PoolCard): void {
   }
   selected.value = card;
   const program = programBySlug(card.slug);
-  if (!roomy.value && program) openZoom(program, card.brandName);
+  /* Below the panel breakpoint the reading panel is off screen, so a tap opens the dialog: the reader asked to see a card. */
+  if (!roomy.value && program) cardParam.openCard(program.slug);
 }
 
 function openCharacterCard(): void {
   selected.value = null;
-  openZoom(null);
+  cardParam.openCard(props.characterId);
 }
 
 const selectedProgram = computed(() =>
@@ -359,18 +353,11 @@ const detailArt = computed(() => {
   return face.value === 'art' ? subject?.sceneArt : subject?.cardArt;
 });
 
-const detailKicker = computed(() =>
-  selected.value
-    ? selected.value.brandName
-    : `${t('character.cardKicker')} · ${t(`cards.sets.${character.value?.set}`)}`,
-);
-
 const detailName = computed(() => (selected.value ? selected.value.name : active.value?.name));
 
 /* Artist credit is per art surface, never shared between them. */
 const artistOf = (art?: { artist?: string | null } | null) =>
   art?.artist || t('character.artistSlot');
-
 
 const panelProgram = computed(() =>
   building.value
@@ -380,19 +367,13 @@ const panelProgram = computed(() =>
     : selectedProgram.value,
 );
 
-const panelBrandName = computed(() => {
-  const program = panelProgram.value;
-  return program ? (brandById(program.brandId)?.name ?? '') : '';
-});
-
 const panelHasCard = computed(() => !building.value || panelProgram.value !== null);
 
 const panelArt = computed(() =>
   building.value ? (panelProgram.value?.cardArt ?? null) : (detailArt.value ?? null),
 );
 
-/* Only the character's card is captioned. A program's name is printed on the
-   face above it, and the panel is showing that face. */
+/* Only the character's card is captioned: a program's name is printed on the face above it. */
 const panelName = computed(() =>
   !building.value && !panelProgram.value ? detailName.value : '',
 );
@@ -434,26 +415,6 @@ const cardLines = computed<CardLine[]>(() => {
     { label: t('cards.set'), values: [t(`cards.sets.${c.set}`)] },
   ].filter((line) => line.values.some(Boolean));
 });
-
-const SHOW_PRINTING_SOURCE = false;
-
-const zoomRows = computed<ZoomRow[]>(() => {
-  const rows: ZoomRow[] = [
-    { label: t('character.rowSet'), value: t(`cards.sets.${character.value?.set}`) },
-    {
-      label: t('character.rowAccess'),
-      value: playedBrands.value.map((b) => b.name).join(' · '),
-    },
-    { label: t('character.rowPrinting'), value: active.value?.label ?? '' },
-    { label: t('character.rowArtist'), value: artistOf(detailArt.value) },
-  ];
-  if (SHOW_PRINTING_SOURCE && active.value?.source) {
-    const licensor = active.value.licensor ? ` · ${active.value.licensor}` : '';
-    rows.push({ label: t('character.rowSource'), value: `${active.value.source}${licensor}` });
-  }
-  return rows;
-});
-
 
 const appearsIn = computed(() =>
   stories
@@ -593,6 +554,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 
       <section id="cards" tabindex="-1" class="l-band">
         <div class="l-wrap">
+          <MissingCardNote :slug="cardParam.missing.value" @dismiss="cardParam.dismissMissing()" />
           <div class="char__band-head">
             <SectionMarker
               id="cards"
@@ -674,7 +636,9 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 type="button"
                 class="char__panel-card"
                 :aria-label="panelZoomLabel"
-                @click="openZoom(panelProgram, panelBrandName)"
+                @click="
+                  panelProgram ? cardParam.openCard(panelProgram.slug) : openCharacterCard()
+                "
               >
                 <ArtFrame
                   :art="panelArt ?? null"
@@ -819,42 +783,13 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
       </section>
     </div>
 
-    <CardZoom
-      :open="zoomOpen && !zoomSubject"
-      :kicker="detailKicker"
-      :name="detailName ?? ''"
-      :art="detailArt ?? active.cardArt"
-      :placeholder="face === 'art' ? t('character.sceneSlot') : t('character.cardSlot')"
-      :rows="zoomRows"
-      :errata-line="t('character.noErrata')"
-      @close="zoomOpen = false"
-    >
-      <template #face>
-        <FaceToggle v-model="face" />
-      </template>
-      <template #links>
-        <p class="char__panel-link">
-          <BaseLink :to="to('cards', {}, { hash: '#anatomy' })">
-            {{ t('character.cardAnatomy') }} →
-          </BaseLink>
-        </p>
-      </template>
-    </CardZoom>
-
-    <ProgramZoom
-      :open="zoomOpen && Boolean(zoomSubject)"
-      :program="zoomSubject?.program ?? null"
-      :brand-name="zoomSubject?.brandName ?? ''"
-      @close="zoomOpen = false"
-    >
-      <template #links>
-        <p class="char__panel-link">
-          <BaseLink :to="to('cards', {}, { query: galleryQuery })">
-            {{ t('character.openInGallery') }} →
-          </BaseLink>
-        </p>
-      </template>
-    </ProgramZoom>
+    <CardDetail
+      :open="cardParam.open.value"
+      :row="zoomedRow"
+      :printing="cardParam.printing.value"
+      @close="cardParam.close()"
+      @printing="cardParam.setPrinting($event)"
+    />
   </template>
 
   <section v-else class="l-band">
@@ -1237,10 +1172,6 @@ button:focus-visible > .char__zoom-badge {
   font-weight: 500;
   letter-spacing: normal;
 }
-
-
-
-
 
 .char__panel-link {
   margin-top: var(--space-4);

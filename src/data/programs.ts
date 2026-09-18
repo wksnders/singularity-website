@@ -3,7 +3,7 @@
 // This ships in the JS bundle and is readable in devtools, so nothing internal goes here: an unannounced card is simply absent, never `revealed: false`.
 // `cardId` is the printed, locale-bearing id errata cite in `affectedProgramIds`; `id` is the public URL identity, derived from the English name so `?card=` and `?stack=` name the same cards in every locale.
 
-import type { Program, SetCode } from './types';
+import type { Art, Program, SetCode } from './types';
 
 const PROGRAM_ARTIST = 'Josh Bruce';
 
@@ -1899,9 +1899,7 @@ export const allPrograms: Program[] = [
 ];
 assertProgramIds();
 
-/* PARKED — printed cards that are not programs, deliberately exported so the text is not lost; nothing renders any of it and none of it is added to `allPrograms`.
-   TODO — each needs a type and a surface of its own.
-   ========================================================================== */
+/* PRINTED CARDS THAT ARE NOT PROGRAMS. `otherCards` shapes the designs and environments into cards; `libraryZone` deliberately is not, and all of it stays out of `allPrograms` — a program is a brand's card. */
 
 /* Not one of Forbidden Archives' fifteen cards. */
 export const libraryZone: CardText = {
@@ -2061,3 +2059,84 @@ export const environments: EnvironmentCard[] = [
     flavour: 'When the right confluence of ancient stars align, a strange and mysterious energy emerges.',
   },
 ];
+
+/* The three kinds above, shaped into cards the database can pool. None has a transcribed `cardId` except the Library, and `cardId` is what every asset URL is named for, so the rest have no face. `cost: null` means the card prints no cost line; a printed zero is `0`. */
+
+export type OtherKind = 'architech' | 'environment';
+
+export interface OtherCard {
+  kind: OtherKind;
+  /** URL identity from the ENGLISH name, the same rule a program's slug obeys. */
+  slug: string;
+  cardId?: string;
+  name: string;
+  /** Printed type line, without the sub-type. */
+  type: string;
+  subType?: string;
+  cost: number | null;
+  /** Environments print a named ability above their rules. Nothing else does. */
+  ability?: string;
+  rules: string[];
+  flavour: string;
+  set: SetCode;
+  /** SCENE — the art and its background as printed, without the card frame. */
+  sceneArt: Art;
+  /** CARD — the whole printed card. */
+  cardArt: Art;
+}
+
+interface OtherSeed {
+  name: string;
+  cardId?: string;
+  type: string;
+  subType?: string;
+  cost: number | null;
+  ability?: string;
+  rules: string[];
+  flavour: string;
+}
+
+const otherCard = (kind: OtherKind, set: SetCode, seed: OtherSeed): OtherCard => ({
+  kind,
+  slug: slugify(seed.name),
+  ...(seed.cardId ? { cardId: seed.cardId } : {}),
+  name: seed.name,
+  type: seed.type,
+  ...(seed.subType ? { subType: seed.subType } : {}),
+  cost: seed.cost,
+  ...(seed.ability ? { ability: seed.ability } : {}),
+  rules: seed.rules,
+  flavour: seed.flavour,
+  set,
+  sceneArt: {
+    /* `illustration` builds a path under `/programs/`, and only an Architech
+       Design is a program. An Environment or a Zone would 404 there, so it
+       stays a drop zone until its own art lands somewhere. */
+    src: seed.cardId && kind === 'architech' ? illustration('scene', seed.cardId, WITHOUT_SCENE) : null,
+    alt: `${seed.name} in its world`,
+    artist: PROGRAM_ARTIST,
+  },
+  cardArt: {
+    src: seed.cardId ? cardFace(seed.cardId) : null,
+    alt: `${seed.name} card`,
+    artist: PROGRAM_ARTIST,
+  },
+});
+
+export const architechCards: OtherCard[] = architechDesigns.map((card) =>
+  otherCard('architech', 'INC', { ...card, cost: card.cost }),
+);
+
+export const environmentCards: OtherCard[] = environments.map((env) =>
+  otherCard('environment', 'CORE', {
+    name: env.name,
+    type: 'Environment',
+    cost: null,
+    ability: env.ability,
+    rules: [env.rules],
+    flavour: env.flavour,
+  }),
+);
+
+/** Printed order within the non-program cards: the designs, then the board. */
+export const otherCards: OtherCard[] = [...architechCards, ...environmentCards];

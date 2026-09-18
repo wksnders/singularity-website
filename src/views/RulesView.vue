@@ -8,13 +8,17 @@ import JumpChip from '@/components/atoms/JumpChip.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
+import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import RuleEntryView from '@/components/molecules/RuleEntry.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import CardDetail from '@/components/organisms/CardDetail.vue';
 import { t } from '@/content';
 import { useChrome } from '@/composables/useChrome';
+import { useCardParam } from '@/composables/useCardParam';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { cardBySlug } from '@/site/cards';
 import { outbound, to } from '@/site/links';
 import {
   assertRulesShape,
@@ -34,6 +38,10 @@ const { navHidden } = useChrome();
 
 const query = useQueryFilter('q');
 const cls = useQueryFilter('class');
+
+/* A cited card opens THE CARD, never a second transcription. Closing returns to the anchored rule with search and class filter intact, because `useCardParam` patches the query rather than replacing it. */
+const card = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
+const activeCard = computed(() => (card.slug.value ? cardBySlug(card.slug.value) : null));
 const searchField = ref<HTMLInputElement | null>(null);
 const stickyField = ref<HTMLInputElement | null>(null);
 
@@ -126,6 +134,8 @@ function jump(id: string): void {
 function onKeydown(event: KeyboardEvent): void {
   /* Modified presses belong to the browser and to assistive tech. */
   if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+  /* The search field is inside the inert subtree while a card is open, so focusing it would swallow the keystroke — or, without `inert` support, type behind the dialog. */
+  if (card.open.value) return;
   const target = event.target as HTMLElement | null;
   if (target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable)) {
     return;
@@ -298,6 +308,12 @@ watch(() => route.hash, applyHash);
     </div>
   </div>
 
+  <section v-if="card.missing.value" class="l-band">
+    <div class="l-wrap l-wrap--reading">
+      <MissingCardNote :slug="card.missing.value" @dismiss="card.dismissMissing()" />
+    </div>
+  </section>
+
   <!-- Keyed so a changed section list remounts the rail, which observes its sections only on mount. -->
   <ScrollSpyRail :key="sections.map((s) => s.key).join(',')" :sections="sections" />
 
@@ -333,6 +349,7 @@ watch(() => route.hash, applyHash);
         :entry="entry"
         :copied="copied === entry.id"
         @copy="copyLink(entry.id)"
+        @card="card.openCard($event)"
       />
     </div>
   </section>
@@ -348,6 +365,14 @@ watch(() => route.hash, applyHash);
       </UiButton>
     </div>
   </section>
+
+  <CardDetail
+    :open="card.open.value"
+    :row="activeCard"
+    :printing="card.printing.value"
+    @close="card.close()"
+    @printing="card.setPrinting($event)"
+  />
 </template>
 
 <style>
