@@ -19,6 +19,7 @@ import {
   programsOfBrand,
 } from '@/data/universe';
 import { brandOneLiner, brandRowNote } from '@/site/brands';
+import { cardRows, defaultFacets, matches } from '@/site/cards';
 import { environmentSources, to } from '@/site/links';
 import type { Character } from '@/data/types';
 
@@ -37,6 +38,13 @@ useDocumentTitle(() => name.value);
 const brands = computed(() => (faction.value ? brandsOfFaction(faction.value.id) : []));
 const programTotal = computed(() =>
   brands.value.reduce((total, brand) => total + programsOfBrand(brand.id).length, 0),
+);
+
+/* Counted through the gallery's own filter, so the exit card cannot drift from what the link lands on: it takes characters and any-faction cards too, not just this faction's programs. */
+const galleryTotal = computed(
+  () =>
+    cardRows.filter((row) => matches(row, { ...defaultFacets(), faction: props.factionId }, ''))
+      .length,
 );
 
 const cast = computed<Character[]>(() =>
@@ -154,7 +162,7 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
         <ContentCard
           :to="to('cards', {}, { query: { faction: faction.id } })"
           :kicker="t('faction.exits.cardsKicker')"
-          :title="`${programTotal} ${shortName} ${t('faction.stats.programs')}`"
+          :title="`${galleryTotal} ${shortName} ${t('faction.exits.cardsUnit')}`"
           :body="t('faction.exits.cardsBody')"
         />
       </div>

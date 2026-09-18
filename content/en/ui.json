@@ -401,6 +401,7 @@
       "storyTitle": "in the chapters",
       "storyBody": "Where this faction appears in the story, in order.",
       "cardsKicker": "Cards",
+      "cardsUnit": "cards",
       "cardsBody": "Card gallery, filtered to this faction. Full rules text included."
     },
     "missingTitle": "No faction at that address",

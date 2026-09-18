@@ -13,7 +13,7 @@ import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
 import { brandById, characters, programsOfBrand } from '@/data/universe';
-import { to } from '@/site/links';
+import { pictureSources, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
@@ -57,10 +57,12 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
         <div v-if="lux" class="unv__feature">
           <div class="unv__feature-art">
             <ArtFrame
-              :art="lux.art"
+              :art="lux.sceneArt"
               ratio="3 / 4"
               radius="m"
               :placeholder="t('universal.luxArtPlaceholder')"
+              :sources="pictureSources(lux.sceneArt.src)"
+              sizes="280px"
             />
           </div>
           <div class="unv__feature-body">
