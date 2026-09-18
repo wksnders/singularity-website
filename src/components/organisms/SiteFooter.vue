@@ -4,7 +4,7 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { footerColumns, socialKeys } from '@/site/ia';
-import { asset, outbound, resolveLink } from '@/site/links';
+import { asset, outbound, resolveLink, to } from '@/site/links';
 import { game } from '@/data/universe';
 </script>
 
@@ -29,24 +29,26 @@ import { game } from '@/data/universe';
           </BaseLink>
         </div>
       </div>
-      <picture>
-        <source
-          type="image/webp"
-          :srcset="`${asset('/logo/singularity-logo-exe-center.webp')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.webp')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.webp')} 2160w`"
-          sizes="(max-width: 360px) 84vw, 300px"
-        />
-        <img
-          class="c-footer__signoff"
-          :src="asset('/logo/singularity-logo-exe-center.png')"
-          :srcset="`${asset('/logo/singularity-logo-exe-center.png')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.png')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.png')} 2160w`"
-          sizes="(max-width: 360px) 84vw, 300px"
-          alt=""
-          width="720"
-          height="254"
-          loading="lazy"
-          decoding="async"
-        />
-      </picture>
+      <RouterLink :to="to('home')" class="c-footer__signoff-link">
+        <picture>
+          <source
+            type="image/webp"
+            :srcset="`${asset('/logo/singularity-logo-exe-center.webp')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.webp')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.webp')} 2160w`"
+            sizes="(max-width: 360px) 84vw, 300px"
+          />
+          <img
+            class="c-footer__signoff"
+            :src="asset('/logo/singularity-logo-exe-center.png')"
+            :srcset="`${asset('/logo/singularity-logo-exe-center.png')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.png')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.png')} 2160w`"
+            sizes="(max-width: 360px) 84vw, 300px"
+            :alt="t('chrome.logoAlt')"
+            width="720"
+            height="254"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+      </RouterLink>
 
       <div class="c-footer__legal">
         <span>© {{ game.copyrightYear }} {{ game.studio }} · {{ game.studioCity }}</span>
@@ -95,11 +97,16 @@ import { game } from '@/data/universe';
   white-space: nowrap;
 }
 
-.c-footer__signoff {
+.c-footer__signoff-link {
   display: block;
   width: min(100%, 300px);
-  height: auto;
   margin-top: var(--space-8);
+}
+
+.c-footer__signoff {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .c-footer__legal {
