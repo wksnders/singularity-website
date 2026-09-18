@@ -1,5 +1,4 @@
 <script setup lang="ts">
-/* A character may hold several faction memberships; the hero shows one emblem per membership. */
 import { computed, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
@@ -11,6 +10,7 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import CardFace from '@/components/molecules/CardFace.vue';
+import CardText from '@/components/molecules/CardText.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
@@ -28,9 +28,7 @@ import { useStack } from '@/composables/useStack';
 import type { StackChange } from '@/composables/useStack';
 import { useZoomUpgrade } from '@/composables/useZoomUpgrade';
 import { docHtml, getDoc, metaString, t } from '@/content';
-import { expandIcons } from '@/site/cardText';
 import { cardBySlug } from '@/site/cards';
-import type { CardLine } from '@/site/cardText';
 import { seedsFor, SLOT_KEYS, STACK_SIZE } from '@/data/starterStacks';
 import type { StackSeed } from '@/data/starterStacks';
 import {
@@ -45,12 +43,12 @@ import {
   resolvePrinting,
   stories,
 } from '@/data/universe';
-import { pictureSources, outbound, to } from '@/site/links';
+import { environmentSources, pictureSources, outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
 
-/* Where a 320px panel and a 148px-minimum rail still fit side by side. */
-const roomy = useMediaQuery('(min-width: 720px)');
+/* The 320px panel and the pool's 420px flex basis stop fitting side by side near 820px, and this clears that with room to spare because a media query counts the scrollbar on some engines and not others. */
+const roomy = useMediaQuery('(min-width: 880px)');
 
 const zoomed = useZoomUpgrade();
 
@@ -96,11 +94,10 @@ const scopeQuery = computed(() =>
   scopedFaction.value ? { faction: scopedFaction.value } : undefined,
 );
 
-/* ONE printing selector, and it is the URL: the hero's chips and the zoom's chips are the same control, and a second local ref would let them disagree. */
+/* ONE printing selector, and it is the URL: a second local ref would let the hero's chips and the zoom's disagree. */
 const cardParam = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
 const printingId = computed(() => cardParam.printing.value ?? 'standard');
 
-/* The chips sit under the art, so switching brings the reader back to the top — otherwise the thing that changed is off screen above them. */
 function choosePrinting(id: string): void {
   cardParam.setPrinting(id);
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -159,6 +156,8 @@ const playedBrands = computed(() => {
     .filter((b): b is NonNullable<ReturnType<typeof brandById>> => Boolean(b));
 });
 
+const brandJumpNames = computed(() => playedBrands.value.map((b) => b.name).join(' · '));
+
 const poolBrands = computed(() => {
   const common = brandById('common');
   const own = playedBrands.value.filter((b) => b.id !== 'common');
@@ -188,7 +187,7 @@ const groups = computed<PoolGroup[]>(() =>
   }),
 );
 
-/* `?brand=` takes a comma-separated list because a pool spans several brands. The split lives in `matchesFacet` and the two must stay in step, or this link lands on an empty gallery. */
+/* `?brand=` takes a comma-separated list, and the split in `matchesFacet` must stay in step or this link lands on an empty gallery. */
 const galleryQuery = computed(() => ({ brand: poolBrands.value.map((b) => b.id).join(',') }));
 
 const poolPrograms = computed(() => poolBrands.value.flatMap((brand) => programsOfBrand(brand.id)));
@@ -335,13 +334,23 @@ function pick(card: PoolCard): void {
   }
   selected.value = card;
   const program = programBySlug(card.slug);
-  /* Below the panel breakpoint the reading panel is off screen, so a tap opens the dialog: the reader asked to see a card. */
-  if (!roomy.value && program) cardParam.openCard(program.slug);
+  /* The panel is off screen below the breakpoint, so a tap opens the dialog instead. */
+  if (!roomy.value && program) openCard(program.slug);
 }
 
-function openCharacterCard(): void {
+const zoomFace = ref<'card' | 'art'>('card');
+
+/* A bare `{ hash }` resolves with an empty query, which would drop `?printing=`, `?faction=`, `?card=` and `?stack=`. */
+const hashOnly = (hash: string) => ({ hash, query: route.query });
+
+function openCard(slug: string, open: 'card' | 'art' = 'card'): void {
+  zoomFace.value = open;
+  cardParam.openCard(slug);
+}
+
+function openCharacterCard(open: 'card' | 'art' = 'card'): void {
   selected.value = null;
-  cardParam.openCard(props.characterId);
+  openCard(props.characterId, open);
 }
 
 const selectedProgram = computed(() =>
@@ -391,29 +400,13 @@ const panelZoomLabel = computed(
   () => `${t('character.enlarge')}: ${panelProgram.value?.name ?? name.value}`,
 );
 
-/* Two strings: "replacing what is there" is a lie on an empty slot. */
+/* "Replacing what is there" is a lie on an empty slot. */
 const fillingNote = computed(() => {
   if (armed.value === null) return '';
   const slot = slotLabel(armed.value).toLowerCase();
   return panelProgram.value
     ? t('character.fillingNoteFull', { slot })
     : t('character.fillingNote', { slot });
-});
-
-const cardLines = computed<CardLine[]>(() => {
-  const c = character.value;
-  const printing = active.value;
-  if (!c || !printing) return [];
-  return [
-    { label: t('character.statHp'), values: [String(c.hp)] },
-    { label: t('character.statAbility'), values: [printing.abilityName] },
-    {
-      label: t('cards.rules'),
-      values: c.abilityText.split('\n').map((line) => expandIcons(line.trim())),
-    },
-    { label: t('cards.flavour'), values: [printing.flavour] },
-    { label: t('cards.set'), values: [t(`cards.sets.${c.set}`)] },
-  ].filter((line) => line.values.some(Boolean));
 });
 
 const appearsIn = computed(() =>
@@ -459,18 +452,8 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             <p class="char__epithet">{{ epithet }}</p>
             <h1 class="char__name">{{ name }}</h1>
 
-            <div class="char__emblems">
-              <BaseLink
-                v-for="faction in memberships"
-                :key="faction.id"
-                :to="to('faction', { factionId: faction.id })"
-                class="char__emblem"
-                :style="{ '--faction': faction.color }"
-              >
-                <FactionDot :color="faction.color" :size="9" />
-                {{ faction.name }}
-              </BaseLink>
-              <span v-if="character.factionIds === 'any'" class="char__emblem char__emblem--any">
+            <div v-if="character.factionIds === 'any'" class="char__emblems">
+              <span class="char__emblem">
                 <FactionDot :color="null" :size="9" />
                 {{ t('universe.anyFaction') }}
               </span>
@@ -483,43 +466,44 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 <dt><MonoLabel tone="muted" as="span">{{ t('character.statHp') }}</MonoLabel></dt>
                 <dd class="char__hp">{{ character.hp }}</dd>
               </div>
-              <div class="char__facts-brands">
-                <dt><MonoLabel tone="muted" as="span">{{ t('character.brandsLabel') }}</MonoLabel></dt>
-                <dd class="char__brand-list">
-                  <BaseLink
-                    v-for="brand in playedBrands"
-                    :key="brand.id"
-                    :to="to('brand', { brandId: brand.id })"
-                    class="char__brand"
-                  >
-                    <BrandMark
-                      :icon="brand.icon"
-                      :name="brand.name"
-                      :color="factionById(brand.factionId ?? '')?.color"
-                      :size="26"
-                    />
-                    {{ brand.name }}
-                  </BaseLink>
+              <div class="char__facts-ability">
+                <dt>
+                  <MonoLabel tone="muted" as="span">{{ t('character.statAbility') }}</MonoLabel>
+                </dt>
+                <dd class="char__ability">
+                  <span class="char__ability-name">{{ active.abilityName }}</span>
+                  <CardText :text="character.abilityText" class="char__ability-text" />
                 </dd>
               </div>
             </dl>
 
-            <div class="char__hero-foot">
-              <p v-if="loreTeaser" class="char__lore-teaser">{{ loreTeaser }}</p>
-              <p class="char__hero-exits">
-                <BaseLink v-if="hasLore" :to="{ hash: '#lore' }" class="char__hero-exit">
-                  {{ t('character.continueReading') }} <span aria-hidden="true">↓</span>
-                </BaseLink>
-                <BaseLink :to="{ hash: '#cards' }" class="char__hero-exit">
-                  {{ t('character.seeTheirCard') }} <span aria-hidden="true">↓</span>
-                </BaseLink>
-              </p>
+            <BaseLink v-if="playedBrands.length" :to="hashOnly('#pool')" class="char__brand-jump">
+              <span class="l-sr-only">{{ t('character.brandJumpLabel') }}</span>
+              <span class="char__brand-marks" aria-hidden="true">
+                <BrandMark
+                  v-for="brand in playedBrands"
+                  :key="brand.id"
+                  :icon="brand.icon"
+                  :name="brand.name"
+                  :color="factionById(brand.factionId ?? '')?.color"
+                  :size="26"
+                />
+              </span>
+              {{ brandJumpNames }}<span aria-hidden="true">↓</span>
+            </BaseLink>
+
+            <div v-if="loreTeaser" class="char__hero-foot">
+              <p class="char__lore-teaser">{{ loreTeaser }}</p>
+              <BaseLink v-if="hasLore" :to="hashOnly('#lore')" class="char__lore-link">
+                {{ t('character.readTheirStory') }} <span aria-hidden="true">↓</span>
+              </BaseLink>
             </div>
           </div>
         </div>
 
         <div class="char__art">
-          <div class="char__art-frame">
+          <!-- Pointer-only by design: the same card is reachable from the panel and the own-card tile. -->
+          <div class="char__art-frame" @click="openCharacterCard('art')">
             <ArtFrame
               :art="active.sceneArt"
               :placeholder="t('character.sceneSlot')"
@@ -551,6 +535,31 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
           </MonoLabel>
         </div>
       </section>
+
+      <div v-if="memberships.length" class="char__factions l-wrap">
+        <BaseLink
+          v-for="faction in memberships"
+          :key="faction.id"
+          :to="to('faction', { factionId: faction.id })"
+          class="char__faction"
+          :style="{ '--faction': faction.color, '--faction-text': faction.colorText }"
+        >
+          <ArtFrame
+            v-if="faction.environment"
+            :art="faction.environment"
+            :sources="environmentSources(faction.id)"
+            ratio="auto"
+            sizes="(max-width: 899px) 100vw, 550px"
+            class="char__faction-art"
+          />
+          <span class="char__faction-scrim" aria-hidden="true"></span>
+          <span class="char__faction-body">
+            <MonoLabel tone="muted" as="span">{{ t('character.moreFrom') }}</MonoLabel>
+            <span class="char__faction-name">{{ faction.name }}</span>
+          </span>
+          <span class="char__faction-go" aria-hidden="true">→</span>
+        </BaseLink>
+      </div>
 
       <section id="cards" tabindex="-1" class="l-band">
         <div class="l-wrap">
@@ -586,7 +595,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
               sizes="210px"
               :art="active.cardArt"
               :placeholder="t('character.cardSlot')"
-              :lines="cardLines"
               :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
               @select="openCharacterCard()"
             >
@@ -616,7 +624,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 sizes="210px"
                 :art="active.cardArt"
                 :placeholder="t('character.cardSlot')"
-                :lines="cardLines"
                 :action-label="`${t('character.seeCardLarge')}: ${active.name}`"
                 @select="openCharacterCard()"
               >
@@ -637,7 +644,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
                 class="char__panel-card"
                 :aria-label="panelZoomLabel"
                 @click="
-                  panelProgram ? cardParam.openCard(panelProgram.slug) : openCharacterCard()
+                  panelProgram ? openCard(panelProgram.slug) : openCharacterCard()
                 "
               >
                 <ArtFrame
@@ -740,11 +747,6 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
             :heading="t('character.loreTitle')"
           />
           <MarkdownBlock :slug="`universe/characters/${characterId}`" measure />
-          <p v-if="memberships[0]" class="char__lore-exit">
-            <BaseLink :to="to('faction', { factionId: memberships[0].id })">
-              {{ t('character.moreFrom') }} {{ memberships[0].name }} →
-            </BaseLink>
-          </p>
         </div>
       </section>
 
@@ -787,6 +789,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
       :open="cardParam.open.value"
       :row="zoomedRow"
       :printing="cardParam.printing.value"
+      :open-face="zoomFace"
       @close="cardParam.close()"
       @printing="cardParam.setPrinting($event)"
     />
@@ -800,7 +803,38 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 </template>
 
 <style>
+.char__brand-jump {
+  margin-top: var(--space-5);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-m);
+  background: rgba(var(--rgb-ink), 0.03);
+  color: var(--color-ink);
+  font-size: var(--size-field);
+  font-weight: 500;
+}
+
+.char__brand-jump:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+}
+
+.char__brand-marks {
+  display: inline-flex;
+  align-items: center;
+}
+
+.char__brand-marks > * + * {
+  margin-left: -4px;
+}
+
 .char__hero-foot {
+  position: relative;
   margin-top: var(--space-6);
   padding-top: var(--space-5);
   border-top: 1px solid var(--color-line-strong);
@@ -811,24 +845,94 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   font-size: var(--size-body);
   line-height: 1.7;
   color: var(--color-ink-muted);
+  /* Fixed distance, not a percentage: these teasers run 200 to 540 characters, and a proportional fade erases half a short one. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 4.5em), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 4.5em), transparent 100%);
 }
 
-.char__hero-exits {
-  margin-top: var(--space-4);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-6);
-  align-items: center;
-}
-
-/* Both exits are 44px targets, not only the one that reads as a button. */
-.char__hero-exit {
+.char__lore-link {
+  position: absolute;
+  left: 0;
+  bottom: -6px;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  padding-right: var(--space-4);
   font-size: var(--size-field);
   font-weight: 500;
   white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.char__lore-link:hover {
+  color: var(--color-accent-text);
+}
+
+.char__factions {
+  margin-top: clamp(28px, 4vw, 40px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.char__faction {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 92px;
+  padding: var(--space-4) var(--space-5);
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-left: 3px solid var(--faction);
+  border-radius: var(--radius-m);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.char__faction:hover {
+  border-color: var(--faction);
+  text-decoration: none;
+}
+
+.char__faction-art {
+  position: absolute;
+  inset: 0;
+}
+
+.char__faction-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--color-bg) 6%, rgba(var(--rgb-bg), 0.55) 62%, transparent),
+    rgba(var(--rgb-bg), 0.62);
+}
+
+.char__faction-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.char__faction-name {
+  font-size: var(--size-field);
+  font-weight: 500;
+  color: var(--faction-text);
+}
+
+.char__faction-go {
+  position: relative;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-soft);
 }
 
 .char__band-head {
@@ -931,6 +1035,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
 }
 
 .char__art-frame {
+  cursor: zoom-in;
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -1024,22 +1129,14 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   gap: var(--space-2);
   min-height: 44px;
   padding-inline: var(--space-4);
-  border: 1px solid var(--faction);
+  border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
   font-size: var(--size-m);
   color: var(--color-ink);
   white-space: nowrap;
 }
 
-.char__emblem:hover {
-  background: rgba(var(--rgb-ink), 0.06);
-  color: var(--color-ink);
-  text-decoration: none;
-}
 
-.char__emblem--any {
-  border-color: var(--color-line-strong);
-}
 
 .char__quote {
   margin-top: 22px;
@@ -1060,9 +1157,31 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   gap: 18px var(--space-8);
 }
 
-.char__facts-brands {
-  flex: 1 1 240px;
+
+.char__facts-ability {
+  flex: 1 1 280px;
   min-width: 0;
+}
+
+.char__ability {
+  margin: 7px 0 0;
+}
+
+.char__ability-name {
+  display: block;
+  font-size: var(--size-body-l);
+  font-weight: 500;
+}
+
+.char__ability-text {
+  display: block;
+  margin-top: var(--space-2);
+  max-width: 46ch;
+  font-size: var(--size-body);
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+  /* A printed keyword sits on its own line, and the card face splits on the same newline. */
+  white-space: pre-line;
 }
 
 .char__hp {
@@ -1080,25 +1199,7 @@ const sectionTotal = computed(() => (hasLore.value ? 3 : 2));
   line-height: 1;
 }
 
-.char__brand-list {
-  margin: 7px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
 
-.char__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 38px;
-  padding: 0 var(--space-3) 0 var(--space-2);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  font-size: var(--size-m);
-  color: var(--color-ink);
-  white-space: nowrap;
-}
 
 .char__linkish {
   padding: 0;
@@ -1179,8 +1280,7 @@ button:focus-visible > .char__zoom-badge {
   font-weight: 500;
 }
 
-.char__pool-exit,
-.char__lore-exit {
+.char__pool-exit {
   font-size: var(--size-body);
   font-weight: 500;
   white-space: nowrap;
@@ -1210,10 +1310,6 @@ button:focus-visible > .char__zoom-badge {
   flex-wrap: wrap;
   gap: var(--space-3) var(--space-6);
   align-items: center;
-}
-
-.char__lore-exit {
-  margin-top: var(--space-6);
 }
 
 .char__no-stories {

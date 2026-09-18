@@ -1,6 +1,6 @@
 /* Render-time reading layer only: `programs.ts` and `Character.abilityText` keep the printed tokens verbatim, and any token with no entry here passes through unchanged. */
 
-/** Title case throughout, so a quantity reads the same on every card. */
+/** Every key needs a matching entry in `tokenGlyph`, or the token prints as bare text. */
 export const iconWords: Record<string, string> = {
   '[P]': 'Power Damage',
   '[A]': 'AI Damage',
@@ -18,6 +18,27 @@ const TOKEN = /\[[A-Z]+\]/g;
 
 export const expandIcons = (text: string): string =>
   text.replace(TOKEN, (token) => iconWords[token] ?? token);
+
+/** `word` is set only on a token, and is what a screen reader speaks in place of the glyph. */
+export interface GlyphSegment {
+  text: string;
+  word?: string;
+}
+
+/* A token with no entry in `iconWords` stays literal text rather than vanishing. */
+export function glyphSegments(text: string): GlyphSegment[] {
+  const out: GlyphSegment[] = [];
+  let at = 0;
+  for (const match of text.matchAll(TOKEN)) {
+    const word = iconWords[match[0]];
+    if (!word) continue;
+    if (match.index > at) out.push({ text: text.slice(at, match.index) });
+    out.push({ text: match[0], word });
+    at = match.index + match[0].length;
+  }
+  if (at < text.length) out.push({ text: text.slice(at) });
+  return out;
+}
 
 /** Holds both spellings of every part, so "[P]" and "power damage" are one query — never drop a spelling. */
 export const searchHaystack = (parts: (string | null | undefined)[]): string =>

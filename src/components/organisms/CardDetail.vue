@@ -2,7 +2,7 @@
 /**
  * The enlarged card: one dialog for every kind and every surface.
  *
- * ALWAYS OPENS ON THE PRINTED CARD, whatever face the grid behind it is browsing.
+ * Opens on the face the caller asks for — the printed card unless told otherwise — and resets to it on every open, so the next card never arrives showing something other than itself.
  * NOTHING PRINTED ON THE CARD IS REPEATED BESIDE IT — the rows carry what the card does not print, and the printed wording stays in the DOM visually hidden for readers who cannot see the image.
  * No pager, deliberately: the pool is grouped, sortable and filterable, so "next" would mean something different after every control change.
  */
@@ -31,18 +31,19 @@ const props = withDefaults(
     row: CardRow | null;
     /** The `?printing=` the host page holds. Absent means the standard printing. */
     printing?: string | null;
+    openFace?: 'card' | 'art';
   }>(),
-  { printing: null },
+  { printing: null, openFace: 'card' },
 );
 
 defineEmits<{ close: []; printing: [id: string] }>();
 
-/* The face is dialog state, not an address: `?face=` belongs to the GRID behind it. Reset per card, or the next one opens showing something other than itself. */
-const face = ref<'card' | 'art'>('card');
+/* The face is dialog state, not an address: `?face=` belongs to the GRID behind it. */
+const face = ref<'card' | 'art'>(props.openFace);
 watch(
-  () => props.row?.slug,
+  [() => props.row?.slug, () => props.open],
   () => {
-    face.value = 'card';
+    if (props.open) face.value = props.openFace;
   },
 );
 

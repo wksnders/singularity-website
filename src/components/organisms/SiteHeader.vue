@@ -125,7 +125,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.55), transparent);
+  background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.62), transparent);
 }
 
 /* Fill and blur must match MegaPanel's or the bar reads as a seam on the open panel, and this border doubles the panel's own border-top. */

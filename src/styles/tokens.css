@@ -25,6 +25,11 @@
   --color-accent-text: #c6d0f7;
   --color-accent-wash: rgba(221, 228, 255, 0.14);
   --color-on-accent: #0a0715;
+
+  /* Only the damage glyphs are printed in colour; sampled from the rulebook's icon key. */
+  --color-glyph-power: #e47a82;
+  --color-glyph-ai: #8ab9dc;
+  --color-glyph-corruption: #a3c46b;
   --glow-accent: 0 0 24px rgba(221, 228, 255, 0.35);
   --glow-accent-strong: 0 0 40px rgba(221, 228, 255, 0.4);
 

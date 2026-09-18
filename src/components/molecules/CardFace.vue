@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// The visually hidden wording belongs only to a printed card, never a bare illustration, and must stay real text — aria-label collapses the face into one unpunctuated run.
+// Pass `lines` only where the card's wording is not already on the page: it must stay real text, because aria-label collapses a face into one unpunctuated run.
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import { pictureSources } from '@/site/links';
 import type { CardLine } from '@/site/cardText';
@@ -10,7 +10,7 @@ const props = defineProps<{
   art: Art;
   placeholder: string;
 
-  lines: CardLine[];
+  lines?: CardLine[];
   actionLabel?: string;
 
   sizes?: string;
@@ -42,7 +42,7 @@ defineEmits<{ select: [] }>();
       />
       <slot name="overlay" />
     </component>
-    <dl class="l-sr-only">
+    <dl v-if="lines?.length" class="l-sr-only">
       <template v-for="line in lines" :key="line.label">
         <dt>{{ line.label }}</dt>
         <dd v-for="(value, index) in line.values" :key="index">{{ value }}</dd>

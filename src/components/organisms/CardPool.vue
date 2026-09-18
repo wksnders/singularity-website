@@ -83,7 +83,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
       <slot name="panel" />
     </div>
 
-    <div class="c-pool__main">
+    <div id="pool" tabindex="-1" class="c-pool__main">
       <div v-for="group in groups" :key="group.id" class="c-pool__group">
         <div
           class="c-pool__head"
@@ -188,6 +188,11 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
 .c-pool__group {
   margin-top: var(--space-8);
+}
+
+/* The first brand head lines up with the top of the panel beside it. */
+.c-pool__group:first-child {
+  margin-top: 0;
 }
 
 .c-pool__head {

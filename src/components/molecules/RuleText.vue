@@ -1,6 +1,8 @@
 <script setup lang="ts"> 
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import { outbound } from '@/site/links';
+import { tokenGlyph } from '@/site/glyphs';
 import type { RuleSeg } from '@/site/rules';
 
 defineProps<{ segs: RuleSeg[] }>();
@@ -25,7 +27,8 @@ defineEmits<{ card: [id: string] }>();
     </button>
     <span v-else-if="seg.kind === 'token' && seg.word" class="c-rt__tok">
       <component :is="seg.target ? 'a' : 'span'" :href="seg.target ? `#${seg.target}` : undefined">
-        <span aria-hidden="true">{{ seg.text }}</span>
+        <CardGlyph v-if="tokenGlyph[seg.text]" :name="tokenGlyph[seg.text]" />
+        <span v-else aria-hidden="true">{{ seg.text }}</span>
         <span class="l-sr-only">{{ seg.word }}</span>
       </component>
     </span>
