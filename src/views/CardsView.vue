@@ -58,14 +58,24 @@ const searchField = ref<HTMLInputElement | null>(null);
 const moreOpen = ref(false);
 
 /* The FIELD is the source of truth for what is shown, not the URL: routing is async, so filtering off `db.query` would leave the grid one keystroke behind. */
-const shown = computed(() =>
-  sortRows(
-    cardRows.filter((row) => matches(row, db.facets.value, searchText.value)),
-    db.sort.value,
-  ),
+const strictRows = computed(() =>
+  cardRows.filter((row) => matches(row, db.facets.value, searchText.value)),
 );
 
-const groups = computed(() => facetGroups(db.facets.value, searchText.value));
+/* A query matching no whole word widens to the old substring pass rather than dead-ending, and stays empty unless that found something, so a facet emptying the grid is never blamed on the query. */
+const looseRows = computed(() =>
+  searchText.value.trim() && strictRows.value.length === 0
+    ? cardRows.filter((row) => matches(row, db.facets.value, searchText.value, true))
+    : [],
+);
+
+const widened = computed(() => looseRows.value.length > 0);
+
+const shown = computed(() =>
+  sortRows(widened.value ? looseRows.value : strictRows.value, db.sort.value),
+);
+
+const groups = computed(() => facetGroups(db.facets.value, searchText.value, widened.value));
 
 /* AN ACTIVE FACET IS NEVER HIDDEN, even collapsed, or the grid is filtered with no visible cause and nothing but the blanket Clear to undo it. */
 const visibleGroups = computed(() =>
@@ -81,7 +91,11 @@ const filtered = computed(() => !isDefault(db.facets.value) || Boolean(searchTex
 const countLabel = computed(() => {
   const n = shown.value.length;
   const base = n === 1 ? t('cardsPage.countOne') : `${n} ${t('cardsPage.countMany')}`;
-  return filtered.value ? `${base} · ${t('cardsPage.countFiltered')}` : base;
+  const notes = [
+    filtered.value ? t('cardsPage.countFiltered') : '',
+    widened.value ? t('cardsPage.countWidened') : '',
+  ].filter(Boolean);
+  return [base, ...notes].join(' · ');
 });
 
 const footnote = computed(() =>

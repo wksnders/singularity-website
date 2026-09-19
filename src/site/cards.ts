@@ -1,4 +1,4 @@
-/* One row shape over every printed card. `cost: null` and `printedType: null` mean the card PRINTS no such line — a printed 0 is `0`, and the facets must tell them apart. Search reads every printed slot except flavour, which would drown a rules lookup in prose. */
+/* One row shape over every printed card. `cost: null` and `printedType: null` mean the card PRINTS no such line — a printed 0 is `0`, and the facets must tell them apart. Search reads only what a reader would read off the card face; everything it leaves out — set, epithet, unlock, flavour, ability names — has a facet instead. */
 
 import { t } from '@/content';
 import {
@@ -11,7 +11,8 @@ import {
   programs,
 } from '@/data/universe';
 import { otherCards } from '@/data/programs';
-import { expandIcons, matchesQuery, searchHaystack } from '@/site/cardText';
+import { brandAbbr } from '@/site/brands';
+import { expandIcons, matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
 import type { CardLine } from '@/site/cardText';
 import type { Art, Character, Printing, Program, SetCode } from '@/data/types';
 import type { OtherCard } from '@/data/programs';
@@ -171,7 +172,6 @@ function matchesFacet(row: CardRow, key: FacetKey, value: string): boolean {
 /* Memoised on the row, which is safe only because `cardRows` is a module-level constant: mutable rows would stale this cache silently. */
 const haystacks = new WeakMap<CardRow, string>();
 
-/** Every printed slot except flavour, both spellings of every icon. */
 function haystackOf(row: CardRow): string {
   const cached = haystacks.get(row);
   if (cached !== undefined) return cached;
@@ -180,35 +180,94 @@ function haystackOf(row: CardRow): string {
   return built;
 }
 
+/** What is printed on the face, both spellings of every icon. A stat goes in as its BARE NUMBER, the way it is printed: "5", not "cost 5". */
 function buildHaystack(row: CardRow): string {
-  const brandNames = row.brandIds.map((id) => brandById(id)?.name);
   const shared = [
     row.name,
     row.printedType,
-    row.cost === null ? null : `${t('cards.cost')} ${row.cost}`,
+    row.cost === null ? null : String(row.cost),
     row.rules.join(' '),
-    ...brandNames,
-    t(`cards.sets.${row.set}`),
   ];
-  if (row.kind === 'characters') {
-    return searchHaystack([
-      ...shared,
-      row.character.epithet,
-      `${t('character.statHp')} ${row.character.hp}`,
-      row.character.abilityName,
-    ]);
-  }
-  if (row.kind === 'programs') {
-    return searchHaystack([...shared, row.program.subType, row.program.unlock]);
-  }
+  if (row.kind === 'characters') return searchHaystack([...shared, String(row.character.hp)]);
+  if (row.kind === 'programs') return searchHaystack([...shared, row.program.subType]);
   return searchHaystack([...shared, row.other.type, row.other.subType, row.other.ability]);
 }
 
-const matchesSearch = (row: CardRow, query: string) => matchesQuery(haystackOf(row), query);
+/** Everything a reader half-types: names, not prose. */
+function buildNames(row: CardRow): string {
+  const parts = [row.name, row.printedType];
+  if (row.kind === 'programs') parts.push(row.program.subType);
+  if (row.kind === 'architech' || row.kind === 'environments') parts.push(row.other.subType);
+  return nameHaystack(parts);
+}
 
-export function matches(row: CardRow, facets: FacetState, query: string): boolean {
+const escapeRe = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** The full spellings a brand answers to, all lower case: its name, that name with `&` written out, and either with separators stripped. A part of a name is never one of them, because browsing a brand is what the facet is for. */
+function brandSpellings(id: string): string[] {
+  const name = brandById(id)?.name.toLowerCase();
+  if (!name) return [];
+  const written = name.replace(/&/g, 'and');
+  const squash = (value: string) => value.replace(/[^a-z0-9]+/g, '');
+  return [...new Set([name, written, squash(name), squash(written)])];
+}
+
+/* Longest first, so "mega byte" is never read as a shorter brand that happens to sit inside it. */
+const BRAND_NAMES = [...new Set(brands.flatMap((brand) => brandSpellings(brand.id)))].sort(
+  (a, b) => b.length - a.length,
+);
+
+const ABBR_OF = new Map(Object.entries(brandAbbr).map(([id, abbr]) => [abbr, id]));
+
+/** A brand is lifted OUT of the query so the rest still searches: "scrap brigade crisis" is the brand plus "crisis". An acronym counts only IN CAPS, or "on" and "at" would quietly become brand filters. */
+function liftBrand(query: string): { brand: string | null; rest: string } {
+  const lower = query.toLowerCase();
+  for (const name of BRAND_NAMES) {
+    const found = new RegExp(`(^|[^a-z0-9"-])(${escapeRe(name)})([^a-z0-9"]|$)`).exec(lower);
+    if (!found) continue;
+    const at = found.index + found[1].length;
+    return { brand: name, rest: query.slice(0, at) + query.slice(at + name.length) };
+  }
+  for (const [abbr, id] of ABBR_OF) {
+    const found = new RegExp(`(^|[^A-Za-z0-9"-])(${abbr})([^A-Za-z0-9"]|$)`).exec(query);
+    if (!found) continue;
+    const at = found.index + found[1].length;
+    return { brand: id, rest: query.slice(0, at) + query.slice(at + abbr.length) };
+  }
+  return { brand: null, rest: query };
+}
+
+const exacts = new WeakMap<CardRow, Set<string>>();
+
+/** Every spelling this row's brands answer to, plus their ids, which is what `liftBrand` reports for an acronym. */
+function exactOf(row: CardRow): Set<string> {
+  const cached = exacts.get(row);
+  if (cached !== undefined) return cached;
+  const built = new Set(row.brandIds.flatMap((id) => [id, ...brandSpellings(id)]));
+  exacts.set(row, built);
+  return built;
+}
+
+const names = new WeakMap<CardRow, string>();
+
+function namesOf(row: CardRow): string {
+  const cached = names.get(row);
+  if (cached !== undefined) return cached;
+  const built = buildNames(row);
+  names.set(row, built);
+  return built;
+}
+
+const matchesSearch = (row: CardRow, query: string, loose: boolean): boolean => {
+  const { brand, rest } = liftBrand(query);
+  if (brand && !exactOf(row).has(brand)) return false;
+  return matchesQuery(haystackOf(row), rest, namesOf(row), loose);
+};
+
+export function matches(row: CardRow, facets: FacetState, query: string, loose = false): boolean {
   return (
-    FACET_KEYS.every((key) => matchesFacet(row, key, facets[key])) && matchesSearch(row, query)
+    FACET_KEYS.every((key) => matchesFacet(row, key, facets[key])) &&
+    matchesSearch(row, query, loose)
   );
 }
 
@@ -277,7 +336,7 @@ function optionColor(key: FacetKey, id: string): string | null {
 }
 
 /** Counted with the other facets and the query applied, so a count says what clicking it would leave. Zero-count options are dropped, except the selected one — clearing it needs a control still on screen. */
-export function facetGroups(facets: FacetState, query: string): FacetGroup[] {
+export function facetGroups(facets: FacetState, query: string, loose = false): FacetGroup[] {
   return FACET_KEYS.map((key) => {
     const options = optionIds(key)
       .map<FacetOption>((id) => ({
@@ -285,7 +344,7 @@ export function facetGroups(facets: FacetState, query: string): FacetGroup[] {
         label: optionLabel(key, id),
         color: optionColor(key, id),
         showDot: key === 'faction' || key === 'brand',
-        count: cardRows.filter((row) => matches(row, { ...facets, [key]: id }, query)).length,
+        count: cardRows.filter((row) => matches(row, { ...facets, [key]: id }, query, loose)).length,
         /* Split, so every brand in a multi-brand `?brand=` reads as selected rather than none of them. */
         on: facets[key].split(',').includes(id),
       }))

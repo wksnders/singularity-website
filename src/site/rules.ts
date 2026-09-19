@@ -1,8 +1,9 @@
 /* Every entry `id` is a published URL fragment (`/learn/rules#crash`): renaming one breaks every printed and pasted link. */
 
 import { getCollection } from '@/content';
-import { expandIcons, matchesQuery } from '@/site/cardText';
+import { expandIcons, isWordTerm, matchesQuery, parseQuery, termPattern } from '@/site/cardText';
 import { brandById, programs } from '@/data/universe';
+import type { QueryTerm } from '@/site/cardText';
 import type { Program } from '@/data/types';
 
 export const INTRO_ID = 'using-the-rules-reference';
@@ -64,6 +65,8 @@ export interface RuleEntry {
   redirect: { id: string; label: string } | null;
   todo: string;
   haystack: string;
+  /** Title and aliases only: these are matched by word prefix, the body by whole word. */
+  names: string;
 }
 
 const NEVER_LINK = new Set(['may', 'when', 'then', 'deal', 'lose', 'remove', 'spend', 'cycle']);
@@ -158,9 +161,17 @@ function pieces(text: string, re: RegExp | null, base: Omit<Span, 's' | 'e'>, ou
     if (value) out.push({ key: out.length, kind: base.kind, text: value, hit, word: base.word, target: base.target });
   };
   if (!re) return push(text, false);
-  const parts = text.split(re);
-  if (parts.length < 2) return push(text, false);
-  parts.forEach((part, i) => push(part, i % 2 === 1));
+  let at = 0;
+  /* Whichever branch of `hitRe` fired is the hit, and the edge `split` would swallow is ordinary text before it. */
+  for (const m of text.matchAll(re)) {
+    const hit = m[1] ?? m[2];
+    if (!hit) continue;
+    const start = (m.index ?? 0) + m[0].length - hit.length;
+    if (start > at) push(text.slice(at, start), false);
+    push(hit, true);
+    at = start + hit.length;
+  }
+  if (at < text.length) push(text.slice(at), false);
 }
 
 function segment(text: string, ctx: LinkCtx, re: RegExp | null): RuleSeg[] {
@@ -177,7 +188,25 @@ function segment(text: string, ctx: LinkCtx, re: RegExp | null): RuleSeg[] {
 
 let warned = false;
 
-export function rulesEntries(terms: string[] = []): RuleEntry[] {
+/** Marks exactly what `matchesRule` matched: printed tokens raw, words on their edges, and everything raw once a query has widened. A minus term is what the entry does NOT say, so it is never marked. */
+function hitRe(query: string, loose: boolean): RegExp | null {
+  const terms = parseQuery(query).filter((term) => !term.exclude);
+  const pattern = (term: QueryTerm) => termPattern(term, loose);
+  if (loose) {
+    const alts = terms.map(pattern).filter(Boolean);
+    return alts.length ? new RegExp(`(${alts.join('|')})`, 'ig') : null;
+  }
+  const tokens = terms.filter((term) => !isWordTerm(term)).map(pattern).filter(Boolean);
+  const words = terms.filter(isWordTerm).map(pattern).filter(Boolean);
+  /* Group order is the contract `pieces` reads: tokens carry no edges, and a word's leading edge is CONSUMED rather than looked behind, because Safari only gained lookbehind in 16.4. */
+  const branches = [
+    tokens.length ? `(${tokens.join('|')})` : '',
+    words.length ? `(?:^|[^a-z0-9])(${words.join('|')})(?![a-z0-9])` : '',
+  ].filter(Boolean);
+  return branches.length ? new RegExp(branches.join('|'), 'ig') : null;
+}
+
+export function rulesEntries(query = '', loose = false): RuleEntry[] {
   const sources = [...getCollection<RuleSource>('rules')].sort((a, b) =>
     a.id === INTRO_ID ? -1 : b.id === INTRO_ID ? 1 : bareOf(a.title).localeCompare(bareOf(b.title)),
   );
@@ -202,9 +231,7 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
   );
 
   const label = new Map(sources.map((s) => [s.id, bareOf(s.title)]));
-  const re = terms.length
-    ? new RegExp(`(${terms.map(escapeRe).filter(Boolean).join('|')})`, 'ig')
-    : null;
+  const re = hitRe(query, loose);
 
   return sources.map((source): RuleEntry => {
     const ctx: LinkCtx = { refs, tokens, cards, self: source.id, linked: new Set() };
@@ -230,6 +257,7 @@ export function rulesEntries(terms: string[] = []): RuleEntry[] {
       redirect: pointer?.target ? { id: pointer.target, label: label.get(pointer.target) ?? '' } : null,
       todo: source.todo ?? '',
       haystack: fold([source.title, ...lines, ...(source.aliases ?? [])]),
+      names: fold([source.title, ...(source.aliases ?? [])]),
     };
   });
 }
@@ -240,8 +268,8 @@ const fold = (parts: string[]) =>
     .join(' ')
     .toLowerCase();
 
-export const matchesRule = (entry: RuleEntry, terms: string[]) =>
-  terms.every((term) => matchesQuery(entry.haystack, term));
+export const matchesRule = (entry: RuleEntry, query: string, loose = false) =>
+  matchesQuery(entry.haystack, query, entry.names, loose);
 
 export interface RuleLetter {
 

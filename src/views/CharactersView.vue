@@ -15,7 +15,7 @@ import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
 import { brandById, characters, factionById, factions } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
-import { matchesQuery, searchHaystack } from '@/site/cardText';
+import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
 import { to } from '@/site/links';
 import type { Character } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
@@ -51,7 +51,7 @@ function badge(character: Character): string | undefined {
   return undefined;
 }
 
-function matches(character: Character): boolean {
+function matches(character: Character, loose: boolean): boolean {
   const active = faction.value.value;
   const factionOk =
     !active ||
@@ -59,21 +59,42 @@ function matches(character: Character): boolean {
       ? character.factionIds === 'any'
       : character.factionIds === 'any' || character.factionIds.includes(active));
   const query = search.value.trim().toLowerCase();
-  /* Health is indexed with its label ("health 11"), never a bare number, which would match every ability line containing it. */
+  /* HP is deliberately not indexed: the word is printed nowhere on the card, and a bare number would match every ability line containing it. */
   const haystack = searchHaystack([
     character.name,
     character.epithet,
-    `${t('character.statHp')} ${character.hp}`,
     character.abilityName,
     character.abilityText,
     ...brandNames(character),
     t(`cards.sets.${character.set}`),
   ]);
-  const searchOk = matchesQuery(haystack, query);
+  const searchOk = matchesQuery(
+    haystack,
+    query,
+    nameHaystack([character.name, character.epithet, character.abilityName, ...brandNames(character)]),
+    loose,
+  );
   return factionOk && searchOk;
 }
 
-const shown = computed(() => characters.filter(matches));
+const strictShown = computed(() => characters.filter((c) => matches(c, false)));
+
+/* A query matching no whole word widens to a substring pass, and stays empty unless that found something, so the faction filter emptying the grid is never blamed on the query. */
+const looseShown = computed(() =>
+  search.value.trim() && strictShown.value.length === 0
+    ? characters.filter((c) => matches(c, true))
+    : [],
+);
+
+const widened = computed(() => looseShown.value.length > 0);
+
+const shown = computed(() => (widened.value ? looseShown.value : strictShown.value));
+
+const countLabel = computed(() =>
+  widened.value
+    ? `${t('universe.characters.count')} · ${t('cardsPage.countWidened')}`
+    : t('universe.characters.count'),
+);
 
 const tileQuery = computed(() =>
   faction.value.value ? { faction: faction.value.value } : undefined,
@@ -110,7 +131,7 @@ function clearAll(): void {
         :options="filterOptions"
         :active="faction.value.value"
         :count="shown.length"
-        :count-label="t('universe.characters.count')"
+        :count-label="countLabel"
         :all-label="t('characters.everyone')"
         :search="search"
         :search-label="t('characters.searchLabel')"

@@ -670,6 +670,7 @@
     "countOne": "1 card",
     "countMany": "cards",
     "countFiltered": "Filtered",
+    "countWidened": "No whole-word match",
     "slots": {
       "card": "[ printed card ]",
       "character": "[ character art ]",

@@ -4,6 +4,28 @@ import { getDoc, metaString, t } from '@/content';
 import { charactersOfBrand, programsOfBrand } from '@/data/universe';
 import type { Brand } from '@/data/types';
 
+/** The two letters a brand mark falls back to when its image has not shipped, and a spelling search accepts IN CAPS. Keyed by id, because the printed name drifts from the data's ("Bloom & Never"). */
+export const brandAbbr: Record<string, string> = {
+  'ark-totem': 'AT',
+  'benobasas-fist': 'BF',
+  'bloom-and-never': 'BN',
+  'chaos-verve': 'CV',
+  common: 'CO',
+  'data-nation': 'DN',
+  'de-crypt': 'DC',
+  'endless-chain': 'EC',
+  feralesque: 'FQ',
+  'forbidden-archives': 'FA',
+  'hostile-rewrite': 'HR',
+  'infinite-divine': 'ID',
+  'lux-vault': 'LV',
+  masquerade: 'MQ',
+  'mega-byte': 'MB',
+  'onryoki-noh': 'ON',
+  'scrap-brigade': 'SB',
+  'zodiac-reliquary': 'ZR',
+};
+
 export const brandOneLiner = (brand: Brand): string =>
   metaString(getDoc(`universe/brands/${brand.id}`), 'oneLiner', '');
 

@@ -60,16 +60,33 @@ function search(next: string): void {
   query.set(next.trim() ? next.trim() : null);
 }
 
-const terms = computed(() => draft.value.trim().toLowerCase().split(/\s+/).filter(Boolean));
-const searching = computed(() => terms.value.length > 0);
+const searching = computed(() => Boolean(draft.value.trim()));
 
-const all = computed(() => rulesEntries(terms.value));
+/* Matching reads only the haystacks, which no term changes, so the index is built once and the displayed pass is built from the widening it decides — the other way round would be circular. */
+const index = rulesEntries();
+
+const idsMatching = (loose: boolean) =>
+  new Set(
+    index.filter((entry) => entry.id !== INTRO_ID && matchesRule(entry, draft.value, loose)).map((entry) => entry.id),
+  );
+
+const strictIds = computed(() => idsMatching(false));
+
+/* A query matching no whole word widens to a substring pass, and stays empty unless that found something, so the class filter emptying the list is never blamed on the query. */
+const looseIds = computed(() =>
+  searching.value && strictIds.value.size === 0 ? idsMatching(true) : new Set<string>(),
+);
+
+const widened = computed(() => looseIds.value.size > 0);
+
+const all = computed(() => rulesEntries(draft.value, widened.value));
 const intro = computed(() => all.value.find((entry) => entry.id === INTRO_ID) ?? null);
 const activeClass = computed(() => (cls.value.value ?? '') as RuleClass | '');
 
-const matched = computed(() =>
-  all.value.filter((entry) => entry.id !== INTRO_ID && matchesRule(entry, terms.value)),
-);
+const matched = computed(() => {
+  const ids = widened.value ? looseIds.value : strictIds.value;
+  return all.value.filter((entry) => ids.has(entry.id));
+});
 
 const hits = computed(() =>
   matched.value.filter((entry) => !activeClass.value || entry.cls.includes(activeClass.value)),
@@ -108,8 +125,11 @@ const sections = computed<SectionEntry[]>(() =>
 const countLabel = computed(() => {
   if (noResults.value) return t('rules.count.none');
   const noun = total.value === 1 ? t('rules.count.term') : t('rules.count.terms');
-  if (searching.value || activeClass.value) return `${total.value} ${t('rules.count.match')}`;
-  return `${total.value} ${noun}`;
+  const base =
+    searching.value || activeClass.value
+      ? `${total.value} ${t('rules.count.match')}`
+      : `${total.value} ${noun}`;
+  return widened.value ? `${base} · ${t('cardsPage.countWidened')}` : base;
 });
 
 const updated = computed(() => game.rulesUpdated);
