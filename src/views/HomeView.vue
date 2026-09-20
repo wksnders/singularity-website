@@ -10,9 +10,9 @@ import ContentCard from '@/components/molecules/ContentCard.vue';
 import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
-import StatRow from '@/components/molecules/StatRow.vue';
 import SiteLockup from '@/components/molecules/SiteLockup.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
+import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
 import { getDoc, getDocs, metaString, t } from '@/content';
@@ -24,18 +24,10 @@ import {
   factions,
   game,
   keyArt,
-  modes,
 } from '@/data/universe';
 import { factionTags } from '@/site/characters';
 import { pad } from '@/site/format';
 import { chapterHash, environmentSources, outbound, to } from '@/site/links';
-import type { Stat } from '@/site/stats';
-
-const pitchStats = computed<Stat[]>(() => [
-  { label: t('home.pitch.players'), value: game.players },
-  { label: t('home.pitch.length'), value: game.playTime },
-  { label: t('home.pitch.solo'), value: t('home.pitch.soloValue') },
-]);
 
 /* Capped for page weight. */
 const ROTATOR_MAX = 20;
@@ -115,34 +107,7 @@ function scrollCast(direction: 1 | -1): void {
     </p>
   </section>
 
-  <section class="l-band">
-    <div class="l-wrap l-split">
-      <div class="l-split__main">
-        <MonoLabel tone="accent">{{ t('home.pitch.kicker') }}</MonoLabel>
-        <h2 class="home__h2">{{ t('home.pitch.title') }}</h2>
-        <p class="l-lede home__body">{{ t('home.pitch.body') }}</p>
-      </div>
-      <div class="l-split__aside">
-        <StatRow bordered :stats="pitchStats" />
-        <MonoLabel tone="muted" class="home__spacer">{{ t('home.pitch.modesKicker') }}</MonoLabel>
-        <div class="home__modes l-row">
-          <template v-for="mode in modes" :key="mode.id">
-            <BaseLink
-              v-if="mode.id === 'incursions'"
-              :to="to('incursions')"
-              class="home__mode home__mode--exit"
-            >
-              {{ mode.name }} →
-            </BaseLink>
-            <span v-else class="home__mode">{{ mode.name }}</span>
-          </template>
-        </div>
-        <UiButton variant="quiet" :to="to('learn', {}, { hash: '#modes' })" class="home__spacer">
-          {{ t('home.pitch.modesLink') }}
-        </UiButton>
-      </div>
-    </div>
-  </section>
+  <WaysToPlayBand />
 
   <section class="l-band l-band--line-top l-band--line-bottom home__claim">
     <div class="l-wrap l-wrap--reading home__center">
@@ -435,27 +400,6 @@ function scrollCast(direction: 1 | -1): void {
 
 .home__spacer {
   margin-top: var(--space-5);
-}
-
-.home__modes {
-  margin-top: var(--space-4);
-}
-
-.home__mode {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid rgba(var(--rgb-ink), 0.16);
-  border-radius: var(--radius-pill);
-  font-size: var(--size-m);
-  white-space: nowrap;
-}
-
-.home__mode--exit {
-  border-color: rgba(var(--rgb-accent), 0.45);
-  background: var(--color-accent-wash);
-  color: var(--color-ink);
 }
 
 .home__rotator-head {

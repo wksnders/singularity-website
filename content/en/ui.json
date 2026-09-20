@@ -247,16 +247,26 @@
       "ships": "Ships to",
       "ages": "Ages"
     },
-    "pitch": {
-      "kicker": "The game",
-      "title": "Crash your opponents' characters. No dice, no draws, no luck.",
-      "body": "A deterministic card game for 1–4 players — head-to-head, in teams, or solo against a rogue AI. About 30 minutes per player, and every card in every hand is knowable: outcomes come from reading the board, not the top of a deck.",
-      "players": "Players",
-      "length": "Length",
-      "solo": "Solo",
-      "soloValue": "Yes · Incursions",
-      "modesKicker": "Five ways to play",
-      "modesLink": "See modes of play"
+    "waysToPlay": {
+      "title": "Two ways to play",
+      "competitive": {
+        "players": "players",
+        "length": "30 min each",
+        "title": "Competitive",
+        "lead": "No dead turns. No bad top-decks. Just turns worth sequencing.",
+        "support": "No shuffling. Play your favorite card every game, or stack your deck to crush the competition.",
+        "cta": "How a skirmish plays",
+        "box": "In the core box"
+      },
+      "coop": {
+        "players": "players",
+        "length": "Solo or team",
+        "title": "Cooperative",
+        "lead": "The Incursion plays itself. Everyone at the table is on your side.",
+        "support": "Each of the three bosses is built like its own game, breaking rules the competitive side never can. Stack mutations to raise the difficulty: 40–50 hours of fun per boss in playtesting.",
+        "cta": "How Incursions work",
+        "box": "Its own box"
+      }
     },
     "zero": {
       "title": "No dice. No shuffle. No luck.",

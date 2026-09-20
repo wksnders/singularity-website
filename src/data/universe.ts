@@ -45,6 +45,8 @@ export const game = {
   players: '1\u20134',
   /** Its own field: Incursions is a separate box, so this is not the same claim as `players`. */
   incursionsPlayers: '1\u20134',
+  /** The core box's competitive modes only, which start at two: not `players`. */
+  competitivePlayers: '2\u20134',
   playTime: '30 min per player',
   /* No price here: three editions at three prices, so price lives on `products[]`. */
   releaseDate: null as string | null,
