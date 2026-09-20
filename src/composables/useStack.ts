@@ -100,12 +100,15 @@ export function useStack(source: {
 
   watch(() => source.characterId(), reset, { immediate: true });
 
+  const armAfter = (change: StackChange, next: (string | null)[]): number =>
+    change.kind === 'loaded' || change.kind === 'cleared' ? defaultArm(next) : change.slot;
+
   function commit(next: (string | null)[], change: StackChange): StackChange {
     const checked = legal(next);
     ids.value = checked.ids;
     dropped.value = 0;
 
-    if (armed.value !== null) armed.value = defaultArm(checked.ids);
+    if (armed.value !== null) armed.value = armAfter(change, checked.ids);
     seedId.value = change.kind === 'loaded' ? change.seed.deckId : null;
     write(checked.ids);
     return change;
@@ -145,10 +148,7 @@ export function useStack(source: {
     if (!program) return null;
     const next = ids.value.slice();
     next[index] = null;
-    const change = commit(next, { kind: 'removed', program, slot: index });
-    /* Emptying arms what it emptied, which is what the reader will fill. */
-    armed.value = index;
-    return change;
+    return commit(next, { kind: 'removed', program, slot: index });
   }
 
   function load(seed: StackSeed): StackChange {
