@@ -195,7 +195,7 @@ function buildHaystack(row: CardRow): string {
 
 /** Everything a reader half-types: names, not prose. */
 function buildNames(row: CardRow): string {
-  const parts = [row.name, row.printedType];
+  const parts: (string | null | undefined)[] = [row.name, row.printedType];
   if (row.kind === 'programs') parts.push(row.program.subType);
   if (row.kind === 'architech' || row.kind === 'environments') parts.push(row.other.subType);
   return nameHaystack(parts);
