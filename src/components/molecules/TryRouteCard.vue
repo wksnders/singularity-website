@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Each try route states its price of entry on the card, not at the destination.
+import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import { t } from '@/content';
@@ -8,10 +9,12 @@ import type { TryRoute } from '@/data/types';
 
 const props = defineProps<{ route: TryRoute }>();
 
-const conditions = [
-  ...props.route.requiresKeys.map((key) => t(key)),
-  ...(props.route.costNote ? [t(`try.cost.${props.route.costNote}`)] : []),
-].join(' · ');
+const conditions = computed(() =>
+  [
+    ...props.route.requiresKeys.map((key) => t(key)),
+    ...(props.route.costNote ? [t(`try.cost.${props.route.costNote}`)] : []),
+  ].join(' · '),
+);
 </script>
 
 <template>

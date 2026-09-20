@@ -30,13 +30,13 @@ const sources = computed(() =>
       />
       <span class="c-faction__scrim" aria-hidden="true" />
     </span>
-    <span class="c-faction__body">
+    <div class="c-faction__body">
       <h3 class="c-faction__name">
         <FactionDot :color="faction.color" :size="9" />
         {{ faction.name }}
       </h3>
       <span class="c-faction__tagline">{{ faction.tagline }}</span>
-    </span>
+    </div>
   </BaseLink>
 </template>
 

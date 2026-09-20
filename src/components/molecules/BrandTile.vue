@@ -25,12 +25,12 @@ defineProps<{
     <span class="c-brand__mark">
       <BrandMark :icon="brand.icon" :name="brand.name" :color="faction?.color" :size="88" />
     </span>
-    <span class="c-brand__body">
+    <div class="c-brand__body">
       <h3 class="c-brand__name">{{ brand.name }}</h3>
       <span v-if="descriptor" class="c-brand__descriptor">{{ descriptor }}</span>
       <span v-if="condition" class="c-brand__condition">{{ condition }}</span>
       <span v-if="note" class="c-brand__note">{{ note }}</span>
-    </span>
+    </div>
   </BaseLink>
 </template>
 

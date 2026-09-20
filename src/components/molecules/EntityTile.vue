@@ -42,7 +42,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
         :sizes="sizes"
       />
     </span>
-    <span class="c-tile__body">
+    <div class="c-tile__body">
       <span v-if="badge" class="c-tile__badge">{{ badge }}</span>
       <span v-if="epithet" class="c-tile__epithet">{{ epithet }}</span>
       <h3 class="c-tile__name">{{ name }}</h3>
@@ -52,7 +52,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
           {{ tag.label }}
         </span>
       </span>
-    </span>
+    </div>
   </BaseLink>
 </template>
 
