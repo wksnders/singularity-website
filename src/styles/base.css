@@ -85,11 +85,6 @@ img {
   scroll-margin-top: var(--scroll-offset);
 }
 
-/* Set by MobileMenu while the sheet is open; the page behind the modal must not scroll. */
-body.is-menu-open {
-  overflow: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

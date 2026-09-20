@@ -114,8 +114,5 @@ export function useModal(options: {
 
   onBeforeUnmount(release);
 
-  /* Kept for callers that still bind it in a template; the document listener above already covers every case. */
-  function onKeydown(_event: KeyboardEvent): void {}
-
-  return { dialog, onKeydown };
+  return { dialog };
 }

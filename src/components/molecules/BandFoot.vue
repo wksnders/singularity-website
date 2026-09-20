@@ -14,7 +14,7 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
       <UiButton variant="quiet" :to="to" :link="link">{{ label }}</UiButton>
       <slot />
     </div>
-    <a class="c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
+    <a class="c-mono c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
   </div>
 </template>
 
@@ -36,10 +36,6 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
 }
 
 .c-bandfoot__up {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--color-ink-faint);
 }
 

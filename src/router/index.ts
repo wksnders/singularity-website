@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 import { LOCALE_ROUTE_PATTERN, setLocale } from '@/i18n/locales';
 import { t } from '@/content';
+import { prefersReducedMotion } from '@/composables/useMediaQuery';
 
 /* Locale prefix appears only once a code is added to LOCALES; public anchors and query params never change either way. */
 const prefix = LOCALE_ROUTE_PATTERN ? `/:locale(${LOCALE_ROUTE_PATTERN})?` : '';
@@ -135,9 +136,8 @@ export const router = createRouter({
   scrollBehavior(target, from, savedPosition) {
     if (savedPosition) return savedPosition;
     if (target.path === from.path && target.hash === from.hash) return false;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (target.hash) {
-      return { el: target.hash, behavior: reduced ? 'auto' : 'smooth' };
+      return { el: target.hash, behavior: prefersReducedMotion() ? 'auto' : 'smooth' };
     }
     return { top: 0 };
   },

@@ -1583,14 +1583,6 @@ export const teamOf = (group: string) => team.filter((member) => member.group ==
 export const factionById = (id: string) => factions.find((f) => f.id === id) ?? null;
 export const brandById = (id: string) => brands.find((b) => b.id === id) ?? null;
 export const characterById = (id: string) => characters.find((c) => c.id === id) ?? null;
-export const boxById = (id: string) => boxes.find((b) => b.id === id) ?? null;
-export const productById = (id: string) => products.find((p) => p.id === id) ?? null;
-/** The boxes a SKU ships, in listed order. Empty while a SKU is unenumerated. */
-export const boxesOfProduct = (productId: string) =>
-  (productById(productId)?.boxIds ?? [])
-    .map(boxById)
-    .filter((b): b is Box => Boolean(b));
-export const chapterById = (id: string) => chapters.find((c) => c.id === id) ?? null;
 export const programsOfBrand = (brandId: string) => programs.filter((p) => p.brandId === brandId);
 export const programBySlug = (slug: string) => programs.find((p) => p.slug === slug) ?? null;
 export const rogueAIById = (id: string) => rogueAIs.find((a) => a.id === id) ?? null;
@@ -1635,3 +1627,41 @@ export const charactersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds === 'any' || c.factionIds.includes(factionId));
 
 export const universalCharacters = () => characters.filter((c) => c.factionIds === 'any');
+
+/** Empty for an any-faction character: it belongs to no faction in particular, not to every one. */
+export const factionsOf = (character: Character): Faction[] =>
+  character.factionIds === 'any'
+    ? []
+    : character.factionIds
+        .map((id) => factionById(id))
+        .filter((f): f is Faction => Boolean(f));
+
+/** Every brand a character plays: `brandIds` in printed order, then `personalBrandId`. Concatenated, never one in place of the other. */
+export const brandsOf = (character: Character): Brand[] =>
+  [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
+    .map((id) => brandById(id))
+    .filter((b): b is Brand => Boolean(b));
+
+/** Strict, unlike `charactersOfFaction`: any-faction characters are left out. */
+export const membersOfFaction = (factionId: string) =>
+  characters.filter((c) => c.factionIds !== 'any' && c.factionIds.includes(factionId));
+
+/** `active` is a faction id, `'universal'` for the any-faction characters alone, or null for no filter. Any-faction characters are exempt from a faction filter, not excluded. */
+export function matchesFactionFilter(character: Character, active: string | null): boolean {
+  if (!active) return true;
+  if (active === 'universal') return character.factionIds === 'any';
+  return character.factionIds === 'any' || character.factionIds.includes(active);
+}
+
+/** Wraps at both ends, and `position.index` is 1-based. Null when `index` is outside the list; a one-item list is its own neighbour both ways, so a caller that must hide the links then checks the length. */
+export function ringNeighbours<T>(
+  list: readonly T[],
+  index: number,
+): { prev: T; next: T; position: { index: number; total: number } } | null {
+  if (index < 0 || index >= list.length) return null;
+  return {
+    prev: list[(index - 1 + list.length) % list.length],
+    next: list[(index + 1) % list.length],
+    position: { index: index + 1, total: list.length },
+  };
+}

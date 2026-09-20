@@ -119,7 +119,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
 .c-tile__tag {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
   font-size: var(--size-mono-m);
   color: var(--color-ink-muted);
 }

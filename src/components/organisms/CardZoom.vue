@@ -1,13 +1,12 @@
 <script setup lang="ts">
 
 import { ref, watch } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import CardImage from '@/components/atoms/CardImage.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { useModal } from '@/composables/useModal';
 import { savingData } from '@/composables/useZoomUpgrade';
-import { pictureSources } from '@/site/links';
 import type { Art } from '@/data/types';
 
 export interface ZoomRow {
@@ -83,14 +82,11 @@ watch(
         <!-- The body is centred and capped at 900px, so at wide sizes the dark area either side of the card is the body's own box. -->
         <div class="c-zoom__body" @click.self="emit('close')">
           <div class="c-zoom__figure">
-            <!-- THE STAGE IS ALWAYS 63/88, FOR BOTH FACES, so the controls below it never move. `contain` letterboxes rather than crops; do not pass `natural` here. -->
-            <ArtFrame
+            <!-- THE STAGE IS ALWAYS THE CARD'S SHAPE, FOR BOTH FACES, so the controls below it never move. -->
+            <CardImage
               :art="art"
-              ratio="63 / 88"
               :placeholder="placeholder"
               radius="m"
-              fit="contain"
-              :sources="pictureSources(art?.src ?? null)"
               :sizes="full ? FULL_SIZES : FIT_SIZES"
             />
             <slot name="figure" />
@@ -126,7 +122,7 @@ watch(
 .c-zoom {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: var(--z-modal);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -142,7 +138,7 @@ watch(
   position: fixed;
   top: var(--space-3);
   right: var(--space-3);
-  z-index: 2;
+  z-index: var(--z-raised);
   display: grid;
   place-items: center;
   width: 48px;

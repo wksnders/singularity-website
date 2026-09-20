@@ -1,7 +1,9 @@
 <script setup lang="ts">
 // Desktop-only: on narrower viewports the site nav, not this rail, carries section wayfinding.
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { t } from '@/content';
+import { useMediaQuery } from '@/composables/useMediaQuery';
+import { pad } from '@/site/format';
 import type { SectionEntry } from '@/site/sections';
 
 // 1488px = --width-content + 2 * (--rail-width + --rail-gap) from tokens.css; below it the rail overlaps the content column.
@@ -10,18 +12,11 @@ const FITS_QUERY = '(min-width: 1488px)';
 const props = defineProps<{ sections: SectionEntry[] }>();
 
 const active = ref<string>(props.sections[0]?.id ?? '');
-const shown = ref(false);
+const shown = useMediaQuery(FITS_QUERY);
 
 let observer: IntersectionObserver | null = null;
-let media: MediaQueryList | null = null;
-
-const onMedia = () => (shown.value = Boolean(media?.matches));
 
 onMounted(() => {
-  media = window.matchMedia(FITS_QUERY);
-  media.addEventListener('change', onMedia);
-  onMedia();
-
   observer = new IntersectionObserver(
     (entries) => {
       const visible = entries
@@ -32,19 +27,26 @@ onMounted(() => {
     { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
   );
 
+  observe();
+});
+
+function observe(): void {
+  if (!observer) return;
+  observer.disconnect();
+  if (!props.sections.some((section) => section.id === active.value)) {
+    active.value = props.sections[0]?.id ?? '';
+  }
   for (const section of props.sections) {
     const el = document.getElementById(section.id);
     if (el) observer.observe(el);
   }
-});
+}
 
-onBeforeUnmount(() => {
-  observer?.disconnect();
-  media?.removeEventListener('change', onMedia);
-});
+/* A filter that changes the list also changes which bands exist: re-observe once they have rendered. */
+watch(() => props.sections.map((section) => section.id).join(','), observe, { flush: 'post' });
 
-const pad = (n: number) => String(n).padStart(2, '0');
- 
+onBeforeUnmount(() => observer?.disconnect());
+
 const grouped = computed(() => props.sections.some((section) => section.group));
 
 const heading = (i: number) =>
@@ -74,7 +76,7 @@ const heading = (i: number) =>
   top: 50%;
   left: calc(50% + var(--width-content) / 2 + var(--rail-gap));
   translate: 0 -50%;
-  z-index: 30;
+  z-index: var(--z-rail);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -111,7 +113,7 @@ const heading = (i: number) =>
   align-items: baseline;
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }

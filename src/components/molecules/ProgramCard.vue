@@ -57,7 +57,9 @@ const lines = computed<CardLine[]>(() =>
       @select="$emit('select')"
     >
       <template #overlay>
-        <span class="c-prog__zoom" aria-hidden="true">{{ t('character.enlarge') }}</span>
+        <MonoLabel as="span" size="xs" tone="accent" class="c-prog__zoom" aria-hidden="true">
+          {{ t('character.enlarge') }}
+        </MonoLabel>
       </template>
     </CardFace>
     <div v-else class="c-prog__sealed">
@@ -103,11 +105,6 @@ const lines = computed<CardLine[]>(() =>
   padding: 3px 7px;
   border-radius: var(--radius-s);
   background: rgba(var(--rgb-bg), 0.8);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  color: var(--color-accent-text);
   opacity: 0;
   transition: opacity var(--dur-2) var(--ease-out);
 }
@@ -121,7 +118,7 @@ const lines = computed<CardLine[]>(() =>
 .c-prog__sealed {
   display: grid;
   place-items: center;
-  aspect-ratio: 63 / 88;
+  aspect-ratio: var(--ratio-card);
   padding: var(--space-3);
   border: 1px dashed var(--color-line-dashed);
   border-radius: var(--radius-s);
@@ -143,7 +140,7 @@ const lines = computed<CardLine[]>(() =>
 .c-prog__brand {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
   font-size: var(--size-mono-m);
   color: var(--color-ink-faint);
 }
@@ -151,7 +148,7 @@ const lines = computed<CardLine[]>(() =>
 .c-prog__brand-link {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
   min-height: 44px;
   color: inherit;
 }

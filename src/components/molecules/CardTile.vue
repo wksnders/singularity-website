@@ -1,12 +1,11 @@
 <script setup lang="ts">
 /**
- * One card in the database grid.
- *
- * NOTHING IS CAPTIONED: the card prints its own name, and a second copy can drift from the printed face. The name still reaches a screen reader through the button's label.
- * CARD is the default face, always 63/88 and `contain`, because a cropped card face loses rules text. ART is the scene illustration at its own shape, which is what makes the grid ragged. The rule both obey is on `CardFace`.
+ * NOTHING IS CAPTIONED: the card prints its own name, and a second copy can drift from the printed face; the name still reaches a screen reader through the button's label.
+ * The ART face borrows the card's ratio only while there is no image, so an empty tile does not collapse.
  */
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import CardImage from '@/components/atoms/CardImage.vue';
 import { t } from '@/content';
 import { factionColorOf, placeholderOf } from '@/site/cards';
 import { pictureSources } from '@/site/links';
@@ -16,7 +15,8 @@ const props = defineProps<{ row: CardRow; face: 'art' | 'card' }>();
 
 defineEmits<{ select: [] }>();
 
-const art = computed(() => (props.face === 'art' ? props.row.sceneArt : props.row.cardArt));
+const SIZES = '(min-width: 1160px) 380px, (min-width: 760px) 32vw, 45vw';
+
 const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0.28)');
 </script>
 
@@ -29,15 +29,22 @@ const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0
     @click="$emit('select')"
   >
     <span class="c-ctile__frame">
-      <ArtFrame
-        :art="art"
-        :natural="face === 'art'"
-        ratio="63 / 88"
+      <CardImage
+        v-if="face === 'card'"
+        :art="row.cardArt"
         :placeholder="placeholderOf(row, face)"
         radius="m"
-        fit="contain"
-        :sources="pictureSources(art?.src ?? null)"
-        sizes="(min-width: 1160px) 380px, (min-width: 760px) 32vw, 45vw"
+        :sizes="SIZES"
+      />
+      <ArtFrame
+        v-else
+        :art="row.sceneArt"
+        natural
+        ratio="var(--ratio-card)"
+        :placeholder="placeholderOf(row, face)"
+        radius="m"
+        :sources="pictureSources(row.sceneArt.src)"
+        :sizes="SIZES"
       />
     </span>
   </button>

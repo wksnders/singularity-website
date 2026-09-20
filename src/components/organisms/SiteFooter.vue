@@ -1,11 +1,28 @@
 <script setup lang="ts">
 // The footer is the sitemap of record: every section and every deep-linkable in-page anchor must be listed in footerColumns.
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { t } from '@/content';
 import { footerColumns, socialKeys } from '@/site/ia';
-import { asset, outbound, resolveLink, to } from '@/site/links';
+import { asset, logoSrcset, outbound, resolveLink, to } from '@/site/links';
 import { game } from '@/data/universe';
+
+const route = useRoute();
+const router = useRouter();
+
+const home = computed(() => to('home'));
+const atHome = computed(() => router.resolve(home.value).path === route.path);
+
+//scroll when cant navigate. 
+function toTop(event: MouseEvent): void {
+  if (!atHome.value) return;
+  event.preventDefault();
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  document.getElementById('main')?.focus({ preventScroll: true });
+}
 </script>
 
 <template>
@@ -29,17 +46,22 @@ import { game } from '@/data/universe';
           </BaseLink>
         </div>
       </div>
-      <RouterLink :to="to('home')" class="c-footer__signoff-link">
+      <RouterLink
+        :to="home"
+        class="c-footer__signoff-link"
+        :aria-label="atHome ? t('chrome.backToTop') : undefined"
+        @click="toTop"
+      >
         <picture>
           <source
             type="image/webp"
-            :srcset="`${asset('/logo/singularity-logo-exe-center.webp')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.webp')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.webp')} 2160w`"
+            :srcset="logoSrcset('singularity-logo-exe-center', 'webp')"
             sizes="(max-width: 360px) 84vw, 300px"
           />
           <img
             class="c-footer__signoff"
             :src="asset('/logo/singularity-logo-exe-center.png')"
-            :srcset="`${asset('/logo/singularity-logo-exe-center.png')} 720w, ${asset('/logo/singularity-logo-exe-center@2x.png')} 1440w, ${asset('/logo/singularity-logo-exe-center@3x.png')} 2160w`"
+            :srcset="logoSrcset('singularity-logo-exe-center', 'png')"
             sizes="(max-width: 360px) 84vw, 300px"
             :alt="t('chrome.logoAlt')"
             width="720"
@@ -73,7 +95,7 @@ import { game } from '@/data/universe';
   margin-top: var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
   font-size: var(--size-m);
 }
 
@@ -92,7 +114,7 @@ import { game } from '@/data/universe';
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   color: var(--color-ink-muted);
   white-space: nowrap;
 }
@@ -115,7 +137,7 @@ import { game } from '@/data/universe';
   border-top: 1px solid rgba(var(--rgb-ink), 0.08);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) 28px;
+  gap: var(--space-3) var(--space-7);
   align-items: center;
   font-size: var(--size-s);
   color: var(--color-ink-faint);

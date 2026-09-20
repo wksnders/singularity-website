@@ -10,28 +10,30 @@ import EntityTile from '@/components/molecules/EntityTile.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
-import { docHtml, getDoc, metaString, t } from '@/content';
+import { useEntityDoc } from '@/composables/useEntityDoc';
+import { t } from '@/content';
 import {
   brandsOfFaction,
-  characters,
   factionById,
   factions,
+  membersOfFaction,
   programsOfBrand,
+  ringNeighbours,
 } from '@/data/universe';
 import { brandOneLiner, brandRowNote } from '@/site/brands';
 import { cardRows, defaultFacets, matches } from '@/site/cards';
+import { factionTags } from '@/site/characters';
 import { environmentSources, to } from '@/site/links';
 import type { Character } from '@/data/types';
 
 const props = defineProps<{ factionId: string }>();
 
 const faction = computed(() => factionById(props.factionId));
-const doc = computed(() => getDoc(`universe/factions/${props.factionId}`));
-const hasLore = computed(() => Boolean(docHtml(doc.value)));
+const { has: hasLore, meta } = useEntityDoc(() => `universe/factions/${props.factionId}`);
 
-const name = computed(() => metaString(doc.value, 'name', faction.value?.name ?? ''));
-const tagline = computed(() => metaString(doc.value, 'tagline', faction.value?.tagline ?? ''));
-const shortName = computed(() => metaString(doc.value, 'shortName', name.value));
+const name = computed(() => meta('name', faction.value?.name ?? ''));
+const tagline = computed(() => meta('tagline', faction.value?.tagline ?? ''));
+const shortName = computed(() => meta('shortName', name.value));
 
 useDocumentTitle(() => name.value);
 
@@ -47,33 +49,18 @@ const galleryTotal = computed(
       .length,
 );
 
-const cast = computed<Character[]>(() =>
-  faction.value
-    ? characters.filter(
-        (c) => Array.isArray(c.factionIds) && c.factionIds.includes(faction.value!.id),
-      )
-    : [],
-);
+const cast = computed<Character[]>(() => (faction.value ? membersOfFaction(faction.value.id) : []));
 
 const neighbours = computed(() => {
-  const index = factions.findIndex((f) => f.id === props.factionId);
-  if (index < 0) return { prev: null, next: null, position: null };
-  const prev = factions[(index - 1 + factions.length) % factions.length];
-  const next = factions[(index + 1) % factions.length];
+  const ring = ringNeighbours(factions, factions.findIndex((f) => f.id === props.factionId));
+  if (!ring) return { prev: null, next: null, position: null };
+  const { prev, next, position } = ring;
   return {
     prev: { label: prev.name, to: to('faction', { factionId: prev.id }) },
     next: { label: next.name, to: to('faction', { factionId: next.id }) },
-    position: { label: t('faction.hero.position'), index: index + 1, total: factions.length },
+    position: { label: t('faction.hero.position'), ...position },
   };
 });
-
-const tags = (character: Character) =>
-  Array.isArray(character.factionIds)
-    ? character.factionIds
-        .map((id) => factionById(id))
-        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
-        .map((f) => ({ label: f.name, color: f.color }))
-    : [{ label: t('universe.anyFaction'), color: null }];
 
 const heroSources = computed(() =>
   faction.value?.environment ? environmentSources(faction.value.id) : [],
@@ -107,7 +94,7 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
       <p class="faction__tagline">{{ tagline }}</p>
 
       <MarkdownBlock v-if="hasLore" :slug="`universe/factions/${factionId}`" measure class="faction__lore" />
-      <p v-else class="faction__lore-placeholder">{{ t('faction.hero.lorePlaceholder') }}</p>
+      <p v-else class="l-lede faction__lore-placeholder">{{ t('faction.hero.lorePlaceholder') }}</p>
 
       <p class="faction__stats">
         <span>{{ brands.length }} {{ t('faction.stats.brands') }}</span>
@@ -127,7 +114,7 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
             :art="character.cardArt"
             :epithet="character.epithet"
             :name="character.name"
-            :tags="tags(character)"
+            :tags="factionTags(character)"
             :placeholder="t('character.cardArtPlaceholder')"
           />
         </div>
@@ -154,12 +141,14 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
     <section class="l-band l-band--line-top">
       <div class="l-wrap l-grid l-grid--wide">
         <ContentCard
+          :heading-level="2"
           :to="to('story', {}, { hash: '#chapters' })"
           :kicker="t('ia.story.label')"
           :title="`${shortName} ${t('faction.exits.storyTitle')}`"
           :body="t('faction.exits.storyBody')"
         />
         <ContentCard
+          :heading-level="2"
           :to="to('cards', {}, { query: { faction: faction.id } })"
           :kicker="t('faction.exits.cardsKicker')"
           :title="`${galleryTotal} ${shortName} ${t('faction.exits.cardsUnit')}`"
@@ -191,13 +180,17 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
   color: var(--faction-text);
 }
 
-.faction__lore,
-.faction__lore-placeholder {
+/* Not `.l-lede`: that loads before MarkdownBlock's `.c-prose`, which would win back its 1.65 and the reading width. */
+.faction__lore {
   margin-top: var(--space-6);
   max-width: 60ch;
   font-size: var(--size-body-l);
   line-height: 1.6;
   color: var(--color-ink-soft);
+}
+
+.faction__lore-placeholder {
+  margin-top: var(--space-6);
 }
 
 .faction__stats {
@@ -207,13 +200,13 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
   gap: var(--space-2);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }
 
 .faction__stats span {
-  padding: var(--space-2) 14px;
+  padding: var(--space-2) var(--space-4);
   border: 1px solid rgba(var(--rgb-ink), 0.2);
   border-radius: var(--radius-pill);
   white-space: nowrap;

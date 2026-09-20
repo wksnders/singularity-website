@@ -2,9 +2,9 @@
 
 import { getCollection } from '@/content';
 import { expandIcons, isWordTerm, matchesQuery, parseQuery, termPattern } from '@/site/cardText';
-import { brandById, programs } from '@/data/universe';
+import { programs } from '@/data/universe';
+import { escapeRe } from '@/site/highlight';
 import type { QueryTerm } from '@/site/cardText';
-import type { Program } from '@/data/types';
 
 export const INTRO_ID = 'using-the-rules-reference';
 
@@ -80,7 +80,6 @@ const GUIDE = /Learn to Play(?: Guide| book| guide)?/g;
 
 const bareOf = (title: string) => title.replace(/\s*\[[A-Za-z]+\]/g, '').trim();
 const tokenOf = (title: string) => (title.match(/\[[A-Za-z]+\]/) ?? [''])[0];
-const escapeRe = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 interface Span {
   s: number;
@@ -339,5 +338,3 @@ export function assertRulesShape(entries: RuleEntry[]): void {
   const todo = entries.filter((e) => e.todo).length;
   if (todo) console.warn(`[rules] ${todo} of ${entries.length} records still carry a todo`);
 }
-
-export const brandNameOf = (program: Program) => brandById(program.brandId)?.name ?? '';

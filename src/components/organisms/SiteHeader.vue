@@ -101,7 +101,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
 .c-nav {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 50;
+  z-index: var(--z-nav);
   border-bottom: 1px solid transparent;
   background: transparent;
   transform: translateY(0);
@@ -172,7 +172,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
 }
 
 .c-nav__link {
-  padding: 10px 12px;
+  padding: var(--space-3);
   font-size: var(--size-m);
   font-weight: 500;
   color: var(--color-ink-muted);
@@ -209,7 +209,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: 18px;
+  padding-inline: var(--space-5);
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-on-accent);

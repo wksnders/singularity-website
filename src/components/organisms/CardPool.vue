@@ -1,12 +1,12 @@
 <script setup lang="ts">
 
 import { ref } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import CardImage from '@/components/atoms/CardImage.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
-import { pictureSources } from '@/site/links';
+import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import type { Art } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
@@ -69,10 +69,9 @@ function onRoveKey(event: KeyboardEvent, groupId: string): void {
 function scrollRail(groupId: string, direction: 1 | -1): void {
   const rail = rails.value[groupId];
   if (!rail) return;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   rail.scrollBy({
     left: direction * Math.min(rail.clientWidth * 0.8, 520),
-    behavior: reduced ? 'auto' : 'smooth',
+    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
   });
 }
 </script>
@@ -138,15 +137,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
               :tabindex="tabIndexFor(group, index)"
               @click="emit('select', card)"
             >
-              <ArtFrame
-                :art="card.cardArt"
-                ratio="63 / 88"
-                :placeholder="t('pool.cardPlaceholder')"
-                radius="s"
-                fit="contain"
-                :sources="pictureSources(card.cardArt.src)"
-                sizes="200px"
-              />
+              <CardImage :art="card.cardArt" :placeholder="t('pool.cardPlaceholder')" />
             </button>
             <slot name="card" :card="card" />
           </li>
@@ -198,7 +189,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 .c-pool__head {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) 14px;
+  gap: var(--space-2) var(--space-4);
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
@@ -259,13 +250,13 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 }
 
 .c-pool__tiles {
-  margin-top: 14px;
+  margin-top: var(--space-4);
   list-style: none;
 }
 
 .c-pool__tiles--rail {
   display: flex;
-  gap: 10px;
+  gap: var(--space-3);
 
   padding: 0 56px var(--space-1) 0;
   overflow-x: auto;

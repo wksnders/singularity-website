@@ -1,12 +1,12 @@
 <script setup lang="ts">
-/** One primary CTA per screen. Everything else is secondary or quiet. */
+/* One primary CTA per screen; `text` is not a CTA but the small mono control (clear, dismiss, copy, expand) that acts on the page and never navigates. */
 import BaseLink from './BaseLink.vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';
 
 withDefaults(
   defineProps<{
-    variant?: 'primary' | 'secondary' | 'quiet';
+    variant?: 'primary' | 'secondary' | 'quiet' | 'text';
     to?: RouteLocationRaw;
     href?: string;
     link?: ResolvedLink;
@@ -38,7 +38,7 @@ withDefaults(
   align-items: center;
   justify-content: center;
   min-height: 48px;
-  padding-inline: 22px;
+  padding-inline: var(--space-6);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font-size: var(--size-body);
@@ -92,5 +92,34 @@ withDefaults(
 
 .c-btn--quiet:hover {
   color: var(--color-ink-bright);
+}
+
+/* min-width as well as min-height: a label as short as "#" still has to be a 44px target. */
+.c-btn--text {
+  min-width: 44px;
+  min-height: 44px;
+  padding-inline: var(--space-1);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: none;
+  color: var(--color-ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  font-weight: 400;
+  letter-spacing: var(--track-mono);
+  text-transform: uppercase;
+}
+
+.c-btn--text:hover {
+  color: var(--color-accent-text);
+}
+
+/* Quieted with ink/line roles rather than opacity, so the label keeps a known contrast ratio. After the variants on purpose: disabled wins over any of them. */
+.c-btn:disabled {
+  border-color: var(--color-line);
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-ink-faint);
+  cursor: not-allowed;
 }
 </style>

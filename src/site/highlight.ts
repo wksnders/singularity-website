@@ -5,7 +5,7 @@ export interface Segment {
   hit: boolean;
 }
 
-const escapeRe = (term: string) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+export const escapeRe = (term: string) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export function matcher(terms: string[]): RegExp | null {
   const parts = terms.map(escapeRe).filter(Boolean);
@@ -25,10 +25,10 @@ export function segments(text: string, re: RegExp | null): Segment[] {
   return out;
 }
 
-/** Replaces only outside tags: a bare html.replace would rewrite matches inside attributes and tag names. */
+/** Replaces only outside tags and entities: a bare html.replace would rewrite matches inside attributes and tag names, and a search for `amp` would split `&amp;`. */
 export function markHtml(html: string, re: RegExp | null): string {
   if (!re) return html;
-  return html.replace(/<[^>]*>|[^<]+/g, (chunk) =>
-    chunk.startsWith('<') ? chunk : chunk.replace(re, '<mark>$&</mark>'),
+  return html.replace(/(<[^>]*>|&\w+;|&#\d+;)|[^<&]+|&/g, (chunk, atomic?: string) =>
+    atomic ? chunk : chunk.replace(re, '<mark>$&</mark>'),
   );
 }

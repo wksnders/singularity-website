@@ -4,7 +4,8 @@ import { currentLocale, DEFAULT_LOCALE, LOCALE_ROUTE_PATTERN } from '@/i18n/loca
 import { urls } from '@/data/universe';
 import { CARD_WIDTHS } from '@/data/programs';
 import { ART_WIDTHS } from '@/data/universe';
-import type { OutboundKey, TryRoute } from '@/data/types';
+import { pad } from '@/site/format';
+import type { ArtSource, OutboundKey, TryRoute } from '@/data/types';
 
 const HAS_LOCALE_SEGMENT = LOCALE_ROUTE_PATTERN.length > 0;
 
@@ -68,7 +69,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/press/covers/', PRESS_WIDTHS],
 ];
 
-export function pictureSources(src: string | null): { type: string; srcset: string }[] {
+export function pictureSources(src: string | null): ArtSource[] {
   const widths = src ? WIDTHS_BY_PREFIX.find(([prefix]) => src.startsWith(prefix))?.[1] : undefined;
   const stem = src?.replace(/-\d+\.[a-z0-9]+$/, '');
   if (!src || !widths || !stem || stem === src) return [];
@@ -80,7 +81,7 @@ export function pictureSources(src: string | null): { type: string; srcset: stri
 }
 
 /** Data names only the JPEG (`Faction.environment.src`); the WebP pair is derived from the id, so upload all three or the WebP 404s. */
-export function environmentSources(id: string): { type: string; srcset: string }[] {
+export function environmentSources(id: string): ArtSource[] {
   return [
     {
       type: 'image/webp',
@@ -90,6 +91,10 @@ export function environmentSources(id: string): { type: string; srcset: string }
     },
   ];
 }
+
+/** The logos are cut at 720px and exported at 1x, 2x and 3x as `name`, `name@2x` and `name@3x`. */
+export const logoSrcset = (name: string, ext: 'webp' | 'png') =>
+  `${asset(`/logo/${name}.${ext}`)} 720w, ${asset(`/logo/${name}@2x.${ext}`)} 1440w, ${asset(`/logo/${name}@3x.${ext}`)} 2160w`;
 
 export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
@@ -117,3 +122,6 @@ export function tryRouteLink(route: TryRoute): ResolvedLink {
   if (route.outbound) return outbound(route.outbound);
   return { to: to(route.route.name, {}, { hash: route.route.hash }), external: false };
 }
+
+/** A public URL: StoryView renders these anchors, and shared links point at them. */
+export const chapterHash = (n: number) => `#ch-${pad(n)}`;

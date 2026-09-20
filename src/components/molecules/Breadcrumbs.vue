@@ -2,6 +2,7 @@
 // Mount only where a crumb has an ancestor to link (a `to`-less lone crumb is an empty nav landmark), and keep the 44px hop targets.
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
+import { pad } from '@/site/format';
 import type { Crumb } from '@/site/sections';
 
 defineProps<{
@@ -11,8 +12,6 @@ defineProps<{
   position?: { label: string; index: number; total: number } | null;
   compactHops?: boolean;
 }>();
-
-const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <template>
@@ -33,7 +32,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <span v-if="i < crumbs.length - 1" class="c-crumbs__sep" aria-hidden="true">/</span>
       </li>
     </ol>
-    <div v-if="prev || next" class="c-crumbs__hops">
+    <div v-if="prev || next" class="l-row c-crumbs__hops">
       <span v-if="position" class="c-crumbs__position">
         {{ position.label }} {{ pad(position.index) }} / {{ pad(position.total) }}
       </span>
@@ -94,7 +93,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 .c-crumbs__hop {
   font-family: var(--font-mono);
   font-size: var(--size-mono-m);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
 }
 
@@ -112,13 +111,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 .c-crumbs__sep {
   color: rgba(var(--rgb-ink), 0.3);
-}
-
-.c-crumbs__hops {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
 }
 
 .c-crumbs__position {

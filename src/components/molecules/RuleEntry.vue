@@ -2,11 +2,15 @@
 // Entries never collapse into an accordion; every entry stays in the DOM so find-in-page can reach it.
 import { computed } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import UiButton from '@/components/atoms/UiButton.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import { t } from '@/content';
 import type { RuleBlock, RuleEntry } from '@/site/rules';
 
-const props = defineProps<{ entry: RuleEntry; copied: boolean }>();
+const props = defineProps<{
+  entry: RuleEntry;
+  copied: boolean;
+}>();
 
 /* THE PAGE OWNS THE DIALOG, not this entry: a modal inside a list item would be inside what it inerts. The id travels up; `RulesView` opens the card. */
 defineEmits<{ copy: []; card: [slug: string] }>();
@@ -34,16 +38,16 @@ const chunks = computed(() => {
       <span v-if="entry.token" class="c-rule__token">{{ entry.token }}</span>
     </div>
 
-    <div class="c-rule__head">
+    <div class="l-row c-rule__head">
       <h3 class="c-rule__term">{{ entry.bare }}</h3>
-      <button
-        type="button"
+      <UiButton
+        variant="text"
         class="c-rule__copy"
         :aria-label="`${t('rules.copyLink')}: ${entry.bare}`"
         @click="$emit('copy')"
       >
         {{ copied ? t('wayfinding.copied') : t('rules.copyLabel') }}
-      </button>
+      </UiButton>
     </div>
 
     <p v-if="entry.redirect" class="c-rule__redirect">
@@ -103,8 +107,6 @@ const chunks = computed(() => {
 
 .c-rule__head {
   margin-top: var(--space-2);
-  display: flex;
-  flex-wrap: wrap;
   gap: var(--space-3);
   align-items: baseline;
   justify-content: space-between;
@@ -115,29 +117,17 @@ const chunks = computed(() => {
   font-weight: 500;
   line-height: 1.3;
 }
- 
-.c-rule__copy {
+
+/* Two classes, so this holds whichever of the two components' CSS loads first. */
+.c-btn--text.c-rule__copy {
   opacity: 0;
-  min-height: 44px;
   padding-inline: var(--space-3);
-  border: 0;
-  background: none;
-  color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
   transition: opacity var(--dur-2) var(--ease-out);
 }
 
 .c-rule:hover .c-rule__copy,
 .c-rule:focus-within .c-rule__copy {
   opacity: 1;
-}
-
-.c-rule__copy:hover {
-  color: var(--color-accent-text);
 }
 
 .c-rule__redirect {

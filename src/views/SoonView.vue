@@ -23,7 +23,7 @@ const body = computed(() => t(`soon.d.${destination.value.id}.body`));
       {{ destination.kind === 'page' ? t('soon.kicker.page') : t('soon.kicker.link') }}
     </MonoLabel>
     <h1 class="soon__title">{{ title }}</h1>
-    <p class="soon__body">{{ body }}</p>
+    <p class="l-lede l-lede--narrow soon__body">{{ body }}</p>
   </SecondaryHero>
 
   <section class="l-band">
@@ -47,10 +47,6 @@ const body = computed(() => t(`soon.d.${destination.value.id}.body`));
 
 .soon__body {
   margin-top: var(--space-5);
-  max-width: 56ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .soon__also {

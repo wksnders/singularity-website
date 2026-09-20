@@ -40,16 +40,13 @@ function onScroll(): void {
   lastY = y;
 }
 
+/* Mega panel only: the mobile sheet's Escape belongs to useModal, and handling it here too would close it twice. */
 function onKeydown(event: KeyboardEvent): void {
   if (event.key !== 'Escape') return;
   const open = megaOpen.value;
-  if (!open && !menuOpen.value) return;
+  if (!open) return;
   closeAll();
-  menuOpen.value = false;
-  if (open) {
-    const trigger = document.querySelector<HTMLElement>(`[data-mega-trigger="${open}"]`);
-    trigger?.focus();
-  }
+  document.querySelector<HTMLElement>(`[data-mega-trigger="${open}"]`)?.focus();
 }
 
 export function useChrome() {

@@ -1,19 +1,16 @@
 <script setup lang="ts">
 // Decorative art passes alt: ""; all other alt text comes from the data record.
 import { asset } from '@/site/links';
-import type { Art } from '@/data/types';
+import type { Art, ArtSource } from '@/data/types';
 
-export interface ArtSource {
-  type: string;
-  srcset: string;
-}
+export type { ArtSource };
 
 const props = withDefaults(
   defineProps<{
     art?: Art | null;
 
     ratio?: string;
-    /** Let the image keep its own uncropped shape. `ratio` still applies while `src` is null, or an empty drop zone collapses; the cost is layout shift as each image lands. */
+    /** Let the image keep its own uncropped shape; `ratio` still applies while `src` is null, or an empty drop zone collapses. */
     natural?: boolean;
 
     placeholder?: string;

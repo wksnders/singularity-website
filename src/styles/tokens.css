@@ -50,14 +50,20 @@
   --size-mono-m: 0.75rem;
   --size-s: 0.8125rem;
   --size-m: 0.875rem;
-  /* iOS Safari zooms the viewport when a focused field's font-size is under 16px, so this 15px value makes the search box and both forms jump on iPhone. */
-  --size-field: 0.9375rem;
+  /* 15px TEXT — link rows and strip names. Never for an input: see --size-field. */
+  --size-body-s: 0.9375rem;
+  /* Never under 16px: iOS Safari zooms the viewport when a focused field's font-size is smaller. */
+  --size-field: 1rem;
   --size-body: 1rem;
   --size-body-l: 1.0625rem;
   --size-h3: 1.1875rem;
   --size-h2: clamp(1.625rem, 4.4vw, 2.5rem);
   --size-h1: clamp(1.5rem, 7.6vw, 5.75rem);
+  /* The `h1` of every page below the home hero. */
+  --size-h1-page: clamp(1.875rem, 5.6vw, 3.5rem);
+  /* A mono label standing alone takes --track-mono. One in a row of peers, or inside a pill or segmented control, takes -tight: that is where a string 30–40% longer runs out of room first. */
   --track-mono: 0.16em;
+  --track-mono-tight: 0.1em;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -65,8 +71,10 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
+  --space-7: 28px;
   --space-8: 32px;
   --space-9: 36px;
+  --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
   --band-y: clamp(56px, 9vw, 96px);
@@ -87,6 +95,19 @@
   --radius-m: 14px;
   --radius-l: 20px;
   --radius-pill: 999px;
+
+  /* Every printed card. A frame at this ratio shows `cardArt` and never crops it. */
+  --ratio-card: 63 / 88;
+
+  /* Page-level layers, bottom to top, named for the KIND of layer so the next fixed bar takes --z-sticky instead of inventing 45. */
+  --z-rail: 30;
+  --z-sticky: 40;
+  --z-nav: 50;
+  --z-skip: 60;
+  /* Anything on useModal. The skip link sits under it because the page behind a modal is inert. */
+  --z-modal: 70;
+  /* Above siblings INSIDE a component's own stacking context; never a page-level position. */
+  --z-raised: 1;
 
   --dur-1: 120ms;
   --dur-2: 200ms;

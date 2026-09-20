@@ -1,22 +1,23 @@
 <script setup lang="ts">
 // Pass `lines` only where the card's wording is not already on the page: it must stay real text, because aria-label collapses a face into one unpunctuated run.
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
-import { pictureSources } from '@/site/links';
+import CardImage from '@/components/atoms/CardImage.vue';
 import type { CardLine } from '@/site/cardText';
 import type { Art } from '@/data/types';
 
-const props = defineProps<{
+withDefaults(
+  defineProps<{
 
-  art: Art;
-  placeholder: string;
+    art: Art | null;
+    placeholder: string;
 
-  lines?: CardLine[];
-  actionLabel?: string;
+    lines?: CardLine[];
+    actionLabel?: string;
 
-  sizes?: string;
-}>();
-
-const sources = () => pictureSources(props.art.src);
+    radius?: 's' | 'm';
+    sizes?: string;
+  }>(),
+  { lines: undefined, actionLabel: undefined, radius: 's', sizes: '160px' },
+);
 
 defineEmits<{ select: [] }>();
 </script>
@@ -31,15 +32,7 @@ defineEmits<{ select: [] }>();
       :class="{ 'is-action': actionLabel }"
       @click="actionLabel && $emit('select')"
     >
-      <ArtFrame
-        :art="art"
-        ratio="63 / 88"
-        radius="s"
-        fit="contain"
-        :placeholder="placeholder"
-        :sources="sources()"
-        :sizes="sizes ?? '160px'"
-      />
+      <CardImage :art="art" :placeholder="placeholder" :radius="radius" :sizes="sizes" />
       <slot name="overlay" />
     </component>
     <dl v-if="lines?.length" class="l-sr-only">

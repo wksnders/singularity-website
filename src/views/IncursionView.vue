@@ -10,11 +10,14 @@ import EmptyState from '@/components/molecules/EmptyState.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
-import { docHtml, getDoc, metaString, t } from '@/content';
+import { useEntityDoc } from '@/composables/useEntityDoc';
+import { provideSections } from '@/composables/useSections';
+import { t } from '@/content';
 import { game, rogueAIById, rogueAIs } from '@/data/universe';
+import { pad } from '@/site/format';
 import { to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
@@ -26,11 +29,8 @@ const position = computed(() => rogueAIs.findIndex((entry) => entry.id === props
 const others = computed(() => rogueAIs.filter((entry) => entry.id !== props.aiId));
 
 const slug = computed(() => `universe/incursions/${props.aiId}`);
-const doc = computed(() => getDoc(slug.value));
-const hasLore = computed(() => Boolean(docHtml(doc.value)));
-const challenge = computed(() =>
-  metaString(doc.value, 'challenge', t('incursion.challengePlaceholder')),
-);
+const { has: hasLore, meta } = useEntityDoc(() => slug.value);
+const challenge = computed(() => meta('challenge', t('incursion.challengePlaceholder')));
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'lore', label: t('incursion.sections.lore') },
@@ -39,7 +39,7 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'exits', label: t('incursion.sections.exits') },
 ]);
 
-const pad = (n: number) => String(n).padStart(2, '0');
+provideSections(sections);
 
 useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
 </script>
@@ -82,90 +82,76 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
 
     <ScrollSpyRail :sections="sections" />
 
-    <section id="lore" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="lore" :index="1" :total="4" :heading="t('incursion.sections.lore')" />
-        <MonoLabel tone="faint">{{ t('incursion.loreNote') }}</MonoLabel>
-        <MarkdownBlock v-if="hasLore" :slug="slug" measure class="inc1__lore" />
-        <p v-else class="inc1__body">{{ t('incursion.lorePlaceholder') }}</p>
+    <SectionBand id="lore" class="l-band--line-top" :heading="t('incursion.sections.lore')">
+      <MonoLabel tone="faint">{{ t('incursion.loreNote') }}</MonoLabel>
+      <MarkdownBlock v-if="hasLore" :slug="slug" measure class="inc1__lore" />
+      <p v-else class="inc1__body">{{ t('incursion.lorePlaceholder') }}</p>
 
-        <BandFoot :to="to('incursions', {}, { hash: '#threat' })" :label="t('incursions.exitHow')" />
-      </div>
-    </section>
+      <BandFoot :to="to('incursions', {}, { hash: '#threat' })" :label="t('incursions.exitHow')" />
+    </SectionBand>
 
-    <section id="challenge" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker
-          id="challenge"
-          :index="2"
-          :total="4"
-          :heading="t('incursion.sections.challenge')"
-        />
-        <MonoLabel tone="faint">{{ t('incursion.challengeNote') }}</MonoLabel>
-        <p class="inc1__body inc1__challenge">{{ challenge }}</p>
-      </div>
-    </section>
+    <SectionBand
+      id="challenge"
+      class="l-band--alt l-band--line-top"
+      :heading="t('incursion.sections.challenge')"
+    >
+      <MonoLabel tone="faint">{{ t('incursion.challengeNote') }}</MonoLabel>
+      <p class="inc1__body inc1__challenge">{{ challenge }}</p>
+    </SectionBand>
 
-    <section id="fights" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker
-          id="fights"
-          :index="3"
-          :total="4"
-          :heading="t('incursion.sections.fights')"
-        />
-        <MonoLabel tone="faint">{{ t('incursion.fightsNote') }}</MonoLabel>
-        <p class="inc1__body">{{ t('incursion.fightsPlaceholder') }}</p>
+    <SectionBand id="fights" class="l-band--line-top" :heading="t('incursion.sections.fights')">
+      <MonoLabel tone="faint">{{ t('incursion.fightsNote') }}</MonoLabel>
+      <p class="inc1__body">{{ t('incursion.fightsPlaceholder') }}</p>
 
-        <div class="l-split inc1__gap">
-          <div class="l-split__main">
-            <MonoLabel tone="faint">{{ t('incursion.decidesNote') }}</MonoLabel>
-            <p class="inc1__body">{{ t('incursion.decidesPlaceholder') }}</p>
-          </div>
-
-          <div class="l-split__aside inc1__mutations">
-            <MonoLabel tone="faint">{{ t('incursion.mutationsLabel') }}</MonoLabel>
-            <TbdValue />
-            <p class="inc1__aside">{{ t('incursion.mutationsNote') }}</p>
-          </div>
+      <div class="l-split">
+        <div class="l-split__main">
+          <MonoLabel tone="faint">{{ t('incursion.decidesNote') }}</MonoLabel>
+          <p class="inc1__body">{{ t('incursion.decidesPlaceholder') }}</p>
         </div>
 
-        <BandFoot
-          :to="to('incursions', {}, { hash: '#mutations' })"
-          :label="t('incursions.sections.mutations')"
-        />
+        <div class="l-split__aside inc1__mutations">
+          <MonoLabel tone="faint">{{ t('incursion.mutationsLabel') }}</MonoLabel>
+          <TbdValue />
+          <p class="inc1__aside">{{ t('incursion.mutationsNote') }}</p>
+        </div>
       </div>
-    </section>
 
-    <section id="exits" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="exits" :index="4" :total="4" :heading="t('incursion.sections.exits')" />
-        <MonoLabel tone="faint">{{ t('incursion.exitsOthers') }}</MonoLabel>
+      <BandFoot
+        :to="to('incursions', {}, { hash: '#mutations' })"
+        :label="t('incursions.sections.mutations')"
+      />
+    </SectionBand>
 
-        <ul class="l-grid inc1__gap">
-          <li v-for="other in others" :key="other.id" class="inc1__exit">
-            <MonoLabel tone="faint">{{ t('incursion.hero.kind') }}</MonoLabel>
-            <h3 class="inc1__exit-name">
-              <RouterLink :to="to('incursion', { aiId: other.id })">{{ other.name }}</RouterLink>
-            </h3>
-            <p class="inc1__body">{{ t('incursion.hero.taglinePlaceholder') }}</p>
-          </li>
+    <SectionBand
+      id="exits"
+      class="l-band--alt l-band--line-top"
+      :heading="t('incursion.sections.exits')"
+    >
+      <MonoLabel tone="faint">{{ t('incursion.exitsOthers') }}</MonoLabel>
 
-          <li class="inc1__exit">
-            <MonoLabel tone="faint">{{ t('incursion.exitsMode') }}</MonoLabel>
-            <h3 class="inc1__exit-name">
-              <RouterLink :to="to('incursions')">{{ t('incursion.modeTitle') }}</RouterLink>
-            </h3>
-            <p class="inc1__body">{{ t('incursion.modeBody') }}</p>
-          </li>
-        </ul>
+      <ul class="l-grid">
+        <li v-for="other in others" :key="other.id" class="inc1__exit">
+          <MonoLabel tone="faint">{{ t('incursion.hero.kind') }}</MonoLabel>
+          <h3 class="inc1__exit-name">
+            <RouterLink :to="to('incursion', { aiId: other.id })">{{ other.name }}</RouterLink>
+          </h3>
+          <p class="inc1__body">{{ t('incursion.hero.taglinePlaceholder') }}</p>
+        </li>
 
-        <BandFoot
-          :to="to('learn', {}, { hash: '#paths' })"
-          :label="t('incursion.exitLearn')"
-        />
-      </div>
-    </section>
+        <li class="inc1__exit">
+          <MonoLabel tone="faint">{{ t('incursion.exitsMode') }}</MonoLabel>
+          <h3 class="inc1__exit-name">
+            <RouterLink :to="to('incursions')">{{ t('incursion.modeTitle') }}</RouterLink>
+          </h3>
+          <p class="inc1__body">{{ t('incursion.modeBody') }}</p>
+        </li>
+      </ul>
+
+      <BandFoot
+        :to="to('learn', {}, { hash: '#paths' })"
+        :label="t('incursion.exitLearn')"
+      />
+    </SectionBand>
   </div>
 
   <section v-else class="l-band">
@@ -210,10 +196,6 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
 .inc1__lore {
   margin-top: var(--space-4);
   max-width: 62ch;
-}
-
-.inc1__gap {
-  margin-top: var(--space-6);
 }
 
 .inc1__mutations {

@@ -3,14 +3,14 @@
 import JumpChip from '@/components/atoms/JumpChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { pad } from '@/site/format';
 import type { SectionEntry } from '@/site/sections';
 
 defineProps<{ sections: SectionEntry[] }>();
-
-const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <template>
+  <!-- BandFoot's up-link targets this id. -->
   <nav id="on-this-page" class="c-index" :aria-label="t('wayfinding.onThisPage')">
     <MonoLabel tone="faint">{{ t('wayfinding.onThisPage') }}</MonoLabel>
     <div class="c-index__chips">

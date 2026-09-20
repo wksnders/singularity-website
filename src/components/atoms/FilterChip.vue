@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // Must stay visually distinct from JumpChip (pill, sentence case, aria-pressed) so a filter never reads as navigation.
+import FactionDot from '@/components/atoms/FactionDot.vue';
+
 defineProps<{
   active: boolean;
   color?: string | null;
@@ -15,10 +17,9 @@ defineEmits<{ toggle: [] }>();
     class="c-chip"
     :class="{ 'is-active': active }"
     :aria-pressed="active"
-    :style="color ? { '--faction': color } : undefined"
     @click="$emit('toggle')"
   >
-    <span v-if="showDot" class="c-chip__dot" aria-hidden="true" />
+    <FactionDot v-if="showDot" :color="color" />
     <slot />
     <span v-if="count !== undefined" class="c-chip__count">{{ count }}</span>
   </button>
@@ -30,7 +31,7 @@ defineEmits<{ toggle: [] }>();
   align-items: center;
   gap: var(--space-2);
   min-height: 44px;
-  padding-inline: 16px;
+  padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -59,13 +60,5 @@ defineEmits<{ toggle: [] }>();
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
   color: var(--color-ink-soft);
-}
-
-.c-chip__dot {
-  width: 8px;
-  height: 8px;
-  flex: 0 0 auto;
-  border-radius: var(--radius-pill);
-  background: var(--faction);
 }
 </style>

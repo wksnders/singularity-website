@@ -7,6 +7,10 @@
 
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useQueryWriter } from '@/composables/useQuery';
+import { queryString } from '@/site/query';
+
+export { useQueryWriter };
 
 export const CARD_PARAM = 'card';
 export const PRINTING_PARAM = 'printing';
@@ -15,29 +19,12 @@ export interface CardParamOptions {
   isKnown: (slug: string) => boolean;
 }
 
-/** Patch the query, keeping everything not named. The hash is carried explicitly — a bare `{ query }` DROPS IT, and the rules page opens cards from an anchored rule. `null` deletes the key. */
-export function useQueryWriter() {
-  const route = useRoute();
-  const router = useRouter();
-  return (patch: Record<string, string | null>, mode: 'push' | 'replace'): void => {
-    const next = { ...route.query };
-    for (const [key, value] of Object.entries(patch)) {
-      if (value === null) delete next[key];
-      else next[key] = value;
-    }
-    void router[mode]({ query: next, hash: route.hash });
-  };
-}
-
 export function useCardParam({ isKnown }: CardParamOptions) {
   const route = useRoute();
   const router = useRouter();
   const write = useQueryWriter();
 
-  const str = (key: string): string | null => {
-    const value = route.query[key];
-    return typeof value === 'string' && value !== '' ? value : null;
-  };
+  const str = (key: string) => queryString(route.query, key);
 
   const raw = computed(() => str(CARD_PARAM));
   const slug = computed(() => (raw.value && isKnown(raw.value) ? raw.value : null));

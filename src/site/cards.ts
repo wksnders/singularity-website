@@ -10,6 +10,7 @@ import {
   printingsOf,
   programs,
 } from '@/data/universe';
+import { escapeRe } from '@/site/highlight';
 import { otherCards } from '@/data/programs';
 import { brandAbbr } from '@/site/brands';
 import { expandIcons, matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
@@ -200,8 +201,6 @@ function buildNames(row: CardRow): string {
   if (row.kind === 'architech' || row.kind === 'environments') parts.push(row.other.subType);
   return nameHaystack(parts);
 }
-
-const escapeRe = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** The full spellings a brand answers to, all lower case: its name, that name with `&` written out, and either with separators stripped. A part of a name is never one of them, because browsing a brand is what the facet is for. */
 function brandSpellings(id: string): string[] {

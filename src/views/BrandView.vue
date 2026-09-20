@@ -14,15 +14,17 @@ import ProgramCard from '@/components/molecules/ProgramCard.vue';
 import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { useCardParam } from '@/composables/useCardParam';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
+import { useEntityDoc } from '@/composables/useEntityDoc';
+import { provideSections } from '@/composables/useSections';
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { hasSubType } from '@/site/cardText';
 import { cardBySlug } from '@/site/cards';
-import { docHtml, getDoc, metaString, t } from '@/content';
+import { t } from '@/content';
 import {
   brandById,
   brandsOfFaction,
@@ -30,29 +32,32 @@ import {
   factionById,
   programsOfBrand,
 } from '@/data/universe';
+import { factionTags } from '@/site/characters';
+import { pad } from '@/site/format';
 import { to } from '@/site/links';
-import type { Character, Program } from '@/data/types';
+import type { Program } from '@/data/types';
 import type { SectionEntry } from '@/site/sections';
 
 const props = defineProps<{ brandId: string }>();
 
 const brand = computed(() => brandById(props.brandId));
 const faction = computed(() => (brand.value?.factionId ? factionById(brand.value.factionId) : null));
-const doc = computed(() => getDoc(`universe/brands/${props.brandId}`));
-const hasStory = computed(() => Boolean(docHtml(doc.value)));
+const { has: hasStory, meta } = useEntityDoc(() => `universe/brands/${props.brandId}`);
 
-const name = computed(() => metaString(doc.value, 'name', brand.value?.name ?? ''));
-const oneLiner = computed(() => metaString(doc.value, 'oneLiner', t('brand.oneLinerPlaceholder')));
+const name = computed(() => meta('name', brand.value?.name ?? ''));
+const oneLiner = computed(() => meta('oneLiner', t('brand.oneLinerPlaceholder')));
 
 useDocumentTitle(() => name.value);
-const inWorldQuote = computed(() => metaString(doc.value, 'quote', t('brand.quotePlaceholder')));
-const quoteBy = computed(() => metaString(doc.value, 'quoteBy'));
+const inWorldQuote = computed(() => meta('quote', t('brand.quotePlaceholder')));
+const quoteBy = computed(() => meta('quoteBy'));
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'story', label: t('brand.sections.story') },
   { id: 'programs', label: t('brand.sections.programs') },
   { id: 'characters', label: t('brand.sections.cast') },
 ]);
+
+provideSections(sections);
 
 const facet = computed(() => brand.value?.facetSubType ?? null);
 const isFacet = (program: Program) => hasSubType(program.subType, facet.value ?? '');
@@ -93,19 +98,9 @@ const siblings = computed(() => {
 
 const cast = computed(() => charactersOfBrand(props.brandId));
 
-const tags = (character: Character) =>
-  Array.isArray(character.factionIds)
-    ? character.factionIds
-        .map((id) => factionById(id))
-        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
-        .map((f) => ({ label: f.name, color: f.color }))
-    : [{ label: t('universe.anyFaction'), color: null }];
-
 /* `isKnown` means EXISTS, not "is in the list on screen": a facet filter must not turn an open card into a missing one. */
 const card = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
 const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) : null));
-
-const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <template>
@@ -153,114 +148,106 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </div>
       </div>
 
-      <p class="brand__oneliner">{{ oneLiner }}</p>
+      <p class="l-lede l-lede--narrow brand__oneliner">{{ oneLiner }}</p>
       <SectionIndex :sections="sections" />
     </PageHero>
 
     <ScrollSpyRail :sections="sections" />
 
-    <section id="story" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="story" :index="1" :total="3" :heading="t('brand.sections.story')" />
-        <MonoLabel tone="faint">{{ t('brand.storyNote') }}</MonoLabel>
-        <MarkdownBlock
-          v-if="hasStory"
-          :slug="`universe/brands/${brandId}`"
-          measure
-          class="brand__gap"
-        />
-        <div v-else class="brand__story-placeholder">
-          <p>{{ t('brand.storyPlaceholder1') }}</p>
-          <p>{{ t('brand.storyPlaceholder2') }}</p>
-          <p>{{ t('brand.storyPlaceholder3') }}</p>
-        </div>
-        <blockquote class="brand__quote">
-          {{ inWorldQuote }}
-          <cite v-if="quoteBy" class="brand__quote-by">{{ quoteBy }}</cite>
-        </blockquote>
-        <BandFoot :to="{ hash: '#programs' }" :label="t('brand.exitPrograms')" />
+    <SectionBand id="story" class="l-band--line-top" :heading="t('brand.sections.story')">
+      <MonoLabel tone="faint">{{ t('brand.storyNote') }}</MonoLabel>
+      <MarkdownBlock v-if="hasStory" :slug="`universe/brands/${brandId}`" measure />
+      <div v-else class="brand__story-placeholder">
+        <p>{{ t('brand.storyPlaceholder1') }}</p>
+        <p>{{ t('brand.storyPlaceholder2') }}</p>
+        <p>{{ t('brand.storyPlaceholder3') }}</p>
       </div>
-    </section>
+      <blockquote class="brand__quote">
+        {{ inWorldQuote }}
+        <cite v-if="quoteBy" class="brand__quote-by">{{ quoteBy }}</cite>
+      </blockquote>
+      <BandFoot :to="{ hash: '#programs' }" :label="t('brand.exitPrograms')" />
+    </SectionBand>
 
-    <section id="programs" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <MissingCardNote :slug="card.missing.value" @dismiss="card.dismissMissing()" />
-        <SectionMarker id="programs" :index="2" :total="3" :heading="t('brand.sections.programs')" />
-        <MonoLabel v-if="!facet" tone="faint">
-          {{ programs.length }} {{ t('brand.cardsNote') }}
-        </MonoLabel>
-
-        <div v-if="facet" class="l-row brand__facets" role="group" :aria-label="t('brand.showLabel')">
-          <FilterChip :active="!showingFacet" :count="programs.length" @toggle="cards.set(null)">
-            {{ t('filters.all') }}
-          </FilterChip>
-          <FilterChip
-            :active="showingFacet"
-            :count="facetCount"
-            show-dot
-            @toggle="cards.set('facet')"
-          >
-            {{ t(`cards.subTypes.${facet}`) }}
-          </FilterChip>
-        </div>
-
-        <p v-if="showingFacet" class="brand__facet-note">
-          {{ t(`cards.subTypeNotes.${facet}`) }}
-          <BaseLink :to="to('learn', {}, { hash: '#paths' })">{{ t('brand.learnLink') }}</BaseLink>.
-        </p>
-
-        <ul class="l-grid l-grid--cards brand__gap">
-          <li v-for="program in shown" :key="program.slug">
-            <ProgramCard
-              branded
-              :program="program"
-              :brand-label="name"
-              :brand-icon="brand.icon"
-              :color="faction?.color"
-              :sealed-label="t('brand.unrevealed')"
-              @select="card.openCard(program.slug)"
-            />
-          </li>
-        </ul>
-
-        <MonoLabel v-if="announced && shown.length < announced" tone="faint" class="brand__gap">
-          {{ shown.length }} {{ t('brand.of') }} {{ announced }} {{ t('brand.revealed') }}
-        </MonoLabel>
-
-        <BandFoot
-          :to="to('cards', {}, { query: faction ? { faction: faction.id } : undefined })"
-          :label="t('brand.exitGallery')"
+    <SectionBand
+      id="programs"
+      class="l-band--alt l-band--line-top"
+      :heading="t('brand.sections.programs')"
+    >
+      <template #before>
+        <MissingCardNote
+          class="brand__missing"
+          :slug="card.missing.value"
+          @dismiss="card.dismissMissing()"
         />
-      </div>
-    </section>
+      </template>
 
-    <section id="characters" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="characters" :index="3" :total="3" :heading="t('brand.sections.cast')" />
-        <div v-if="cast.length" class="l-grid l-grid--tiles brand__gap">
-          <EntityTile
-            v-for="character in cast"
-            :key="character.id"
-            :to="to('character', { characterId: character.id })"
-            :art="character.cardArt"
-            :epithet="character.epithet"
-            :name="character.name"
-            :tags="tags(character)"
-            :placeholder="t('character.cardArtPlaceholder')"
+      <MonoLabel v-if="!facet" tone="faint">
+        {{ programs.length }} {{ t('brand.cardsNote') }}
+      </MonoLabel>
+
+      <div v-if="facet" class="l-row brand__facets" role="group" :aria-label="t('brand.showLabel')">
+        <FilterChip :active="!showingFacet" :count="programs.length" @toggle="cards.set(null)">
+          {{ t('filters.all') }}
+        </FilterChip>
+        <FilterChip
+          :active="showingFacet"
+          :count="facetCount"
+          show-dot
+          @toggle="cards.set('facet')"
+        >
+          {{ t(`cards.subTypes.${facet}`) }}
+        </FilterChip>
+      </div>
+
+      <p v-if="showingFacet" class="brand__facet-note">
+        {{ t(`cards.subTypeNotes.${facet}`) }}
+        <BaseLink :to="to('learn', {}, { hash: '#paths' })">{{ t('brand.learnLink') }}</BaseLink>.
+      </p>
+
+      <ul class="l-grid l-grid--cards">
+        <li v-for="program in shown" :key="program.slug">
+          <ProgramCard
+            branded
+            :program="program"
+            :brand-label="name"
+            :brand-icon="brand.icon"
+            :color="faction?.color"
+            :sealed-label="t('brand.unrevealed')"
+            @select="card.openCard(program.slug)"
           />
-        </div>
-        <EmptyState
-          v-else
-          class="brand__gap"
-          :title="t('brand.noCastTitle')"
-          :body="t('brand.noCastBody')"
-        />
-        <BandFoot
-          :to="faction ? to('faction', { factionId: faction.id }) : to('universe')"
-          :label="`${t('brand.exitFaction')} ${faction?.name ?? ''} →`"
+        </li>
+      </ul>
+
+      <MonoLabel v-if="announced && shown.length < announced" tone="faint">
+        {{ shown.length }} {{ t('brand.of') }} {{ announced }} {{ t('brand.revealed') }}
+      </MonoLabel>
+
+      <BandFoot
+        :to="to('cards', {}, { query: faction ? { faction: faction.id } : undefined })"
+        :label="t('brand.exitGallery')"
+      />
+    </SectionBand>
+
+    <SectionBand id="characters" class="l-band--line-top" :heading="t('brand.sections.cast')">
+      <div v-if="cast.length" class="l-grid l-grid--tiles">
+        <EntityTile
+          v-for="character in cast"
+          :key="character.id"
+          :to="to('character', { characterId: character.id })"
+          :art="character.cardArt"
+          :epithet="character.epithet"
+          :name="character.name"
+          :tags="factionTags(character)"
+          :placeholder="t('character.cardArtPlaceholder')"
         />
       </div>
-    </section>
+      <EmptyState v-else :title="t('brand.noCastTitle')" :body="t('brand.noCastBody')" />
+      <BandFoot
+        :to="faction ? to('faction', { factionId: faction.id }) : to('universe')"
+        :label="`${t('brand.exitFaction')} ${faction?.name ?? ''} →`"
+      />
+    </SectionBand>
 
     <CardDetail
       :open="card.open.value"
@@ -282,6 +269,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
 </template>
 
 <style>
+.brand__missing {
+  margin-top: var(--space-4);
+}
+
 .brand__identity {
   margin-top: var(--space-6);
   display: flex;
@@ -302,15 +293,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 .brand__oneliner {
   margin-top: var(--space-5);
-  max-width: 52ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
-}
-
-.brand__body,
-.brand__gap {
-  margin-top: var(--space-6);
 }
 
 .brand__facets {
@@ -326,13 +308,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   font-size: var(--size-m);
   line-height: 1.6;
   color: var(--color-ink-muted);
-}
-
-.brand__body {
-  max-width: 68ch;
-  font-size: var(--size-m);
-  line-height: 1.6;
-  color: var(--color-ink-faint);
 }
 
 .brand__story-placeholder {

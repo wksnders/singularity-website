@@ -7,7 +7,10 @@ import FactionDot from '@/components/atoms/FactionDot.vue';
 import { environmentSources, to } from '@/site/links';
 import type { Faction } from '@/data/types';
 
-const props = defineProps<{ faction: Faction; placeholder: string }>();
+const props = defineProps<{
+  faction: Faction;
+  placeholder: string;
+}>();
 
 const sources = computed(() =>
   props.faction.environment ? environmentSources(props.faction.id) : [],
@@ -73,7 +76,7 @@ const sources = computed(() =>
 
 .c-faction__body {
   display: block;
-  padding: 18px;
+  padding: var(--space-5);
   border-top: 2px solid var(--faction);
 }
 

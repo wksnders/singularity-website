@@ -3,7 +3,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { t } from '@/content';
 import { useMediaQuery } from '@/composables/useMediaQuery';
-import { asset } from '@/site/links';
+import { asset, logoSrcset } from '@/site/links';
 
 const SIGN_DELAY = 1200;
 
@@ -44,19 +44,17 @@ onBeforeUnmount(() => {
 });
 
 const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`);
-const set = (name: string, ext: 'webp' | 'png') =>
-  `${src(name, ext)} 720w, ${asset(`/logo/${name}@2x.${ext}`)} 1440w, ${asset(`/logo/${name}@3x.${ext}`)} 2160w`;
 const SIZES = '(max-width: 760px) 92vw, 720px';
 </script>
 
 <template>
   <span class="c-lockup" :class="{ 'is-signed': signed, 'is-instant': reduce }">
     <picture>
-      <source type="image/webp" :srcset="set('singularity-logo', 'webp')" :sizes="SIZES" />
+      <source type="image/webp" :srcset="logoSrcset('singularity-logo', 'webp')" :sizes="SIZES" />
       <img
         class="c-lockup__word"
         :src="src('singularity-logo', 'png')"
-        :srcset="set('singularity-logo', 'png')"
+        :srcset="logoSrcset('singularity-logo', 'png')"
         :sizes="SIZES"
         :alt="t('chrome.logoAlt')"
         width="720"
@@ -68,11 +66,11 @@ const SIZES = '(max-width: 760px) 92vw, 720px';
 
     <!-- alt="" : the wordmark above already carries the name. -->
     <picture>
-      <source type="image/webp" :srcset="set('singularity-exe-badge-center', 'webp')" :sizes="SIZES" />
+      <source type="image/webp" :srcset="logoSrcset('singularity-exe-badge-center', 'webp')" :sizes="SIZES" />
       <img
         class="c-lockup__badge"
         :src="src('singularity-exe-badge-center', 'png')"
-        :srcset="set('singularity-exe-badge-center', 'png')"
+        :srcset="logoSrcset('singularity-exe-badge-center', 'png')"
         :sizes="SIZES"
         alt=""
         width="720"

@@ -21,8 +21,10 @@ withDefaults(
 
     featured?: boolean;
     current?: boolean;
+    /** 3 sits under a band's `h2`. Say otherwise under an `h3`, or in a band with none. */
+    headingLevel?: 2 | 3 | 4;
   }>(),
-  { ratio: '16 / 9', featured: false },
+  { ratio: '16 / 9', featured: false, headingLevel: 3 },
 );
 </script>
 
@@ -37,7 +39,7 @@ withDefaults(
     <ArtFrame v-if="placeholder || art" :art="art" :ratio="ratio" :placeholder="placeholder" />
     <div class="c-card__body">
       <MonoLabel v-if="kicker" :tone="featured ? 'faint' : 'accent'">{{ kicker }}</MonoLabel>
-      <h3 class="c-card__title">{{ title }}</h3>
+      <component :is="`h${headingLevel}`" class="c-card__title">{{ title }}</component>
       <p v-if="body" class="c-card__text">{{ body }}</p>
       <slot />
     </div>
@@ -93,7 +95,7 @@ withDefaults(
 }
 
 .c-card__text {
-  margin-top: 10px;
+  margin-top: var(--space-3);
   font-size: var(--size-m);
   line-height: 1.55;
   color: var(--color-ink-soft);

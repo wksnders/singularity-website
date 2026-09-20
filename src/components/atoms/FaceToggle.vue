@@ -1,16 +1,10 @@
 <script setup lang="ts">
-
-import { t } from '@/content';
-
-/* Labels are per-surface: the database calls the other face ART, the zoom calls it ART ONLY. */
-withDefaults(
-  defineProps<{
-    modelValue: 'card' | 'art';
-    cardLabel?: string;
-    artLabel?: string;
-  }>(),
-  { cardLabel: undefined, artLabel: undefined },
-);
+/* Labels are per-surface — the database calls the other face ART, the zoom calls it ART ONLY — so there is no default to fall back to. */
+defineProps<{
+  modelValue: 'card' | 'art';
+  cardLabel: string;
+  artLabel: string;
+}>();
 defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
 </script>
 
@@ -22,7 +16,7 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
       :aria-pressed="modelValue === 'card'"
       @click="$emit('update:modelValue', 'card')"
     >
-      {{ cardLabel ?? t('character.faceCard') }}
+      {{ cardLabel }}
     </button>
     <button
       type="button"
@@ -30,16 +24,14 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
       :aria-pressed="modelValue === 'art'"
       @click="$emit('update:modelValue', 'art')"
     >
-      {{ artLabel ?? t('character.faceArt') }}
+      {{ artLabel }}
     </button>
   </div>
 </template>
 
 <style>
 .c-face-toggle {
-  margin-top: 14px;
   display: flex;
-  max-width: 300px;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
   overflow: hidden;
@@ -55,7 +47,7 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
   color: var(--color-ink-soft);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   cursor: pointer;
 }

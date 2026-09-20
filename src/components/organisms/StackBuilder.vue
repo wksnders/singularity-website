@@ -4,14 +4,12 @@ export const slotButtonId = (index: number) => `slot-btn-${index}`;
 </script>
 
 <script setup lang="ts">
-
-import { onBeforeUnmount, ref } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import CardImage from '@/components/atoms/CardImage.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
+import { useCopy } from '@/composables/useCopy';
 import type { StackSeed } from '@/data/starterStacks';
 import type { Program } from '@/data/types';
-import { pictureSources } from '@/site/links';
 
 export interface StackSlot {
   key: string;
@@ -39,22 +37,14 @@ const emit = defineEmits<{
 
 
 
-const copied = ref(false);
-let revert: ReturnType<typeof setTimeout> | undefined;
+const { copied, copy } = useCopy();
 
 /* A stack's only memory is its address, so copying the link is the save. */
 function copyLink(): void {
   const url = new URL(window.location.href);
   url.hash = 'stack';
-  if (!navigator.clipboard) return;
-  void navigator.clipboard.writeText(url.toString()).then(() => {
-    copied.value = true;
-    clearTimeout(revert);
-    revert = setTimeout(() => (copied.value = false), 2400);
-  });
+  void copy(url.toString());
 }
-
-onBeforeUnmount(() => clearTimeout(revert));
 </script>
 
 <template>
@@ -107,12 +97,12 @@ onBeforeUnmount(() => clearTimeout(revert));
           @click="emit('choose', slot.index)"
         >
           <div class="c-stack__slot-head">
-            <p class="c-stack__slot-label">
+            <MonoLabel size="xs" class="c-stack__slot-label">
               {{ slot.label }}
               <span v-if="slot.armed" class="c-stack__armed">
                 {{ t('character.slotArmed') }}
               </span>
-            </p>
+            </MonoLabel>
             <button
               v-if="slot.program"
               type="button"
@@ -143,15 +133,7 @@ onBeforeUnmount(() => clearTimeout(revert));
             "
             @click.stop="emit('choose', slot.index)"
           >
-            <ArtFrame
-              :art="slot.program.cardArt"
-              ratio="63 / 88"
-              :placeholder="t('pool.cardPlaceholder')"
-              radius="s"
-              fit="contain"
-              :sources="pictureSources(slot.program.cardArt.src)"
-              sizes="200px"
-            />
+            <CardImage :art="slot.program.cardArt" :placeholder="t('pool.cardPlaceholder')" />
           </button>
 
           <button
@@ -234,7 +216,7 @@ onBeforeUnmount(() => clearTimeout(revert));
   align-items: center;
   gap: var(--space-2);
   min-height: 44px;
-  padding-inline: 14px;
+  padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -256,7 +238,7 @@ onBeforeUnmount(() => clearTimeout(revert));
 .c-stack__clear {
   min-width: 44px;
   min-height: 44px;
-  padding-inline: 14px;
+  padding-inline: var(--space-4);
   border: 0;
   background: transparent;
   color: var(--color-accent-text);
@@ -341,16 +323,10 @@ onBeforeUnmount(() => clearTimeout(revert));
   align-items: center;
   gap: var(--space-2);
   min-height: 28px;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
   white-space: nowrap;
 }
 
 .c-stack__armed {
-  letter-spacing: 0.14em;
   color: var(--color-accent);
 }
 
@@ -410,7 +386,7 @@ onBeforeUnmount(() => clearTimeout(revert));
 .c-stack__choose-box {
   flex: 0 0 auto;
   width: 84px;
-  aspect-ratio: 63 / 88;
+  aspect-ratio: var(--ratio-card);
   display: grid;
   place-items: center;
   border: 1px dashed var(--color-line-dashed);
@@ -456,7 +432,7 @@ onBeforeUnmount(() => clearTimeout(revert));
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: 18px;
+  padding-inline: var(--space-5);
   border: 1px solid rgba(var(--rgb-accent), 0.55);
   border-radius: var(--radius-pill);
   background: rgba(var(--rgb-accent), 0.12);

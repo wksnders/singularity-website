@@ -1,16 +1,10 @@
 <script setup lang="ts">
-/**
- * The enlarged card: one dialog for every kind and every surface.
- *
- * Opens on the face the caller asks for — the printed card unless told otherwise — and resets to it on every open, so the next card never arrives showing something other than itself.
- * NOTHING PRINTED ON THE CARD IS REPEATED BESIDE IT — the rows carry what the card does not print, and the printed wording stays in the DOM visually hidden for readers who cannot see the image.
- * No pager, deliberately: the pool is grouped, sortable and filterable, so "next" would mean something different after every control change.
- */
+/* NOTHING PRINTED ON THE CARD IS REPEATED BESIDE IT: the rows carry what the card does not print, and the printed wording stays in the DOM visually hidden for readers who cannot see the image. */
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import FaceToggle from '@/components/atoms/FaceToggle.vue';
-import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import PrintingChips from '@/components/molecules/PrintingChips.vue';
 import CardZoom from '@/components/organisms/CardZoom.vue';
 import type { ZoomRow } from '@/components/organisms/CardZoom.vue';
 import { t } from '@/content';
@@ -71,7 +65,6 @@ const stats = computed<ZoomRow[]>(() => {
   return [...rows, { label: t('cardsPage.stats.printing'), value: chosen.label }];
 });
 
-/** The printed face, for readers who cannot see the image. Never rendered visibly. */
 const hidden = computed(() => (props.row ? linesOf(props.row) : []));
 
 const route = useRoute();
@@ -108,27 +101,20 @@ const exit = computed(() => {
     <template #figure>
       <FaceToggle
         v-model="face"
+        class="c-cdetail__face"
         :card-label="t('cardsPage.zoomFace.card')"
         :art-label="t('cardsPage.zoomFace.art')"
       />
     </template>
 
     <template #face>
-      <div v-if="printings.length > 1" class="c-cdetail__printings">
-        <MonoLabel tone="faint" as="span">{{ t('cardsPage.printings') }}</MonoLabel>
-        <div class="c-cdetail__chips" role="group" :aria-label="t('cardsPage.printings')">
-          <button
-            v-for="option in printings"
-            :key="option.id"
-            type="button"
-            class="c-cdetail__chip"
-            :aria-pressed="option.id === active?.id"
-            @click="$emit('printing', option.id)"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-      </div>
+      <PrintingChips
+        class="c-cdetail__printings"
+        :printings="printings"
+        :active-id="active?.id ?? null"
+        :label="t('cardsPage.printings')"
+        @select="$emit('printing', $event)"
+      />
 
       <div class="l-sr-only">
         <p v-for="line in hidden" :key="line.label">
@@ -146,38 +132,13 @@ const exit = computed(() => {
 </template>
 
 <style>
+.c-cdetail__face {
+  margin-top: var(--space-4);
+  max-width: 300px;
+}
+
 .c-cdetail__printings {
   margin-top: var(--space-4);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-  align-items: center;
-}
-
-.c-cdetail__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.c-cdetail__chip {
-  min-height: 40px;
-  padding-inline: var(--space-3);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink-soft);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.c-cdetail__chip[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent-wash);
-  color: var(--color-ink);
 }
 
 .c-cdetail__exit {

@@ -23,11 +23,11 @@ defineProps<{ stats: Stat[]; bordered?: boolean }>();
 .c-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 22px var(--space-6);
+  gap: var(--space-6);
 }
 
 .c-stats--bordered .c-stats__item {
-  padding: 14px;
+  padding: var(--space-4);
   border: 1px solid rgba(var(--rgb-ink), 0.16);
   border-radius: var(--radius-m);
 }

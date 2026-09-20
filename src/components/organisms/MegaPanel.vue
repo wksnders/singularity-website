@@ -93,7 +93,7 @@ const columns = computed(() => {
   display: grid;
   grid-template-columns: var(--mega-columns);
   gap: var(--space-8);
-  padding-block: var(--space-6) 28px;
+  padding-block: var(--space-6) var(--space-7);
 }
 
 .c-mega__title {
@@ -103,7 +103,7 @@ const columns = computed(() => {
 
 .c-mega__row {
   display: block;
-  padding: var(--space-2) 10px;
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-s);
   color: var(--color-ink);
 }
@@ -117,7 +117,7 @@ const columns = computed(() => {
 .c-mega__row--faction {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   min-height: 40px;
   padding-block: 0;
   font-size: var(--size-m);
@@ -162,6 +162,6 @@ const columns = computed(() => {
   left: var(--space-3);
   bottom: 10px;
   font-family: var(--font-display);
-  font-size: var(--size-field);
+  font-size: var(--size-body-s);
 }
 </style>

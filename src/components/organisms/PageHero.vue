@@ -51,6 +51,7 @@ withDefaults(
 <style>
 .c-hero {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -107,7 +108,7 @@ withDefaults(
   position: absolute;
   right: var(--gutter);
   bottom: 14px;
-  z-index: 3;
+  z-index: var(--z-raised);
   pointer-events: none;
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
@@ -117,7 +118,7 @@ withDefaults(
 
 .c-hero__body {
   position: relative;
-  z-index: 3;
+  z-index: var(--z-raised);
   padding-block: 120px clamp(48px, 7vw, 88px);
 }
 </style>

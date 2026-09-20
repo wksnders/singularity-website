@@ -9,10 +9,12 @@ import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
+import { provideSections } from '@/composables/useSections';
 import { t } from '@/content';
 import { brandById, characters, programsOfBrand } from '@/data/universe';
+import { pad } from '@/site/format';
 import { pictureSources, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
@@ -20,6 +22,8 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'lux', label: 'LuX' },
   { id: 'personal-brands', label: t('universal.sections.brands') },
 ]);
+
+provideSections(sections);
 
 const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
 const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.value.personalBrandId) : null));
@@ -41,112 +45,99 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
           { label: t('ia.universe.universal.label') },
         ]"
       />
-      <h1 class="unv__title">{{ t('universal.hero.title') }}</h1>
-      <p class="unv__lede">{{ t('universal.hero.lede') }}</p>
+      <h1 class="l-page-title unv__title">{{ t('universal.hero.title') }}</h1>
+      <p class="l-lede unv__lede">{{ t('universal.hero.lede') }}</p>
       <MonoLabel tone="faint">{{ t('universal.areaName') }}</MonoLabel>
       <SectionIndex :sections="sections" />
     </PageHero>
 
     <ScrollSpyRail :sections="sections" />
 
-    <section id="lux" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker id="lux" :index="1" :total="2" heading="LuX" />
-        <MonoLabel tone="faint">{{ t('universe.anyFaction') }}</MonoLabel>
+    <SectionBand id="lux" class="l-band--line-top" heading="LuX">
+      <MonoLabel tone="faint">{{ t('universe.anyFaction') }}</MonoLabel>
 
-        <div v-if="lux" class="unv__feature">
-          <div class="unv__feature-art">
-            <ArtFrame
-              :art="lux.sceneArt"
-              ratio="3 / 4"
-              radius="m"
-              :placeholder="t('universal.luxArtPlaceholder')"
-              :sources="pictureSources(lux.sceneArt.src)"
-              sizes="280px"
+      <div v-if="lux" class="unv__feature">
+        <div class="unv__feature-art">
+          <ArtFrame
+            :art="lux.sceneArt"
+            ratio="3 / 4"
+            radius="m"
+            :placeholder="t('universal.luxArtPlaceholder')"
+            :sources="pictureSources(lux.sceneArt.src)"
+            sizes="280px"
+          />
+        </div>
+        <div class="unv__feature-body">
+          <p class="unv__epithet">{{ lux.epithet }}</p>
+          <h3 class="unv__name">{{ lux.name }}</h3>
+          <p class="l-lede unv__body">{{ t('universal.lux.body') }}</p>
+          <p v-if="luxCards.length" class="l-lede unv__body">
+            {{ luxCards.length }} {{ t('universal.lux.brandLine') }}
+          </p>
+          <div class="l-row unv__gap">
+            <UiButton :to="to('character', { characterId: lux.id })">
+              {{ t('universal.lux.ctaPage') }}
+            </UiButton>
+            <UiButton variant="quiet" :to="{ hash: '#personal-brands' }">
+              {{ t('universal.lux.ctaPrograms') }}
+            </UiButton>
+          </div>
+        </div>
+      </div>
+
+      <BandFoot :to="{ hash: '#personal-brands' }" :label="t('universal.exitBrands')" />
+    </SectionBand>
+
+    <SectionBand
+      id="personal-brands"
+      class="l-band--line-top"
+      :heading="t('universal.sections.brands')"
+    >
+      <MonoLabel tone="faint">{{ t('universal.brands.note') }}</MonoLabel>
+      <p class="l-lede unv__body">{{ t('universal.brands.body') }}</p>
+
+      <div class="l-grid l-grid--wide unv__gap">
+        <article class="l-surface l-surface--pad">
+          <MonoLabel tone="faint">
+            LuX<template v-if="luxCards.length"> · {{ luxCards.length }} {{ t('faction.stats.programs') }}</template>
+          </MonoLabel>
+          <h3 class="unv__brand-title">
+            <BrandMark
+              :icon="luxBrand?.icon"
+              :name="t('universal.brands.luxTitle')"
+              :size="52"
             />
-          </div>
-          <div class="unv__feature-body">
-            <p class="unv__epithet">{{ lux.epithet }}</p>
-            <h3 class="unv__name">{{ lux.name }}</h3>
-            <p class="unv__body">{{ t('universal.lux.body') }}</p>
-            <p v-if="luxCards.length" class="unv__body">
-              {{ luxCards.length }} {{ t('universal.lux.brandLine') }}
-            </p>
-            <div class="l-row unv__gap">
-              <UiButton :to="to('character', { characterId: lux.id })">
-                {{ t('universal.lux.ctaPage') }}
-              </UiButton>
-              <UiButton variant="quiet" :to="{ hash: '#personal-brands' }">
-                {{ t('universal.lux.ctaPrograms') }}
-              </UiButton>
-            </div>
-          </div>
-        </div>
-
-        <BandFoot :to="{ hash: '#personal-brands' }" :label="t('universal.exitBrands')" />
+            {{ t('universal.brands.luxTitle') }}
+          </h3>
+          <p class="l-lede unv__body">{{ t('universal.brands.luxBody') }}</p>
+          <ul class="unv__slots">
+            <li v-for="(program, i) in luxCards" :key="program.slug">
+              {{ pad(i + 1) }}
+            </li>
+          </ul>
+          <MonoLabel
+            v-if="luxAnnounced && luxCards.length < luxAnnounced"
+            tone="faint"
+            class="unv__gap"
+          >
+            {{ luxCards.length }} {{ t('brand.of') }} {{ luxAnnounced }} {{ t('brand.revealed') }}
+          </MonoLabel>
+        </article>
       </div>
-    </section>
 
-    <section id="personal-brands" tabindex="-1" class="l-band l-band--line-top">
-      <div class="l-wrap">
-        <SectionMarker
-          id="personal-brands"
-          :index="2"
-          :total="2"
-          :heading="t('universal.sections.brands')"
-        />
-        <MonoLabel tone="faint">{{ t('universal.brands.note') }}</MonoLabel>
-        <p class="unv__body">{{ t('universal.brands.body') }}</p>
-
-        <div class="l-grid l-grid--wide unv__gap">
-          <article class="unv__brand">
-            <MonoLabel tone="faint">
-              LuX<template v-if="luxCards.length"> · {{ luxCards.length }} {{ t('faction.stats.programs') }}</template>
-            </MonoLabel>
-            <h3 class="unv__brand-title">
-              <BrandMark
-                :icon="luxBrand?.icon"
-                :name="t('universal.brands.luxTitle')"
-                :size="52"
-              />
-              {{ t('universal.brands.luxTitle') }}
-            </h3>
-            <p class="unv__body">{{ t('universal.brands.luxBody') }}</p>
-            <ul class="unv__slots">
-              <li v-for="(program, i) in luxCards" :key="program.slug">
-                {{ String(i + 1).padStart(2, '0') }}
-              </li>
-            </ul>
-            <MonoLabel
-              v-if="luxAnnounced && luxCards.length < luxAnnounced"
-              tone="faint"
-              class="unv__gap"
-            >
-              {{ luxCards.length }} {{ t('brand.of') }} {{ luxAnnounced }} {{ t('brand.revealed') }}
-            </MonoLabel>
-          </article>
-        </div>
-
-        <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
-      </div>
-    </section>
+      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
+    </SectionBand>
   </div>
 </template>
 
 <style>
 .unv__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
   max-width: 26ch;
 }
 
 .unv__lede,
 .unv__body {
   margin-top: var(--space-4);
-  max-width: 60ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .unv__gap {
@@ -181,13 +172,6 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
   font-size: clamp(1.5rem, 4vw, 2.25rem);
 }
 
-.unv__brand {
-  padding: clamp(20px, 3vw, 28px);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
-}
-
 .unv__brand-title {
   display: flex;
   align-items: center;
@@ -209,7 +193,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
 .unv__slots li {
   display: grid;
   place-items: center;
-  aspect-ratio: 63 / 88;
+  aspect-ratio: var(--ratio-card);
   border: 1px dashed var(--color-line-dashed);
   border-radius: var(--radius-s);
   font-family: var(--font-mono);

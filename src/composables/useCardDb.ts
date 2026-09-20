@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router';
 import { useCardParam, useQueryWriter } from '@/composables/useCardParam';
 import type { CardParamOptions } from '@/composables/useCardParam';
 import { ALL, FACET_KEYS, SORTS, defaultFacets } from '@/site/cards';
+import { queryString } from '@/site/query';
 import type { FacetKey, FacetState, SortKey } from '@/site/cards';
 
 export type Face = 'art' | 'card';
@@ -29,10 +30,7 @@ export function useCardDb(options: CardDbOptions) {
   const write = useQueryWriter();
   const card = useCardParam(options);
 
-  const str = (key: string): string | null => {
-    const value = route.query[key];
-    return typeof value === 'string' && value !== '' ? value : null;
-  };
+  const str = (key: string) => queryString(route.query, key);
 
   const query = computed(() => str('q') ?? '');
   const face = computed<Face>(() => (str('face') === 'art' ? 'art' : 'card'));
@@ -51,7 +49,6 @@ export function useCardDb(options: CardDbOptions) {
   const setFace = (value: Face) => write({ face: value === 'card' ? null : value }, 'replace');
   const setSort = (value: SortKey) => write({ sort: value === 'printed' ? null : value }, 'replace');
 
-  /** Single-select, and clicking the option that is already on clears it. */
   const setFacet = (key: FacetKey, value: string) =>
     write({ [PARAM_OF[key]]: facets.value[key] === value || value === ALL ? null : value }, 'replace');
 

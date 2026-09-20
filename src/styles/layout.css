@@ -30,12 +30,6 @@
   border-bottom: 1px solid var(--color-line);
 }
 
-.l-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 .l-row {
   display: flex;
   flex-wrap: wrap;
@@ -80,8 +74,39 @@
   min-width: 0;
 }
 
-.l-hidden {
-  display: none !important;
+/* An `l-` class names a THING a designer would point at (a band, a surface, a lede). One that names a property is a utility, and does not belong here. */
+
+/* A page's `h1`, under either hero. Entity pages (a faction, a character, a boss) size their own name and do not take this. */
+.l-page-title {
+  margin-top: var(--space-5);
+  font-size: var(--size-h1-page);
+}
+
+/* The intro paragraph under a heading, `h1` or `h2` alike. Sets no margin: the space above it belongs to whatever it sits in. A hero over art keeps its own lede, because that one answers to the scrim. */
+.l-lede {
+  max-width: 60ch;
+  font-size: var(--size-body-l);
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.l-lede--narrow {
+  max-width: 56ch;
+}
+
+.l-lede--wide {
+  max-width: 62ch;
+}
+
+/* Paint only. Padding is a modifier because clip containers, whose children pad themselves, take the paint without it. */
+.l-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-l);
+}
+
+.l-surface--pad {
+  padding: clamp(20px, 3vw, 28px);
 }
 
 .l-sr-only {

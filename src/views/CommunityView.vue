@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import JumpChip from '@/components/atoms/JumpChip.vue';
@@ -11,6 +11,7 @@ import BandFoot from '@/components/molecules/BandFoot.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
@@ -25,13 +26,14 @@ import {
   wallpaperKinds,
   wallpapers,
 } from '@/data/universe';
+import { useCopy } from '@/composables/useCopy';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { provideSections } from '@/composables/useSections';
+import { pad } from '@/site/format';
 import { asset, outbound, pictureSources, to } from '@/site/links';
 import type { PressGroup } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
-
-const pad = (n: number) => String(n).padStart(2, '0');
 
 const mb = (bytes: number) => `${(bytes / 1048576).toFixed(1)} MB`;
 
@@ -50,12 +52,9 @@ const boilerplate = computed(
   () => `${game.name} ${t('community.press.boilerplateBody')}`,
 );
 
-const copied = ref(false);
-function copyBoilerplate() {
-  navigator.clipboard?.writeText(boilerplate.value).catch(() => {});
-  copied.value = true;
-  setTimeout(() => { copied.value = false; }, 1600);
-}
+const { copied, copy } = useCopy();
+const copyBoilerplate = () => void copy(boilerplate.value);
+
 const sections = computed<SectionEntry[]>(() => [
   { id: 'discord', label: t('community.sections.discord') },
   { id: 'wallpapers', label: t('community.sections.wallpapers') },
@@ -63,6 +62,8 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'support', label: t('community.sections.support') },
   { id: 'team', label: t('community.sections.team') },
 ]);
+
+provideSections(sections);
 
 const kind = useQueryFilter('kind');
 
@@ -96,8 +97,8 @@ const factSheet = computed(() => [
 
 <template>
   <SecondaryHero glow="70% 60% at 84% 0%" :note="t('community.hero.pending')">
-    <h1 class="comm__title">{{ t('community.hero.title') }}</h1>
-    <p class="comm__lede">{{ t('community.hero.lede') }}</p>
+    <h1 class="l-page-title">{{ t('community.hero.title') }}</h1>
+    <p class="l-lede l-lede--wide comm__lede">{{ t('community.hero.lede') }}</p>
 
     <nav id="on-this-page" class="comm__hub" :aria-label="t('wayfinding.onThisPage')">
       <a href="#discord" class="comm__hub-card comm__hub-card--wide">
@@ -130,13 +131,8 @@ const factSheet = computed(() => [
   <section id="discord" tabindex="-1" class="l-band">
     <div class="l-wrap l-split">
       <div class="l-split__main">
-        <SectionMarker
-          id="discord"
-          :index="1"
-          :total="5"
-          :heading="t('community.discord.heading')"
-        />
-        <p class="comm__body">{{ t('community.discord.body') }}</p>
+        <SectionMarker section-id="discord" :heading="t('community.discord.heading')" />
+        <p class="l-lede l-lede--wide comm__body">{{ t('community.discord.body') }}</p>
         <UiButton :link="outbound('discord')" class="comm__gap">
           {{ t('community.discord.cta') }}
         </UiButton>
@@ -147,232 +143,219 @@ const factSheet = computed(() => [
     </div>
   </section>
 
-  <section id="wallpapers" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker
-        id="wallpapers"
-        :index="2"
-        :total="5"
-        :heading="t('community.sections.wallpapers')"
-      />
-      <MonoLabel tone="faint">{{ t('community.wallpapers.sizesTbd') }}</MonoLabel>
+  <SectionBand
+    id="wallpapers"
+    class="l-band--alt l-band--line-top"
+    :heading="t('community.sections.wallpapers')"
+  >
+    <MonoLabel tone="faint">{{ t('community.wallpapers.sizesTbd') }}</MonoLabel>
 
-      <FilterBar
-        class="comm__gap"
-        :options="kindOptions"
-        :active="kind.value.value"
-        :count="shownWallpapers.length"
-        :count-label="t('community.wallpapers.count')"
-        :all-label="t('filters.all')"
-        @toggle="kind.toggle($event)"
-        @clear="kind.set(null)"
-      />
+    <FilterBar
+      :options="kindOptions"
+      :active="kind.value.value"
+      :count="shownWallpapers.length"
+      :count-label="t('community.wallpapers.count')"
+      :all-label="t('filters.all')"
+      @toggle="kind.toggle($event)"
+      @clear="kind.set(null)"
+    />
 
-      <div class="l-grid comm__gap">
-        <div v-for="wallpaper in shownWallpapers" :key="wallpaper.id" class="comm__wall">
-          <ArtFrame
-            :art="null"
-            :ratio="wallpaper.kind === 'avatar' ? '1 / 1' : wallpaper.kind === 'mobile' ? '9 / 16' : '16 / 9'"
-            radius="m"
-            :placeholder="`[ ${kindName(wallpaper.kind).toLowerCase()} ]`"
-          />
-          <MonoLabel tone="faint">
-            {{ kindName(wallpaper.kind) }} · {{ kindSize(wallpaper.kind) }}
-          </MonoLabel>
-        </div>
+    <div class="l-grid">
+      <div v-for="wallpaper in shownWallpapers" :key="wallpaper.id" class="comm__wall">
+        <ArtFrame
+          :art="null"
+          :ratio="wallpaper.kind === 'avatar' ? '1 / 1' : wallpaper.kind === 'mobile' ? '9 / 16' : '16 / 9'"
+          radius="m"
+          :placeholder="`[ ${kindName(wallpaper.kind).toLowerCase()} ]`"
+        />
+        <MonoLabel tone="faint">
+          {{ kindName(wallpaper.kind) }} · {{ kindSize(wallpaper.kind) }}
+        </MonoLabel>
       </div>
-
-      <BandFoot :to="{ hash: '#press' }" :label="t('community.wallpapers.exit')" />
     </div>
-  </section>
 
-  <section id="press" tabindex="-1" class="l-band l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="press" :index="3" :total="5" :heading="t('community.sections.press')" />
+    <BandFoot :to="{ hash: '#press' }" :label="t('community.wallpapers.exit')" />
+  </SectionBand>
 
-      <div class="comm__press-head">
-        <div class="comm__press-lede">
-          <p class="comm__body">{{ t('community.press.intro') }}</p>
-        </div>
-        <div class="comm__press-get">
-          <UiButton variant="primary" :href="asset(pressKit.href)">
-            {{ t('community.press.cta') }}
-          </UiButton>
-          <MonoLabel tone="faint">
-            {{ pressKit.files }} {{ t('community.press.kitMeta') }} · {{ mb(pressKit.zipBytes) }}
-          </MonoLabel>
-        </div>
+  <SectionBand id="press" class="l-band--line-top" :heading="t('community.sections.press')">
+    <div class="comm__press-head">
+      <div class="comm__press-lede">
+        <p class="l-lede l-lede--wide comm__body">{{ t('community.press.intro') }}</p>
       </div>
-
-      <ul class="l-grid l-grid--wide comm__gap comm__press-groups">
-        <li
-          v-for="group in pressGroups"
-          :key="group.id"
-          class="comm__press-card"
-          :class="{ 'is-waiting': group.state !== 'ready' }"
-        >
-          <div class="comm__press-cover" :class="{ 'is-empty': !group.cover }">
-            <ArtFrame
-              v-if="group.cover"
-              :art="group.cover"
-              ratio="16 / 9"
-              :fit="group.fit"
-              sizes="(min-width: 900px) 360px, 100vw"
-              :sources="pressSources(group.cover.src)"
-              :placeholder="t('community.press.pending')"
-            />
-          </div>
-          <div class="comm__press-body">
-            <h3 class="comm__h3">{{ t(`community.press.groups.${group.id}.name`) }}</h3>
-            <p class="comm__body comm__press-grow">{{ t(`community.press.groups.${group.id}.body`) }}</p>
-            <MonoLabel tone="faint">{{ groupMeta(group) }}</MonoLabel>
-            <UiButton v-if="group.zipBytes" :href="asset(`/press/${group.id}.zip`)">
-              {{ t('community.press.zipVerb') }} · {{ mb(group.zipBytes) }}
-            </UiButton>
-          </div>
-        </li>
-      </ul>
-
-      <div class="l-grid l-grid--wide comm__gap">
-        <div class="comm__card">
-          <div class="comm__press-row">
-            <MonoLabel tone="faint">{{ t('community.press.boilerplate') }}</MonoLabel>
-            <button type="button" class="comm__copy" @click="copyBoilerplate">
-              {{ copied ? t('community.press.copied') : t('community.press.copy') }}
-            </button>
-          </div>
-          <p class="comm__body">{{ boilerplate }}</p>
-          <p class="comm__meta">
-            {{ t('footer.publishedBy') }} {{ game.publisher }}.
-            {{ t('community.press.crossover') }} {{ game.crossoverGame }}.
-          </p>
-          <p class="comm__meta comm__gap">
-            {{ t('community.press.contact') }}
-            <a :href="`mailto:${game.enquiriesEmail}`">{{ game.enquiriesEmail }}</a>
-          </p>
-        </div>
-
-        <div class="comm__card">
-          <MonoLabel tone="faint">{{ t('community.press.factSheet') }}</MonoLabel>
-          <dl class="comm__facts">
-            <div v-for="fact in factSheet" :key="fact.label">
-              <dt>{{ fact.label }}</dt>
-              <dd>
-                <TbdValue v-if="fact.reserved" :value="fact.value" />
-                <template v-else>{{ fact.value }}</template>
-              </dd>
-            </div>
-          </dl>
-        </div>
+      <div class="comm__press-get">
+        <UiButton variant="primary" :href="asset(pressKit.href)">
+          {{ t('community.press.cta') }}
+        </UiButton>
+        <MonoLabel tone="faint">
+          {{ pressKit.files }} {{ t('community.press.kitMeta') }} · {{ mb(pressKit.zipBytes) }}
+        </MonoLabel>
       </div>
-
-      <BandFoot :to="{ hash: '#support' }" :label="t('community.press.exit')" />
     </div>
-  </section>
 
-  <section id="support" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap l-wrap--reading">
-      <SectionMarker id="support" :index="4" :total="5" :heading="t('community.sections.support')" />
-      <p class="comm__body">
-        {{ t('community.support.triage1') }}
-        <BaseLink :to="to('faq')">{{ t('ia.learn.faq.label') }}</BaseLink>
-        {{ t('community.support.and') }}
-        <BaseLink :link="outbound('discord')">{{ t('chrome.social.discord') }}</BaseLink>
-        {{ t('community.support.triage2') }}
-      </p>
-
-      <SupportForm class="comm__gap" />
-
-      <BandFoot :to="to('faq')" :label="t('community.support.exit')" />
-    </div>
-  </section>
-
-  <section id="team" tabindex="-1" class="l-band l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="team" :index="5" :total="5" :heading="t('community.sections.team')" />
-      <p class="comm__body">{{ t('community.team.body') }}</p>
-      <MonoLabel tone="faint">{{ t('community.team.pending') }}</MonoLabel>
-
-      <nav :aria-label="t('community.team.groupNav')" class="comm__team-nav">
-        <JumpChip
-          v-for="(group, index) in teamGroups"
-          :key="group"
-          :to="{ hash: `#team-${group}` }"
-          :index="pad(index + 1)"
-        >
-          {{ t(`community.team.groups.${group}.title`) }}
-        </JumpChip>
-      </nav>
-
-      <div
-        v-for="group in teamGroups"
-        :id="`team-${group}`"
-        :key="group"
-        tabindex="-1"
-        class="comm__team-group"
-        :class="`comm__team-group--${group}`"
+    <ul class="l-grid l-grid--wide comm__press-groups">
+      <li
+        v-for="group in pressGroups"
+        :key="group.id"
+        class="comm__press-card"
+        :class="{ 'is-waiting': group.state !== 'ready' }"
       >
-        <div class="comm__team-head">
-          <h3 class="comm__team-title">{{ t(`community.team.groups.${group}.title`) }}</h3>
-          <MonoLabel tone="faint">
-            {{ pad(teamOf(group).length) }} · {{ t(`community.team.groups.${group}.kicker`) }}
-          </MonoLabel>
+        <div class="comm__press-cover" :class="{ 'is-empty': !group.cover }">
+          <ArtFrame
+            v-if="group.cover"
+            :art="group.cover"
+            ratio="16 / 9"
+            :fit="group.fit"
+            sizes="(min-width: 900px) 360px, 100vw"
+            :sources="pressSources(group.cover.src)"
+            :placeholder="t('community.press.pending')"
+          />
         </div>
-        <p class="comm__body">{{ t(`community.team.groups.${group}.body`) }}</p>
+        <div class="comm__press-body">
+          <h3 class="comm__h3">{{ t(`community.press.groups.${group.id}.name`) }}</h3>
+          <p class="l-lede l-lede--wide comm__body comm__press-grow">{{ t(`community.press.groups.${group.id}.body`) }}</p>
+          <MonoLabel tone="faint">{{ groupMeta(group) }}</MonoLabel>
+          <UiButton v-if="group.zipBytes" :href="asset(`/press/${group.id}.zip`)">
+            {{ t('community.press.zipVerb') }} · {{ mb(group.zipBytes) }}
+          </UiButton>
+        </div>
+      </li>
+    </ul>
 
-        <div class="comm__roster">
-          <div v-for="member in teamOf(group)" :key="member.id" class="comm__member">
-            <ArtFrame
-              v-if="group !== 'friends'"
-              class="comm__portrait"
-              :art="null"
-              ratio="1 / 1"
-              radius="m"
-              :placeholder="t('community.team.portrait')"
-            />
-            <div class="comm__member-text">
-              <h4 class="comm__member-name">{{ member.name }}</h4>
-              <p class="comm__member-role">{{ member.role }}</p>
-              <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="comm__member-art">
-                {{ t('community.team.seeTheArt') }}
-              </BaseLink>
-            </div>
+    <div class="l-grid l-grid--wide">
+      <div class="l-surface l-surface--pad">
+        <div class="comm__press-row">
+          <MonoLabel tone="faint">{{ t('community.press.boilerplate') }}</MonoLabel>
+          <UiButton variant="text" @click="copyBoilerplate">
+            {{ copied ? t('community.press.copied') : t('community.press.copy') }}
+          </UiButton>
+        </div>
+        <p class="l-lede l-lede--wide comm__body">{{ boilerplate }}</p>
+        <p class="comm__meta">
+          {{ t('footer.publishedBy') }} {{ game.publisher }}.
+          {{ t('community.press.crossover') }} {{ game.crossoverGame }}.
+        </p>
+        <p class="comm__meta comm__gap">
+          {{ t('community.press.contact') }}
+          <a :href="`mailto:${game.enquiriesEmail}`">{{ game.enquiriesEmail }}</a>
+        </p>
+      </div>
+
+      <div class="l-surface l-surface--pad">
+        <MonoLabel tone="faint">{{ t('community.press.factSheet') }}</MonoLabel>
+        <dl class="comm__facts">
+          <div v-for="fact in factSheet" :key="fact.label">
+            <MonoLabel as="dt" size="xs" tone="faint">{{ fact.label }}</MonoLabel>
+            <dd>
+              <TbdValue v-if="fact.reserved" :value="fact.value" />
+              <template v-else>{{ fact.value }}</template>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <BandFoot :to="{ hash: '#support' }" :label="t('community.press.exit')" />
+  </SectionBand>
+
+  <SectionBand
+    id="support"
+    class="l-band--alt l-band--line-top"
+    wrap="reading"
+    :heading="t('community.sections.support')"
+  >
+    <p class="l-lede l-lede--wide comm__body">
+      {{ t('community.support.triage1') }}
+      <BaseLink :to="to('faq')">{{ t('ia.learn.faq.label') }}</BaseLink>
+      {{ t('community.support.and') }}
+      <BaseLink :link="outbound('discord')">{{ t('chrome.social.discord') }}</BaseLink>
+      {{ t('community.support.triage2') }}
+    </p>
+
+    <SupportForm />
+
+    <BandFoot :to="to('faq')" :label="t('community.support.exit')" />
+  </SectionBand>
+
+  <SectionBand id="team" class="l-band--line-top" :heading="t('community.sections.team')">
+    <p class="l-lede l-lede--wide comm__body">{{ t('community.team.body') }}</p>
+    <MonoLabel tone="faint" class="comm__pending">{{ t('community.team.pending') }}</MonoLabel>
+
+    <nav :aria-label="t('community.team.groupNav')" class="l-row comm__team-nav">
+      <JumpChip
+        v-for="(group, index) in teamGroups"
+        :key="group"
+        :to="{ hash: `#team-${group}` }"
+        :index="pad(index + 1)"
+      >
+        {{ t(`community.team.groups.${group}.title`) }}
+      </JumpChip>
+    </nav>
+
+    <div
+      v-for="group in teamGroups"
+      :id="`team-${group}`"
+      :key="group"
+      tabindex="-1"
+      class="comm__team-group"
+      :class="`comm__team-group--${group}`"
+    >
+      <div class="comm__team-head">
+        <h3 class="comm__team-title">{{ t(`community.team.groups.${group}.title`) }}</h3>
+        <MonoLabel tone="faint">
+          {{ pad(teamOf(group).length) }} · {{ t(`community.team.groups.${group}.kicker`) }}
+        </MonoLabel>
+      </div>
+      <p class="l-lede l-lede--wide comm__body">{{ t(`community.team.groups.${group}.body`) }}</p>
+
+      <div class="comm__roster">
+        <div v-for="member in teamOf(group)" :key="member.id" class="comm__member">
+          <ArtFrame
+            v-if="group !== 'friends'"
+            class="comm__portrait"
+            :art="null"
+            ratio="1 / 1"
+            radius="m"
+            :placeholder="t('community.team.portrait')"
+          />
+          <div class="comm__member-text">
+            <h4 class="comm__member-name">{{ member.name }}</h4>
+            <p class="comm__member-role">{{ member.role }}</p>
+            <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="c-mono c-mono--xs comm__member-art">
+              {{ t('community.team.seeTheArt') }}
+            </BaseLink>
           </div>
         </div>
-
-        <details v-if="group === 'artists'" class="comm__statement">
-          <summary class="comm__statement-summary">
-            <span class="comm__statement-text">
-              <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
-              <span class="comm__statement-line">{{ t('community.team.aiSummary') }}</span>
-            </span>
-            <span class="comm__chevron" aria-hidden="true">▾</span>
-          </summary>
-          <MarkdownBlock slug="community/ai-statement" measure class="comm__statement-body" />
-          <BaseLink :to="to('faq', {}, { hash: '#faq-ai-art' })" class="comm__member-art">
-            {{ t('community.team.aiFaq') }}
-          </BaseLink>
-        </details>
       </div>
 
-      <div class="comm__credit-note">
-        <MonoLabel tone="faint">{{ t('community.team.creditKicker') }}</MonoLabel>
-        <p class="comm__body">{{ t('community.team.credits') }}</p>
-      </div>
-
-      <p class="comm__meta">{{ t('footer.publishedBy') }} {{ game.publisher }}.</p>
-
-      <BandFoot :to="to('community', {}, { hash: '#discord' })" :label="t('community.team.exit')" />
+      <details v-if="group === 'artists'" class="l-surface comm__statement">
+        <summary class="comm__statement-summary">
+          <span class="comm__statement-text">
+            <MonoLabel tone="faint">{{ t('community.team.aiKicker') }}</MonoLabel>
+            <span class="comm__statement-line">{{ t('community.team.aiSummary') }}</span>
+          </span>
+          <span class="comm__chevron" aria-hidden="true">▾</span>
+        </summary>
+        <MarkdownBlock slug="community/ai-statement" measure class="comm__statement-body" />
+        <BaseLink :to="to('faq', {}, { hash: '#faq-ai-art' })" class="c-mono c-mono--xs comm__member-art">
+          {{ t('community.team.aiFaq') }}
+        </BaseLink>
+      </details>
     </div>
-  </section>
+
+    <div class="l-surface comm__credit-note">
+      <MonoLabel tone="faint">{{ t('community.team.creditKicker') }}</MonoLabel>
+      <p class="l-lede l-lede--wide comm__body">{{ t('community.team.credits') }}</p>
+    </div>
+
+    <p class="comm__meta">{{ t('footer.publishedBy') }} {{ game.publisher }}.</p>
+
+    <BandFoot :to="to('community', {}, { hash: '#discord' })" :label="t('community.team.exit')" />
+  </SectionBand>
 </template>
 
 <style>
 .comm__team-nav {
   margin-top: var(--space-5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
 }
 
 .comm__team-group {
@@ -445,18 +428,11 @@ const factSheet = computed(() => [
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
 }
 
 .comm__statement {
   margin-top: var(--space-6);
   max-width: 760px;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
-  background: var(--color-surface);
 }
 
 .comm__statement-summary {
@@ -511,28 +487,21 @@ const factSheet = computed(() => [
 
 .comm__credit-note {
   margin-top: var(--space-7);
-  padding: var(--space-5) var(--space-5);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
-  background: var(--color-surface);
-}
-
-.comm__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
+  padding: var(--space-5);
 }
 
 .comm__lede,
 .comm__body {
   margin-top: var(--space-4);
-  max-width: 62ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .comm__gap {
   margin-top: var(--space-6);
+}
+
+/* Sits straight under the paragraph it qualifies, not a band step below it. */
+.comm__pending {
+  margin-top: 0;
 }
 
 .comm__hub {
@@ -582,7 +551,7 @@ const factSheet = computed(() => [
 }
 
 .comm__channels span {
-  padding: var(--space-2) 10px;
+  padding: var(--space-2) var(--space-3);
   border: 1px solid rgba(var(--rgb-ink), 0.14);
   border-radius: var(--radius-s);
   font-family: var(--font-mono);
@@ -659,31 +628,6 @@ const factSheet = computed(() => [
   gap: var(--space-3);
 }
 
-.comm__copy {
-  min-height: 36px;
-  padding-inline: 14px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.14em;
-  cursor: pointer;
-}
-
-.comm__copy:hover {
-  border-color: rgba(var(--rgb-accent), 0.7);
-  background: var(--color-accent-wash);
-}
-
-.comm__card {
-  padding: clamp(20px, 3vw, 28px);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
-}
-
 .comm__h3 {
   font-family: var(--font-display);
   font-size: var(--size-h3);
@@ -708,14 +652,6 @@ const factSheet = computed(() => [
   grid-template-columns: 120px minmax(0, 1fr);
   gap: var(--space-3);
   align-items: baseline;
-}
-
-.comm__facts dt {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
 }
 
 .comm__facts dd {

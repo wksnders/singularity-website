@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
@@ -20,13 +21,14 @@ import {
   characters,
   coreProduct,
   tryRoutes,
-  factionById,
   factions,
   game,
   keyArt,
   modes,
 } from '@/data/universe';
-import { environmentSources, outbound, to } from '@/site/links';
+import { factionTags } from '@/site/characters';
+import { pad } from '@/site/format';
+import { chapterHash, environmentSources, outbound, to } from '@/site/links';
 import type { Stat } from '@/site/stats';
 
 const pitchStats = computed<Stat[]>(() => [
@@ -47,14 +49,6 @@ const rotatorCast = computed(() => {
   const seen = new Set(lead.map((c) => c.id));
   return [...lead, ...characters.filter((c) => !seen.has(c.id))].slice(0, ROTATOR_MAX);
 });
-
-const factionTags = (character: (typeof characters)[number]) =>
-  character.factionIds === 'any'
-    ? [{ label: t('universe.anyFaction'), color: null }]
-    : character.factionIds
-        .map((id) => factionById(id))
-        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
-        .map((f) => ({ label: f.name, color: f.color }));
 
 /* The newest PUBLISHED chapter, deliberately not the newest product. */
 const currentChapter = computed(
@@ -126,7 +120,7 @@ function scrollCast(direction: 1 | -1): void {
       <div class="l-split__main">
         <MonoLabel tone="accent">{{ t('home.pitch.kicker') }}</MonoLabel>
         <h2 class="home__h2">{{ t('home.pitch.title') }}</h2>
-        <p class="home__body">{{ t('home.pitch.body') }}</p>
+        <p class="l-lede home__body">{{ t('home.pitch.body') }}</p>
       </div>
       <div class="l-split__aside">
         <StatRow bordered :stats="pitchStats" />
@@ -153,7 +147,7 @@ function scrollCast(direction: 1 | -1): void {
   <section class="l-band l-band--line-top l-band--line-bottom home__claim">
     <div class="l-wrap l-wrap--reading home__center">
       <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
-      <p class="home__body home__body--center">{{ t('home.zero.body') }}</p>
+      <p class="l-lede home__body home__body--center">{{ t('home.zero.body') }}</p>
       <TrailerPlayer
         class="home__trailer"
         :you-tube-id="game.trailerYouTubeId"
@@ -214,9 +208,9 @@ function scrollCast(direction: 1 | -1): void {
 
   <section class="l-band l-band--line-top home__incursions">
     <div class="l-wrap">
-      <span class="home__threat">{{ t('home.incursions.badge') }}</span>
+      <ThreatBadge>{{ t('home.incursions.badge') }}</ThreatBadge>
       <h2 class="home__h2 home__h2--tight">{{ t('home.incursions.title') }}</h2>
-      <p class="home__body">{{ t('home.incursions.body') }}</p>
+      <p class="l-lede home__body">{{ t('home.incursions.body') }}</p>
       <p class="home__facts">
         <span>{{ game.incursionsPlayers }} {{ t('home.incursions.players') }}</span>
         <span>{{ t('home.incursions.solo') }}</span>
@@ -231,18 +225,18 @@ function scrollCast(direction: 1 | -1): void {
   <section id="story" class="l-band">
     <div class="l-wrap">
       <MonoLabel tone="accent">{{ t('home.chapter.kicker') }}</MonoLabel>
-      <div class="home__chapter">
+      <div class="l-surface l-surface--pad home__chapter">
         <div class="home__chapter-art">
           <ArtFrame :art="null" ratio="4 / 3" radius="m" :placeholder="t('home.chapter.artPlaceholder')" />
         </div>
         <div class="home__chapter-body">
           <MonoLabel tone="muted">
-            {{ t('home.chapter.label') }} {{ String(currentChapter.number).padStart(2, '0') }}
+            {{ t('home.chapter.label') }} {{ pad(currentChapter.number) }}
           </MonoLabel>
           <h2 class="home__h3">{{ currentChapterTitle }}</h2>
-          <p class="home__body">{{ t('home.chapter.body') }}</p>
+          <p class="l-lede home__body">{{ t('home.chapter.body') }}</p>
           <UiButton
-            :to="to('story', {}, { hash: `#ch-${String(currentChapter.number).padStart(2, '0')}` })"
+            :to="to('story', {}, { hash: chapterHash(currentChapter.number) })"
             class="home__spacer"
           >
             {{ t('home.chapter.cta') }}
@@ -291,7 +285,7 @@ function scrollCast(direction: 1 | -1): void {
     <div class="l-wrap l-split">
       <div class="l-split__main">
         <h2 class="home__h3">{{ t('home.community.title') }}</h2>
-        <p class="home__body">{{ t('home.community.body') }}</p>
+        <p class="l-lede home__body">{{ t('home.community.body') }}</p>
         <p class="home__channels">
           <span>#rules-desk</span><span>#incursion-logs</span><span>#deck-lab</span>
         </p>
@@ -336,10 +330,10 @@ function scrollCast(direction: 1 | -1): void {
   margin-top: var(--space-9);
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 28px;
+  gap: var(--space-3) var(--space-7);
   font-family: var(--font-mono);
   font-size: var(--size-mono-m);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   color: var(--color-ink-soft);
 }
@@ -419,10 +413,6 @@ function scrollCast(direction: 1 | -1): void {
 
 .home__body {
   margin-top: var(--space-5);
-  max-width: 60ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .home__body--center {
@@ -439,7 +429,7 @@ function scrollCast(direction: 1 | -1): void {
 }
 
 .home__trailer {
-  margin-top: 28px;
+  margin-top: var(--space-7);
   text-align: left;
 }
 
@@ -492,7 +482,7 @@ function scrollCast(direction: 1 | -1): void {
 }
 
 .home__rotator {
-  margin-top: 28px;
+  margin-top: var(--space-7);
   display: flex;
   gap: var(--space-4);
   overflow-x: auto;
@@ -510,34 +500,21 @@ function scrollCast(direction: 1 | -1): void {
   --faction: var(--color-threat);
 }
 
-.home__threat {
-  display: inline-block;
-  padding: 6px var(--space-3);
-  border: 1px solid rgba(var(--rgb-threat), 0.65);
-  border-radius: var(--radius-pill);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  color: var(--color-threat-text);
-  white-space: nowrap;
-}
-
 .home__facts,
 .home__channels {
-  margin-top: 22px;
+  margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }
 
 .home__facts span {
-  padding: var(--space-2) 14px;
+  padding: var(--space-2) var(--space-4);
   border: 1px solid rgba(var(--rgb-ink), 0.2);
   border-radius: var(--radius-pill);
   white-space: nowrap;
@@ -549,7 +526,7 @@ function scrollCast(direction: 1 | -1): void {
 }
 
 .home__channels span {
-  padding: 6px 10px;
+  padding: 6px var(--space-3);
   border: 1px solid rgba(var(--rgb-ink), 0.14);
   border-radius: var(--radius-s);
   white-space: nowrap;
@@ -561,10 +538,6 @@ function scrollCast(direction: 1 | -1): void {
   flex-wrap: wrap;
   gap: clamp(24px, 4vw, 48px);
   align-items: center;
-  padding: clamp(20px, 3vw, 32px);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
 }
 
 .home__chapter-art {

@@ -13,6 +13,11 @@ export interface Art {
   artist?: string | null;
 }
 
+export interface ArtSource {
+  type: string;
+  srcset: string;
+}
+
 export interface Faction {
   id: string;
   /** Identifier tone: dots, 2–3px edges, ≤10% washes. Never body text. */

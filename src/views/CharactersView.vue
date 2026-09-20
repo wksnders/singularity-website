@@ -10,41 +10,30 @@ import EntityTile from '@/components/molecules/EntityTile.vue';
 import FilterBar from '@/components/molecules/FilterBar.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { brandById, characters, factionById, factions } from '@/data/universe';
+import { brandsOf, characters, matchesFactionFilter } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { provideSections } from '@/composables/useSections';
 import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
+import { characterFactionOptions, factionTags } from '@/site/characters';
 import { to } from '@/site/links';
 import type { Character } from '@/data/types';
-import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'characters', label: t('characters.sections.cast') },
 ]);
 
+provideSections(sections);
+
 const faction = useQueryFilter('faction');
 const search = ref('');
 
-const filterOptions = computed<FilterOption[]>(() => [
-  ...factions.map((f) => ({ id: f.id, label: f.name, color: f.color, showDot: true })),
-  { id: 'universal', label: t('ia.universe.universal.label'), showDot: true, color: null },
-]);
+const filterOptions = computed(() => characterFactionOptions(t('ia.universe.universal.label')));
 
-const tags = (character: Character) =>
-  character.factionIds === 'any'
-    ? [{ label: t('universe.anyFaction'), color: null }]
-    : character.factionIds
-        .map((id) => factionById(id))
-        .filter((f): f is NonNullable<ReturnType<typeof factionById>> => Boolean(f))
-        .map((f) => ({ label: f.name, color: f.color }));
-
-const brandNames = (character: Character) =>
-  [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
-    .map((id) => brandById(id)?.name)
-    .filter(Boolean);
+const brandNames = (character: Character) => brandsOf(character).map((brand) => brand.name);
 
 function badge(character: Character): string | undefined {
   if (character.factionIds === 'any') return t('characters.anyFactionBadge');
@@ -52,12 +41,7 @@ function badge(character: Character): string | undefined {
 }
 
 function matches(character: Character, loose: boolean): boolean {
-  const active = faction.value.value;
-  const factionOk =
-    !active ||
-    (active === 'universal'
-      ? character.factionIds === 'any'
-      : character.factionIds === 'any' || character.factionIds.includes(active));
+  const factionOk = matchesFactionFilter(character, faction.value.value);
   const query = search.value.trim().toLowerCase();
   /* HP is deliberately not indexed: the word is printed nowhere on the card, and a bare number would match every ability line containing it. */
   const haystack = searchHaystack([
@@ -114,77 +98,63 @@ function clearAll(): void {
         { label: t('characters.hero.crumb') },
       ]"
     />
-    <h1 class="cast__title">{{ t('characters.hero.title') }}</h1>
-    <p class="cast__lede">{{ t('characters.hero.lede') }}</p>
+    <h1 class="l-page-title">{{ t('characters.hero.title') }}</h1>
+    <p class="l-lede cast__lede">{{ t('characters.hero.lede') }}</p>
     <SectionIndex :sections="sections" />
   </SecondaryHero>
 
   <ScrollSpyRail :sections="sections" />
 
-  <section id="characters" tabindex="-1" class="l-band">
-    <div class="l-wrap">
-      <SectionMarker id="characters" :index="1" :total="1" :heading="t('characters.sections.cast')" />
-      <MonoLabel tone="faint">{{ t('characters.note') }}</MonoLabel>
+  <SectionBand id="characters" :heading="t('characters.sections.cast')">
+    <MonoLabel tone="faint">{{ t('characters.note') }}</MonoLabel>
 
-      <FilterBar
-        class="cast__gap"
-        :options="filterOptions"
-        :active="faction.value.value"
-        :count="shown.length"
-        :count-label="countLabel"
-        :all-label="t('characters.everyone')"
-        :search="search"
-        :search-label="t('characters.searchLabel')"
-        :search-placeholder="t('characters.searchPlaceholder')"
-        @toggle="faction.toggle($event)"
-        @clear="faction.set(null)"
-        @update:search="search = $event"
+    <FilterBar
+      :options="filterOptions"
+      :active="faction.value.value"
+      :count="shown.length"
+      :count-label="countLabel"
+      :all-label="t('characters.everyone')"
+      :search="search"
+      :search-label="t('characters.searchLabel')"
+      :search-placeholder="t('characters.searchPlaceholder')"
+      @toggle="faction.toggle($event)"
+      @clear="faction.set(null)"
+      @update:search="search = $event"
+    />
+
+    <p class="cast__canon">{{ t('characters.canonNote') }}</p>
+
+    <div v-if="shown.length" class="l-grid l-grid--tiles">
+      <EntityTile
+        v-for="character in shown"
+        :key="character.id"
+        :to="to('character', { characterId: character.id }, { query: tileQuery })"
+        :art="character.cardArt"
+        :badge="badge(character)"
+        :epithet="character.epithet"
+        :name="character.name"
+        :tags="factionTags(character)"
+        :placeholder="t('character.cardArtPlaceholder')"
       />
-
-      <p class="cast__canon">{{ t('characters.canonNote') }}</p>
-
-      <div v-if="shown.length" class="l-grid l-grid--tiles cast__gap">
-        <EntityTile
-          v-for="character in shown"
-          :key="character.id"
-          :to="to('character', { characterId: character.id }, { query: tileQuery })"
-          :art="character.cardArt"
-          :badge="badge(character)"
-          :epithet="character.epithet"
-          :name="character.name"
-          :tags="tags(character)"
-          :placeholder="t('character.cardArtPlaceholder')"
-        />
-      </div>
-
-      <EmptyState
-        v-else
-        class="cast__gap"
-        variant="noResults"
-        :kicker="t('filters.noResults')"
-        :title="t('characters.emptyTitle')"
-        :body="t('characters.emptyBody')"
-        :action-label="t('filters.clear')"
-        @action="clearAll()"
-      />
-
-      <BandFoot :to="to('universal')" :label="t('characters.exitUniversal')" />
     </div>
-  </section>
+
+    <EmptyState
+      v-else
+      variant="noResults"
+      :kicker="t('filters.noResults')"
+      :title="t('characters.emptyTitle')"
+      :body="t('characters.emptyBody')"
+      :action-label="t('filters.clear')"
+      @action="clearAll()"
+    />
+
+    <BandFoot :to="to('universal')" :label="t('characters.exitUniversal')" />
+  </SectionBand>
 </template>
 
 <style>
-.cast__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
-}
-
 .cast__lede {
   margin-top: var(--space-5);
-  max-width: 60ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .cast__canon {
@@ -193,9 +163,5 @@ function clearAll(): void {
   font-size: var(--size-m);
   line-height: 1.6;
   color: var(--color-ink-faint);
-}
-
-.cast__gap {
-  margin-top: var(--space-6);
 }
 </style>

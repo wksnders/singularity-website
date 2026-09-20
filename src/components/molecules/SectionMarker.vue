@@ -1,23 +1,40 @@
 <script setup lang="ts">
-// Section ids are public URLs; never rename them.
+
+import { computed } from 'vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import { useSectionPosition } from '@/composables/useSections';
+import { pad } from '@/site/format';
 
-defineProps<{
-  id: string;
-  index: number;
-  total: number;
+const props = defineProps<{
+  /** The section this marks. Looked up in the page's provided section list for the ordinal; never rendered as an `id`, because the <section> already carries it. */
+  sectionId?: string;
   heading: string;
   color?: string | null;
+
+  /* LEGACY, for call sites not yet converted: `id` is read as `sectionId`, and `index`/`total` are used only when the page provides no section list. `id` must stay DECLARED until the last caller stops passing it — undeclared, it falls through onto the root and duplicates the section's public anchor. */
+  id?: string;
+  index?: number;
+  total?: number;
 }>();
 
-const pad = (n: number) => String(n).padStart(2, '0');
+const found = useSectionPosition(() => props.sectionId ?? props.id);
+
+const position = computed(
+  () =>
+    found.value ??
+    (props.index !== undefined && props.total !== undefined
+      ? { index: props.index, total: props.total }
+      : null),
+);
 </script>
 
 <template>
   <div class="c-marker">
     <span class="c-marker__rule" aria-hidden="true" />
-    <MonoLabel tone="faint" class="c-marker__count">{{ pad(index) }} / {{ pad(total) }}</MonoLabel>
+    <MonoLabel v-if="position" tone="faint" class="c-marker__count">
+      {{ pad(position.index) }} / {{ pad(position.total) }}
+    </MonoLabel>
     <div class="c-marker__head">
       <FactionDot v-if="color" :color="color" :size="12" />
       <h2 class="c-marker__heading">{{ heading }}</h2>

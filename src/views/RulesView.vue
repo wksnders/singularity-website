@@ -1,10 +1,12 @@
 <script setup lang="ts">
 
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
+import FilterChip from '@/components/atoms/FilterChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import JumpChip from '@/components/atoms/JumpChip.vue';
+import TextField from '@/components/atoms/TextField.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
@@ -12,12 +14,16 @@ import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import RuleEntryView from '@/components/molecules/RuleEntry.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
+import SearchField from '@/components/molecules/SearchField.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { t } from '@/content';
 import { useChrome } from '@/composables/useChrome';
 import { useCardParam } from '@/composables/useCardParam';
+import { useCopy } from '@/composables/useCopy';
 import { useQueryFilter } from '@/composables/useQueryFilter';
+import { useSearchQuery } from '@/composables/useSearchQuery';
+import { useSlashFocus } from '@/composables/useSlashFocus';
 import { cardBySlug } from '@/site/cards';
 import { outbound, to } from '@/site/links';
 import {
@@ -33,34 +39,21 @@ import type { RuleClass } from '@/site/rules';
 import type { SectionEntry } from '@/site/sections';
 
 const route = useRoute();
-const searchId = useId();
 const { navHidden } = useChrome();
 
-const query = useQueryFilter('q');
+const { draft, searching, search, clear, field: searchField } = useSearchQuery('q');
+
+const query = computed({ get: () => draft.value, set: search });
+
+/* useSearchQuery focuses `field` after a clear, and the / shortcut needs it too: both want the <input> inside SearchField. */
+const searchBox = ref<InstanceType<typeof SearchField> | null>(null);
+watchEffect(() => (searchField.value = searchBox.value?.input ?? null));
 const cls = useQueryFilter('class');
 
 /* A cited card opens THE CARD, never a second transcription. Closing returns to the anchored rule with search and class filter intact, because `useCardParam` patches the query rather than replacing it. */
 const card = useCardParam({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
 const activeCard = computed(() => (card.slug.value ? cardBySlug(card.slug.value) : null));
-const searchField = ref<HTMLInputElement | null>(null);
-const stickyField = ref<HTMLInputElement | null>(null);
-
-/* Bound to a local draft ref, not the query param: writing the URL on every keystroke waits on router.replace and jumps the caret. */
-const draft = ref(query.value.value ?? '');
-watch(
-  () => query.value.value,
-  (next) => {
-    const incoming = next ?? '';
-    if (incoming !== draft.value.trim()) draft.value = incoming;
-  },
-);
-
-function search(next: string): void {
-  draft.value = next;
-  query.set(next.trim() ? next.trim() : null);
-}
-
-const searching = computed(() => Boolean(draft.value.trim()));
+const stickyField = ref<InstanceType<typeof TextField> | null>(null);
 
 /* Matching reads only the haystacks, which no term changes, so the index is built once and the displayed pass is built from the widening it decides — the other way round would be circular. */
 const index = rulesEntries();
@@ -151,23 +144,15 @@ function jump(id: string): void {
   target.focus({ preventScroll: true });
 }
 
-function onKeydown(event: KeyboardEvent): void {
-  /* Modified presses belong to the browser and to assistive tech. */
-  if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
-  /* The search field is inside the inert subtree while a card is open, so focusing it would swallow the keystroke — or, without `inert` support, type behind the dialog. */
-  if (card.open.value) return;
-  const target = event.target as HTMLElement | null;
-  if (target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable)) {
-    return;
-  }
-  event.preventDefault();
-  (navHidden.value ? stickyField.value : searchField.value)?.focus();
-}
+/* Whichever field is on screen: the sticky one replaces the hero's once the nav retracts. */
+useSlashFocus(() => (navHidden.value ? stickyField.value?.el : searchField.value), {
+  enabled: () => !card.open.value,
+});
 
+/* Clear here means the class filter as well as the text. */
 function clearSearch(): void {
-  search('');
+  clear();
   cls.set(null);
-  searchField.value?.focus();
 }
 
 /* A pasted #<id> clears an active search and scrolls explicitly: the router's scrollBehavior runs before this lazy route has rendered the entry, and focus() will not scroll a tabindex="-1" article. */
@@ -182,30 +167,16 @@ async function applyHash(): Promise<void> {
   jump(id);
 }
 
-const copied = ref<string | null>(null);
-let copyTimer: number | undefined;
+const { copied, copy } = useCopy();
 
-async function copyLink(id: string): Promise<void> {
+function copyLink(id: string): void {
   const url = `${window.location.origin}${window.location.pathname}#${id}`;
-  try {
-    await navigator.clipboard.writeText(url);
-  } catch {
-    window.location.hash = id;
-  }
-  copied.value = id;
-  window.clearTimeout(copyTimer);
-  copyTimer = window.setTimeout(() => (copied.value = null), 1600);
+  void copy(url, id, () => (window.location.hash = id));
 }
 
 onMounted(() => {
   assertRulesShape(all.value);
-  window.addEventListener('keydown', onKeydown);
   void applyHash();
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', onKeydown);
-  window.clearTimeout(copyTimer);
 });
 
 watch(() => route.hash, applyHash);
@@ -216,7 +187,7 @@ watch(() => route.hash, applyHash);
     <Breadcrumbs
       :crumbs="[{ label: t('ia.learn.label'), to: to('learn') }, { label: t('rules.hero.crumb') }]"
     />
-    <h1 class="rules__title">{{ t('rules.hero.title') }}</h1>
+    <h1 class="l-page-title">{{ t('rules.hero.title') }}</h1>
 
     <p class="rules__currency">
       <MonoLabel tone="accent">{{ t('rules.current') }}</MonoLabel>
@@ -254,47 +225,34 @@ watch(() => route.hash, applyHash);
     </div>
 
     <div class="rules__search">
-      <label class="l-sr-only" :for="searchId">{{ t('rules.search.label') }}</label>
-      <div class="rules__field">
-        <input
-          :id="searchId"
-          ref="searchField"
-          class="rules__input"
-          type="search"
-          autocomplete="off"
-          :value="draft"
-          :placeholder="t('rules.search.placeholder')"
-          @input="search(($event.target as HTMLInputElement).value)"
-        />
-        <button v-if="searching || activeClass" type="button" class="rules__clear" @click="clearSearch()">
-          {{ t('rules.search.clear') }}
-        </button>
-      </div>
+      <SearchField
+        ref="searchBox"
+        v-model="query"
+        :label="t('rules.search.label')"
+        :placeholder="t('rules.search.placeholder')"
+        :clear-label="t('rules.search.clear')"
+        :can-clear="searching || Boolean(activeClass)"
+        @clear="clearSearch()"
+      />
       <MonoLabel tone="faint" aria-live="polite">{{ countLabel }}</MonoLabel>
     </div>
 
-    <div class="rules__filter">
-      <button
-        type="button"
-        class="rules__cls"
-        :aria-pressed="!activeClass"
-        @click="cls.set(null)"
-      >
+    <div class="l-row rules__filter">
+      <FilterChip :active="!activeClass" @toggle="cls.set(null)">
         {{ t('rules.classes.all') }}
-      </button>
-      <button
+      </FilterChip>
+      <FilterChip
         v-for="row in classes"
         :key="row.name"
-        type="button"
-        class="rules__cls"
-        :aria-pressed="activeClass === row.name"
-        @click="cls.set(activeClass === row.name ? null : row.name)"
+        :active="activeClass === row.name"
+        :count="row.count"
+        @toggle="cls.toggle(row.name)"
       >
-        {{ t(`rules.classes.${row.name}`) }} <span class="rules__cls-n">{{ row.count }}</span>
-      </button>
+        {{ t(`rules.classes.${row.name}`) }}
+      </FilterChip>
     </div>
 
-    <nav id="on-this-page" class="rules__az" :aria-label="t('rules.az')">
+    <nav id="on-this-page" class="l-row rules__az" :aria-label="t('rules.az')">
       <JumpChip
         v-for="row in alphabet"
         :key="row.letter"
@@ -310,15 +268,14 @@ watch(() => route.hash, applyHash);
  
   <div v-if="navHidden" class="rules__sticky">
     <div class="l-wrap rules__sticky-row">
-      <input
+      <TextField
         ref="stickyField"
+        v-model="query"
         class="rules__sticky-input"
         type="search"
         autocomplete="off"
-        :value="draft"
         :aria-label="t('rules.search.label')"
         :placeholder="t('rules.search.placeholder')"
-        @input="search(($event.target as HTMLInputElement).value)"
       />
       <MonoLabel tone="faint">{{ countLabel }}</MonoLabel>
       <div v-if="total > 1" class="rules__step">
@@ -330,12 +287,15 @@ watch(() => route.hash, applyHash);
 
   <section v-if="card.missing.value" class="l-band">
     <div class="l-wrap l-wrap--reading">
-      <MissingCardNote :slug="card.missing.value" @dismiss="card.dismissMissing()" />
+      <MissingCardNote
+        class="rules__missing"
+        :slug="card.missing.value"
+        @dismiss="card.dismissMissing()"
+      />
     </div>
   </section>
 
-  <!-- Keyed so a changed section list remounts the rail, which observes its sections only on mount. -->
-  <ScrollSpyRail :key="sections.map((s) => s.key).join(',')" :sections="sections" />
+  <ScrollSpyRail :sections="sections" />
 
   <section v-if="noResults" class="l-band">
     <div class="l-wrap"> 
@@ -396,11 +356,6 @@ watch(() => route.hash, applyHash);
 </template>
 
 <style>
-.rules__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
-}
-
 .rules__currency {
   margin-top: var(--space-4);
   display: flex;
@@ -444,78 +399,12 @@ watch(() => route.hash, applyHash);
   gap: var(--space-3);
 }
 
-.rules__field {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  align-items: center;
-}
-
-.rules__input {
-  width: 100%;
-  max-width: 420px;
-  min-height: 48px;
-  padding-inline: var(--space-4);
-  background: var(--color-bg);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink);
-  font-size: var(--size-field);
-}
-
-.rules__clear {
-  min-height: 44px;
-  padding-inline: var(--space-3);
-  border: 0;
-  background: none;
-  color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.rules__clear:hover {
-  color: var(--color-accent-text);
-}
-
 .rules__filter {
   margin-top: var(--space-5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.rules__cls {
-  min-height: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink-soft);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.rules__cls[aria-pressed='true'] {
-  background: var(--color-accent-wash);
-  border-color: var(--color-accent);
-  color: var(--color-ink);
-}
-
-.rules__cls-n {
-  opacity: 0.6;
 }
 
 .rules__az {
   margin-top: var(--space-5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
 }
 
 .rules__az-chip {
@@ -527,12 +416,16 @@ watch(() => route.hash, applyHash);
   opacity: 0.35;
 }
 
+.rules__missing {
+  margin-top: var(--space-4);
+}
+
 .rules__sticky {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: var(--z-sticky);
   background: rgba(var(--rgb-bg), 0.96);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-line);
@@ -545,16 +438,13 @@ watch(() => route.hash, applyHash);
   min-height: var(--nav-height);
 }
 
-.rules__sticky-input {
+/* Two classes, so this holds whichever of the two components' CSS loads first. Shorter than the hero field, and on surface, to sit inside the bar. */
+.c-field.rules__sticky-input {
   flex: 1 1 auto;
-  min-width: 0;
+  width: auto;
   min-height: 40px;
   padding-inline: var(--space-3);
   background: var(--color-surface);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink);
-  font-size: var(--size-field);
 }
 
 .rules__step {

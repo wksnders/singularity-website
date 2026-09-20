@@ -35,12 +35,12 @@ defineProps<{
   align-items: center;
   gap: var(--space-2);
   min-height: 44px;
-  padding-inline: 12px;
+  padding-inline: var(--space-3);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
   white-space: nowrap;

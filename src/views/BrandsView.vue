@@ -8,7 +8,7 @@ import BrandTile from '@/components/molecules/BrandTile.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { getDoc, metaString, t } from '@/content';
 import {
@@ -21,6 +21,7 @@ import {
 import { brandOneLiner, brandRowNote } from '@/site/brands';
 import { to } from '@/site/links';
 import type { Brand, Faction } from '@/data/types';
+import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
 
 /* A public anchor, like the faction ids the other bands use. */
@@ -40,6 +41,8 @@ const sections = computed<SectionEntry[]>(() => [
   })),
   { id: UNIVERSAL, label: t('brands.universal.title') },
 ]);
+
+provideSections(sections);
 
 /* Every figure derives; the roster is data. */
 const factLine = computed(() => {
@@ -70,99 +73,78 @@ const conditionOf = (brand: Brand): string => {
         { label: t('brands.hero.crumb') },
       ]"
     />
-    <h1 class="brands__title">{{ t('brands.hero.title') }}</h1>
-    <p class="brands__lede">{{ t('brands.hero.lede') }}</p>
+    <h1 class="l-page-title">{{ t('brands.hero.title') }}</h1>
+    <p class="l-lede l-lede--wide brands__lede">{{ t('brands.hero.lede') }}</p>
     <MonoLabel tone="faint" class="brands__stat">{{ factLine }}</MonoLabel>
     <SectionIndex :sections="sections" />
   </SecondaryHero>
 
   <ScrollSpyRail :sections="sections" />
 
-  <section
+  <SectionBand
     v-for="(faction, i) in factions"
     :id="faction.id"
     :key="faction.id"
-    tabindex="-1"
-    class="l-band brands__band"
+    class="brands__band"
     :class="{ 'l-band--alt': i % 2 === 1 }"
     :style="{ '--faction': faction.color, '--faction-text': faction.colorText }"
+    :heading="faction.name"
+    :color="faction.color"
   >
-    <div class="l-wrap">
-      <SectionMarker
-        :id="faction.id"
-        :index="i + 1"
-        :total="sections.length"
-        :heading="faction.name"
-        :color="faction.color"
-      />
-      <MonoLabel tone="faint">
-        {{ t('brands.count', { count: brandsOfFaction(faction.id).length }) }}
-      </MonoLabel>
-      <p class="brands__tagline">{{ faction.tagline }}</p>
+    <MonoLabel tone="faint">
+      {{ t('brands.count', { count: brandsOfFaction(faction.id).length }) }}
+    </MonoLabel>
+    <p class="brands__tagline">{{ faction.tagline }}</p>
 
-      <div class="brands__grid">
-        <!-- `brand-<id>` is a public anchor: News and errata deep-link one row. -->
-        <BrandTile
-          v-for="brand in brandsOfFaction(faction.id)"
-          :id="`brand-${brand.id}`"
-          :key="brand.id"
-          :brand="brand"
-          :faction="faction"
-          :descriptor="brandOneLiner(brand)"
-          :note="brandRowNote(brand)"
-        />
-      </div>
-
-      <BandFoot
-        :to="to('faction', { factionId: faction.id })"
-        :label="t('brands.exitFaction', { name: faction.name })"
+    <div class="brands__grid">
+      <!-- `brand-<id>` is a public anchor: News and errata deep-link one row. -->
+      <BrandTile
+        v-for="brand in brandsOfFaction(faction.id)"
+        :id="`brand-${brand.id}`"
+        :key="brand.id"
+        :brand="brand"
+        :faction="faction"
+        :descriptor="brandOneLiner(brand)"
+        :note="brandRowNote(brand)"
       />
     </div>
-  </section>
 
-  <section :id="UNIVERSAL" tabindex="-1" class="l-band brands__band brands__band--neutral">
-    <div class="l-wrap">
-      <SectionMarker
-        :id="UNIVERSAL"
-        :index="sections.length"
-        :total="sections.length"
-        :heading="t('brands.universal.title')"
+    <BandFoot
+      :to="to('faction', { factionId: faction.id })"
+      :label="t('brands.exitFaction', { name: faction.name })"
+    />
+  </SectionBand>
+
+  <SectionBand
+    :id="UNIVERSAL"
+    class="brands__band brands__band--neutral"
+    :heading="t('brands.universal.title')"
+  >
+    <MonoLabel tone="faint">{{ t('brands.count', { count: universal.length }) }}</MonoLabel>
+
+    <div class="brands__grid">
+      <BrandTile
+        v-for="brand in universal"
+        :id="`brand-${brand.id}`"
+        :key="brand.id"
+        :brand="brand"
+        :descriptor="brandOneLiner(brand)"
+        :condition="conditionOf(brand)"
+        :note="brandRowNote(brand)"
       />
-      <MonoLabel tone="faint">{{ t('brands.count', { count: universal.length }) }}</MonoLabel>
-
-      <div class="brands__grid">
-        <BrandTile
-          v-for="brand in universal"
-          :id="`brand-${brand.id}`"
-          :key="brand.id"
-          :brand="brand"
-          :descriptor="brandOneLiner(brand)"
-          :condition="conditionOf(brand)"
-          :note="brandRowNote(brand)"
-        />
-      </div>
-
-      <BandFoot :to="to('universal')" :label="t('brands.exitUniversal')">
-        <UiButton variant="quiet" :to="to('cards', {}, { query: { faction: 'any' } })">
-          {{ t('brands.exitAnyFaction') }}
-        </UiButton>
-      </BandFoot>
     </div>
-  </section>
+
+    <BandFoot :to="to('universal')" :label="t('brands.exitUniversal')">
+      <UiButton variant="quiet" :to="to('cards', {}, { query: { faction: 'any' } })">
+        {{ t('brands.exitAnyFaction') }}
+      </UiButton>
+    </BandFoot>
+  </SectionBand>
 </template>
 
 <style>
-.brands__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
-}
-
 .brands__lede {
   margin-top: var(--space-5);
-  max-width: 62ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .brands__stat {
@@ -186,7 +168,6 @@ const conditionOf = (brand: Brand): string => {
 }
 
 .brands__grid {
-  margin-top: var(--space-6);
   display: grid;
   gap: var(--space-4);
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));

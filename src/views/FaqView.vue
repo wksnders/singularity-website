@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* Each question id is the public URL #faq-<id>: renaming an id in content/<locale>/faq.json breaks every link already pasted. */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -9,11 +9,15 @@ import BandFoot from '@/components/molecules/BandFoot.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
+import SearchField from '@/components/molecules/SearchField.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { useQueryFilter } from '@/composables/useQueryFilter';
+import { useCopy } from '@/composables/useCopy';
+import { useSearchQuery } from '@/composables/useSearchQuery';
+import { provideSections } from '@/composables/useSections';
+import { useSlashFocus } from '@/composables/useSlashFocus';
 import { assertFaqShape, faqEntries, faqGroups } from '@/site/faq';
 import { markHtml, matcher, segments } from '@/site/highlight';
 import { resolveLink, to } from '@/site/links';
@@ -21,31 +25,17 @@ import type { FaqEntry } from '@/site/faq';
 import type { SectionEntry } from '@/site/sections';
 
 const route = useRoute();
-const searchId = useId();
 
-const query = useQueryFilter('q');
+const { draft, searching, search, clear: clearSearch, field: searchField } = useSearchQuery('q');
+
+const query = computed({ get: () => draft.value, set: search });
+
+/* useSearchQuery focuses `field` after a clear, and the / shortcut needs it too: both want the <input> inside SearchField. */
+const searchBox = ref<InstanceType<typeof SearchField> | null>(null);
+watchEffect(() => (searchField.value = searchBox.value?.input ?? null));
 
 const entries = computed(() => faqEntries());
-const searchField = ref<HTMLInputElement | null>(null);
-
-/* The field binds to a local ref, not to the query param it writes: routing every keystroke through router.replace makes the caret jump. */
-const draft = ref(query.value.value ?? '');
-watch(
-  () => query.value.value,
-  (next) => {
-
-    const incoming = next ?? '';
-    if (incoming !== draft.value.trim()) draft.value = incoming;
-  },
-);
-
-function search(next: string): void {
-  draft.value = next;
-  query.set(next.trim() ? next.trim() : null);
-}
-
 const terms = computed(() => draft.value.trim().toLowerCase().split(/\s+/).filter(Boolean));
-const searching = computed(() => terms.value.length > 0);
 const re = computed(() => matcher(terms.value));
 
 const matches = (entry: FaqEntry) => terms.value.every((word) => entry.haystack.includes(word));
@@ -53,10 +43,9 @@ const matches = (entry: FaqEntry) => terms.value.every((word) => entry.haystack.
 /* t() answers a miss with the key itself, so a group with no `standfirst` key in content would print the raw key. */
 const bands = computed(() =>
   faqGroups
-    .map((group, i) => ({
+    .map((group) => ({
       id: group.id,
       exit: resolveLink(group.exit),
-      index: i + 1,
       label: t(`faq.groups.${group.id}.label`),
       short: t(`faq.groups.${group.id}.short`),
 
@@ -69,6 +58,9 @@ const bands = computed(() =>
 
 const total = computed(() => bands.value.reduce((n, band) => n + band.items.length, 0));
 const noResults = computed(() => searching.value && total.value === 0);
+
+/* The FULL list, not `sections`: a band's ordinal stays absolute while a search hides other groups. */
+provideSections(() => faqGroups.map(({ id }) => ({ id })));
 
 const sections = computed<SectionEntry[]>(() =>
   bands.value.map((band) => ({
@@ -144,30 +136,12 @@ async function applyHash(): Promise<void> {
   document.getElementById(`faq-${id}`)?.focus();
 }
 
-function onKeydown(event: KeyboardEvent): void {
-  /* Never swallow modified presses: Ctrl+/ and Cmd+/ belong to the browser and to assistive tech. */
-  if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
-  const target = event.target as HTMLElement | null;
-  if (target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable)) {
-    return;
-  }
-  event.preventDefault();
-  searchField.value?.focus();
-}
-
-/** Clearing removes the button that was clicked, so focus has to be placed. */
-function clearSearch(): void {
-  search('');
-  searchField.value?.focus();
-}
+useSlashFocus(() => searchField.value);
 
 onMounted(() => {
   assertFaqShape(entries.value);
-  window.addEventListener('keydown', onKeydown);
   void applyHash();
 });
-
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
 watch(() => route.hash, applyHash);
 
@@ -182,22 +156,12 @@ function matchNote(entry: FaqEntry): string {
   return `${t('faq.matchedOn')}: ${shown.join(', ')}`;
 }
 
-const copied = ref<string | null>(null);
-let copyTimer: number | undefined;
+const { copied, copy } = useCopy();
 
-async function copyQuestionLink(entry: FaqEntry): Promise<void> {
+function copyQuestionLink(entry: FaqEntry): void {
   const url = `${window.location.origin}${window.location.pathname}#${entry.anchor}`;
-  try {
-    await navigator.clipboard.writeText(url);
-  } catch {
-    window.location.hash = entry.anchor;
-  }
-  copied.value = entry.id;
-  window.clearTimeout(copyTimer);
-  copyTimer = window.setTimeout(() => (copied.value = null), 1600);
+  void copy(url, entry.id, () => (window.location.hash = entry.anchor));
 }
-
-onBeforeUnmount(() => window.clearTimeout(copyTimer));
 
 const routing = [
   { key: 'order', to: to('community', {}, { hash: '#support' }) },
@@ -211,37 +175,30 @@ const routing = [
     <Breadcrumbs
       :crumbs="[{ label: t('ia.learn.label'), to: to('learn') }, { label: t('faq.hero.crumb') }]"
     />
-    <h1 class="faq__title">{{ t('faq.hero.title') }}</h1>
-    <p class="faq__lede">{{ t('faq.hero.lede') }}</p>
+    <h1 class="l-page-title">{{ t('faq.hero.title') }}</h1>
+    <p class="l-lede faq__lede">{{ t('faq.hero.lede') }}</p>
 
     <div class="faq__search">
-      <label class="l-sr-only" :for="searchId">{{ t('faq.search.label') }}</label>
-      <div class="faq__field">
-        <input
-          :id="searchId"
-          ref="searchField"
-          class="faq__input"
-          type="search"
-          autocomplete="off"
-          :value="draft"
-          :placeholder="t('faq.search.placeholder')"
-          @input="search(($event.target as HTMLInputElement).value)"
-        />
-        <button v-if="searching" type="button" class="faq__clear" @click="clearSearch()">
-          {{ t('faq.search.clear') }}
-        </button>
-      </div>
+      <SearchField
+        ref="searchBox"
+        v-model="query"
+        :label="t('faq.search.label')"
+        :placeholder="t('faq.search.placeholder')"
+        :clear-label="t('faq.search.clear')"
+        :can-clear="searching"
+        @clear="clearSearch()"
+      />
       <div class="faq__meter">
         <MonoLabel tone="faint" aria-live="polite">{{ countLabel }}</MonoLabel>
-        <button
+        <UiButton
           v-if="!searching"
-          type="button"
+          variant="text"
           class="faq__expand"
           :aria-pressed="expandAll"
           @click="toggleAll()"
         >
           {{ expandAll ? t('faq.collapseAll') : t('faq.expandAll') }}
-        </button>
+        </UiButton>
       </div>
     </div>
 
@@ -260,8 +217,7 @@ const routing = [
     </div>
   </SecondaryHero>
 
-  <!-- Keyed to remount: ScrollSpyRail observes its sections once on mount, so a changed list leaves it spying on stale ids. -->
-  <ScrollSpyRail :key="sections.map((s) => s.id).join(',')" :sections="sections" />
+  <ScrollSpyRail :sections="sections" />
 
   <section v-if="noResults" class="l-band">
     <div class="l-wrap">
@@ -288,74 +244,65 @@ const routing = [
     </div>
   </section>
 
-  <section
+  <SectionBand
     v-for="(band, i) in bands"
     :id="band.id"
     :key="band.id"
-    tabindex="-1"
-    class="l-band"
     :class="{ 'l-band--alt': i % 2 === 1, 'l-band--line-top': i > 0 }"
+    :heading="band.label"
   >
-    <div class="l-wrap">
-      <SectionMarker
-        :id="band.id"
-        :index="band.index"
-        :total="faqGroups.length"
-        :heading="band.label"
-      />
-      <div class="faq__bandhead">
-        <MonoLabel tone="faint">{{ bandCount(band.items.length) }}</MonoLabel>
-        <p v-if="band.standfirst && !searching" class="faq__standfirst">{{ band.standfirst }}</p>
-      </div>
-
-      <div class="faq__list">
-        <details
-          v-for="entry in band.items"
-          :id="entry.anchor"
-          :key="entry.id"
-          class="faq__item"
-          tabindex="-1"
-          :open="isOpen(entry)"
-          @toggle="onToggle(entry, $event)"
-        >
-          <!-- A summary takes phrasing content or one heading, not both, so the chevron is a ::after and not a child element. -->
-          <summary class="faq__summary">
-            <h3 class="faq__question">
-              <template v-for="part in question(entry)" :key="part.key"
-                ><mark v-if="part.hit" class="faq__hit">{{ part.text }}</mark
-                ><template v-else>{{ part.text }}</template></template
-              >
-            </h3>
-          </summary>
-
-          <div class="faq__answer">
-            <!-- v-html is safe only because the source is repo content plus this page's own <mark>: never user input. -->
-            <div class="c-prose faq__prose" v-html="answer(entry)" />
-
-            <MonoLabel v-if="matchNote(entry)" tone="faint" class="faq__note">
-              {{ matchNote(entry) }}
-            </MonoLabel>
-
-            <div class="faq__actions">
-              <UiButton v-if="entry.link" variant="quiet" :to="entry.link.to" :link="entry.link.link">
-                {{ entry.link.label }}
-              </UiButton>
-              <button
-                type="button"
-                class="faq__copy"
-                :aria-label="`${t('faq.copyQuestion')}: ${entry.question}`"
-                @click="copyQuestionLink(entry)"
-              >
-                {{ copied === entry.id ? t('wayfinding.copied') : t('faq.copyLabel') }}
-              </button>
-            </div>
-          </div>
-        </details>
-      </div>
-
-      <BandFoot :link="band.exit" :label="band.exitLabel" />
+    <div class="faq__bandhead">
+      <MonoLabel tone="faint">{{ bandCount(band.items.length) }}</MonoLabel>
+      <p v-if="band.standfirst && !searching" class="l-lede faq__standfirst">{{ band.standfirst }}</p>
     </div>
-  </section>
+
+    <div class="faq__list">
+      <details
+        v-for="entry in band.items"
+        :id="entry.anchor"
+        :key="entry.id"
+        class="faq__item"
+        tabindex="-1"
+        :open="isOpen(entry)"
+        @toggle="onToggle(entry, $event)"
+      >
+        <!-- A summary takes phrasing content or one heading, not both, so the chevron is a ::after and not a child element. -->
+        <summary class="faq__summary">
+          <h3 class="faq__question">
+            <template v-for="part in question(entry)" :key="part.key"
+              ><mark v-if="part.hit" class="faq__hit">{{ part.text }}</mark
+              ><template v-else>{{ part.text }}</template></template
+            >
+          </h3>
+        </summary>
+
+        <div class="faq__answer">
+          <!-- v-html is safe only because the source is repo content plus this page's own <mark>: never user input. -->
+          <div class="c-prose faq__prose" v-html="answer(entry)" />
+
+          <MonoLabel v-if="matchNote(entry)" tone="faint" class="faq__note">
+            {{ matchNote(entry) }}
+          </MonoLabel>
+
+          <div class="faq__actions">
+            <UiButton v-if="entry.link" variant="quiet" :to="entry.link.to" :link="entry.link.link">
+              {{ entry.link.label }}
+            </UiButton>
+            <UiButton
+              variant="text"
+              class="faq__copy"
+              :aria-label="`${t('faq.copyQuestion')}: ${entry.question}`"
+              @click="copyQuestionLink(entry)"
+            >
+              {{ copied === entry.id ? t('wayfinding.copied') : t('faq.copyLabel') }}
+            </UiButton>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <BandFoot :link="band.exit" :label="band.exitLabel" />
+  </SectionBand>
 
   <section class="l-band l-band--tight l-band--line-top">
     <div class="l-wrap l-wrap--reading faq__stuck">
@@ -374,42 +321,14 @@ const routing = [
 </template>
 
 <style>
-.faq__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
-}
-
 .faq__lede {
   margin-top: var(--space-5);
-  max-width: 60ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .faq__search {
   margin-top: var(--space-8);
   display: grid;
   gap: var(--space-3);
-}
-
-.faq__field {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  align-items: center;
-}
-
-.faq__input {
-  width: 100%;
-  max-width: 420px;
-  min-height: 48px;
-  padding-inline: var(--space-4);
-  background: var(--color-bg);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink);
-  font-size: var(--size-field);
 }
 
 .faq__meter {
@@ -420,25 +339,10 @@ const routing = [
   justify-content: space-between;
 }
 
-.faq__clear,
-.faq__expand,
-.faq__copy {
-  min-height: 44px;
+/* Two classes, so this holds whichever of the two components' CSS loads first. */
+.c-btn--text.faq__expand,
+.c-btn--text.faq__copy {
   padding-inline: var(--space-3);
-  border: 0;
-  background: none;
-  color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono);
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.faq__clear:hover,
-.faq__expand:hover,
-.faq__copy:hover {
-  color: var(--color-accent-text);
 }
 
 .faq__routing {
@@ -472,10 +376,6 @@ const routing = [
 
 .faq__standfirst {
   margin-top: var(--space-3);
-  max-width: 60ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .faq__list {

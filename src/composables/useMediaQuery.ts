@@ -17,3 +17,7 @@ export function useMediaQuery(query: string) {
 
   return readonly(matches);
 }
+
+/** Read once, at the moment of a scroll: nothing re-renders when it changes. A template that must follow the setting uses `useMediaQuery` instead. */
+export const prefersReducedMotion = (): boolean =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;

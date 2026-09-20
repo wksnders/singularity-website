@@ -2,6 +2,8 @@
 // Chips must come from data, and this bar is deliberately not sticky: the fixed site header already owns the pinned slot.
 import { computed, useId } from 'vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
+import MonoLabel from '@/components/atoms/MonoLabel.vue';
+import TextField from '@/components/atoms/TextField.vue';
 import { t } from '@/content';
 import type { FilterOption } from '@/site/filters';
 
@@ -46,20 +48,20 @@ const activeLabel = computed(
 
     <div v-if="searchLabel" class="c-filters__search">
       <label class="l-sr-only" :for="searchId">{{ searchLabel }}</label>
-      <input
+      <TextField
         :id="searchId"
         class="c-filters__input"
         type="search"
-        :value="search"
+        :model-value="search ?? ''"
         :placeholder="searchPlaceholder"
-        @input="$emit('update:search', ($event.target as HTMLInputElement).value)"
+        @update:model-value="$emit('update:search', $event)"
       />
     </div>
 
-    <p class="c-filters__count" aria-live="polite">
+    <MonoLabel tone="faint" aria-live="polite">
       {{ count }} {{ countLabel
       }}<template v-if="activeLabel"> {{ t('filters.in') }} {{ activeLabel }}</template>
-    </p>
+    </MonoLabel>
   </div>
 </template>
 
@@ -76,22 +78,6 @@ const activeLabel = computed(
 }
 
 .c-filters__input {
-  width: 100%;
   max-width: 360px;
-  min-height: 48px;
-  padding-inline: var(--space-4);
-  background: var(--color-bg);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink);
-  font-size: var(--size-field);
-}
-
-.c-filters__count {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
 }
 </style>

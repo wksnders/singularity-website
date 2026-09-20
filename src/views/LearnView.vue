@@ -9,12 +9,13 @@ import ContentCard from '@/components/molecules/ContentCard.vue';
 import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionBand from '@/components/molecules/SectionBand.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
 import { modes, TRY_TIERS, tryRoutesOfTier, videos } from '@/data/universe';
 import { outbound, soon, to } from '@/site/links';
+import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
 import type { TryTier } from '@/data/types';
 
@@ -25,6 +26,8 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'rules', label: t('learn.sections.rules') },
   { id: 'try', label: t('learn.sections.try') },
 ]);
+
+provideSections(sections);
 
 const tracks = ['new', 'veteran', 'coop'] as const;
 
@@ -44,148 +47,123 @@ const rulesHub = [
 
 <template>
   <SecondaryHero glow="85% 70% at 40% 0%" :note="t('learn.hero.pending')">
-    <h1 class="learn__title">{{ t('learn.hero.title') }}</h1>
-    <p class="learn__lede">{{ t('learn.hero.lede') }}</p>
+    <h1 class="l-page-title">{{ t('learn.hero.title') }}</h1>
+    <p class="l-lede l-lede--wide learn__lede">{{ t('learn.hero.lede') }}</p>
     <SectionIndex :sections="sections" />
   </SecondaryHero>
 
   <ScrollSpyRail :sections="sections" />
 
-  <section id="paths" tabindex="-1" class="l-band">
-    <div class="l-wrap">
-      <SectionMarker id="paths" :index="1" :total="5" :heading="t('learn.paths.heading')" />
-      <div class="l-grid l-grid--wide learn__gap">
-        <div
-          v-for="track in tracks"
-          :id="`path-${track}`"
-          :key="track"
-          tabindex="-1"
-          class="learn__track"
-        >
-          <ContentCard
-            :to="soon('#learn-track')"
-            :current="currentTrack === track"
-            :kicker="t(`learn.tracks.${track}.kicker`)"
-            :title="t(`learn.tracks.${track}.title`)"
-            :body="t(`learn.tracks.${track}.body`)"
-          />
-        </div>
-      </div>
-      <BandFoot :to="{ hash: '#modes' }" :label="t('learn.paths.exit')" />
-    </div>
-  </section>
-
-  <section id="modes" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="modes" :index="2" :total="5" :heading="t('learn.sections.modes')" />
-      <div class="l-grid learn__gap">
-        <div
-          v-for="mode in modes"
-          :key="mode.id"
-          class="learn__mode"
-          :class="{ 'learn__mode--coop': mode.id === 'incursions' }"
-        >
-          <h3 class="learn__mode-name">{{ mode.name }}</h3>
-          <MonoLabel tone="faint">
-            {{ mode.players || t(`learn.modes.${mode.id}.players`) }}
-          </MonoLabel>
-          <p class="learn__mode-body">{{ t(`learn.modes.${mode.id}.blurb`) }}</p>
-        </div>
-      </div>
-      <BandFoot :to="to('incursions')" :label="t('learn.modes.exit')" />
-    </div>
-  </section>
-
-  <section id="videos" tabindex="-1" class="l-band l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="videos" :index="3" :total="5" :heading="t('learn.videos.heading')" />
-      <MonoLabel tone="faint">{{ t('learn.videos.note') }}</MonoLabel>
-
-      <div class="l-grid l-grid--wide learn__gap">
-        <BaseLink
-          v-for="video in videos"
-          :key="video.id"
-          :to="soon('#video')"
-          class="learn__video"
-        >
-          <span class="learn__video-art">
-            <ArtFrame :art="null" ratio="16 / 9" :placeholder="t('learn.videos.posterPlaceholder')" />
-            <span v-if="video.captioned" class="learn__cc">CC</span>
-          </span>
-          <span class="learn__video-body">
-            <span class="learn__video-title">{{ video.title }}</span>
-            <span class="learn__video-meta">
-              {{ video.youTubeId ? video.qrSlug : t('learn.videos.idTbd') }}
-            </span>
-          </span>
-        </BaseLink>
-      </div>
-
-      <p class="learn__note">{{ t('learn.videos.captionNote') }}</p>
-      <BandFoot :to="{ hash: '#rules' }" :label="t('learn.videos.exit')" />
-    </div>
-  </section>
-
-  <section id="rules" tabindex="-1" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="rules" :index="4" :total="5" :heading="t('learn.sections.rules')" />
-      <p class="learn__body">{{ t('learn.rules.lede') }}</p>
-
-      <div class="l-grid learn__gap">
+  <SectionBand id="paths" :heading="t('learn.paths.heading')">
+    <div class="l-grid l-grid--wide">
+      <div
+        v-for="track in tracks"
+        :id="`path-${track}`"
+        :key="track"
+        tabindex="-1"
+        class="learn__track"
+      >
         <ContentCard
-          v-for="item in rulesHub"
-          :key="item.key"
-          :to="item.to"
-          :kicker="t(`learn.rules.${item.key}.kicker`)"
-          :title="t(`learn.rules.${item.key}.title`)"
-          :body="t(`learn.rules.${item.key}.body`)"
+          :to="soon('#learn-track')"
+          :current="currentTrack === track"
+          :kicker="t(`learn.tracks.${track}.kicker`)"
+          :title="t(`learn.tracks.${track}.title`)"
+          :body="t(`learn.tracks.${track}.body`)"
         />
       </div>
-
-      <p class="learn__note">
-        {{ t('learn.rules.booklet') }}
-        <BaseLink :link="outbound('rulebook')">{{ t('learn.rules.bookletLink') }}</BaseLink>
-        ·
-        <BaseLink :link="outbound('rulesReference')">
-          {{ t('learn.rules.referenceLink') }}
-        </BaseLink>
-      </p>
-
-      <BandFoot :to="{ hash: '#try' }" :label="t('learn.rules.exit')" />
     </div>
-  </section>
+    <BandFoot :to="{ hash: '#modes' }" :label="t('learn.paths.exit')" />
+  </SectionBand>
 
-  <section id="try" tabindex="-1" class="l-band l-band--line-top">
-    <div class="l-wrap">
-      <SectionMarker id="try" :index="5" :total="5" :heading="t('learn.try.heading')" />
-      <div v-for="tier in TRY_TIERS" :key="tier" class="learn__tier">
-        <MonoLabel tone="muted">{{ t(`try.tiers.${tier}`) }}</MonoLabel>
-        <div class="l-grid l-grid--wide learn__gap">
-          <TryRouteCard
-            v-for="tryRoute in routesToTry(tier)"
-            :key="tryRoute.id"
-            :route="tryRoute"
-          />
-        </div>
+  <SectionBand id="modes" class="l-band--alt l-band--line-top" :heading="t('learn.sections.modes')">
+    <div class="l-grid">
+      <div
+        v-for="mode in modes"
+        :key="mode.id"
+        class="l-surface learn__mode"
+        :class="{ 'learn__mode--coop': mode.id === 'incursions' }"
+      >
+        <h3 class="learn__mode-name">{{ mode.name }}</h3>
+        <MonoLabel tone="faint">
+          {{ mode.players || t(`learn.modes.${mode.id}.players`) }}
+        </MonoLabel>
+        <p class="learn__mode-body">{{ t(`learn.modes.${mode.id}.blurb`) }}</p>
       </div>
-      <BandFoot :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
     </div>
-  </section>
+    <BandFoot :to="to('incursions')" :label="t('learn.modes.exit')" />
+  </SectionBand>
+
+  <SectionBand id="videos" class="l-band--line-top" :heading="t('learn.videos.heading')">
+    <MonoLabel tone="faint">{{ t('learn.videos.note') }}</MonoLabel>
+
+    <div class="l-grid l-grid--wide">
+      <BaseLink
+        v-for="video in videos"
+        :key="video.id"
+        :to="soon('#video')"
+        class="learn__video"
+      >
+        <span class="learn__video-art">
+          <ArtFrame :art="null" ratio="16 / 9" :placeholder="t('learn.videos.posterPlaceholder')" />
+          <span v-if="video.captioned" class="learn__cc">CC</span>
+        </span>
+        <span class="learn__video-body">
+          <span class="learn__video-title">{{ video.title }}</span>
+          <span class="learn__video-meta">
+            {{ video.youTubeId ? video.qrSlug : t('learn.videos.idTbd') }}
+          </span>
+        </span>
+      </BaseLink>
+    </div>
+
+    <p class="learn__note">{{ t('learn.videos.captionNote') }}</p>
+    <BandFoot :to="{ hash: '#rules' }" :label="t('learn.videos.exit')" />
+  </SectionBand>
+
+  <SectionBand id="rules" class="l-band--alt l-band--line-top" :heading="t('learn.sections.rules')">
+    <p class="l-lede l-lede--wide">{{ t('learn.rules.lede') }}</p>
+
+    <div class="l-grid">
+      <ContentCard
+        v-for="item in rulesHub"
+        :key="item.key"
+        :to="item.to"
+        :kicker="t(`learn.rules.${item.key}.kicker`)"
+        :title="t(`learn.rules.${item.key}.title`)"
+        :body="t(`learn.rules.${item.key}.body`)"
+      />
+    </div>
+
+    <p class="learn__note">
+      {{ t('learn.rules.booklet') }}
+      <BaseLink :link="outbound('rulebook')">{{ t('learn.rules.bookletLink') }}</BaseLink>
+      ·
+      <BaseLink :link="outbound('rulesReference')">
+        {{ t('learn.rules.referenceLink') }}
+      </BaseLink>
+    </p>
+
+    <BandFoot :to="{ hash: '#try' }" :label="t('learn.rules.exit')" />
+  </SectionBand>
+
+  <SectionBand id="try" class="l-band--line-top" :heading="t('learn.try.heading')">
+    <div v-for="tier in TRY_TIERS" :key="tier" class="learn__tier">
+      <MonoLabel tone="muted">{{ t(`try.tiers.${tier}`) }}</MonoLabel>
+      <div class="l-grid l-grid--wide">
+        <TryRouteCard
+          v-for="tryRoute in routesToTry(tier)"
+          :key="tryRoute.id"
+          :route="tryRoute"
+        />
+      </div>
+    </div>
+    <BandFoot :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
+  </SectionBand>
 </template>
 
 <style>
-.learn__title {
-  margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
-}
-
-.learn__lede,
-.learn__body {
+.learn__lede {
   margin-top: var(--space-4);
-  max-width: 62ch;
-  font-size: var(--size-body-l);
-  line-height: 1.6;
-  color: var(--color-ink-soft);
 }
 
 .learn__track {
@@ -201,7 +179,8 @@ const rulesHub = [
   margin-top: var(--space-9);
 }
 
-.learn__gap {
+/* A tier is not a direct child of the band, so the band's rhythm does not reach inside it. */
+.learn__tier > * + * {
   margin-top: var(--space-6);
 }
 
@@ -215,9 +194,6 @@ const rulesHub = [
 
 .learn__mode {
   padding: var(--space-5);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-l);
 }
 
 /* Co-op mode takes the threat edge, never a faction colour. */
