@@ -545,8 +545,6 @@
   },
   "brand": {
     "hero": {
-      "artPlaceholder": "[ brand key art — wide ]",
-      "pending": "[ BRAND KEY ART — PENDING ]",
       "position": "Brand"
     },
     "sections": {

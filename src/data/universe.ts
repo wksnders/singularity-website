@@ -244,6 +244,9 @@ const factionBrand = (
   ...extra,
 });
 
+/** What a faction-less brand (Common, LuX Vault) wears in place of a faction's `color` and `colorText`. */
+export const universalTone = { color: '#909495', colorText: '#909495' };
+
 export const brands: Brand[] = [
   factionBrand('scrap-brigade', 'monarchy-of-boom', 'Scrap Brigade'),
   factionBrand('benobasas-fist', 'monarchy-of-boom', "Benobasa's Fist"),

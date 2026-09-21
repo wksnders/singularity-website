@@ -2,10 +2,8 @@
 
 import { computed } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
-import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
@@ -15,7 +13,7 @@ import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import PageHero from '@/components/organisms/PageHero.vue';
+import BrandHero from '@/components/organisms/BrandHero.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { useCardParam } from '@/composables/useCardParam';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
@@ -31,6 +29,7 @@ import {
   charactersOfBrand,
   factionById,
   programsOfBrand,
+  universalTone,
 } from '@/data/universe';
 import { factionTags } from '@/site/characters';
 import { pad } from '@/site/format';
@@ -65,13 +64,14 @@ const isFacet = (program: Program) => hasSubType(program.subType, facet.value ??
 const cards = useQueryFilter('cards');
 const showingFacet = computed(() => Boolean(facet.value) && cards.value.value === 'facet');
 
-const programs = computed<Program[]>(() => {
-  const written = programsOfBrand(props.brandId);
+const written = computed(() => programsOfBrand(props.brandId));
+
+const programs = computed<Program[]>(() =>
   /* Facet-first ordering is display only. */
-  return facet.value
-    ? [...written.filter(isFacet), ...written.filter((p) => !isFacet(p))]
-    : written;
-});
+  facet.value
+    ? [...written.value.filter(isFacet), ...written.value.filter((p) => !isFacet(p))]
+    : written.value,
+);
 
 const shown = computed(() =>
   showingFacet.value ? programs.value.filter(isFacet) : programs.value,
@@ -96,6 +96,12 @@ const siblings = computed(() => {
   };
 });
 
+const eyebrow = computed(() =>
+  faction.value
+    ? `${t('brand.hero.position')} ${pad(siblings.value.index)} / ${pad(siblings.value.total)} · ${faction.value.name}`
+    : null,
+);
+
 const cast = computed(() => charactersOfBrand(props.brandId));
 
 /* `isKnown` means EXISTS, not "is in the list on screen": a facet filter must not turn an open card into a missing one. */
@@ -108,49 +114,28 @@ const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) 
     v-if="brand"
     class="brand"
     :style="{
-      '--faction': faction?.color,
-      '--faction-text': faction?.colorText,
+      '--faction': faction?.color ?? universalTone.color,
+      '--faction-text': faction?.colorText ?? universalTone.colorText,
     }"
   >
-    <PageHero
-      :placeholder="t('brand.hero.artPlaceholder')"
-      :pending-note="t('brand.hero.pending')"
-      glow="100% 80% at 70% 6%"
-      min-height="min(72dvh, 640px)"
+    <!-- The faction is not a crumb: faction-less brands have none. -->
+    <BrandHero
+      :name="name"
+      :icon="brand.icon"
+      :programs="written"
+      :pattern="faction?.id ?? 'common'"
+      :eyebrow="eyebrow"
+      :crumbs="[
+        { label: t('ia.universe.label'), to: to('universe') },
+        { label: t('brands.hero.crumb'), to: to('brands') },
+        { label: name },
+      ]"
+      :prev="siblings.prev"
+      :next="siblings.next"
     >
-      <!-- The faction is not a segment: faction-less brands have none. -->
-      <Breadcrumbs
-        :crumbs="[
-          { label: t('ia.universe.label'), to: to('universe') },
-          { label: t('brands.hero.crumb'), to: to('brands') },
-          { label: name },
-        ]"
-        :prev="siblings.prev"
-        :next="siblings.next"
-      />
-
-      <div class="brand__identity">
-        <div class="brand__mark">
-          <BrandMark
-            :icon="brand.icon"
-            :name="name"
-            :color="faction?.color"
-            :size="112"
-            eager
-          />
-        </div>
-        <div>
-          <MonoLabel tone="faint">
-            {{ t('brand.hero.position') }} {{ pad(siblings.index) }} / {{ pad(siblings.total) }}
-            <template v-if="faction"> · {{ faction.name }}</template>
-          </MonoLabel>
-          <h1 class="brand__name">{{ name }}</h1>
-        </div>
-      </div>
-
       <p class="l-lede l-lede--narrow brand__oneliner">{{ oneLiner }}</p>
       <SectionIndex :sections="sections" />
-    </PageHero>
+    </BrandHero>
 
     <ScrollSpyRail :sections="sections" />
 
@@ -273,26 +258,10 @@ const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) 
   margin-top: var(--space-4);
 }
 
-.brand__identity {
-  margin-top: var(--space-6);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  align-items: center;
-}
-
-.brand__mark {
-  display: flex;
-  flex: 0 0 auto;
-}
-
-.brand__name {
-  margin-top: var(--space-2);
-  font-size: clamp(1.875rem, 5.6vw, 3.25rem);
-}
-
 .brand__oneliner {
-  margin-top: var(--space-5);
+  font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+  line-height: 1.55;
+  color: rgba(var(--rgb-ink), 0.84);
 }
 
 .brand__facets {
