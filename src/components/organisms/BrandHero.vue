@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { asset, pictureSources } from '@/site/links';
+import { patternUrl } from '@/site/patterns';
 import type { Program } from '@/data/types';
 import type { Crumb } from '@/site/sections';
 
@@ -39,8 +40,10 @@ const pieces = computed(() => {
 });
 
 /* Common's sheet repeats at 0.8 of a faction tile; drawing it at 0.8 keeps every texture at one scale. */
+const patternSrc = computed(() => patternUrl(`${props.pattern}-texture`));
+
 const patternStyle = computed(() => ({
-  '--hero-pattern': `url(${asset(`/patterns/${props.pattern}-texture.webp`)})`,
+  '--hero-pattern': `url(${patternSrc.value})`,
   '--hero-tile-scale': props.pattern === 'common' ? 0.8 : 1,
 }));
 
@@ -78,7 +81,9 @@ onBeforeUnmount(() => {
   <section class="c-brand-hero">
     <div class="c-brand-hero__backdrop">
       <div class="c-brand-hero__layer c-brand-hero__glow" aria-hidden="true"></div>
+      <!-- Only with a file: with no mask the tint floods the hero. -->
       <div
+        v-if="patternSrc"
         class="c-brand-hero__layer c-brand-hero__pattern"
         :style="patternStyle"
         aria-hidden="true"

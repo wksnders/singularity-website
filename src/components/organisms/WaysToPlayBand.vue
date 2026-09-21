@@ -4,7 +4,8 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import { game, modes } from '@/data/universe';
-import { asset, to } from '@/site/links';
+import { to } from '@/site/links';
+import { patternUrl } from '@/site/patterns';
 
 const formats = modes.filter((mode) => mode.id !== 'incursions');
 
@@ -14,9 +15,8 @@ function filledPips(range: string): number {
   return Number.isFinite(low) ? Math.min(Math.max(low, 1), PIPS) : 1;
 }
 
-/* Through asset() rather than a url() in the stylesheet, or the mask would load from the origin while every other image loads from the CDN. */
 const patternStyle = {
-  '--ways-pattern': `url(${asset('/patterns/incursions-feature.webp')})`,
+  '--ways-pattern': `url(${patternUrl('incursions-feature')})`,
 };
 </script>
 
