@@ -212,23 +212,32 @@ onBeforeUnmount(() => {
 
 /* Black ink on transparency, so only usable as a mask; the radial layer keeps it off the type. */
 .c-brand-hero__pattern {
+  --hero-tile: clamp(300px, 40vw, 640px);
+  --hero-clear: 48%;
+
   background: var(--faction-text);
   opacity: 0.2;
   mask-image: var(--hero-pattern),
-    radial-gradient(66% 60% at 50% 48%, transparent 76%, #000 100%);
+    radial-gradient(66% 60% at 50% 48%, transparent var(--hero-clear), #000 100%);
   mask-size:
-    calc(min(320px, 25vw) * var(--hero-tile-scale, 1)) auto,
+    calc(var(--hero-tile) * var(--hero-tile-scale, 1)) auto,
     100% 100%;
   mask-repeat: repeat, no-repeat;
   mask-composite: intersect;
   -webkit-mask-image: var(--hero-pattern),
-    radial-gradient(66% 60% at 50% 48%, transparent 76%, #000 100%);
+    radial-gradient(66% 60% at 50% 48%, transparent var(--hero-clear), #000 100%);
   -webkit-mask-size:
-    calc(min(320px, 25vw) * var(--hero-tile-scale, 1)) auto,
+    calc(var(--hero-tile) * var(--hero-tile-scale, 1)) auto,
     100% 100%;
   -webkit-mask-repeat: repeat, no-repeat;
   /* A different keyword from the standard `intersect`, not a prefix of it. */
   -webkit-mask-composite: source-in;
+}
+
+@media (min-width: 700px) {
+  .c-brand-hero__pattern {
+    --hero-clear: 76%;
+  }
 }
 
 .c-brand-hero__ring {
