@@ -26,10 +26,10 @@
   --color-accent-wash: rgba(221, 228, 255, 0.14);
   --color-on-accent: #0a0715;
 
-  /* Only the damage glyphs are printed in colour; sampled from the rulebook's icon key. */
-  --color-glyph-power: #e47a82;
-  --color-glyph-ai: #8ab9dc;
-  --color-glyph-corruption: #a3c46b;
+  /* Only the damage glyphs are printed in colour. These are the dark-surface set; a light surface redefines the three on its own element with the values beside them, which are a shade deeper so the glyph holds on white. */
+  --color-glyph-power: #e83a5b; /* on light: #e73148 */
+  --color-glyph-ai: #71abdd; /* on light: #5689c8 */
+  --color-glyph-corruption: #99c556; /* on light: #6eb74e */
   --glow-accent: 0 0 24px rgba(221, 228, 255, 0.35);
   --glow-accent-strong: 0 0 40px rgba(221, 228, 255, 0.4);
 
