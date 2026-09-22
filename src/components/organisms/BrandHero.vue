@@ -27,10 +27,12 @@ const SIZES = ['m', 's', 'l'] as const;
 const pieces = computed(() => {
   const drawn = props.programs.filter((program) => program.art.src);
   return drawn.map((program, i) => {
-    const angle = (i / drawn.length) * 2 * Math.PI;
+    const degrees = (i / drawn.length) * 360;
+    const angle = (degrees * Math.PI) / 180;
     return {
       program,
       size: SIZES[i % SIZES.length],
+      angle: `${degrees.toFixed(2)}deg`,
       left: `${(50 + RX * Math.sin(angle)).toFixed(2)}%`,
       top: `${(50 - RY * Math.cos(angle)).toFixed(2)}%`,
       src: asset(program.art.src as string),
@@ -101,13 +103,18 @@ onBeforeUnmount(() => {
       <div class="c-brand-hero__frame">
         <div ref="stage" class="c-brand-hero__stage">
           <!-- Decorative: every program is named in the programs band below. -->
-          <div ref="ring" class="c-brand-hero__ring" aria-hidden="true">
+          <div
+            ref="ring"
+            class="c-brand-hero__ring"
+            :style="{ '--hero-rx': `${RX}%`, '--hero-ry': `${RY}%` }"
+            aria-hidden="true"
+          >
             <div class="c-brand-hero__arrive">
               <div
                 v-for="piece in pieces"
                 :key="piece.program.slug"
                 class="c-brand-hero__slot"
-                :style="{ left: piece.left, top: piece.top }"
+                :style="{ '--hero-left': piece.left, '--hero-top': piece.top, '--hero-angle': piece.angle }"
               >
                 <div class="c-brand-hero__upright">
                   <picture
@@ -244,8 +251,6 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: var(--hero-top) 0 var(--hero-bottom);
   z-index: 3;
-  transform: rotate(var(--hero-spin, 0deg));
-  will-change: transform;
 }
 
 .c-brand-hero__arrive {
@@ -256,12 +261,23 @@ onBeforeUnmount(() => {
 
 .c-brand-hero__slot {
   position: absolute;
+  left: var(--hero-left);
+  top: var(--hero-top);
 }
 
-/* Counter-rotates by the ring's own angle, so the art never tilts. */
+/* Pieces travel along the ellipse rather than the ellipse turning, so the ring never tilts out of its frame. Without CSS trig the static positions hold and the ring stays still. */
+@supports (top: calc(1% * sin(1deg))) {
+  .c-brand-hero__slot {
+    --hero-at: calc(var(--hero-angle) + var(--hero-spin, 0deg));
+
+    left: calc(50% + var(--hero-rx) * sin(var(--hero-at)));
+    top: calc(50% - var(--hero-ry) * cos(var(--hero-at)));
+  }
+}
+
 .c-brand-hero__upright {
   position: absolute;
-  transform: translate(-50%, -50%) rotate(calc(-1 * var(--hero-spin, 0deg)));
+  transform: translate(-50%, -50%);
 }
 
 .c-brand-hero__piece {
