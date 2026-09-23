@@ -91,7 +91,7 @@ function clearAll(): void {
 </script>
 
 <template>
-  <section class="universe__hero" aria-labelledby="universe-title">
+  <section id="world" tabindex="-1" class="universe__hero" aria-labelledby="universe-title">
     <div class="universe__plate" aria-hidden="true">
       <span class="universe__plate-scrim"></span>
       <span class="universe__plate-fade"></span>
@@ -109,7 +109,7 @@ function clearAll(): void {
 
   <ScrollSpyRail :sections="sections" />
 
-  <section id="world" tabindex="-1" class="universe__lead" :aria-label="t('universe.sections.world')">
+  <section class="universe__lead" :aria-label="t('universe.sections.world')">
     <div class="l-wrap">
       <p class="universe__standfirst">{{ t('universe.world.body1') }}</p>
       <p class="l-lede universe__body">{{ t('universe.world.body2') }}</p>
