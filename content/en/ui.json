@@ -91,8 +91,8 @@
     "factionArtPlaceholder": "[ faction hero art ]",
     "hero": {
       "title": "The Autumn Network.",
-      "lede": "A world made entirely of code",
-      "pending": "[ UNIVERSE KEY ART — PENDING ]",
+      "subhead": "Physical reality is a fairy tale, a myth.",
+      "pending": "[ ESTABLISHING PLATE — PENDING ]",
       "kicker": "The universe of Singularity.exe"
     },
     "sections": {
@@ -138,14 +138,12 @@
       "cta": "Browse every program"
     },
     "world": {
-      "standfirst": "Physical reality is a fairy tale, a myth.",
       "body1": "Humanity lives on as soul code, reborn into the Autumn Network, a digital sprawl built from endless imagination, indeterminable will, and the faint remembrance of ancient ways.",
       "body2": "The Network is old, and the secrets it holds are older still. Between the Fractal Sea, a roiling chaos of unformed memory, and the Broken Heap, where obsolete code decays into nothingness, forgotten powers stir.",
       "body3": "No legend burns brighter in the minds of its denizens than that of the Singularity. Fragmented, hidden, and written in the Old Code, it predates nearly every construct on the server. It’s thought that whoever activates the Singularity will rewrite the very foundation of the digital world, and that it will grant untapped power to the first to harness it.",
       "body4": "The Fragments are surfacing. Unexpected alliances are forming, and digital titans are moving in secret to assemble the pieces. Some of them seek to twist the Network into a throne. Others aim to resurrect what was lost.",
       "body5": "But, no one can assemble the pieces alone.",
       "closer": "Gather your allies, because your quest for power will summon enemies of its own. A new protocol is coming online. The Singularity is awakening, and when it does, the Network will never be the same.",
-      "platePlaceholder": "[ establishing plate — the Autumn Network, wide ]",
       "platePending": "[ THE NETWORK — ART PENDING ]",
       "relicPlaceholder": "[ a Fragment of the Singularity ]",
       "relicPending": "[ FRAGMENT — ART PENDING ]",

@@ -6,13 +6,15 @@ import { t } from '@/content';
 import { pad } from '@/site/format';
 import type { SectionEntry } from '@/site/sections';
 
-defineProps<{ sections: SectionEntry[] }>();
+defineProps<{ sections: SectionEntry[]; labelHidden?: boolean }>();
 </script>
 
 <template>
   <!-- BandFoot's up-link targets this id. -->
   <nav id="on-this-page" class="c-index" :aria-label="t('wayfinding.onThisPage')">
-    <MonoLabel tone="faint">{{ t('wayfinding.onThisPage') }}</MonoLabel>
+    <MonoLabel tone="faint" :class="{ 'l-sr-only': labelHidden }">
+      {{ t('wayfinding.onThisPage') }}
+    </MonoLabel>
     <div class="c-index__chips">
       <JumpChip
         v-for="(section, i) in sections"

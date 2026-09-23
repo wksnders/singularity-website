@@ -14,13 +14,11 @@ import FilterBar from '@/components/molecules/FilterBar.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
 import {
   characters,
   factions,
   game,
-  keyArt,
   matchesFactionFilter,
   universalCharacters,
 } from '@/data/universe';
@@ -28,12 +26,11 @@ import { useQueryFilter } from '@/composables/useQueryFilter';
 import { provideSections } from '@/composables/useSections';
 import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
 import { characterFactionOptions, factionTags } from '@/site/characters';
-import { environmentSources, to } from '@/site/links';
+import { to } from '@/site/links';
 import type { Character } from '@/data/types';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
-  { id: 'world', label: t('universe.sections.world') },
   { id: 'factions', label: t('universe.sections.factions') },
   { id: 'characters', label: t('universe.sections.characters') },
   { id: 'universal', label: t('universe.sections.universal') },
@@ -94,30 +91,27 @@ function clearAll(): void {
 </script>
 
 <template>
-  <SecondaryHero glow="90% 70% at 78% 0%" :note="t('universe.hero.pending')">
-    <MonoLabel tone="faint">{{ t('universe.hero.kicker') }}</MonoLabel>
-    <h1 class="l-page-title">{{ t('universe.hero.title') }}</h1>
-    <p class="l-lede l-lede--narrow universe__lede">{{ t('universe.hero.lede') }}</p>
-    <SectionIndex :sections="sections" />
-  </SecondaryHero>
+  <section class="universe__hero" aria-labelledby="universe-title">
+    <div class="universe__plate" aria-hidden="true">
+      <span class="universe__plate-scrim"></span>
+      <span class="universe__plate-fade"></span>
+    </div>
+    <div class="l-wrap">
+      <div class="universe__hero-copy">
+        <MonoLabel>{{ t('universe.hero.kicker') }}</MonoLabel>
+        <h1 id="universe-title" class="universe__title">{{ t('universe.hero.title') }}</h1>
+        <p class="universe__subhead">{{ t('universe.hero.subhead') }}</p>
+      </div>
+      <SectionIndex :sections="sections" label-hidden class="universe__chips" />
+      <p class="universe__pending" aria-hidden="true">{{ t('universe.hero.pending') }}</p>
+    </div>
+  </section>
 
   <ScrollSpyRail :sections="sections" />
 
-  <SectionBand id="world" :heading="t('universe.sections.world')">
-    <p class="universe__standfirst">{{ t('universe.world.standfirst') }}</p>
-
-    <div class="universe__beats">
-      <p class="l-lede universe__body">{{ t('universe.world.body1') }}</p>
-
-      <ArtFrame
-        :art="keyArt.world.art"
-        :sources="environmentSources(keyArt.world.id)"
-        ratio="3 / 1"
-        radius="l"
-        class="universe__plate"
-        :placeholder="t('universe.world.platePlaceholder')"
-      />
-
+  <section id="world" tabindex="-1" class="universe__lead" :aria-label="t('universe.sections.world')">
+    <div class="l-wrap">
+      <p class="universe__standfirst">{{ t('universe.world.body1') }}</p>
       <p class="l-lede universe__body">{{ t('universe.world.body2') }}</p>
       <p class="l-lede universe__body">{{ t('universe.world.body3') }}</p>
       <p class="l-lede universe__body">{{ t('universe.world.body4') }}</p>
@@ -132,25 +126,25 @@ function clearAll(): void {
       <MonoLabel tone="faint">{{ t('universe.world.relicPending') }}</MonoLabel>
 
       <p class="l-lede universe__body">{{ t('universe.world.body5') }}</p>
-    </div>
 
-    <p class="universe__closer">{{ t('universe.world.closer') }}</p>
+      <p class="universe__closer">{{ t('universe.world.closer') }}</p>
 
-    <div class="universe__bridge">
-      <MonoLabel tone="faint">{{ t('universe.world.bridge.kicker') }}</MonoLabel>
-      <div class="l-grid universe__gap">
-        <article v-for="row in bridgeRows" :key="row.key" class="universe__bridge-row">
-          <h3 class="universe__bridge-title">{{ row.title }}</h3>
-          <MonoLabel tone="faint">{{ t('universe.world.bridge.worldLabel') }}</MonoLabel>
-          <p class="universe__bridge-body">{{ row.world }}</p>
-          <MonoLabel tone="faint">{{ t('universe.world.bridge.tableLabel') }}</MonoLabel>
-          <p class="universe__bridge-body">{{ row.table }}</p>
-        </article>
+      <div class="universe__bridge">
+        <MonoLabel tone="faint">{{ t('universe.world.bridge.kicker') }}</MonoLabel>
+        <div class="l-grid universe__gap">
+          <article v-for="row in bridgeRows" :key="row.key" class="universe__bridge-row">
+            <h3 class="universe__bridge-title">{{ row.title }}</h3>
+            <MonoLabel tone="faint">{{ t('universe.world.bridge.worldLabel') }}</MonoLabel>
+            <p class="universe__bridge-body">{{ row.world }}</p>
+            <MonoLabel tone="faint">{{ t('universe.world.bridge.tableLabel') }}</MonoLabel>
+            <p class="universe__bridge-body">{{ row.table }}</p>
+          </article>
+        </div>
       </div>
-    </div>
 
-    <BandFoot :to="{ hash: '#factions' }" :label="t('universe.world.exit')" />
-  </SectionBand>
+      <BandFoot :to="{ hash: '#factions' }" :label="t('universe.world.exit')" />
+    </div>
+  </section>
 
   <SectionBand
     id="factions"
@@ -303,8 +297,91 @@ function clearAll(): void {
 </template>
 
 <style>
-.universe__lede {
+.universe__hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.universe__plate {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      90% 70% at 78% 0%,
+      rgba(var(--rgb-accent), 0.18) 0%,
+      rgba(var(--rgb-bg), 0) 60%
+    ),
+    repeating-linear-gradient(
+      135deg,
+      rgba(var(--rgb-ink), 0.04) 0 12px,
+      rgba(var(--rgb-ink), 0.015) 12px 24px
+    );
+}
+
+/* Sized for the plate that will sit under them: a flat wash, then the fade that hands the page its own background back. */
+.universe__plate-scrim,
+.universe__plate-fade {
+  position: absolute;
+  inset: 0;
+}
+
+.universe__plate-scrim {
+  background: rgba(var(--rgb-bg), 0.55);
+}
+
+.universe__plate-fade {
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--rgb-bg), 0) 0%,
+    rgba(var(--rgb-bg), 0.3) 40%,
+    rgba(var(--rgb-bg), 0.8) 62%,
+    rgba(var(--rgb-bg), 0.94) 74%,
+    var(--color-bg) 86%
+  );
+}
+
+.universe__hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(520px, 78vh, 720px);
+  padding-block: calc(var(--nav-height) + var(--space-12)) var(--space-8);
+}
+
+.universe__title {
   margin-top: var(--space-5);
+  font-size: clamp(2rem, 6vw, 3.75rem);
+}
+
+.universe__subhead {
+  margin-top: var(--space-5);
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--color-ink);
+}
+
+.universe__chips {
+  margin-top: 0;
+  padding-bottom: var(--space-2);
+}
+
+.universe__pending {
+  padding-block: var(--space-4) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: 0.12em;
+  color: rgba(var(--rgb-ink), 0.32);
+}
+
+.universe__lead {
+  padding-block: var(--space-8) var(--band-y);
 }
 
 .universe__body {
@@ -323,17 +400,12 @@ function clearAll(): void {
 }
 
 .universe__standfirst {
-  max-width: 40ch;
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  line-height: 1.35;
-  color: var(--color-ink);
+  max-width: 60ch;
+  font-size: var(--size-body-l);
+  line-height: 1.6;
+  color: var(--color-ink-muted);
 }
 
-.universe__beats {
-  margin-top: var(--space-8);
-}
-
-.universe__plate,
 .universe__relic {
   margin-top: var(--space-5);
 }
