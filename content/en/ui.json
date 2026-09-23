@@ -519,14 +519,9 @@
   "brands": {
     "hero": {
       "crumb": "Brands",
-      "title": "Every brand in the game",
-      "lede": "Every program your squad plays comes from a brand. Listed below and grouped by faction"
-    },
-    "count": "{count} brands",
-    "stat": {
-      "perFaction": "{count} per faction",
-      "universal": "{count} universal",
-      "cards": "{count} programs"
+      "titleLead": "Every brand in",
+      "logoAlt": "Singularity",
+      "lede": "Every program your squad plays comes from a brand. Listed below and grouped by faction."
     },
     "universal": {
       "title": "Universal"

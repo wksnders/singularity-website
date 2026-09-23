@@ -5,25 +5,36 @@ import BrandMark from '@/components/atoms/BrandMark.vue';
 import { to } from '@/site/links';
 import type { Brand, Faction } from '@/data/types';
 
-defineProps<{
-  brand: Brand;
-  faction?: Faction | null;
-  descriptor?: string;
-  /** Why a brand sits outside the faction lines; universal and personal brands only. */
-  condition?: string;
+withDefaults(
+  defineProps<{
+    brand: Brand;
+    faction?: Faction | null;
+    color?: string | null;
+    descriptor?: string;
+    /** Why a brand sits outside the faction lines; universal and personal brands only. */
+    condition?: string;
 
-  note?: string;
-}>();
+    note?: string;
+    markSize?: number;
+  }>(),
+  { faction: null, color: null, markSize: 88 },
+);
 </script>
 
 <template>
   <BaseLink
     :to="to('brand', { brandId: brand.id })"
     class="c-brand"
-    :style="{ '--faction': faction?.color, '--faction-text': faction?.colorText }"
+    :style="{ '--faction': color ?? faction?.color, '--faction-text': faction?.colorText }"
   >
+    <span class="c-brand__edge" aria-hidden="true"></span>
     <span class="c-brand__mark">
-      <BrandMark :icon="brand.icon" :name="brand.name" :color="faction?.color" :size="88" />
+      <BrandMark
+        :icon="brand.icon"
+        :name="brand.name"
+        :color="color ?? faction?.color"
+        :size="markSize"
+      />
     </span>
     <div class="c-brand__body">
       <h3 class="c-brand__name">{{ brand.name }}</h3>
@@ -36,13 +47,13 @@ defineProps<{
 
 <style>
 .c-brand {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  background: var(--color-surface);
+  gap: 18px;
+  padding: 22px 22px 20px;
+  background: var(--color-surface-sunk);
   border: 1px solid var(--color-line);
-  border-left: 2px solid var(--faction, var(--color-line-strong));
   border-radius: var(--radius-l);
   color: var(--color-ink);
   transition:
@@ -53,9 +64,18 @@ defineProps<{
 .c-brand:hover {
   color: var(--color-ink);
   text-decoration: none;
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   border-color: rgba(var(--rgb-accent), 0.5);
-  border-left-color: var(--faction, var(--color-line-strong));
+}
+
+.c-brand__edge {
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--faction, rgba(var(--rgb-ink), 0.28));
 }
 
 .c-brand__mark {
@@ -69,40 +89,38 @@ defineProps<{
 }
 
 .c-brand__body {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   min-width: 0;
 }
 
 .c-brand__name {
   font-family: var(--font-display);
-  font-size: var(--size-h3);
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
   font-weight: 400;
+  line-height: 1.1;
   overflow-wrap: anywhere;
 }
 
 .c-brand__descriptor {
-  display: block;
-  margin-top: var(--space-2);
   max-width: 44ch;
-  font-size: var(--size-m);
+  font-size: var(--size-body-s);
   line-height: 1.55;
-  color: var(--color-ink-soft);
+  color: rgba(var(--rgb-ink), 0.78);
 }
 
 .c-brand__condition {
-  display: block;
-  margin-top: var(--space-2);
-  font-size: var(--size-s);
+  font-size: var(--size-m);
   line-height: 1.5;
-  color: var(--color-ink-muted);
+  color: rgba(var(--rgb-ink), 0.66);
 }
 
 .c-brand__note {
-  display: block;
-  margin-top: var(--space-2);
+  margin-top: 2px;
   font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
-  letter-spacing: 0.04em;
-  color: var(--color-ink-faint);
+  font-size: var(--size-s);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
 }
 </style>
