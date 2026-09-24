@@ -210,6 +210,7 @@ const anatomy = computed(() =>
             :key="option.id"
             :active="option.on"
             :color="option.color"
+            :icon="option.icon"
             :show-dot="option.showDot"
             :count="option.count"
             @toggle="onFacet(group.key, option.id)"

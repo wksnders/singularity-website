@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // Must stay visually distinct from JumpChip (pill, sentence case, aria-pressed) so a filter never reads as navigation.
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 
 defineProps<{
   active: boolean;
   color?: string | null;
+  icon?: string | null;
   showDot?: boolean;
   count?: number;
 }>();
@@ -19,7 +21,8 @@ defineEmits<{ toggle: [] }>();
     :aria-pressed="active"
     @click="$emit('toggle')"
   >
-    <FactionDot v-if="showDot" :color="color" />
+    <BrandMark v-if="icon" class="c-chip__mark" :icon="icon" name="" :size="22" />
+    <FactionDot v-else-if="showDot" :color="color" />
     <slot />
     <span v-if="count !== undefined" class="c-chip__count">{{ count }}</span>
   </button>
@@ -54,6 +57,10 @@ defineEmits<{ toggle: [] }>();
   background: var(--color-accent-wash);
   border-color: rgba(var(--rgb-accent), 0.45);
   color: var(--color-ink);
+}
+
+.c-chip__mark {
+  margin-inline-start: calc(var(--space-1) * -1);
 }
 
 .c-chip__count {

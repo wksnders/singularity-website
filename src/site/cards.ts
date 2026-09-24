@@ -275,6 +275,7 @@ interface FacetOption {
   label: string;
   /** Identifier tone for the dot. Null renders the hollow ring. */
   color: string | null;
+  icon: string | null;
   showDot: boolean;
   count: number;
   on: boolean;
@@ -334,6 +335,10 @@ function optionColor(key: FacetKey, id: string): string | null {
   return null;
 }
 
+function optionIcon(key: FacetKey, id: string): string | null {
+  return key === 'brand' ? (brandById(id)?.icon ?? null) : null;
+}
+
 /** Counted with the other facets and the query applied, so a count says what clicking it would leave. Zero-count options are dropped, except the selected one — clearing it needs a control still on screen. */
 export function facetGroups(facets: FacetState, query: string, loose = false): FacetGroup[] {
   return FACET_KEYS.map((key) => {
@@ -342,6 +347,7 @@ export function facetGroups(facets: FacetState, query: string, loose = false): F
         id,
         label: optionLabel(key, id),
         color: optionColor(key, id),
+        icon: optionIcon(key, id),
         showDot: key === 'faction' || key === 'brand',
         count: cardRows.filter((row) => matches(row, { ...facets, [key]: id }, query, loose)).length,
         /* Split, so every brand in a multi-brand `?brand=` reads as selected rather than none of them. */
