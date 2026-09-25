@@ -282,11 +282,6 @@ onBeforeUnmount(() => {
 
 .c-brand-hero__piece {
   display: block;
-  transition: transform var(--dur-2) var(--ease-out);
-}
-
-.c-brand-hero__piece:hover {
-  transform: translateY(-8px);
 }
 
 .c-brand-hero__piece img {
