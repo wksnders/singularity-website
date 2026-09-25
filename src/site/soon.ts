@@ -10,7 +10,7 @@ export interface SoonAlso extends LinkSpec {
 
 export interface SoonDestination {
   id: string;
-  kind: 'page' | 'link';
+  kind: 'page' | 'link' | 'missing';
   also: SoonAlso[];
 }
 
@@ -83,6 +83,8 @@ const FALLBACK_ALSO: SoonAlso[] = [
   { key: 'ia.learn.label', to: to('learn') },
   { key: 'ia.news.label', to: to('news') },
 ];
+
+export const NOT_FOUND: SoonDestination = { id: 'not-found', kind: 'missing', also: FALLBACK_ALSO };
 
 export function soonDestination(hash: string): SoonDestination {
   const id = hash.replace(/^#/, '');

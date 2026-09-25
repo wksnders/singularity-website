@@ -8,7 +8,7 @@ import { primaryNav } from '@/site/ia';
 import { outbound, to } from '@/site/links';
 import { useChrome } from '@/composables/useChrome';
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 const {
   wide,
@@ -25,6 +25,18 @@ const {
 
 const route = useRoute();
 
+/* Keyboard and touch never fire mouseleave. */
+watch(() => route.fullPath, () => closeMega());
+
+function onPanelClick(event: MouseEvent): void {
+  if ((event.target as Element | null)?.closest('a')) closeMega();
+}
+
+function onFocusOut(event: FocusEvent): void {
+  const next = event.relatedTarget as Node | null;
+  if (next && !(event.currentTarget as HTMLElement).contains(next)) closeMega();
+}
+
 const onHome = computed(() => route.name === 'home');
 const solid = computed(() => (onHome.value ? pastHeroLogo.value : scrolled.value));
 const markHidden = computed(() => onHome.value && !solid.value);
@@ -39,6 +51,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
       'is-mega': megaOpen !== null,
     }"
     @mouseleave="closeMega()"
+    @focusout="onFocusOut"
   >
     <div class="c-nav__bar l-wrap">
       <RouterLink :to="to('home')" class="c-nav__brand" :class="{ 'is-quiet': markHidden }">
@@ -74,6 +87,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
             v-show="megaOpen === section.key"
             :id="`mega-${section.key}`"
             :section="section"
+            @click="onPanelClick"
           />
         </span>
       </nav>
@@ -128,11 +142,11 @@ const markHidden = computed(() => onHome.value && !solid.value);
   background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.62), transparent);
 }
 
-/* Fill and blur must match MegaPanel's or the bar reads as a seam on the open panel, and this border doubles the panel's own border-top. */
+/* Must match MegaPanel's fill. */
 .c-nav.is-mega {
-  background: rgba(var(--rgb-surface), 0.97);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: var(--color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom-color: transparent;
 }
 

@@ -85,8 +85,8 @@ const columns = computed(() => {
   inset-inline: 0;
   top: 100%;
   border-top: 1px solid var(--color-line);
-  background: rgba(var(--rgb-surface), 0.97);
-  backdrop-filter: blur(18px);
+  background: var(--color-surface);
+  box-shadow: 0 24px 48px rgba(var(--rgb-bg), 0.6);
 }
 
 .c-mega__inner {

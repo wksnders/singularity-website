@@ -191,7 +191,7 @@ const anatomy = computed(() =>
           :key="option"
           type="button"
           class="cards__sort-btn"
-          :aria-current="db.sort.value === option ? 'true' : undefined"
+          :aria-pressed="db.sort.value === option"
           @click="db.setSort(option)"
         >
           {{ sortLabel(option) }}
@@ -497,7 +497,7 @@ const anatomy = computed(() =>
   cursor: pointer;
 }
 
-.cards__sort-btn[aria-current] {
+.cards__sort-btn[aria-pressed='true'] {
   color: var(--color-ink);
 }
 

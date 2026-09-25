@@ -12,6 +12,7 @@
     "news": "News — Singularity.exe",
     "community": "Community — Singularity.exe",
     "soon": "Not yet — Singularity.exe",
+    "notFound": "Page not found — Singularity.exe",
     "suffix": " — Singularity.exe",
     "fallback": "Singularity.exe",
     "faq": "FAQ — Singularity.exe",
@@ -323,11 +324,16 @@
   "soon": {
     "kicker": {
       "page": "Being written",
-      "link": "Not live yet"
+      "link": "Not live yet",
+      "missing": "404 · Not found"
     },
     "alsoTitle": "Open right now",
     "back": "Back to the home page",
     "d": {
+      "not-found": {
+        "title": "There is no page at that address",
+        "body": "The link may be mistyped, or it may point somewhere that has moved. Here is what is open on the site today."
+      },
       "generic": {
         "title": "That page is still being written",
         "body": "It is on the list, and it is not live yet. Here is what is open on the site today."

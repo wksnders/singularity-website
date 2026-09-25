@@ -126,7 +126,7 @@ const routes: RouteRecordRaw[] = [
     path: `${prefix}/:pathMatch(.*)*`,
     name: 'not-found',
     component: () => import('@/views/SoonView.vue'),
-    meta: { titleKey: 'meta.soon' },
+    meta: { titleKey: 'meta.notFound', notFound: true },
   },
 ];
 
@@ -149,7 +149,7 @@ router.beforeEach((target) => {
 
 router.afterEach(async (target, from) => {
   const key = target.meta.titleKey;
-  document.title = typeof key === 'string' ? t(key) : 'Singularity.exe';
+  if (typeof key === 'string') document.title = t(key);
 
   /* Move focus to <main> (tabindex="-1") so keyboard and screen-reader users land on the new page, except on cold load, on a hash target (scrollBehavior owns those), and on a same-path change, where useQueryFilter's router.replace would steal focus mid-keystroke. */
   if (from === START_LOCATION) return;

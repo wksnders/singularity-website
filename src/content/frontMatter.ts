@@ -1,12 +1,20 @@
-// Front-matter values parse only as strings, numbers, booleans, inline arrays [a, b] or dash lists; content/** authoring is limited to these forms.
+// Front-matter values parse only as strings, numbers, booleans, null, inline arrays [a, b] or dash lists; content/** authoring is limited to these forms.
+// Quoted values stay strings; `null`/`~` omit the key.
 
 export type MetaValue = string | number | boolean | string[];
 export type Meta = Record<string, MetaValue>;
 
 const FENCE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 
-const coerce = (raw: string): MetaValue => {
-  const value = raw.trim().replace(/^["'](.*)["']$/, '$1');
+const QUOTED = /^(["'])(.*)\1$/;
+
+const unquote = (value: string): string => QUOTED.exec(value)?.[2] ?? value;
+
+const coerce = (raw: string): MetaValue | null => {
+  const value = raw.trim();
+  const quoted = QUOTED.exec(value);
+  if (quoted) return quoted[2];
+  if (value === 'null' || value === '~') return null;
   if (value === 'true') return true;
   if (value === 'false') return false;
   if (value !== '' && !Number.isNaN(Number(value))) return Number(value);
@@ -14,7 +22,7 @@ const coerce = (raw: string): MetaValue => {
     return value
       .slice(1, -1)
       .split(',')
-      .map((item) => item.trim().replace(/^["'](.*)["']$/, '$1'))
+      .map((item) => unquote(item.trim()))
       .filter(Boolean);
   }
   return value;
@@ -32,7 +40,8 @@ export function parseFrontMatter(source: string): { meta: Meta; body: string } {
 
     const listItem = /^\s*-\s+(.*)$/.exec(line);
     if (listItem && listKey) {
-      (meta[listKey] as string[]).push(String(coerce(listItem[1])));
+      const item = coerce(listItem[1]);
+      if (item !== null) (meta[listKey] as string[]).push(String(item));
       continue;
     }
 
@@ -44,7 +53,8 @@ export function parseFrontMatter(source: string): { meta: Meta; body: string } {
       meta[key] = [];
       listKey = key;
     } else {
-      meta[key] = coerce(rest);
+      const value = coerce(rest);
+      if (value !== null) meta[key] = value;
       listKey = null;
     }
   }

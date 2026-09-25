@@ -1,4 +1,4 @@
-/* Title is the entity name plus the `meta.suffix` content key (`meta.fallback` when the name is empty), set in setup so it wins over the router's afterEach title. */
+/* Entity name plus `meta.suffix`, or `meta.fallback` when the name is empty. */
 
 import { watchEffect } from 'vue';
 import { t } from '@/content';

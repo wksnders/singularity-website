@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Also mounted as the not-found catch-all route, so this page's copy is the 404 page too.
+// Also the not-found route (`meta.notFound`).
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -7,11 +7,12 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import { t } from '@/content';
-import { soonDestination } from '@/site/soon';
+import { NOT_FOUND, soonDestination } from '@/site/soon';
 import { resolveLink, to } from '@/site/links';
 
 const route = useRoute();
-const destination = computed(() => soonDestination(route.hash));
+const destination = computed(() => (route.meta.notFound ? NOT_FOUND : soonDestination(route.hash)));
+const kicker = computed(() => t(`soon.kicker.${destination.value.kind}`));
 
 const title = computed(() => t(`soon.d.${destination.value.id}.title`));
 const body = computed(() => t(`soon.d.${destination.value.id}.body`));
@@ -20,7 +21,7 @@ const body = computed(() => t(`soon.d.${destination.value.id}.body`));
 <template>
   <SecondaryHero glow="80% 60% at 30% 0%">
     <MonoLabel tone="accent">
-      {{ destination.kind === 'page' ? t('soon.kicker.page') : t('soon.kicker.link') }}
+      {{ kicker }}
     </MonoLabel>
     <h1 class="soon__title">{{ title }}</h1>
     <p class="l-lede l-lede--narrow soon__body">{{ body }}</p>
