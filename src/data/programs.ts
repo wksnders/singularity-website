@@ -18,7 +18,7 @@ export const hasCardFace = (cardId: string): boolean => !WITHOUT_FACE.has(cardId
 export const cardFace = (cardId: string): string | null =>
   hasCardFace(cardId) ? `/cards/${cardId}-840.webp` : null;
 
-const WITHOUT_ART = new Set(['SC-145P-EN']);
+const WITHOUT_ART = new Set<string>();
 
 const WITHOUT_SCENE = new Set([
   'SC-181P-EN',
