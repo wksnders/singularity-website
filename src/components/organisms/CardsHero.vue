@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WallHero from '@/components/organisms/WallHero.vue';
-import type { WallColumn } from '@/components/organisms/WallHero.vue';
+import type { WallColumn, WallImage } from '@/components/organisms/WallHero.vue';
 
 const props = defineProps<{
-  cards: string[];
+  cards: WallImage[];
+  /** Cards the wall starts with(loaded for the db) others at low priority. */
+  initial: number;
+  sizes: string;
   title: string;
   overlap: number;
 }>();
 
-/* `unique` caps a phone's image downloads. */
 const LAYOUT = {
-  wide: { hero: 340, card: 150, gap: 18, extend: 150, unique: Infinity },
-  narrow: { hero: 260, card: 92, gap: 12, extend: 210, unique: 10 },
+  wide: { hero: 340, card: 150, gap: 18, extend: 150, pool: 22 },
+  narrow: { hero: 260, card: 92, gap: 12, extend: 210, pool: 16 },
 };
 
 const WALL_EXTRA = 200;
@@ -31,19 +33,47 @@ function onResize(): void {
   if (!frame) frame = requestAnimationFrame(measure);
 }
 
+const expanded = ref(false);
+const hero = ref<{ $el: HTMLElement } | null>(null);
+let idle = 0;
+let fallback = 0;
+const loaded = new Set<string>();
+
+function expand(): void {
+  if (fallback) window.clearTimeout(fallback);
+  fallback = 0;
+  hero.value?.$el.removeEventListener('load', onImageLoad, true);
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  if (saveData || expanded.value) return;
+  idle = window.requestIdleCallback
+    ? window.requestIdleCallback(() => (expanded.value = true), { timeout: 2000 })
+    : window.setTimeout(() => (expanded.value = true), 200);
+}
+
+function onImageLoad(event: Event): void {
+  if (!(event.target instanceof HTMLImageElement)) return;
+  loaded.add(event.target.currentSrc);
+  if (loaded.size >= props.initial) expand();
+}
+
 onMounted(() => {
   measure();
   window.addEventListener('resize', onResize, { passive: true });
+  hero.value?.$el.addEventListener('load', onImageLoad, true);
+  fallback = window.setTimeout(expand, 5000);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize);
+  hero.value?.$el.removeEventListener('load', onImageLoad, true);
   if (frame) cancelAnimationFrame(frame);
+  if (fallback) window.clearTimeout(fallback);
+  if (idle && window.cancelIdleCallback) window.cancelIdleCallback(idle);
+  else if (idle) window.clearTimeout(idle);
 });
 
 const layout = computed(() => (vw.value >= 900 ? LAYOUT.wide : LAYOUT.narrow));
 
-const pool = computed(() => props.cards.slice(0, layout.value.unique));
 const pitch = computed(() => Math.round((layout.value.card * 88) / 63) + layout.value.gap);
 
 const count = computed(() =>
@@ -55,10 +85,12 @@ const rows = computed(() => {
   return Math.ceil((hero * 1.25 + extend + vw.value * 0.21) / pitch.value) + 1;
 });
 
+/* Until expanded, later cells reuse the first cards. */
 const columns = computed<WallColumn[]>(() => {
-  const cards = pool.value;
-  const n = cards.length;
-  if (!n || !count.value) return [];
+  const cards = props.cards;
+  const n = Math.min(cards.length, layout.value.pool);
+  const ready = expanded.value ? n : Math.min(props.initial, n);
+  if (!n || !ready || !count.value) return [];
   const { card, gap } = layout.value;
   const cardH = pitch.value - gap;
   return Array.from({ length: count.value }, (_, c) => ({
@@ -72,7 +104,10 @@ const columns = computed<WallColumn[]>(() => {
       '--wall-radius': `${Math.round(card * 0.05)}px`,
       translate: `0 ${(STAGGER[c % STAGGER.length] * pitch.value).toFixed(1)}px`,
     },
-    cells: Array.from({ length: rows.value }, (_, r) => cards[(c * 7 + r * 3) % n]),
+    cells: Array.from({ length: rows.value }, (_, r) => {
+      const index = (c * 7 + r * 3) % n;
+      return cards[index < ready ? index : index % ready];
+    }),
   }));
 });
 
@@ -87,11 +122,13 @@ const heroStyle = computed(() => ({
 
 <template>
   <WallHero
+    ref="hero"
     class="c-cards-hero"
     aria-labelledby="cards-title"
     :style="heroStyle"
     :columns="columns"
     :extend="layout.extend"
+    :sizes="sizes"
     lazy
   >
     <div class="c-cards-hero__body">

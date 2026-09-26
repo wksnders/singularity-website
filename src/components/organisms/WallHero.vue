@@ -2,14 +2,20 @@
 import { nextTick, ref, watch } from 'vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import { useScrollRatchet } from '@/composables/useScrollRatchet';
+import type { ArtSource } from '@/data/types';
 import type { Crumb } from '@/site/sections';
+
+export interface WallImage {
+  src: string;
+  sources: ArtSource[];
+}
 
 export interface WallColumn {
   pace: number;
   width: number;
   height: number;
   style: Record<string, string | number>;
-  cells: (string | null)[];
+  cells: (string | WallImage | null)[];
 }
 
 const props = withDefaults(
@@ -19,6 +25,8 @@ const props = withDefaults(
     lazy?: boolean;
     /** Px the wall runs on below the hero. */
     extend?: number;
+    /** Match the `sizes` of other images using the same files, so each downloads once. */
+    sizes?: string;
   }>(),
   { lazy: false, extend: 0 },
 );
@@ -49,19 +57,30 @@ watch(
             :style="column.style"
           >
             <div v-for="copy in 2" :key="copy" class="c-wall-hero__stack">
-              <template v-for="(src, k) in column.cells" :key="k">
-                <img
-                  v-if="src"
-                  class="c-wall-hero__item"
-                  :src="src"
-                  alt=""
-                  :width="column.width"
-                  :height="column.height"
-                  :loading="lazy ? 'lazy' : undefined"
-                  decoding="async"
-                  draggable="false"
-                />
-                <span v-else class="c-wall-hero__item"></span>
+              <template v-for="(cell, k) in column.cells" :key="k">
+                <span v-if="!cell" class="c-wall-hero__item"></span>
+                <picture v-else class="c-wall-hero__picture">
+                  <template v-if="typeof cell !== 'string'">
+                    <source
+                      v-for="source in cell.sources"
+                      :key="source.type"
+                      :type="source.type"
+                      :srcset="source.srcset"
+                      :sizes="sizes"
+                    />
+                  </template>
+                  <img
+                    class="c-wall-hero__item"
+                    :src="typeof cell === 'string' ? cell : cell.src"
+                    alt=""
+                    :width="column.width"
+                    :height="column.height"
+                    :loading="lazy ? 'lazy' : undefined"
+                    :fetchpriority="lazy ? 'low' : undefined"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </picture>
               </template>
             </div>
           </div>
@@ -138,6 +157,10 @@ watch(
   flex-direction: column;
   gap: var(--wall-gap);
   padding-bottom: var(--wall-gap);
+}
+
+.c-wall-hero__picture {
+  display: contents;
 }
 
 .c-wall-hero__item {

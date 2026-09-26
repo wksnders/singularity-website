@@ -358,6 +358,9 @@ export function facetGroups(facets: FacetState, query: string, loose = false): F
   });
 }
 
+/** Shared with the hero wall, so both load the same file. */
+export const CARD_TILE_SIZES = '(min-width: 1360px) 340px, (min-width: 760px) 32vw, 45vw';
+
 export const SORTS = ['printed', 'name', 'cost'] as const;
 export type SortKey = (typeof SORTS)[number];
 

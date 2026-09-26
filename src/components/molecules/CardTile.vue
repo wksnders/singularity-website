@@ -7,15 +7,13 @@ import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import CardImage from '@/components/atoms/CardImage.vue';
 import { t } from '@/content';
-import { factionColorOf, placeholderOf } from '@/site/cards';
+import { CARD_TILE_SIZES, factionColorOf, placeholderOf } from '@/site/cards';
 import { pictureSources } from '@/site/links';
 import type { CardRow } from '@/site/cards';
 
 const props = defineProps<{ row: CardRow; face: 'art' | 'card' }>();
 
 defineEmits<{ select: [] }>();
-
-const SIZES = '(min-width: 1360px) 340px, (min-width: 760px) 32vw, 45vw';
 
 const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0.28)');
 </script>
@@ -34,7 +32,7 @@ const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0
         :art="row.cardArt"
         :placeholder="placeholderOf(row, face)"
         radius="m"
-        :sizes="SIZES"
+        :sizes="CARD_TILE_SIZES"
       />
       <ArtFrame
         v-else
@@ -44,7 +42,7 @@ const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0
         :placeholder="placeholderOf(row, face)"
         radius="m"
         :sources="pictureSources(row.sceneArt.src)"
-        :sizes="SIZES"
+        :sizes="CARD_TILE_SIZES"
       />
     </span>
   </button>

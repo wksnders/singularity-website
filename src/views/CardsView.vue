@@ -17,6 +17,7 @@ import { useMediaQuery } from '@/composables/useMediaQuery';
 import { useSlashFocus } from '@/composables/useSlashFocus';
 import {
   ALL,
+  CARD_TILE_SIZES,
   EXTRA_FACETS,
   PRINTED_TOTAL,
   SORTS,
@@ -28,14 +29,18 @@ import {
   matches,
   sortRows,
 } from '@/site/cards';
-import { asset, soon, to } from '@/site/links';
+import { asset, pictureSources, soon, to } from '@/site/links';
 import type { FacetKey, SortKey } from '@/site/cards';
 
 const OVERLAP = 64;
 
+/* Shares files with the grid; the first eight are its first two desktop rows. */
 const WALL_SIZE = 22;
+const WALL_INITIAL = 8;
 const wallCards = cardRows
-  .flatMap((row) => (row.cardArt.src ? [asset(row.cardArt.src.replace(/-840\.webp$/, '-420.webp'))] : []))
+  .flatMap((row) =>
+    row.cardArt.src ? [{ src: asset(row.cardArt.src), sources: pictureSources(row.cardArt.src) }] : [],
+  )
   .slice(0, WALL_SIZE);
 
 const db = useCardDb({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
@@ -76,7 +81,7 @@ const phone = useMediaQuery('(max-width: 599.98px)');
 const extraFacets = computed<FacetKey[]>(() => (phone.value ? [...EXTRA_FACETS, 'box'] : EXTRA_FACETS));
 
 /* AN ACTIVE FACET IS NEVER HIDDEN, even collapsed, or the grid is filtered with no visible cause and nothing but the blanket Clear to undo it. */
-/* A folded row stays until the panel next collapses, so clearing doesnt remove the chip being tapped. */
+/* A folded row stays until the panel next collapses, so clearing doesn't remove the chip being tapped. */
 const pinned = ref<FacetKey[]>([]);
 watch(moreOpen, () => (pinned.value = []));
 
@@ -145,6 +150,8 @@ onMounted(() => {
 <template>
   <CardsHero
     :cards="wallCards"
+    :initial="WALL_INITIAL"
+    :sizes="CARD_TILE_SIZES"
     :title="t('cardsPage.hero.title')"
     :overlap="OVERLAP"
   />
