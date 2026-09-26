@@ -104,7 +104,6 @@ const active = computed(() => {
 const name = computed(() => meta('name', character.value?.name ?? ''));
 useDocumentTitle(() => name.value);
 
-/* reduce ability motion on page change. */
 const nameEl = ref<HTMLElement | null>(null);
 let nameObserver: ResizeObserver | null = null;
 
@@ -936,6 +935,7 @@ provideSections(() =>
 }
 
 @media (min-width: 900px) {
+  /* Holds a name line and two quote lines, so the facts below stay put when the next character's name or quote is shorter. */
   .char__intro {
     min-height: calc(var(--char-name-size) + var(--space-6) + 2 * 1.55 * var(--char-quote-size));
   }

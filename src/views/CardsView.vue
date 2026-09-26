@@ -312,12 +312,12 @@ onMounted(() => {
 
 .cards__bar {
   margin-top: calc(var(--cards-overlap) * -1);
-  padding: 10px;
+  padding: var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  border: 1px solid rgba(var(--rgb-ink), 0.14);
-  border-radius: 18px;
+  gap: var(--space-4);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-l);
   background: rgba(var(--rgb-surface), 0.94);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -326,7 +326,7 @@ onMounted(() => {
 .cards__tools {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) 18px;
+  gap: var(--space-3) var(--space-5);
   align-items: center;
 }
 
@@ -339,7 +339,7 @@ onMounted(() => {
 .cards__search-input {
   width: 100%;
   min-height: 52px;
-  padding: 0 20px;
+  padding: 0 var(--space-5);
   border: 1px solid rgba(var(--rgb-accent), 0.5);
   border-radius: var(--radius-pill);
   background: var(--color-bg-alt);
@@ -355,11 +355,11 @@ onMounted(() => {
   right: var(--space-4);
   transform: translateY(-50%);
   padding: 3px 7px;
-  border: 1px solid rgba(var(--rgb-ink), 0.24);
+  border: 1px solid var(--color-line-strong);
   border-radius: 6px;
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
-  color: rgba(var(--rgb-ink), 0.5);
+  color: var(--color-ink-faint);
 }
 
 .cards__sort {
@@ -376,7 +376,7 @@ onMounted(() => {
   padding: 0 2px;
   border: 0;
   background: none;
-  color: rgba(var(--rgb-ink), 0.5);
+  color: var(--color-ink-faint);
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
   letter-spacing: var(--track-mono-tight);
@@ -400,8 +400,8 @@ onMounted(() => {
   align-items: center;
   min-width: 0;
   min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid rgba(var(--rgb-ink), 0.24);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
 }
 
@@ -423,7 +423,7 @@ onMounted(() => {
 }
 
 .cards__sort-pick-label {
-  margin-right: 6px;
+  margin-right: var(--space-2);
   color: var(--color-ink-soft);
 }
 
@@ -459,7 +459,7 @@ onMounted(() => {
   flex: 0 0 auto;
   max-width: 100%;
   margin-left: auto;
-  border-color: rgba(var(--rgb-ink), 0.24);
+  border-color: var(--color-line-strong);
 }
 
 .cards__face .c-face-toggle__btn {
@@ -477,16 +477,16 @@ onMounted(() => {
 .cards__facet {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .cards__facet-label {
   flex: 0 0 auto;
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-mono);
   text-transform: uppercase;
-  color: rgba(var(--rgb-ink), 0.5);
+  color: var(--color-ink-faint);
 }
 
 /* The padding keeps the focus ring inside the scroller's clip. */
@@ -506,12 +506,12 @@ onMounted(() => {
 }
 
 .cards__meta {
-  padding-top: 6px;
+  padding-top: var(--space-2);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) 20px;
+  gap: var(--space-2) var(--space-5);
   align-items: center;
-  border-top: 1px solid rgba(var(--rgb-ink), 0.08);
+  border-top: 1px solid var(--color-line);
 }
 
 .cards__meta .cards__meta-btn {
@@ -544,8 +544,7 @@ onMounted(() => {
 
 @media (min-width: 900px) {
   .cards__bar {
-    padding: 16px 20px;
-    border-radius: var(--radius-l);
+    padding: var(--space-4) var(--space-5);
   }
 
   .cards__search {

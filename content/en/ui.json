@@ -55,7 +55,6 @@
     "all": "All",
     "in": "matching",
     "noResults": "Nothing matches that yet",
-    "noResultsBody": "Try a different faction, or clear the search.",
     "clear": "Clear filters"
   },
   "video": {
@@ -1492,10 +1491,6 @@
     }
   },
   "pool": {
-    "filterLabel": "Filter the pool by brand",
-    "allBrands": "All",
-    "ofTotal": "of",
-    "programsShown": "programs shown",
     "programs": "programs",
     "scrollBack": "Scroll back:",
     "scrollForward": "Scroll forward:",

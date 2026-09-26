@@ -34,7 +34,7 @@ function onResize(): void {
 }
 
 const expanded = ref(false);
-const hero = ref<{ $el: HTMLElement } | null>(null);
+const wallHero = ref<{ $el: HTMLElement } | null>(null);
 let idle = 0;
 let fallback = 0;
 const loaded = new Set<string>();
@@ -42,7 +42,7 @@ const loaded = new Set<string>();
 function expand(): void {
   if (fallback) window.clearTimeout(fallback);
   fallback = 0;
-  hero.value?.$el.removeEventListener('load', onImageLoad, true);
+  wallHero.value?.$el.removeEventListener('load', onImageLoad, true);
   const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
   if (saveData || expanded.value) return;
   idle = window.requestIdleCallback
@@ -59,13 +59,13 @@ function onImageLoad(event: Event): void {
 onMounted(() => {
   measure();
   window.addEventListener('resize', onResize, { passive: true });
-  hero.value?.$el.addEventListener('load', onImageLoad, true);
+  wallHero.value?.$el.addEventListener('load', onImageLoad, true);
   fallback = window.setTimeout(expand, 5000);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize);
-  hero.value?.$el.removeEventListener('load', onImageLoad, true);
+  wallHero.value?.$el.removeEventListener('load', onImageLoad, true);
   if (frame) cancelAnimationFrame(frame);
   if (fallback) window.clearTimeout(fallback);
   if (idle && window.cancelIdleCallback) window.cancelIdleCallback(idle);
@@ -122,7 +122,7 @@ const heroStyle = computed(() => ({
 
 <template>
   <WallHero
-    ref="hero"
+    ref="wallHero"
     class="c-cards-hero"
     aria-labelledby="cards-title"
     :style="heroStyle"
