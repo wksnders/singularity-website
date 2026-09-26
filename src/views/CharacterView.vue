@@ -581,12 +581,6 @@ provideSections(() =>
               <p class="char__panel-hint">{{ fillingNote }}</p>
             </template>
 
-            <p v-if="!building && !selected" class="char__panel-link">
-              <BaseLink :to="to('cards', {}, { hash: '#anatomy' })">
-                {{ t('character.cardAnatomy') }} →
-              </BaseLink>
-            </p>
-
             <template v-if="!building && selected">
               <p class="char__panel-link">
                 <BaseLink :to="to('cards', {}, { query: galleryQuery })">

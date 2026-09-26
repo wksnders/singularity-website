@@ -15,7 +15,7 @@ const props = defineProps<{ row: CardRow; face: 'art' | 'card' }>();
 
 defineEmits<{ select: [] }>();
 
-const SIZES = '(min-width: 1160px) 380px, (min-width: 760px) 32vw, 45vw';
+const SIZES = '(min-width: 1360px) 340px, (min-width: 760px) 32vw, 45vw';
 
 const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0.28)');
 </script>

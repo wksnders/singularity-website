@@ -1,25 +1,19 @@
 <script setup lang="ts">
 /* Every control is in the URL (see `useCardDb`), and the column count is CSS rather than a resize listener. */
 import { computed, onMounted, ref, watch } from 'vue';
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import FaceToggle from '@/components/atoms/FaceToggle.vue';
 import FilterChip from '@/components/atoms/FilterChip.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
-import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import CardTile from '@/components/molecules/CardTile.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
-import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
-import SectionIndex from '@/components/molecules/SectionIndex.vue';
-import SectionBand from '@/components/molecules/SectionBand.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import CardsHero from '@/components/organisms/CardsHero.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { t } from '@/content';
 import { useCardDb } from '@/composables/useCardDb';
-import { provideSections } from '@/composables/useSections';
+import { useMediaQuery } from '@/composables/useMediaQuery';
 import { useSlashFocus } from '@/composables/useSlashFocus';
 import {
   ALL,
@@ -34,16 +28,15 @@ import {
   matches,
   sortRows,
 } from '@/site/cards';
-import { soon, to } from '@/site/links';
+import { asset, soon, to } from '@/site/links';
 import type { FacetKey, SortKey } from '@/site/cards';
-import type { SectionEntry } from '@/site/sections';
 
-const sections = computed<SectionEntry[]>(() => [
-  { id: 'gallery', label: t('cardsPage.sections.gallery') },
-  { id: 'anatomy', label: t('cardsPage.sections.anatomy') },
-]);
+const OVERLAP = 64;
 
-provideSections(sections);
+const WALL_SIZE = 22;
+const wallCards = cardRows
+  .flatMap((row) => (row.cardArt.src ? [asset(row.cardArt.src.replace(/-840\.webp$/, '-420.webp'))] : []))
+  .slice(0, WALL_SIZE);
 
 const db = useCardDb({ isKnown: (slug) => Boolean(cardBySlug(slug)) });
 
@@ -79,11 +72,21 @@ const shown = computed(() =>
 
 const groups = computed(() => facetGroups(db.facets.value, searchText.value, widened.value));
 
+const phone = useMediaQuery('(max-width: 599.98px)');
+const extraFacets = computed<FacetKey[]>(() => (phone.value ? [...EXTRA_FACETS, 'box'] : EXTRA_FACETS));
+
 /* AN ACTIVE FACET IS NEVER HIDDEN, even collapsed, or the grid is filtered with no visible cause and nothing but the blanket Clear to undo it. */
+/* A folded row stays until the panel next collapses, so clearing doesnt remove the chip being tapped. */
+const pinned = ref<FacetKey[]>([]);
+watch(moreOpen, () => (pinned.value = []));
+
 const visibleGroups = computed(() =>
   groups.value.filter(
     (group) =>
-      moreOpen.value || !EXTRA_FACETS.includes(group.key) || db.facets.value[group.key] !== ALL,
+      moreOpen.value ||
+      !extraFacets.value.includes(group.key) ||
+      db.facets.value[group.key] !== ALL ||
+      pinned.value.includes(group.key),
   ),
 );
 
@@ -108,7 +111,14 @@ const footnote = computed(() =>
 
 const sortLabel = (key: SortKey) => t(`cardsPage.sorts.${key}`);
 
+function onSortPick(event: Event): void {
+  db.setSort((event.target as HTMLSelectElement).value as SortKey);
+}
+
 function onFacet(key: FacetKey, id: string): void {
+  if (!moreOpen.value && extraFacets.value.includes(key) && !pinned.value.includes(key)) {
+    pinned.value = [...pinned.value, key];
+  }
   db.setFacet(key, id);
 }
 
@@ -130,108 +140,114 @@ onMounted(() => {
   /* A shared link can arrive with a hidden facet already set; leaving the disclosure shut would show a filtered grid with no visible cause. */
   moreOpen.value = EXTRA_FACETS.some((key) => db.facets.value[key] !== ALL);
 });
-
-/** Slot order must match the printed 1-8 numbering of the anatomy diagram below. */
-const anatomy = computed(() =>
-  ['name', 'cost', 'art', 'type', 'rules', 'flavour', 'brand', 'set'].map((key, index) => ({
-    index: index + 1,
-    title: t(`cardsPage.anatomy.${key}.title`),
-    body: t(`cardsPage.anatomy.${key}.body`),
-  })),
-);
 </script>
 
 <template>
-  <SecondaryHero glow="90% 70% at 16% 0%" :note="t('cardsPage.hero.pending')">
-    <Breadcrumbs
-      :crumbs="[
-        { label: t('ia.universe.label'), to: to('universe') },
-        { label: t('ia.universe.cards.label') },
-      ]"
-    />
-    <div class="cards__head">
-      <div class="cards__head-main">
-        <MonoLabel tone="accent">{{ t('ia.universe.cards.label') }}</MonoLabel>
-        <h1 class="l-page-title cards__title">{{ t('cardsPage.hero.title') }}</h1>
-      </div>
-      <p class="l-lede cards__lede">{{ t('cardsPage.hero.lede') }}</p>
-    </div>
-    <SectionIndex :sections="sections" />
-  </SecondaryHero>
+  <CardsHero
+    :cards="wallCards"
+    :title="t('cardsPage.hero.title')"
+    :overlap="OVERLAP"
+  />
 
-  <ScrollSpyRail :sections="sections" />
+  <section
+    id="gallery"
+    tabindex="-1"
+    class="l-wrap cards__gallery"
+    :style="{ '--cards-overlap': `${OVERLAP}px` }"
+  >
+    <div class="cards__bar">
+      <div class="cards__tools">
+        <div class="cards__search">
+          <label class="l-sr-only" for="card-search">{{ t('cardsPage.searchLabel') }}</label>
+          <input
+            id="card-search"
+            ref="searchField"
+            v-model="searchText"
+            type="search"
+            class="cards__search-input"
+            :placeholder="t('cardsPage.searchPlaceholder')"
+          />
+          <span class="cards__key" aria-hidden="true">/</span>
+        </div>
 
-  <SectionBand id="gallery" :heading="t('cardsPage.sections.gallery')">
-    <div class="cards__tools">
-      <div class="cards__search">
-        <label class="l-sr-only" for="card-search">{{ t('cardsPage.searchLabel') }}</label>
-        <input
-          id="card-search"
-          ref="searchField"
-          v-model="searchText"
-          type="search"
-          class="cards__search-input"
-          :placeholder="t('cardsPage.searchPlaceholder')"
+        <div class="cards__sort" role="group" :aria-label="t('cardsPage.sortLabel')">
+          <MonoLabel tone="muted" as="span">{{ t('cardsPage.sortLabel') }}</MonoLabel>
+          <button
+            v-for="option in SORTS"
+            :key="option"
+            type="button"
+            class="cards__sort-btn"
+            :aria-pressed="db.sort.value === option"
+            @click="db.setSort(option)"
+          >
+            {{ sortLabel(option) }}
+          </button>
+        </div>
+
+        <div class="cards__sort-pick">
+          <span class="cards__sort-pick-text" aria-hidden="true">
+            <span class="cards__sort-pick-label">{{ t('cardsPage.sortLabel') }}</span>
+            <span class="cards__sort-pick-value">{{ sortLabel(db.sort.value) }}</span> ▾
+          </span>
+          <select
+            class="cards__sort-select"
+            :aria-label="t('cardsPage.sortLabel')"
+            :value="db.sort.value"
+            @change="onSortPick"
+          >
+            <option v-for="option in SORTS" :key="option" :value="option">
+              {{ sortLabel(option) }}
+            </option>
+          </select>
+        </div>
+
+        <FaceToggle
+          class="cards__face"
+          role="group"
+          :aria-label="t('cardsPage.faceLabel')"
+          :model-value="db.face.value"
+          :card-label="t('cardsPage.face.card')"
+          :art-label="t('cardsPage.face.art')"
+          @update:model-value="db.setFace($event)"
         />
-        <span class="cards__key" aria-hidden="true">/</span>
       </div>
 
-      <FaceToggle
-        class="cards__face"
-        :model-value="db.face.value"
-        :card-label="t('cardsPage.face.card')"
-        :art-label="t('cardsPage.face.art')"
-        @update:model-value="db.setFace($event)"
-      />
+      <div class="cards__facets">
+        <div v-for="group in visibleGroups" :key="group.key" class="cards__facet" role="group" :aria-label="group.aria">
+          <span class="cards__facet-label">{{ group.label }}</span>
+          <div class="cards__facet-options">
+            <FilterChip
+              v-for="option in group.options"
+              :key="option.id"
+              :active="option.on"
+              :color="option.color"
+              :icon="option.icon"
+              :show-dot="option.showDot"
+              :count="option.count"
+              @toggle="onFacet(group.key, option.id)"
+            >
+              {{ option.label }}
+            </FilterChip>
+          </div>
+        </div>
+      </div>
 
-      <div class="l-row" role="group" :aria-label="t('cardsPage.sortLabel')">
-        <MonoLabel tone="muted" as="span">{{ t('cardsPage.sortLabel') }}</MonoLabel>
-        <button
-          v-for="option in SORTS"
-          :key="option"
-          type="button"
-          class="cards__sort-btn"
-          :aria-pressed="db.sort.value === option"
-          @click="db.setSort(option)"
-        >
-          {{ sortLabel(option) }}
-        </button>
+      <div class="cards__meta">
+        <UiButton variant="text" class="cards__meta-btn" :aria-expanded="moreOpen" @click="moreOpen = !moreOpen">
+          <template v-if="moreOpen">{{ t('cardsPage.fewerFilters') }}</template>
+          <template v-else>
+            <span class="cards__more-long">{{ t('cardsPage.moreFilters') }}</span>
+            <span class="cards__more-short">{{ t('cardsPage.moreFiltersShort') }}</span>
+          </template>
+        </UiButton>
+        <UiButton v-if="filtered" variant="text" class="cards__meta-btn" @click="resetAll()">
+          {{ t('filters.clear') }}
+        </UiButton>
+        <span class="cards__count" aria-live="polite">{{ countLabel }}</span>
       </div>
     </div>
 
     <MissingCardNote :slug="db.card.missing.value" @dismiss="db.card.dismissMissing()" />
-
-    <div class="cards__facets">
-      <div v-for="group in visibleGroups" :key="group.key" class="cards__facet" role="group" :aria-label="group.aria">
-        <MonoLabel tone="faint" as="span" class="cards__facet-label">{{ group.label }}</MonoLabel>
-        <div class="cards__facet-options">
-          <FilterChip
-            v-for="option in group.options"
-            :key="option.id"
-            :active="option.on"
-            :color="option.color"
-            :icon="option.icon"
-            :show-dot="option.showDot"
-            :count="option.count"
-            @toggle="onFacet(group.key, option.id)"
-          >
-            {{ option.label }}
-          </FilterChip>
-        </div>
-      </div>
-    </div>
-
-    <div class="cards__meta">
-      <UiButton variant="text" :aria-expanded="moreOpen" @click="moreOpen = !moreOpen">
-        {{ moreOpen ? t('cardsPage.fewerFilters') : t('cardsPage.moreFilters') }}
-      </UiButton>
-      <MonoLabel tone="muted" as="span" class="cards__count" aria-live="polite">
-        {{ countLabel }}
-      </MonoLabel>
-      <UiButton v-if="filtered" variant="text" @click="resetAll()">
-        {{ t('filters.clear') }}
-      </UiButton>
-    </div>
 
     <div
       v-if="shown.length"
@@ -264,58 +280,7 @@ const anatomy = computed(() =>
         <BaseLink :to="to('rules')">{{ t('cardsPage.exitKeywords') }} →</BaseLink>
       </p>
     </div>
-  </SectionBand>
-
-  <SectionBand
-    id="anatomy"
-    class="l-band--alt l-band--line-top"
-    :heading="t('cardsPage.sections.anatomy')"
-  >
-    <MonoLabel tone="faint">{{ t('cardsPage.anatomyNote') }}</MonoLabel>
-
-    <div class="l-split">
-      <div class="l-split__main cards__diagram">
-        <article class="cards__frame">
-          <div class="cards__frame-row">
-            <span>1 · {{ t('cardsPage.anatomy.name.title') }}</span>
-            <span>2</span>
-          </div>
-          <ArtFrame
-            :art="null"
-            ratio="4 / 3"
-            radius="s"
-            :placeholder="`3 · ${t('cardsPage.anatomy.art.title')}`"
-          />
-          <p class="cards__frame-type">4 · {{ t('cardsPage.anatomy.type.title') }}</p>
-          <div class="cards__frame-text">
-            <span>5 · {{ t('cardsPage.anatomy.rules.title') }}</span>
-            <span>6 · {{ t('cardsPage.anatomy.flavour.title') }}</span>
-          </div>
-          <div class="cards__frame-row">
-            <span>7 · {{ t('cardsPage.anatomy.brand.title') }}</span>
-            <span>8 · {{ t('cardsPage.anatomy.set.title') }}</span>
-          </div>
-        </article>
-      </div>
-
-      <div class="l-split__aside">
-        <p class="l-lede cards__body">{{ t('cardsPage.anatomyBody') }}</p>
-        <ol class="cards__slots">
-          <li v-for="slot in anatomy" :key="slot.index">
-            <span class="cards__slot-index">{{ slot.index }}</span>
-            <span>
-              <span class="cards__slot-title">{{ slot.title }}</span>
-              <span class="cards__slot-body">{{ slot.body }}</span>
-            </span>
-          </li>
-        </ol>
-        <MonoLabel tone="faint">{{ t('cardsPage.sleeves') }}</MonoLabel>
-        <MonoLabel tone="faint" class="cards__pending">{{ t('cardsPage.framePending') }}</MonoLabel>
-      </div>
-    </div>
-
-    <BandFoot :to="to('learn')" :label="t('cardsPage.exitLearn')" />
-  </SectionBand>
+  </section>
 
   <CardDetail
     :open="db.card.open.value"
@@ -327,161 +292,76 @@ const anatomy = computed(() =>
 </template>
 
 <style>
-.cards__lede,
-.cards__body {
-  margin-top: var(--space-5);
+.cards__gallery {
+  position: relative;
+  max-width: 1400px;
+  padding-bottom: var(--band-y);
 }
 
-.cards__diagram {
-  flex: 0 1 300px;
-}
-
-.cards__frame {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  aspect-ratio: var(--ratio-card);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-m);
-  background: var(--color-surface-raised);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono-tight);
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
-}
-
-.cards__frame-row,
-.cards__frame-text {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.cards__frame-text {
-  flex: 1 1 auto;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: var(--space-2);
-  border: 1px dashed var(--color-line);
-  border-radius: var(--radius-s);
-}
-
-.cards__frame-type {
-  padding-block: var(--space-1);
-  border-block: 1px solid var(--color-line);
-}
-
-.cards__slots {
+.cards__gallery .c-missing-card,
+.cards__gallery .c-empty {
   margin-top: var(--space-6);
-  display: grid;
-  gap: var(--space-3);
-  list-style: none;
 }
 
-.cards__slots li {
+.cards__bar {
+  margin-top: calc(var(--cards-overlap) * -1);
+  padding: 10px;
   display: flex;
-  gap: var(--space-3);
-}
-
-.cards__slot-index {
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--color-line-strong);
-  border-radius: 6px;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  color: var(--color-ink-muted);
-}
-
-.cards__slot-title {
-  display: block;
-  font-size: var(--size-m);
-  font-weight: 500;
-}
-
-.cards__slot-body {
-  display: block;
-  margin-top: 2px;
-  font-size: var(--size-mono-m);
-  line-height: 1.5;
-  color: var(--color-ink-faint);
-}
-
-.cards__pending {
-  display: block;
-  margin-top: var(--space-2);
-}
-
-.cards__head {
-  margin-top: var(--space-5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-10);
-  align-items: flex-end;
-  justify-content: space-between;
-}
-
-.cards__head-main {
-  flex: 1 1 380px;
-  min-width: 0;
-}
-
-.cards__head .cards__title {
-  margin-top: var(--space-2);
-}
-
-.cards__head .cards__lede {
-  flex: 1 1 320px;
-  margin-top: 0;
-  max-width: 52ch;
-}
-
-.cards__face {
-  margin-top: var(--space-4);
-  max-width: 300px;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(var(--rgb-ink), 0.14);
+  border-radius: 18px;
+  background: rgba(var(--rgb-surface), 0.94);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .cards__tools {
-  margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-3) 18px;
   align-items: center;
 }
 
 .cards__search {
   position: relative;
-  flex: 1 1 280px;
-  max-width: 560px;
+  flex: 1 1 100%;
+  min-width: 0;
 }
 
 .cards__search-input {
   width: 100%;
   min-height: 52px;
-  padding: 0 52px 0 var(--space-4);
-  border: 1px solid var(--color-line-strong);
+  padding: 0 20px;
+  border: 1px solid rgba(var(--rgb-accent), 0.5);
   border-radius: var(--radius-pill);
-  background: var(--color-surface);
+  background: var(--color-bg-alt);
   color: var(--color-ink);
   font: inherit;
   font-size: var(--size-body);
 }
 
 .cards__key {
+  display: none;
   position: absolute;
   top: 50%;
   right: var(--space-4);
   transform: translateY(-50%);
   padding: 3px 7px;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-s);
+  border: 1px solid rgba(var(--rgb-ink), 0.24);
+  border-radius: 6px;
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
-  color: var(--color-ink-faint);
+  color: rgba(var(--rgb-ink), 0.5);
+}
+
+.cards__sort {
+  flex: 0 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-3);
+  min-width: 0;
 }
 
 .cards__sort-btn {
@@ -489,11 +369,12 @@ const anatomy = computed(() =>
   padding: 0 2px;
   border: 0;
   background: none;
-  color: var(--color-ink-faint);
+  color: rgba(var(--rgb-ink), 0.5);
   font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
+  font-size: var(--size-mono-s);
+  letter-spacing: var(--track-mono-tight);
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -505,8 +386,82 @@ const anatomy = computed(() =>
   color: var(--color-accent-text);
 }
 
+.cards__sort-pick {
+  position: relative;
+  display: none;
+  flex: 0 1 auto;
+  align-items: center;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(var(--rgb-ink), 0.24);
+  border-radius: var(--radius-pill);
+}
+
+.cards__sort-pick:has(.cards__sort-select:focus-visible) {
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-accent);
+}
+
+.cards__sort-pick-text {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  letter-spacing: var(--track-mono-tight);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.cards__sort-pick-label {
+  margin-right: 6px;
+  color: var(--color-ink-soft);
+}
+
+/* Invisible over the pill; `--size-field` stops iOS Safari zooming. */
+.cards__sort-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  font-size: var(--size-field);
+  cursor: pointer;
+}
+
+@media (max-width: 599.98px) {
+  .cards__sort {
+    display: none;
+  }
+
+  .cards__sort-pick {
+    display: flex;
+  }
+}
+
+/* Too narrow for the value; the picker still names it. */
+@media (max-width: 359.98px) {
+  .cards__sort-pick-value {
+    display: none;
+  }
+}
+
+.cards__bar .cards__face {
+  flex: 0 0 auto;
+  max-width: 100%;
+  margin-left: auto;
+  border-color: rgba(var(--rgb-ink), 0.24);
+}
+
+.cards__face .c-face-toggle__btn {
+  flex: 0 0 auto;
+  padding-inline: var(--space-4);
+  white-space: nowrap;
+}
+
 .cards__facets {
-  margin-top: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -514,36 +469,121 @@ const anatomy = computed(() =>
 
 .cards__facet {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-  align-items: baseline;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .cards__facet-label {
-  flex: 0 0 92px;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(var(--rgb-ink), 0.5);
 }
 
+/* The padding keeps the focus ring inside the scroller's clip. */
 .cards__facet-options {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2);
   min-width: 0;
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  scroll-padding-inline: 4px;
+  scrollbar-width: none;
+}
+
+.cards__facet-options .c-chip {
+  flex: 0 0 auto;
 }
 
 .cards__meta {
-  margin-top: var(--space-4);
-  padding-top: var(--space-2);
+  padding-top: 6px;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2) 20px;
   align-items: center;
+  border-top: 1px solid rgba(var(--rgb-ink), 0.08);
+}
+
+.cards__meta .cards__meta-btn {
+  max-width: 100%;
+  color: var(--color-accent-text);
+  font-family: var(--font-body);
+  font-size: var(--size-body-s);
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+}
+
+.cards__more-long {
+  display: none;
+}
+
+.cards__meta .cards__meta-btn:hover {
+  color: var(--color-ink);
 }
 
 .cards__count {
   margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--size-mono-s);
+  letter-spacing: var(--track-mono-tight);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
 }
 
-/* THREE IS THE CEILING, not the design's six: the content column is capped at `--width-content`, so the column count IS the card size. A fourth needs the wrap widened, which `ScrollSpyRail` hard-codes a breakpoint against. */
+@media (min-width: 900px) {
+  .cards__bar {
+    padding: 16px 20px;
+    border-radius: var(--radius-l);
+  }
+
+  .cards__search {
+    flex-basis: 280px;
+  }
+
+  .cards__search-input {
+    padding-right: 52px;
+  }
+
+  .cards__key {
+    display: block;
+  }
+
+  .cards__bar .cards__face {
+    margin-left: 0;
+  }
+
+  .cards__facet {
+    flex-direction: row;
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+  }
+
+  .cards__facet-label {
+    width: 108px;
+  }
+
+  .cards__facet-options {
+    flex: 1 1 0;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    overflow-x: visible;
+  }
+
+  .cards__more-long {
+    display: inline;
+  }
+
+  .cards__more-short {
+    display: none;
+  }
+}
+
 .cards__grid {
   margin-top: var(--space-6);
 }
@@ -572,6 +612,16 @@ const anatomy = computed(() =>
 
   .cards__grid--ragged {
     columns: 3;
+  }
+}
+
+@media (min-width: 1360px) {
+  .cards__grid--even {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .cards__grid--ragged {
+    columns: 4;
   }
 }
 

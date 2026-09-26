@@ -503,7 +503,6 @@
     "aboutBrand": "About",
     "galleryExit": "These brands in the gallery",
     "openInGallery": "Open in the card gallery",
-    "cardAnatomy": "How a character card is laid out",
     "backToCard": "Back to {name}'s card",
     "faceCard": "The card",
     "faceArt": "Art only",
@@ -581,69 +580,25 @@
   },
   "cardsPage": {
     "hero": {
-      "title": "Every printed card",
-      "lede": "Every character, program, Architech Design and Environment across the core set, expansion 1 and Terminal Incursions. Viewable as the printed card, or as the art alone.",
-      "pending": "[ CARD SPREAD ART — PENDING ]"
-    },
-    "sections": {
-      "gallery": "Browse the cards",
-      "anatomy": "Anatomy of a card"
+      "title": "Every printed card"
     },
     "searchLabel": "Search cards",
     "emptyTitle": "Nothing here matches that",
     "emptyBody": "Card wording is transcribed exactly as printed, so try a shorter phrase — or clear the filters.",
-    "anatomyNote": "63 × 88 mm",
-    "anatomyBody": "Every program card carries the same eight slots. The gallery shows you the card itself — the printed card is the whole of what you read. Its wording is also held as text, so search finds the words, errata can point at a card, and a screen reader can speak one.",
-    "sleeves": "63 × 88 mm · standard sleeves",
-    "framePending": "[ card frame design — PENDING. Slots and proportions are final; the frame art is not. ]",
     "exitErrata": "Recent errata & rulings →",
-    "exitLearn": "Learn how the cards play →",
-    "anatomy": {
-      "name": {
-        "title": "Name",
-        "body": "The card's title, and the string errata refers to."
-      },
-      "cost": {
-        "title": "Cost",
-        "body": "What it takes to run the program."
-      },
-      "art": {
-        "title": "Art",
-        "body": "Unique art, one artist across all programs."
-      },
-      "type": {
-        "title": "Type line",
-        "body": "What kind of program it is."
-      },
-      "rules": {
-        "title": "Rules text",
-        "body": "Held as text as well as printed, so it stays searchable and correctable."
-      },
-      "flavour": {
-        "title": "Flavour",
-        "body": "In-world voice. Never rules-bearing."
-      },
-      "brand": {
-        "title": "Brand",
-        "body": "The brand mark and its faction colour."
-      },
-      "set": {
-        "title": "Set & number",
-        "body": "Collector info: which box, which slot."
-      }
-    },
     "searchPlaceholder": "Search a name, a keyword, the words on a card…",
     "face": {
       "art": "Art",
-      "card": "Printed card"
+      "card": "Card"
     },
+    "faceLabel": "Show as",
     "zoomFace": {
       "card": "The card",
       "art": "Art only"
     },
     "sortLabel": "Sort",
     "sorts": {
-      "printed": "Printed order",
+      "printed": "Default",
       "name": "Name",
       "cost": "Cost"
     },
@@ -675,6 +630,7 @@
       "INC": "Terminal Incursions"
     },
     "moreFilters": "More filters · Brand · Printed type · Cost ▾",
+    "moreFiltersShort": "More filters ▾",
     "fewerFilters": "Fewer filters ▴",
     "countOne": "1 card",
     "countMany": "cards",

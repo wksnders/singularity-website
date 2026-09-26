@@ -1,8 +1,8 @@
 <script setup lang="ts">
-/* Each column's stack is drawn twice so it can wrap modulo half its height. */
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
-import { prefersReducedMotion, useMediaQuery } from '@/composables/useMediaQuery';
+import { computed } from 'vue';
+import WallHero from '@/components/organisms/WallHero.vue';
+import type { WallColumn } from '@/components/organisms/WallHero.vue';
+import { useMediaQuery } from '@/composables/useMediaQuery';
 import { asset } from '@/site/links';
 import type { Crumb } from '@/site/sections';
 
@@ -20,7 +20,7 @@ const CELLS = 12;
 const PACE = [0.34, 0.55, 0.42, 0.62, 0.48, 0.28];
 const FADE = [0.9, 0.5, 0.75, 0.4, 0.65, 0.85];
 
-const columns = computed(() => {
+const columns = computed<WallColumn[]>(() => {
   const n = props.marks.length;
   if (!n) return [];
   const count = wide.value ? 16 : 8;
@@ -28,12 +28,13 @@ const columns = computed(() => {
   return Array.from({ length: count }, (_, c) => {
     const size = sizes[c % sizes.length];
     return {
-      size,
       pace: PACE[c % PACE.length],
+      width: size,
+      height: size,
       style: {
         opacity: FADE[c % FADE.length],
-        '--rain-size': `${size}px`,
-        '--rain-gap': `${Math.round(size * 0.5)}px`,
+        '--wall-size': `${size}px`,
+        '--wall-gap': `${Math.round(size * 0.5)}px`,
       },
       cells: Array.from({ length: CELLS }, (_, k) =>
         (c * 3 + k * 5) % 7 < 2 ? null : props.marks[(c * 5 + k * 7) % n],
@@ -41,81 +42,10 @@ const columns = computed(() => {
     };
   });
 });
-
-const rain = ref<HTMLElement | null>(null);
-let frame = 0;
-let lastY = 0;
-let travel = 0;
-
-/* Scrolling up holds the rain rather than rewinding */
-function turn(): void {
-  frame = 0;
-  const y = window.scrollY;
-  if (y > lastY) travel += y - lastY;
-  lastY = y;
-  if (!rain.value || y > window.innerHeight * 1.2) return;
-  rain.value.querySelectorAll<HTMLElement>('[data-pace]').forEach((column) => {
-    const half = column.offsetHeight / 2 || 1;
-    const offset = (travel * Number(column.dataset.pace)) % half;
-    column.style.transform = `translateY(${(offset - half).toFixed(1)}px)`;
-  });
-}
-
-function onScroll(): void {
-  if (!frame) frame = requestAnimationFrame(turn);
-}
-
-onMounted(() => {
-  if (prefersReducedMotion()) return;
-  lastY = window.scrollY;
-  window.addEventListener('scroll', onScroll, { passive: true });
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', onScroll);
-  if (frame) cancelAnimationFrame(frame);
-});
 </script>
 
 <template>
-  <section class="c-brands-hero">
-    <!-- Decorative: every brand is named in the bands below. -->
-    <div class="c-brands-hero__rain" aria-hidden="true">
-      <div ref="rain" class="c-brands-hero__columns">
-        <div
-          v-for="(column, c) in columns"
-          :key="c"
-          class="c-brands-hero__column"
-          :data-pace="column.pace"
-          :style="column.style"
-        >
-          <div v-for="copy in 2" :key="copy" class="c-brands-hero__stack">
-            <template v-for="(src, k) in column.cells" :key="k">
-              <img
-                v-if="src"
-                class="c-brands-hero__drop"
-                :src="src"
-                alt=""
-                :width="column.size"
-                :height="column.size"
-                decoding="async"
-              />
-              <span v-else class="c-brands-hero__drop"></span>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="c-brands-hero__layer c-brands-hero__wash" aria-hidden="true"></div>
-    <div class="c-brands-hero__layer c-brands-hero__dim" aria-hidden="true"></div>
-    <div class="c-brands-hero__layer c-brands-hero__glow" aria-hidden="true"></div>
-
-    <div class="c-brands-hero__bar">
-      <div class="l-wrap">
-        <Breadcrumbs :crumbs="crumbs" />
-      </div>
-    </div>
-
+  <WallHero class="c-brands-hero" :columns="columns" :crumbs="crumbs">
     <div class="c-brands-hero__body">
       <h1 class="c-brands-hero__title">
         <span class="c-brands-hero__lead">{{ lead }}</span>
@@ -132,104 +62,12 @@ onBeforeUnmount(() => {
         </span>
       </h1>
     </div>
-  </section>
+  </WallHero>
 </template>
 
 <style>
 .c-brands-hero {
-  --brands-wash: #2a3160;
-
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: clamp(340px, calc(40vh + 12vw), 640px);
-}
-
-.c-brands-hero__rain {
-  position: absolute;
-  inset: -22% -18%;
-  z-index: -4;
-  transform: rotate(-12deg);
-}
-
-.c-brands-hero__columns {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.c-brands-hero__column {
-  display: flex;
-  flex-direction: column;
-  transform: translateY(-50%);
-  will-change: transform;
-}
-
-.c-brands-hero__stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rain-gap);
-  padding-bottom: var(--rain-gap);
-}
-
-.c-brands-hero__drop {
-  display: block;
-  flex: 0 0 auto;
-  width: var(--rain-size);
-  height: var(--rain-size);
-  object-fit: contain;
-}
-
-.c-brands-hero__layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.c-brands-hero__wash {
-  z-index: -3;
-  background: var(--brands-wash);
-  mix-blend-mode: color;
-}
-
-.c-brands-hero__dim {
-  z-index: -2;
-  background: rgba(var(--rgb-bg), 0.62);
-}
-
-.c-brands-hero__glow {
-  z-index: -1;
-  background:
-    radial-gradient(55% 45% at 50% 50%, rgba(var(--rgb-accent), 0.16), transparent 70%),
-    linear-gradient(to top, var(--color-bg) 0%, rgba(var(--rgb-bg), 0) 30%);
-}
-
-.c-brands-hero__bar {
-  position: absolute;
-  top: var(--nav-height);
-  left: 0;
-  right: 0;
-  border-bottom: 1px solid rgba(var(--rgb-ink), 0.08);
-  background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.55), rgba(var(--rgb-bg), 0.25));
-}
-
-/* Two classes, so these hold whichever chunk's CSS loads first. */
-.c-brands-hero__bar .c-crumbs__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: rgba(var(--rgb-ink), 0.78);
-}
-
-.c-brands-hero__bar .c-crumbs__current {
-  color: var(--color-accent-text);
 }
 
 .c-brands-hero__body {
