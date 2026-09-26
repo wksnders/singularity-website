@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import FaceToggle from '@/components/atoms/FaceToggle.vue';
-import FactionDot from '@/components/atoms/FactionDot.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -104,6 +103,38 @@ const active = computed(() => {
 
 const name = computed(() => meta('name', character.value?.name ?? ''));
 useDocumentTitle(() => name.value);
+
+/* reduce ability motion on page change. */
+const nameEl = ref<HTMLElement | null>(null);
+let nameObserver: ResizeObserver | null = null;
+
+function fitName(): void {
+  const el = nameEl.value;
+  if (!el) return;
+  el.style.fontSize = '';
+  if (!window.matchMedia('(min-width: 900px)').matches) return;
+  const over = el.scrollWidth / el.clientWidth;
+  if (over > 1) el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) / over) * 0.98}px`;
+}
+
+watch(name, () => nextTick(fitName));
+
+watch(
+  nameEl,
+  (el, previous) => {
+    if (previous) nameObserver?.unobserve(previous);
+    if (el) nameObserver?.observe(el);
+  },
+  { flush: 'post' },
+);
+
+onMounted(() => {
+  nameObserver = new ResizeObserver(() => fitName());
+  if (nameEl.value) nameObserver.observe(nameEl.value);
+  void document.fonts?.ready.then(fitName);
+});
+
+onBeforeUnmount(() => nameObserver?.disconnect());
 
 const castPool = computed(() =>
   scopedFaction.value ? membersOfFaction(scopedFaction.value) : characters,
@@ -361,16 +392,11 @@ provideSections(() =>
 
           <div class="char__copy-main">
             <p class="char__epithet">{{ epithet }}</p>
-            <h1 class="char__name">{{ name }}</h1>
+            <div class="char__intro">
+              <h1 ref="nameEl" class="char__name">{{ name }}</h1>
 
-            <div v-if="character.factionIds === 'any'" class="char__emblems">
-              <span class="char__emblem">
-                <FactionDot :color="null" :size="9" />
-                {{ t('universe.anyFaction') }}
-              </span>
+              <p class="char__quote">“{{ active.flavour }}”</p>
             </div>
-
-            <p class="char__quote">“{{ active.flavour }}”</p>
 
             <dl class="char__facts">
               <div>
@@ -837,7 +863,7 @@ provideSections(() =>
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .char__art {
@@ -897,38 +923,35 @@ provideSections(() =>
   color: var(--faction-text);
 }
 
-.char__name {
+.char__intro {
+  --char-name-size: clamp(2rem, 6.4vw, 4rem);
+  --char-quote-size: clamp(1.0625rem, 2.2vw, 1.3125rem);
+
   margin-top: var(--space-2);
-  font-size: clamp(2rem, 6.4vw, 4rem);
-  line-height: 1;
 }
 
-.char__emblems {
-  margin-top: var(--space-5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
+.char__name {
+  font-size: var(--char-name-size);
+  line-height: var(--char-name-size);
 }
 
-.char__emblem {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  font-size: var(--size-m);
-  color: var(--color-ink);
-  white-space: nowrap;
+@media (min-width: 900px) {
+  .char__intro {
+    min-height: calc(var(--char-name-size) + var(--space-6) + 2 * 1.55 * var(--char-quote-size));
+  }
+
+  .char__name {
+    white-space: nowrap;
+  }
 }
+
 
 
 
 .char__quote {
   margin-top: var(--space-6);
   max-width: 44ch;
-  font-size: clamp(1.0625rem, 2.2vw, 1.3125rem);
+  font-size: var(--char-quote-size);
   line-height: 1.55;
   font-style: italic;
   color: var(--color-ink-muted);
