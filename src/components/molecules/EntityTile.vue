@@ -96,7 +96,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
   margin-bottom: var(--space-1);
   font-family: var(--font-mono);
   font-size: var(--size-mono-xs);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-mono);
   text-transform: uppercase;
   color: var(--color-ink-faint);
   white-space: nowrap;

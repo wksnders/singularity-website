@@ -102,7 +102,6 @@ export interface Character {
   order: number;
   name: string;
   epithet: string;
-  /** Multi-faction membership is canon: the first entry owns the page's colour, the rest render as further emblems. */
   factionIds: FactionMembership;
   /** Faction brands they play, in printed order. No limit on how many. */
   brandIds: string[];

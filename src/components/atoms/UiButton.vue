@@ -110,7 +110,8 @@ withDefaults(
   text-transform: uppercase;
 }
 
-.c-btn--text:hover {
+.c-btn--text:hover,
+.c-btn--text:focus-visible {
   color: var(--color-accent-text);
 }
 

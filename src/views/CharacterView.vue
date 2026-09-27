@@ -645,7 +645,6 @@ provideSections(() =>
       <SectionBand
         v-if="hasLore"
         id="lore"
-        class="l-band--line-top"
         :heading="t('character.loreTitle')"
       >
         <MarkdownBlock :slug="`universe/characters/${characterId}`" measure />

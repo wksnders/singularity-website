@@ -50,8 +50,8 @@ withDefaults(
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 18px;
-  padding: 22px 22px 20px;
+  gap: var(--space-4);
+  padding: var(--space-5);
   background: var(--color-surface-sunk);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-l);

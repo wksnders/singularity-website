@@ -184,7 +184,7 @@ onMounted(() => {
             :key="option"
             type="button"
             class="cards__sort-btn"
-            :aria-pressed="db.sort.value === option"
+            :aria-current="db.sort.value === option ? 'true' : undefined"
             @click="db.setSort(option)"
           >
             {{ sortLabel(option) }}
@@ -385,7 +385,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.cards__sort-btn[aria-pressed='true'] {
+.cards__sort-btn[aria-current] {
   color: var(--color-ink);
 }
 

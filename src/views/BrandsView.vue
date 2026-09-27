@@ -245,7 +245,6 @@ const conditionOf = (brand: Brand): string => {
 
 .brands__ordinal {
   color: var(--color-ink-soft);
-  letter-spacing: 0.14em;
 }
 
 .brands__heading {
