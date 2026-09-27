@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // Entries never collapse into an accordion; every entry stays in the DOM so find-in-page can reach it.
 import { computed } from 'vue';
+import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import { t } from '@/content';
+import { tokenGlyph } from '@/site/glyphs';
 import type { RuleBlock, RuleEntry } from '@/site/rules';
 
 const props = defineProps<{
@@ -35,11 +37,13 @@ const chunks = computed(() => {
       <MonoLabel :tone="entry.cls.includes('keyword') ? 'accent' : 'faint'">
         {{ entry.cls.map((name) => t(`rules.classes.${name}`)).join(' · ') }}
       </MonoLabel>
-      <span v-if="entry.token" class="c-rule__token">{{ entry.token }}</span>
     </div>
 
     <div class="l-row c-rule__head">
-      <h3 class="c-rule__term">{{ entry.bare }}</h3>
+      <h3 class="c-rule__term">
+        {{ entry.bare }}
+        <CardGlyph v-if="tokenGlyph[entry.token]" :name="tokenGlyph[entry.token]" />
+      </h3>
       <UiButton
         variant="text"
         class="c-rule__copy"
@@ -97,12 +101,6 @@ const chunks = computed(() => {
   display: flex;
   gap: var(--space-3);
   align-items: center;
-}
-
-.c-rule__token {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  color: var(--color-accent-text);
 }
 
 .c-rule__head {
