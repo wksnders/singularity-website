@@ -1,8 +1,9 @@
 # Architecture reference — modules
 
-Reference material extracted verbatim from code comments under Rule 4 of the
-comment-pruning pass. Each section is pointed at from a single-line
-`Reference spec:` comment at the corresponding place in the source file.
+Reference material too long for a code comment. Each section is pointed at by a
+one-line `Reference spec:` comment in its source file. Change a rule here in the
+same commit as the code it describes; last checked against the code on
+26 Sep 2026.
 
 ## content-index
 src/content/index.ts
@@ -13,8 +14,8 @@ src/content/index.ts
    content/
      en/
        ui.json                     every short UI string (nav, chips, labels)
-       faq.json                    a collection: records with a prose field
-       home/hero.md                long-form prose, front matter + body
+       faq.json, rules.json        collections: records with a prose field
+       news/<date>-<slug>.md       long-form prose, front matter + body
        universe/factions/<id>.md   entity copy: name, tagline, story
    Adding a language = copying the folder and translating it. There is no
    i18n dependency: a missing key or file falls back to English, per item.
@@ -50,8 +51,8 @@ src/data/programs.ts
         on the card and carries the locale (`-EN`), so errata cite it in
         `affectedProgramIds` (content/en/news/) — an errata applies to a
         printed card, and the same card in another language is a different
-        printing. `id` is the public URL identity, the name made safe, which
-        is why it is derived from the English name and never from a
+        printing. `slug` is the public URL identity, the name made safe,
+        which is why it is derived from the English name and never from a
         translation: `?card=` and `?stack=` must name the same cards in every
         locale. Neither is positional, so inserting a card renumbers nothing.
    ========================================================================== */
@@ -69,7 +70,6 @@ src/data/types.ts
 
      · ILLUSTRATION (`art`) — the subject as they appear on the card, with the
        background cut away. Croppable, focal-pointable, safe behind text.
-       TODO add in cool parallax with this when we eventually have the art, parked till we get art.
      · SCENE (`sceneArt`) — characters only: subject and background as printed,
        without the rules text.
      · CARD (`cardArt`) — the card as it is in play, rules text and all. Never
@@ -121,10 +121,10 @@ src/site/faq.ts
    1. GROUPS, in page order. The array's order IS the order of the bands, and
       the ordinals ("01 / 06") are computed from its length. Reordering the
       page is a reordering of this array.
-   2. LINK KEYS. A question may carry one link out. Front matter names a key
-      from the table below; this file resolves it to a route. Targets are not
-      writable from `content/`, so translating a question can never repoint it
-      at a page that does not exist.
+   2. LINK KEYS. A question may carry one link out. Its `link` names a key
+      from the table in `faq.ts`; that file resolves it to a route. Targets
+      are not writable from `content/`, so translating a question can never
+      repoint it at a page that does not exist.
 
    The questions themselves are `content/<locale>/faq.json` — one ordered list
    of records, because that is what they are: a sentence with an id, a group,
@@ -134,7 +134,6 @@ src/site/faq.ts
 
    An answer that outgrows a sentence names a markdown file instead
    (`"body": "faq/contents"` → `content/<locale>/faq/contents.md`). That is the
-   exception, not the direction of travel: forty-two files of six-line front
-   matter wrapped around one sentence each is what this replaced.
+   exception, not the direction of travel.
    ========================================================================== */
 ```

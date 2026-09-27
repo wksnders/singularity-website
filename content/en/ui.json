@@ -120,7 +120,6 @@
       "exit": "The characters who're happy to work with anyone to achieve their goals →"
     },
     "universal": {
-      "nameTbd": "[ area name — TBD ]",
       "body": "Some characters are willing to work with any faction to get what they want. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
       "exitPage": "The universal characters →",
       "exit": "How Incursions work →"
@@ -144,7 +143,6 @@
       "body4": "The Fragments are surfacing. Unexpected alliances are forming, and digital titans are moving in secret to assemble the pieces. Some of them seek to twist the Network into a throne. Others aim to resurrect what was lost.",
       "body5": "But, no one can assemble the pieces alone.",
       "closer": "Gather your allies, because your quest for power will summon enemies of its own. A new protocol is coming online. The Singularity is awakening, and when it does, the Network will never be the same.",
-      "platePending": "[ THE NETWORK — ART PENDING ]",
       "relicPlaceholder": "[ a Fragment of the Singularity ]",
       "relicPending": "[ FRAGMENT — ART PENDING ]",
       "exit": "The four powers →",
@@ -191,6 +189,18 @@
       "brokenHeap": {
         "title": "The Broken Heap",
         "body": "Where obsolete code decays into nothingness. The other edge."
+      },
+      "pending1": {
+        "title": "[placeholder]",
+        "body": "[placeholder]"
+      },
+      "pending2": {
+        "title": "[placeholder]",
+        "body": "[placeholder]"
+      },
+      "pending3": {
+        "title": "[placeholder]",
+        "body": "[placeholder]"
       }
     }
   },
@@ -822,7 +832,7 @@
     "sections": {
       "brands": "Personal brands"
     },
-    "areaName": "[ area name — TBD ]",
+    "areaName": "Universal",
     "luxArtPlaceholder": "[ LuX art 3:4 ]",
     "lux": {
       "body": "[PLACEHOLDER — who LuX is. She slots into any faction's line-up without changing it, which is either a gift or a warning depending on who you ask.]",

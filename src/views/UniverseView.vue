@@ -54,11 +54,11 @@ const lexicon = computed(() =>
     'autumnNetwork',
     'soulCode',
     'oldCode',
-    'singularity',
-    'fragments',
     'fractalSea',
     'brokenHeap',
-    'rogueAi',
+    'pending1',
+    'pending2',
+    'pending3',
   ].map((key) => ({
     key,
     title: t(`universe.lexicon.${key}.title`),
@@ -222,7 +222,7 @@ function clearAll(): void {
     class="l-band--alt l-band--line-top"
     :heading="t('universe.sections.universal')"
   >
-    <MonoLabel tone="faint">{{ t('universe.universal.nameTbd') }}</MonoLabel>
+    <MonoLabel tone="faint">{{ t('universal.areaName') }}</MonoLabel>
     <p class="l-lede universe__body">{{ t('universe.universal.body') }}</p>
 
     <div class="l-grid l-grid--tiles">

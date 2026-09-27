@@ -1,7 +1,7 @@
 // Reference spec: docs/architecture/modules.md#programs
 // Transcribe the printed wording exactly, typos and all; an edited string makes this file a second, wrong rulebook.
 // This ships in the JS bundle and is readable in devtools, so nothing internal goes here: an unannounced card is simply absent, never `revealed: false`.
-// `cardId` is the printed, locale-bearing id errata cite in `affectedProgramIds`; `id` is the public URL identity, derived from the English name so `?card=` and `?stack=` name the same cards in every locale.
+// `cardId` is the printed, locale-bearing id errata cite in `affectedProgramIds`; `slug` is the public URL identity, derived from the English name so `?card=` and `?stack=` name the same cards in every locale.
 
 import type { Art, Program, SetCode } from './types';
 
