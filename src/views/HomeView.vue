@@ -107,9 +107,7 @@ function scrollCast(direction: 1 | -1): void {
     </p>
   </section>
 
-  <WaysToPlayBand />
-
-  <section class="l-band l-band--line-top l-band--line-bottom home__claim">
+  <section class="l-band l-band--line-bottom home__claim">
     <div class="l-wrap l-wrap--reading home__center">
       <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
       <p class="l-lede home__body home__body--center">{{ t('home.zero.body') }}</p>
@@ -123,6 +121,8 @@ function scrollCast(direction: 1 | -1): void {
       <UiButton variant="quiet" :to="to('learn')">{{ t('home.zero.link') }}</UiButton>
     </div>
   </section>
+
+  <WaysToPlayBand />
 
   <section class="l-band">
     <div class="l-wrap home__rotator-head">
