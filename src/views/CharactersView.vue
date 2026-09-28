@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // Characters with no faction are exempt from the faction filter rather than excluded by it.
-// TODO: should we offer a way to exclude them, question for design research.
 import { computed, ref } from 'vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
