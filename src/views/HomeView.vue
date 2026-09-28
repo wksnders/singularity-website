@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /* Module order below the hero is fixed and the count is a ceiling, not a target: adding one is an editorial decision. */
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -10,11 +11,11 @@ import ContentCard from '@/components/molecules/ContentCard.vue';
 import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
-import SiteLockup from '@/components/molecules/SiteLockup.vue';
-import PageHero from '@/components/organisms/PageHero.vue';
+import HomeHero from '@/components/organisms/HomeHero.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
+import { viewHeight } from '@/composables/useMediaQuery';
 import { getDoc, getDocs, metaString, t } from '@/content';
 import {
   chapters,
@@ -23,11 +24,12 @@ import {
   tryRoutes,
   factions,
   game,
-  keyArt,
 } from '@/data/universe';
 import { factionTags } from '@/site/characters';
 import { pad } from '@/site/format';
-import { chapterHash, environmentSources, outbound, to } from '@/site/links';
+import { afterGlide, glideToElement } from '@/site/glide';
+import { chapterHash, outbound, to } from '@/site/links';
+import { tokenPx } from '@/site/tokens';
 
 /* Capped for page weight. */
 const ROTATOR_MAX = 20;
@@ -56,6 +58,40 @@ const latestNews = computed(() =>
     .slice(0, 3),
 );
 
+const route = useRoute();
+const trailer = ref<InstanceType<typeof TrailerPlayer> | null>(null);
+
+/* Where the heading would push the player below the fold, the section's scroll margin aims the player instead; glides and anchor jumps read it. */
+function aimTrailer(): void {
+  const section = document.getElementById('trailer');
+  const player = trailer.value?.$el as HTMLElement | undefined;
+  if (!section || !player) return;
+  section.style.removeProperty('scroll-margin-top');
+  const margin = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+  const offset = player.getBoundingClientRect().top - section.getBoundingClientRect().top;
+  const room = viewHeight();
+  if (margin + offset + player.offsetHeight <= room) return;
+  const nav = tokenPx('--nav-height');
+  /* Centred, and below the nav when it fits there: the nav hides on the way down. */
+  const top = Math.max(player.offsetHeight <= room - nav ? nav : 0, (room - player.offsetHeight) / 2);
+  section.style.scrollMarginTop = `${top - offset}px`;
+}
+
+/* Already at #trailer, the router won't navigate, so the glide starts here. */
+async function watchTrailer(): Promise<void> {
+  aimTrailer();
+  const target = document.getElementById('trailer');
+  const arrived = route.hash === '#trailer' && target ? await glideToElement(target) : await afterGlide();
+  if (arrived) trailer.value?.play();
+}
+
+onMounted(() => {
+  aimTrailer();
+  window.addEventListener('resize', aimTrailer);
+});
+
+onBeforeUnmount(() => window.removeEventListener('resize', aimTrailer));
+
 const rotator = ref<HTMLElement | null>(null);
 function scrollCast(direction: 1 | -1): void {
   const el = rotator.value;
@@ -65,244 +101,184 @@ function scrollCast(direction: 1 | -1): void {
 </script>
 
 <template>
-  <PageHero
-    drift
-    :art="keyArt.home.art"
-    :sources="environmentSources(keyArt.home.id)"
-    :placeholder="t('home.hero.placeholder')"
-    glow="120% 80% at 20% 10%"
-  >
-    <MonoLabel tone="accent">{{ t('home.hero.kicker') }}</MonoLabel>
-    <h1 class="home__title"><SiteLockup /></h1>
-    <p class="home__lede">{{ t('home.hero.lede') }}</p>
-    <div class="home__cta l-row">
-      <UiButton variant="primary" :link="outbound('buy')">{{ t('home.hero.ctaPlay') }}</UiButton>
-      <UiButton :to="to('universe')">{{ t('home.hero.ctaUniverse') }}</UiButton>
-    </div>
-    <p class="home__hero-secondary">
-      <BaseLink :to="to('learn', {}, { hash: '#try' })">{{ t('home.hero.secondary') }} →</BaseLink>
-    </p>
-    <!-- The modes are named beside the player count because "1-4" alone does not say solo is supported; four items is the ceiling before this wraps on a phone. -->
-    <p class="home__hero-stats">
-      <span>{{ game.players }} {{ t('home.hero.players') }}</span>
-      <span>{{ t('home.hero.modes') }}</span>
-      <span>{{ t('home.hero.length') }}</span>
-    </p>
-  </PageHero>
-
-  <!-- The page's one filled buy button is in the hero, so this bar's action stays a text link. -->
-  <section class="home__offer">
-    <h2 class="l-sr-only">{{ t('home.offer.title') }}</h2>
-    <p class="l-wrap home__offer-line">
-      <span class="home__offer-state">
-        <span class="home__offer-dot" aria-hidden="true"></span>{{ t('home.offer.badge') }}
-      </span>
-      <span v-if="coreProduct.price" class="home__offer-price">
-        <strong>{{ t('home.offer.from') }} {{ coreProduct.price }}</strong>
-        {{ t('home.offer.priceQualifier') }}
-      </span>
-      <BaseLink :link="outbound('buy')" class="home__offer-cta">
-        {{ t('home.offer.cta') }} →
-      </BaseLink>
-    </p>
-  </section>
-
-  <section class="l-band l-band--line-bottom home__claim">
-    <div class="l-wrap l-wrap--reading home__center">
-      <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
-      <p class="l-lede home__body home__body--center">{{ t('home.zero.body') }}</p>
-      <TrailerPlayer
-        class="home__trailer"
-        :you-tube-id="game.trailerYouTubeId"
-        :title="t('home.zero.trailerTitle')"
-        :placeholder="t('home.zero.trailerPlaceholder')"
-      />
-      <MonoLabel tone="faint" class="home__spacer">{{ t('home.zero.caption') }}</MonoLabel>
-      <UiButton variant="quiet" :to="to('learn')">{{ t('home.zero.link') }}</UiButton>
-    </div>
-  </section>
-
-  <WaysToPlayBand />
-
-  <section class="l-band">
-    <div class="l-wrap home__rotator-head">
-      <div>
-        <MonoLabel tone="accent">{{ t('home.cast.kicker') }}</MonoLabel>
-        <h2 class="home__h2">{{ t('home.cast.title') }}</h2>
-        <MonoLabel tone="faint">
-          {{ characters.length }} {{ t('universe.characters.count') }}
-        </MonoLabel>
-      </div>
-      <div class="home__rotator-nav">
-        <button type="button" :aria-label="t('home.cast.prev')" @click="scrollCast(-1)">←</button>
-        <button type="button" :aria-label="t('home.cast.next')" @click="scrollCast(1)">→</button>
-      </div>
-    </div>
-    <div ref="rotator" class="home__rotator">
-      <EntityTile
-        v-for="character in rotatorCast"
-        :key="character.id"
-        class="home__rotator-item"
-        :to="to('character', { characterId: character.id })"
-        :art="character.cardArt"
-        :epithet="character.epithet"
-        :name="character.name"
-        :tags="factionTags(character)"
-        :placeholder="t('character.cardArtPlaceholder')"
-      />
-    </div>
-    <div class="l-wrap home__spacer">
-      <UiButton variant="quiet" :to="to('characters')">{{ t('home.cast.link') }}</UiButton>
-    </div>
-  </section>
-
-  <section class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <MonoLabel tone="accent">{{ t('home.factions.kicker') }}</MonoLabel>
-      <h2 class="home__h2">{{ t('home.factions.title') }}</h2>
-      <div class="l-grid home__spacer">
-        <FactionTile
-          v-for="faction in factions"
-          :key="faction.id"
-          :faction="faction"
-          :placeholder="t('universe.factionArtPlaceholder')"
+  <HomeHero @watch="watchTrailer">
+    <section id="trailer" tabindex="-1" class="l-band l-band--line-bottom home__claim">
+      <div class="l-wrap l-wrap--reading home__center">
+        <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
+        <p class="l-lede home__body home__body--center">{{ t('home.zero.body') }}</p>
+        <TrailerPlayer
+          ref="trailer"
+          class="home__trailer"
+          :you-tube-id="game.trailerYouTubeId"
+          :title="t('home.zero.trailerTitle')"
+          :placeholder="t('home.zero.trailerPlaceholder')"
         />
+        <MonoLabel tone="faint" class="home__spacer">{{ t('home.zero.caption') }}</MonoLabel>
+        <UiButton variant="quiet" :to="to('learn')">{{ t('home.zero.link') }}</UiButton>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="l-band l-band--line-top home__incursions">
-    <div class="l-wrap">
-      <ThreatBadge>{{ t('home.incursions.badge') }}</ThreatBadge>
-      <h2 class="home__h2 home__h2--tight">{{ t('home.incursions.title') }}</h2>
-      <p class="l-lede home__body">{{ t('home.incursions.body') }}</p>
-      <p class="home__facts">
-        <span>{{ game.incursionsPlayers }} {{ t('home.incursions.players') }}</span>
-        <span>{{ t('home.incursions.solo') }}</span>
-        <span>{{ t('home.incursions.inBox') }}</span>
+    <section class="home__offer">
+      <h2 class="l-sr-only">{{ t('home.offer.title') }}</h2>
+      <p class="l-wrap home__offer-line">
+        <span class="home__offer-state">
+          <span class="home__offer-dot" aria-hidden="true"></span>{{ t('home.offer.badge') }}
+        </span>
+        <span v-if="coreProduct.price" class="home__offer-price">
+          <strong>{{ t('home.offer.from') }} {{ coreProduct.price }}</strong>
+          {{ t('home.offer.priceQualifier') }}
+        </span>
+        <BaseLink :link="outbound('buy')" class="home__offer-cta">
+          {{ t('home.offer.cta') }} →
+        </BaseLink>
       </p>
-      <UiButton :to="to('incursions')" class="home__spacer">
-        {{ t('home.incursions.cta') }}
-      </UiButton>
-    </div>
-  </section>
+    </section>
 
-  <section id="story" class="l-band">
-    <div class="l-wrap">
-      <MonoLabel tone="accent">{{ t('home.chapter.kicker') }}</MonoLabel>
-      <div class="l-surface l-surface--pad home__chapter">
-        <div class="home__chapter-art">
-          <ArtFrame :art="null" ratio="4 / 3" radius="m" :placeholder="t('home.chapter.artPlaceholder')" />
-        </div>
-        <div class="home__chapter-body">
-          <MonoLabel tone="muted">
-            {{ t('home.chapter.label') }} {{ pad(currentChapter.number) }}
+    <WaysToPlayBand />
+
+    <section class="l-band">
+      <div class="l-wrap home__rotator-head">
+        <div>
+          <MonoLabel tone="accent">{{ t('home.cast.kicker') }}</MonoLabel>
+          <h2 class="home__h2">{{ t('home.cast.title') }}</h2>
+          <MonoLabel tone="faint">
+            {{ characters.length }} {{ t('universe.characters.count') }}
           </MonoLabel>
-          <h2 class="home__h3">{{ currentChapterTitle }}</h2>
-          <p class="l-lede home__body">{{ t('home.chapter.body') }}</p>
-          <UiButton
-            :to="to('story', {}, { hash: chapterHash(currentChapter.number) })"
-            class="home__spacer"
-          >
-            {{ t('home.chapter.cta') }}
-          </UiButton>
+        </div>
+        <div class="home__rotator-nav">
+          <button type="button" :aria-label="t('home.cast.prev')" @click="scrollCast(-1)">←</button>
+          <button type="button" :aria-label="t('home.cast.next')" @click="scrollCast(1)">→</button>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Holds the only filled CTA below the fold. -->
-  <section id="learn" class="l-band l-band--alt l-band--line-top">
-    <div class="l-wrap">
-      <h2 class="home__h2">{{ t('home.ways.title') }}</h2>
-      <div class="l-grid l-grid--wide home__spacer">
-        <ContentCard
-          featured
-          :title="t('home.ways.buy.title')"
-          :body="t('home.ways.buy.body')"
-          :link="outbound('buy')"
-        />
-        <TryRouteCard v-for="route in tryRoutes" :key="route.id" :route="route" />
-      </div>
-    </div>
-  </section>
-
-  <section v-if="latestNews.length" id="news" class="l-band">
-    <div class="l-wrap">
-      <div class="home__news-head">
-        <h2 class="home__h2">{{ t('home.news.title') }}</h2>
-        <UiButton variant="quiet" :to="to('news')">{{ t('home.news.link') }}</UiButton>
-      </div>
-      <div class="l-grid l-grid--wide home__spacer">
-        <ContentCard
-          v-for="post in latestNews"
-          :key="post.slug"
-          :to="to('news')"
-          :kicker="`${metaString(post, 'category')} · ${metaString(post, 'date', t('home.news.dateTbd'))}`"
-          :title="metaString(post, 'title')"
-          :placeholder="t('home.news.artPlaceholder')"
+      <div ref="rotator" class="home__rotator">
+        <EntityTile
+          v-for="character in rotatorCast"
+          :key="character.id"
+          class="home__rotator-item"
+          :to="to('character', { characterId: character.id })"
+          :art="character.cardArt"
+          :epithet="character.epithet"
+          :name="character.name"
+          :tags="factionTags(character)"
+          :placeholder="t('character.cardArtPlaceholder')"
         />
       </div>
-    </div>
-  </section>
+      <div class="l-wrap home__spacer">
+        <UiButton variant="quiet" :to="to('characters')">{{ t('home.cast.link') }}</UiButton>
+      </div>
+    </section>
 
-  <section id="community" class="l-band l-band--line-top">
-    <div class="l-wrap l-split">
-      <div class="l-split__main">
-        <h2 class="home__h3">{{ t('home.community.title') }}</h2>
-        <p class="l-lede home__body">{{ t('home.community.body') }}</p>
-        <p class="home__channels">
-          <span>#rules-desk</span><span>#incursion-logs</span><span>#deck-lab</span>
+    <section class="l-band l-band--alt l-band--line-top">
+      <div class="l-wrap">
+        <MonoLabel tone="accent">{{ t('home.factions.kicker') }}</MonoLabel>
+        <h2 class="home__h2">{{ t('home.factions.title') }}</h2>
+        <div class="l-grid home__spacer">
+          <FactionTile
+            v-for="faction in factions"
+            :key="faction.id"
+            :faction="faction"
+            :placeholder="t('universe.factionArtPlaceholder')"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="l-band l-band--line-top home__incursions">
+      <div class="l-wrap">
+        <ThreatBadge>{{ t('home.incursions.badge') }}</ThreatBadge>
+        <h2 class="home__h2 home__h2--tight">{{ t('home.incursions.title') }}</h2>
+        <p class="l-lede home__body">{{ t('home.incursions.body') }}</p>
+        <p class="home__facts">
+          <span>{{ game.incursionsPlayers }} {{ t('home.incursions.players') }}</span>
+          <span>{{ t('home.incursions.solo') }}</span>
+          <span>{{ t('home.incursions.inBox') }}</span>
         </p>
-        <UiButton :link="outbound('discord')" class="home__spacer">
-          {{ t('home.community.cta') }}
+        <UiButton :to="to('incursions')" class="home__spacer">
+          {{ t('home.incursions.cta') }}
         </UiButton>
       </div>
-      <div class="l-split__aside">
-        <NewsletterForm />
+    </section>
+
+    <section id="story" class="l-band">
+      <div class="l-wrap">
+        <MonoLabel tone="accent">{{ t('home.chapter.kicker') }}</MonoLabel>
+        <div class="l-surface l-surface--pad home__chapter">
+          <div class="home__chapter-art">
+            <ArtFrame :art="null" ratio="4 / 3" radius="m" :placeholder="t('home.chapter.artPlaceholder')" />
+          </div>
+          <div class="home__chapter-body">
+            <MonoLabel tone="muted">
+              {{ t('home.chapter.label') }} {{ pad(currentChapter.number) }}
+            </MonoLabel>
+            <h2 class="home__h3">{{ currentChapterTitle }}</h2>
+            <p class="l-lede home__body">{{ t('home.chapter.body') }}</p>
+            <UiButton
+              :to="to('story', {}, { hash: chapterHash(currentChapter.number) })"
+              class="home__spacer"
+            >
+              {{ t('home.chapter.cta') }}
+            </UiButton>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- Holds the only filled CTA below the fold. -->
+    <section id="learn" class="l-band l-band--alt l-band--line-top">
+      <div class="l-wrap">
+        <h2 class="home__h2">{{ t('home.ways.title') }}</h2>
+        <div class="l-grid l-grid--wide home__spacer">
+          <ContentCard
+            featured
+            :title="t('home.ways.buy.title')"
+            :body="t('home.ways.buy.body')"
+            :link="outbound('buy')"
+          />
+          <TryRouteCard v-for="route in tryRoutes" :key="route.id" :route="route" />
+        </div>
+      </div>
+    </section>
+
+    <section v-if="latestNews.length" id="news" class="l-band">
+      <div class="l-wrap">
+        <div class="home__news-head">
+          <h2 class="home__h2">{{ t('home.news.title') }}</h2>
+          <UiButton variant="quiet" :to="to('news')">{{ t('home.news.link') }}</UiButton>
+        </div>
+        <div class="l-grid l-grid--wide home__spacer">
+          <ContentCard
+            v-for="post in latestNews"
+            :key="post.slug"
+            :to="to('news')"
+            :kicker="`${metaString(post, 'category')} · ${metaString(post, 'date', t('home.news.dateTbd'))}`"
+            :title="metaString(post, 'title')"
+            :placeholder="t('home.news.artPlaceholder')"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="community" class="l-band l-band--line-top">
+      <div class="l-wrap l-split">
+        <div class="l-split__main">
+          <h2 class="home__h3">{{ t('home.community.title') }}</h2>
+          <p class="l-lede home__body">{{ t('home.community.body') }}</p>
+          <p class="home__channels">
+            <span>#rules-desk</span><span>#incursion-logs</span><span>#deck-lab</span>
+          </p>
+          <UiButton :link="outbound('discord')" class="home__spacer">
+            {{ t('home.community.cta') }}
+          </UiButton>
+        </div>
+        <div class="l-split__aside">
+          <NewsletterForm />
+        </div>
+      </div>
+    </section>
+  </HomeHero>
 </template>
 
 <style>
-.home__title {
-  margin: 0;
-  font-size: 0;
-  line-height: 0;
-}
-
-.home__lede {
-  margin-top: var(--space-6);
-  max-width: 52ch;
-  font-size: clamp(1rem, 2.4vw, 1.3125rem);
-  line-height: 1.5;
-  color: rgba(var(--rgb-ink), 0.82);
-}
-
-.home__hero-secondary {
-  margin-top: var(--space-4);
-  font-size: var(--size-body);
-  font-weight: 500;
-}
-
-.home__cta {
-  margin-top: var(--space-8);
-  gap: var(--space-3);
-}
-
-.home__hero-stats {
-  margin-top: var(--space-9);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-7);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
-  letter-spacing: var(--track-mono-tight);
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-}
-
 /* Height is set by the 44px tap target inside, so this bar never takes --band-y padding. */
 .home__offer {
   border-top: 1px solid rgba(var(--rgb-accent), 0.2);

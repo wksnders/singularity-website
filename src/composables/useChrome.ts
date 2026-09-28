@@ -6,17 +6,20 @@ const WIDE_QUERY = '(min-width: 900px)';
 const SOLID_AT = 80;
 const RETRACT_AFTER = 240;
 
-const PAST_HERO_LOGO = 0.38;
-
 const wide = ref(false);
 const scrolled = ref(false);
-const pastHeroLogo = ref(false);
+/* Set only by the Home hero (reportHomeHero): it pins while it splits, so no scroll offset can tell when it has left. */
+const heroGone = ref(false);
+const heroMarkGone = ref(false);
+let heroHolds = false;
+const navEcho = ref<string | null>(null);
 const navHidden = ref(false);
 const megaOpen = ref<string | null>(null);
 const menuOpen = ref(false);
 
 let listeners = 0;
 let lastY = 0;
+let lastDown = false;
 let media: MediaQueryList | null = null;
 
 function closeAll(): void {
@@ -28,16 +31,37 @@ function onMedia(): void {
   menuOpen.value = false;
 }
 
+const mayRetract = (y: number) => y > RETRACT_AFTER && !heroHolds && !menuOpen.value && !megaOpen.value;
+
 function onScroll(): void {
   const y = Math.max(0, window.scrollY);
   scrolled.value = y > SOLID_AT;
-  pastHeroLogo.value = y > window.innerHeight * PAST_HERO_LOGO;
   const down = y > lastY + 6;
   const up = y < lastY - 6;
-  if (down && y > RETRACT_AFTER && !menuOpen.value && !megaOpen.value) navHidden.value = true;
-  else if (up || y < RETRACT_AFTER) navHidden.value = false;
+  if (down && mayRetract(y)) navHidden.value = true;
+  else if (up || y < RETRACT_AFTER || heroHolds) navHidden.value = false;
   if (down && megaOpen.value) megaOpen.value = null;
+  if (down || up) lastDown = down;
   lastY = y;
+}
+
+export function reportHomeHero(gone: boolean, markGone: boolean): void {
+  heroGone.value = gone;
+  heroMarkGone.value = markGone;
+  const released = heroHolds && gone;
+  heroHolds = !gone;
+  /* A single jump past the hero is judged by onScroll before the hero reports it gone: retract here too. */
+  if (released && lastDown && mayRetract(lastY)) navHidden.value = true;
+}
+
+export function releaseHomeHero(): void {
+  reportHomeHero(false, false);
+  heroHolds = false;
+  navEcho.value = null;
+}
+
+export function echoNav(key: string | null): void {
+  navEcho.value = key;
 }
 
 /* Mega panel only: the mobile sheet's Escape belongs to useModal, and handling it here too would close it twice. */
@@ -72,7 +96,9 @@ export function useChrome() {
   return {
     wide: readonly(wide),
     scrolled: readonly(scrolled),
-    pastHeroLogo: readonly(pastHeroLogo),
+    heroGone: readonly(heroGone),
+    heroMarkGone: readonly(heroMarkGone),
+    navEcho: readonly(navEcho),
     navHidden: readonly(navHidden),
     megaOpen: readonly(megaOpen),
     menuOpen,

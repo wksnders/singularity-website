@@ -25,6 +25,7 @@ import { useQueryFilter } from '@/composables/useQueryFilter';
 import { useSearchQuery } from '@/composables/useSearchQuery';
 import { useSlashFocus } from '@/composables/useSlashFocus';
 import { cardBySlug } from '@/site/cards';
+import { siteScrolling } from '@/site/glide';
 import { outbound, to } from '@/site/links';
 import {
   assertRulesShape,
@@ -155,7 +156,7 @@ function clearSearch(): void {
   cls.set(null);
 }
 
-/* A pasted #<id> clears an active search and scrolls explicitly: the router's scrollBehavior runs before this lazy route has rendered the entry, and focus() will not scroll a tabindex="-1" article. */
+/* Scrolls explicitly: on a cold load or behind a search the entry isn't rendered when the router scrolls, and focus() will not scroll a tabindex="-1" article. A jump would fight the router's glide. */
 async function applyHash(): Promise<void> {
   const id = route.hash.replace(/^#/, '');
   if (!id || !all.value.some((entry) => entry.id === id)) return;
@@ -163,8 +164,8 @@ async function applyHash(): Promise<void> {
   if (activeClass.value) cls.set(null);
   await nextTick();
 
-  await document.fonts?.ready; 
-  jump(id);
+  await document.fonts?.ready;
+  if (!siteScrolling()) jump(id);
 }
 
 const { copied, copy } = useCopy();

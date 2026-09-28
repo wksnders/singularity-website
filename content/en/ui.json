@@ -228,15 +228,33 @@
   },
   "home": {
     "hero": {
-      "kicker": "Deterministic card game · Octothorpe",
-      "lede": "Humans abandoned physical reality. What remains fights for control of one legendary program — the Singularity.",
-      "ctaPlay": "Play Now",
-      "ctaUniverse": "Enter the universe",
-      "players": "players",
-      "modes": "Solo · co-op · versus",
-      "length": "30 min / player",
-      "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
-      "secondary": "See how it plays"
+      "category": "Deterministic card game",
+      "modes": "Solo, duel or co-op",
+      "modesLine": "{modes} · {players}",
+      "playersIcon": "players",
+      "title": "Humans abandoned physical reality.",
+      "body": "What remains fights for control of one legendary program: the Singularity.",
+      "artAlt": "Box lid art in {count} faction strips, one character each: {cast}.",
+      "artCast": "{character} of {faction}",
+      "playersSpoken": "{min} to {max} players",
+      "railSpoken": "{category}. {modes}, {players}.",
+      "watch": "Watch the trailer",
+      "buy": "Buy the box",
+      "universe": "Enter the universe",
+      "tagsLabel": "Character names",
+      "premise": {
+        "first": "Enter the…",
+        "second": "server"
+      },
+      "readout": {
+        "character": "Character",
+        "faction": "Faction",
+        "hint": "Hover a character to name them",
+        "hintTap": "Tap a character to name them",
+        "cue": "Universe introduction",
+        "goesTo": "Goes to · {place}",
+        "toTrailer": "Plays · the trailer"
+      }
     },
     "offer": {
       "title": "The offer",

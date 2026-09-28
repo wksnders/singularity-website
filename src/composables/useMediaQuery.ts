@@ -21,3 +21,6 @@ export function useMediaQuery(query: string) {
 /** Read once, at the moment of a scroll: nothing re-renders when it changes. A template that must follow the setting uses `useMediaQuery` instead. */
 export const prefersReducedMotion = (): boolean =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Not innerHeight: a phone's toolbars change it mid-scroll. */
+export const viewHeight = (): number => document.documentElement.clientHeight;

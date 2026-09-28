@@ -18,6 +18,9 @@ const props = withDefaults(
 
 const playing = ref(false);
 
+/* Autoplay needs a recent user gesture: call soon after a click. */
+defineExpose({ play: () => (playing.value = true) });
+
 /* Keep the youtube-nocookie host: it sets no tracking cookie until playback starts, which is what keeps this out of consent-banner scope. */
 const src = () =>
   `https://www.youtube-nocookie.com/embed/${props.youTubeId}?autoplay=1&cc_load_policy=1`;

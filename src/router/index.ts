@@ -8,6 +8,7 @@ import {
 import { LOCALE_ROUTE_PATTERN, setLocale } from '@/i18n/locales';
 import { t } from '@/content';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
+import { glideToElement, jumpTo } from '@/site/glide';
 
 /* Locale prefix appears only once a code is added to LOCALES; public anchors and query params never change either way. */
 const prefix = LOCALE_ROUTE_PATTERN ? `/:locale(${LOCALE_ROUTE_PATTERN})?` : '';
@@ -130,13 +131,27 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
+const hashId = (hash: string): string => {
+  try {
+    return decodeURIComponent(hash.slice(1));
+  } catch {
+    return hash.slice(1);
+  }
+};
+
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(target, from, savedPosition) {
-    if (savedPosition) return savedPosition;
+    if (savedPosition) {
+      jumpTo(savedPosition.top);
+      return false;
+    }
     if (target.path === from.path && target.hash === from.hash) return false;
     if (target.hash) {
+      /* Not `{ el }`: the router would measure a target inside the home hero's sticky dock where it waits, not where it lands. */
+      const el = document.getElementById(hashId(target.hash));
+      if (el) return glideToElement(el, from === START_LOCATION).then(() => false as const);
       return { el: target.hash, behavior: prefersReducedMotion() ? 'auto' : 'smooth' };
     }
     return { top: 0 };

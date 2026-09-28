@@ -13,7 +13,9 @@ import { computed, watch } from 'vue';
 const {
   wide,
   scrolled,
-  pastHeroLogo,
+  heroGone,
+  heroMarkGone,
+  navEcho,
   navHidden,
   megaOpen,
   menuOpen,
@@ -38,8 +40,9 @@ function onFocusOut(event: FocusEvent): void {
 }
 
 const onHome = computed(() => route.name === 'home');
-const solid = computed(() => (onHome.value ? pastHeroLogo.value : scrolled.value));
-const markHidden = computed(() => onHome.value && !solid.value);
+const solid = computed(() => (onHome.value ? heroGone.value : scrolled.value));
+const markHidden = computed(() => onHome.value && !heroMarkGone.value);
+const overArt = computed(() => onHome.value && !solid.value && megaOpen.value === null);
 </script>
 
 <template>
@@ -49,6 +52,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
       'is-solid': solid || megaOpen !== null,
       'is-hidden': navHidden,
       'is-mega': megaOpen !== null,
+      'is-over-art': overArt,
     }"
     @mouseleave="closeMega()"
     @focusout="onFocusOut"
@@ -63,6 +67,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
           v-for="section in primaryNav"
           :key="section.key"
           class="c-nav__item"
+          :class="{ 'is-echo': navEcho === section.key }"
           @mouseenter="section.mega ? openMega(section.key) : closeMega()"
         >
           <RouterLink :to="section.to" class="c-nav__link">
@@ -142,6 +147,23 @@ const markHidden = computed(() => onHome.value && !solid.value);
   background: linear-gradient(to bottom, rgba(var(--rgb-bg), 0.62), transparent);
 }
 
+.c-nav.is-over-art::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--rgb-bg), 0.78),
+    rgba(var(--rgb-bg), 0.42) 60%,
+    transparent
+  );
+}
+
+.c-nav.is-over-art .c-nav__link,
+.c-nav.is-over-art .c-nav__chevron {
+  color: var(--color-ink);
+  text-shadow:
+    0 1px 2px rgba(var(--rgb-bg), 0.9),
+    0 0 12px rgba(var(--rgb-bg), 0.7);
+}
+
 /* Must match MegaPanel's fill. */
 .c-nav.is-mega {
   background: var(--color-surface);
@@ -168,6 +190,7 @@ const markHidden = computed(() => onHome.value && !solid.value);
 
 .c-nav__brand.is-quiet {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
@@ -183,6 +206,21 @@ const markHidden = computed(() => onHome.value && !solid.value);
   display: flex;
   align-items: center;
   border-radius: var(--radius-s);
+  transition:
+    background var(--dur-2) var(--ease-linear),
+    box-shadow var(--dur-2) var(--ease-linear);
+}
+
+.c-nav__item.is-echo {
+  border-radius: var(--radius-s) var(--radius-s) 0 0;
+  background: rgba(var(--rgb-accent), 0.22);
+  box-shadow:
+    inset 0 -3px 0 var(--color-accent),
+    0 8px 22px -6px rgba(var(--rgb-accent), 0.85);
+}
+
+.c-nav__item.is-echo .c-nav__link {
+  color: var(--color-ink-bright);
 }
 
 .c-nav__link {
@@ -268,7 +306,9 @@ const markHidden = computed(() => onHome.value && !solid.value);
   align-items: center;
   flex: 0 0 auto;
   color: var(--color-ink);
-  transition: opacity var(--dur-2) var(--ease-out);
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    visibility var(--dur-2) var(--ease-linear);
 }
 
 @media (max-width: 899px) {

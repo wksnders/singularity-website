@@ -1,61 +1,26 @@
 <script setup lang="ts">
-/* The wordmark and badge images must be cut on the same size canvas; the badge is overlaid on top at the same width. */
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+/* The wordmark and badge images must be cut on the same size canvas; the badge is overlaid on top at the same width. A new canvas size must also go into lidArt.ts's MARK. */
 import { t } from '@/content';
-import { useMediaQuery } from '@/composables/useMediaQuery';
 import { asset, logoSrcset } from '@/site/links';
 
-const SIGN_DELAY = 1200;
-
-const FALLBACK = 4000;
-const CUES = ['scroll', 'pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
-
-const reduce = useMediaQuery('(prefers-reduced-motion: reduce)');
-const signed = ref(false);
-
-let timers: number[] = [];
-
-function sign(): void {
-  signed.value = true;
-}
-
-function arm(): void {
-  release();
-  timers.push(window.setTimeout(sign, SIGN_DELAY));
-}
-
-function release(): void {
-  for (const cue of CUES) window.removeEventListener(cue, arm);
-}
-
-onMounted(() => {
-  if (reduce.value) {
-    signed.value = true;
-    return;
-  }
-  for (const cue of CUES) window.addEventListener(cue, arm, { passive: true, once: true });
-  timers.push(window.setTimeout(sign, FALLBACK));
-});
-
-onBeforeUnmount(() => {
-  release();
-  for (const timer of timers) window.clearTimeout(timer);
-  timers = [];
-});
+defineProps<{
+  sizes: string;
+  /** Shows the `.exe` badge. */
+  signed: boolean;
+}>();
 
 const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`);
-const SIZES = '(max-width: 760px) 92vw, 720px';
 </script>
 
 <template>
-  <span class="c-lockup" :class="{ 'is-signed': signed, 'is-instant': reduce }">
+  <span class="c-lockup" :class="{ 'is-signed': signed }">
     <picture>
-      <source type="image/webp" :srcset="logoSrcset('singularity-logo', 'webp')" :sizes="SIZES" />
+      <source type="image/webp" :srcset="logoSrcset('singularity-logo', 'webp')" :sizes="sizes" />
       <img
         class="c-lockup__word"
         :src="src('singularity-logo', 'png')"
         :srcset="logoSrcset('singularity-logo', 'png')"
-        :sizes="SIZES"
+        :sizes="sizes"
         :alt="t('chrome.logoAlt')"
         width="720"
         height="254"
@@ -66,12 +31,12 @@ const SIZES = '(max-width: 760px) 92vw, 720px';
 
     <!-- alt="" : the wordmark above already carries the name. -->
     <picture>
-      <source type="image/webp" :srcset="logoSrcset('singularity-exe-badge-center', 'webp')" :sizes="SIZES" />
+      <source type="image/webp" :srcset="logoSrcset('singularity-exe-badge-center', 'webp')" :sizes="sizes" />
       <img
         class="c-lockup__badge"
         :src="src('singularity-exe-badge-center', 'png')"
         :srcset="logoSrcset('singularity-exe-badge-center', 'png')"
-        :sizes="SIZES"
+        :sizes="sizes"
         alt=""
         width="720"
         height="254"
@@ -85,7 +50,7 @@ const SIZES = '(max-width: 760px) 92vw, 720px';
 .c-lockup {
   position: relative;
   display: block;
-  width: min(100%, 720px);
+  width: 100%;
   filter: drop-shadow(0 10px 30px rgba(var(--rgb-bg), 0.7));
 }
 
@@ -105,16 +70,12 @@ const SIZES = '(max-width: 760px) 92vw, 720px';
   transform: translateY(6px) scale(0.88);
   transform-origin: 51.4% 83.5%;
   transition:
-    opacity 480ms var(--ease-out),
-    transform 480ms var(--ease-out);
+    opacity var(--dur-4) var(--ease-out),
+    transform var(--dur-4) var(--ease-out);
 }
 
 .c-lockup.is-signed .c-lockup__badge {
   opacity: 1;
   transform: translateY(0) scale(1);
-}
-
-.c-lockup.is-instant .c-lockup__badge {
-  transition: none;
 }
 </style>

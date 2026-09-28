@@ -61,12 +61,14 @@ export function asset(path: string): string {
 }
 
 const PRESS_WIDTHS = { avif: [560, 1080], webp: [560, 1080] };
+const BOX_WIDTHS = { avif: [360, 480, 720, 960, 1200], webp: [480, 960] };
 
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
   ['/programs/', CARD_WIDTHS],
   ['/characters/', ART_WIDTHS],
   ['/press/covers/', PRESS_WIDTHS],
+  ['/box-core/', BOX_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {

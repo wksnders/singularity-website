@@ -67,6 +67,9 @@ export const formEndpoints = {
   support: null as FormEndpoint | null,
 };
 
+/** Must name the store `urls.buy` leads to. */
+export const buyStoreName = 'Gamefound';
+
 /** Launch-day replacements happen HERE, not in nine page templates. */
 export const urls: OutboundUrls = {
   buy: 'https://gamefound.com/en/projects/octothorpe/singularityexe/rewards#/section/rewards',
@@ -179,13 +182,6 @@ const plate = (id: string, focalX: number): Art => ({
   alt: '',
   focal: { x: focalX, y: 0.5 },
 });
-
-const keyPlate = (id: string) => ({ id, art: plate(id, 0.5) });
-
-export const keyArt = {
-  home: keyPlate('home-hero'),
-  world: keyPlate('autumn-network'),
-};
 
 export const factions: Faction[] = [
   {

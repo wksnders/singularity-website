@@ -11,8 +11,6 @@ withDefaults(
 
     pendingNote?: string;
 
-    drift?: boolean;
-
     glow?: string;
     minHeight?: string;
     sources?: ArtSource[];
@@ -20,7 +18,6 @@ withDefaults(
   }>(),
   {
     placeholder: '[ key art ]',
-    drift: false,
     glow: '120% 80% at 20% 10%',
     minHeight: 'min(92dvh, 860px)',
   },
@@ -29,7 +26,7 @@ withDefaults(
 
 <template>
   <section class="c-hero" :style="{ minHeight }">
-    <div class="c-hero__art" :class="{ 'c-hero__art--drift': drift }">
+    <div class="c-hero__art">
       <ArtFrame
         :art="art"
         ratio="auto"
@@ -65,19 +62,6 @@ withDefaults(
 
 .c-hero__art > .c-art {
   height: 100%;
-}
-
-.c-hero__art--drift {
-  animation: sx-drift 24s var(--ease-in-out) infinite alternate;
-}
-
-@keyframes sx-drift {
-  from {
-    transform: translate3d(0, 0, 0) scale(1.02);
-  }
-  to {
-    transform: translate3d(0, -14px, 0) scale(1.06);
-  }
 }
 
 .c-hero__glow {

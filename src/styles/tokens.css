@@ -44,6 +44,7 @@
 
   --font-display: 'Unbounded', 'Space Grotesk', sans-serif;
   --font-body: 'Space Grotesk', system-ui, sans-serif;
+  /* HomeHeroRail's monoAdvance assumes this face's 0.6em advance. */
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --size-mono-xs: 0.625rem;
