@@ -87,7 +87,6 @@
   },
   "universe": {
     "anyFaction": "Any faction",
-    "artPlaceholder": "[ character art 3:4 ]",
     "factionArtPlaceholder": "[ faction hero art ]",
     "hero": {
       "title": "The Autumn Network.",
@@ -237,7 +236,6 @@
       "modes": "Solo · co-op · versus",
       "length": "30 min / player",
       "placeholder": "[ key art — hero splash, 21:9 → 4:5, focal on character face ]",
-      "pending": "[ HERO SPLASH — PENDING ]",
       "secondary": "See how it plays"
     },
     "offer": {
@@ -246,14 +244,6 @@
       "from": "From",
       "priceQualifier": "USD + shipping",
       "cta": "Get it now"
-    },
-    "facts": {
-      "title": "The box, at a glance",
-      "price": "Price",
-      "release": "Release",
-      "box": "In the box",
-      "ships": "Ships to",
-      "ages": "Ages"
     },
     "waysToPlay": {
       "title": "Two ways to play",
@@ -433,25 +423,13 @@
     "missingBody": "The four factions are on the Universe page."
   },
   "character": {
-    "emblemNote": "[ faction emblems — assets/factions/<id>/icon.png ]",
     "statHp": "Health",
     "statAbility": "Ability",
     "lorePlaceholder": "[PLACEHOLDER — paste real character lore. This is the door into the world: who they were before the migration, what they run on now, and why two factions claim them.]",
-    "artPlaceholder": "[ character art — full, 3:4, focal on face ]",
     "cardArtPlaceholder": "[ printed character card 63×88 ]",
-    "cardKicker": "Their character card",
     "seeCardLarge": "See the card at reading size",
-    "artCredit": "ART — PENDING · [ artist credit TBD ]",
-    "ctaCards": "See their cards",
-    "ctaChapter": "Read their chapter →",
-    "playsWith": "Plays with:",
-    "brandStory": "The brand story",
-    "alsoPlays": "Also plays",
-    "moreInGallery": "in the gallery",
-    "cardTextNote": "Every program's name, cost, type and rules text lives on the site as text — not only in the card image — so it can be searched, read aloud and corrected by errata.",
     "appearsIn": "Appears in",
     "chapterArtPlaceholder": "[ chapter art ]",
-    "noStoriesTitle": "Not in a published chapter yet",
     "noStoriesBody": "They have not turned up in a published chapter yet.",
     "missingTitle": "No character at that address",
     "missingBody": "Every character is in the index.",
@@ -491,7 +469,6 @@
     "brandJumpLabel": "Jump to their programs",
     "slotChangeAria": "Change the {slot} program, currently {name}",
     "squadExit": "Squad building in Learn",
-    "stackCount": "{n} of {total} chosen",
     "seedGroupLabel": "Prebuilt stacks",
     "seedInBox": "In the box",
     "seedInBook": "In the book",
@@ -518,13 +495,8 @@
     "loreTitle": "Who they were",
     "moreFrom": "More from",
     "readChapters": "Read the chapters so far",
-    "noErrata": "No errata affects this card.",
     "rowBrand": "Brand",
-    "rowSet": "Set",
-    "rowAccess": "Brand access",
-    "rowPrinting": "Printing",
     "rowArtist": "Artist",
-    "rowSource": "Source",
     "noStoriesDiscord": "Tell us who you want to see next on Discord",
     "fillingNoteFull": "The next card you pick goes in the {slot} position, replacing what is there.",
     "sayMoved": "{name} moved from the {from} slot to the {slot} slot. {n} of {total} chosen.",
@@ -1069,8 +1041,7 @@
     "search": {
       "label": "Search the FAQ",
       "placeholder": "shipping, sleeves, solo, refund…",
-      "clear": "Clear",
-      "hint": "to search"
+      "clear": "Clear"
     },
     "count": {
       "questions": "questions",
@@ -1243,7 +1214,6 @@
       "players": "Players",
       "length": "Length",
       "ages": "Ages",
-      "price": "Price",
       "release": "Release",
       "box": "In the box",
       "ships": "Ships to",

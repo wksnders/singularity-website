@@ -4,9 +4,8 @@
 # membership, brand and art stay in the data file.
 #
 # The body below the fence is the long-form lore. Leave it EMPTY until real
-# copy exists — CharacterView falls back to the shared `character.lorePlaceholder`
-# string, so an unwritten character reads the same everywhere instead of
-# leaking a per-file placeholder onto the page.
+# copy exists: a character with no lore gets no lore section at all, rather
+# than a per-file placeholder on the page.
 name: 'Hanbei'
 epithet: 'Aloof Savant'
 ---
