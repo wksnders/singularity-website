@@ -9,6 +9,8 @@ const PX_PER_MS = 1.1;
 const SETTLE_JUMPS = 4;
 /** Ms: scroll events arrive a frame after the jump that caused them. */
 const ECHO_MS = 100;
+/** Ms after a jump that a late scroll ending where it landed still counts as the site's. */
+const LANDED_MS = 1000;
 
 export const SCROLL_INPUTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
 
@@ -55,7 +57,8 @@ function settle(target: Target): void {
 export const siteScrolling = (): boolean => raf !== 0 || performance.now() - jumpedAt < ECHO_MS;
 
 /** For a scroll that arrives late: whether it stopped where the site last sent the page. */
-export const siteLandedAt = (y: number): boolean => Math.abs(Math.round(y) - jumpedTo) <= 1;
+export const siteLandedAt = (y: number): boolean =>
+  performance.now() - jumpedAt < LANDED_MS && Math.abs(Math.round(y) - jumpedTo) <= 1;
 
 /** One hold at a time: the latest registration wins. */
 export function registerHold(remaining: (el: Element) => number): () => void {
@@ -111,6 +114,8 @@ export async function glideToElement(el: HTMLElement, instant = false): Promise<
   }
   return arrived;
 }
+
+export const glideToTop = (): Promise<boolean> => glideTo(() => 0, false, () => true);
 
 /** Waits two frames first: the router starts the glide a tick after the click. */
 export async function afterGlide(): Promise<boolean> {

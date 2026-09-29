@@ -1,19 +1,21 @@
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
+/** A mouse or trackpad that can hover. The CSS rules keyed on hover repeat this query. */
+export const FINE_HOVER = '(hover: hover) and (pointer: fine)';
+
 /* For behaviour CSS cannot express, not styling: `useChrome` owns the shared `wide`, this is per-component. */
 export function useMediaQuery(query: string) {
-  const matches = ref(false);
-  let media: MediaQueryList | null = null;
+  const media = window.matchMedia(query);
+  const matches = ref(media.matches);
 
-  const onChange = () => (matches.value = Boolean(media?.matches));
+  const onChange = () => (matches.value = media.matches);
 
   onMounted(() => {
-    media = window.matchMedia(query);
     media.addEventListener('change', onChange);
     onChange();
   });
 
-  onBeforeUnmount(() => media?.removeEventListener('change', onChange));
+  onBeforeUnmount(() => media.removeEventListener('change', onChange));
 
   return readonly(matches);
 }

@@ -4,8 +4,8 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { t } from '@/content';
+import { glideToTop } from '@/site/glide';
 import { footerColumns, socialKeys } from '@/site/ia';
 import { asset, logoSrcset, outbound, resolveLink, to } from '@/site/links';
 import { game } from '@/data/universe';
@@ -16,12 +16,11 @@ const router = useRouter();
 const home = computed(() => to('home'));
 const atHome = computed(() => router.resolve(home.value).path === route.path);
 
-//scroll when cant navigate. 
+/* At Home the link can't navigate, so it scrolls instead. */
 function toTop(event: MouseEvent): void {
   if (!atHome.value) return;
   event.preventDefault();
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-  document.getElementById('main')?.focus({ preventScroll: true });
+  void glideToTop().then(() => document.getElementById('main')?.focus({ preventScroll: true }));
 }
 </script>
 

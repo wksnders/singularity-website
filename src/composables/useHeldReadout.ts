@@ -5,7 +5,7 @@ import type { LidReadout } from '@/site/lidSplitScene';
 /** Largest first. */
 export type FitSteps = [size: string, tracking: string][];
 
-function fitLine(box: HTMLElement, text: HTMLElement, steps: FitSteps): void {
+export function fitLine(box: HTMLElement, text: HTMLElement, steps: FitSteps): void {
   for (const [size, tracking] of steps) {
     text.style.fontSize = size;
     text.style.letterSpacing = tracking;

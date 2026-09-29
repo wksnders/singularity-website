@@ -18,12 +18,14 @@ const VIA_CLEAR = 3;
 const BUS_SPLIT = { base: 3, spread: 0.12 };
 /** Px per px of scroll. */
 const RAIL_DRIFT = 0.45;
-/** Where each gap wire leaves strip a, lands on strip b, and turns between them: fractions of height, height, gap. */
-const WIRE_SETS: [number, number, number][] = [
-  [0.2, 0.28, 0.5],
-  [0.46, 0.4, 0.5],
-  [0.7, 0.76, 0.5],
+/** Where each gap wire leaves strip a and lands on strip b, as fractions of their heights. */
+const WIRE_SETS: [number, number][] = [
+  [0.2, 0.28],
+  [0.46, 0.4],
+  [0.7, 0.76],
 ];
+/** Where a gap wire turns, as a share of the gap. */
+const WIRE_TURN = 0.5;
 
 /* Whole bytes, first byte most significant; each byte is followed by one empty slot. */
 const WORD = 0x73696e67756c6172697479n;
@@ -116,7 +118,6 @@ interface Wire {
   b: number;
   ta: number;
   tb: number;
-  m: number;
   g: SVGGElement;
   A: Strand;
   B: Strand;
@@ -202,7 +203,7 @@ export function createCircuit(svgs: { zones: SVGSVGElement; wires: SVGSVGElement
   for (let i = 0; i < n - 1; i++) {
     const ca = tones[i];
     const cb = tones[i + 1];
-    WIRE_SETS.forEach(([ta, tb, m], k) => {
+    WIRE_SETS.forEach(([ta, tb], k) => {
       const g = make(svgs.wires, 'g', {});
       const ga = toned(g, ca);
       const gb = toned(g, cb);
@@ -212,7 +213,6 @@ export function createCircuit(svgs: { zones: SVGSVGElement; wires: SVGSVGElement
         b: i + 1,
         ta: ta + v,
         tb: tb - v,
-        m,
         g,
         A: strand(ga),
         B: strand(gb),
@@ -334,7 +334,7 @@ export function createCircuit(svgs: { zones: SVGSVGElement; wires: SVGSVGElement
       const Ay = a.y + a.h * w.ta;
       const Bx = b.x;
       const By = b.y + b.h * w.tb;
-      const mx = Ax + (Bx - Ax) * w.m;
+      const mx = Ax + (Bx - Ax) * WIRE_TURN;
       const my = (Ay + By) / 2;
       const c = Math.min(BEND, Math.abs(By - Ay) / 2, Math.abs(Bx - Ax) / 4);
       const sgn = Math.sign(By - Ay) || 1;

@@ -42,7 +42,7 @@ const plateH = computed(() => Math.max(props.height, natural.value));
 let tagRoom = 0;
 let observer: ResizeObserver | null = null;
 
-/* Hidden for height with l-sr-only, so screen readers keep it. Measured against the full content, tag included, so hiding it can't flip the decision back. */
+/* The tag line hides with l-sr-only, so screen readers keep it. Measure with the tag included, or hiding it flips the decision back. */
 function fit(): void {
   const el = plate.value;
   if (!el) return;
@@ -93,9 +93,9 @@ const factionEl = ref<HTMLElement | null>(null);
 const STEPS: FitSteps = [
   ['var(--size-s)', 'var(--track-mono)'],
   ['var(--size-s)', 'var(--track-mono-tight)'],
-  ['12px', 'var(--track-mono-tight)'],
-  ['11px', 'var(--track-mono-tight)'],
-  ['10px', 'var(--track-mono-tight)'],
+  ['0.75rem', 'var(--track-mono-tight)'],
+  ['0.6875rem', 'var(--track-mono-tight)'],
+  ['0.625rem', 'var(--track-mono-tight)'],
 ];
 
 const shown = useHeldReadout(
@@ -142,6 +142,7 @@ function universe(on: boolean): void {
       <div class="c-home-panel__ctas">
         <UiButton
           variant="primary"
+          class="c-home-panel__watch"
           :to="to('home', {}, { hash: '#trailer' })"
           @click="plainClick($event) && emit('watch')"
           @mouseenter="dest('trailer')"
@@ -184,12 +185,13 @@ function universe(on: boolean): void {
         >
           <span class="c-home-panel__dot" />{{ hint }}
         </MonoLabel>
+        <!-- A no-break space until the first naming: an empty value has no line to size or align its row. -->
         <div class="c-home-panel__names" :class="{ 'is-on': named }">
           <MonoLabel as="span" size="xs" tone="faint" class="c-home-panel__label">{{ t('home.hero.readout.character') }}</MonoLabel>
-          <span ref="nameEl" class="c-home-panel__value">{{ shown?.character ?? '' }}</span>
+          <span ref="nameEl" class="c-home-panel__value">{{ shown?.character ?? '\u00a0' }}</span>
           <MonoLabel as="span" size="xs" tone="faint" class="c-home-panel__label">{{ t('home.hero.readout.faction') }}</MonoLabel>
           <span ref="factionEl" class="c-home-panel__value c-home-panel__value--faction" :style="{ '--faction-text': shown?.tone }">
-            {{ shown?.faction ?? '' }}
+            {{ shown?.faction ?? '\u00a0' }}
           </span>
         </div>
       </div>
@@ -262,6 +264,13 @@ function universe(on: boolean): void {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3) var(--space-5);
+}
+
+/* Large text sizes: wraps inside the column rather than running under the teeth. */
+.c-btn.c-home-panel__watch {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
 }
 
 .c-home-panel__play {

@@ -50,6 +50,7 @@ export function reportHomeHero(gone: boolean, markGone: boolean): void {
   heroMarkGone.value = markGone;
   const released = heroHolds && gone;
   heroHolds = !gone;
+  if (heroHolds) navHidden.value = false;
   /* A single jump past the hero is judged by onScroll before the hero reports it gone: retract here too. */
   if (released && lastDown && mayRetract(lastY)) navHidden.value = true;
 }

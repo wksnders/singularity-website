@@ -12,6 +12,7 @@ import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
+import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
@@ -67,11 +68,16 @@ function aimTrailer(): void {
   const player = trailer.value?.$el as HTMLElement | undefined;
   if (!section || !player) return;
   section.style.removeProperty('scroll-margin-top');
-  const margin = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+  const css = getComputedStyle(section);
+  const nav = tokenPx('--nav-height');
+  /* Flush once its own padding clears the nav: a margin would leave the lid's foot under the header. */
+  const margin = parseFloat(css.paddingTop) >= nav ? 0 : parseFloat(css.scrollMarginTop) || 0;
   const offset = player.getBoundingClientRect().top - section.getBoundingClientRect().top;
   const room = viewHeight();
-  if (margin + offset + player.offsetHeight <= room) return;
-  const nav = tokenPx('--nav-height');
+  if (margin + offset + player.offsetHeight <= room) {
+    section.style.scrollMarginTop = `${margin}px`;
+    return;
+  }
   /* Centred, and below the nav when it fits there: the nav hides on the way down. */
   const top = Math.max(player.offsetHeight <= room - nav ? nav : 0, (room - player.offsetHeight) / 2);
   section.style.scrollMarginTop = `${top - offset}px`;
@@ -88,6 +94,7 @@ async function watchTrailer(): Promise<void> {
 onMounted(() => {
   aimTrailer();
   window.addEventListener('resize', aimTrailer);
+  void document.fonts?.ready.then(aimTrailer);
 });
 
 onBeforeUnmount(() => window.removeEventListener('resize', aimTrailer));
@@ -104,17 +111,20 @@ function scrollCast(direction: 1 | -1): void {
   <HomeHero @watch="watchTrailer">
     <section id="trailer" tabindex="-1" class="l-band l-band--line-bottom home__claim">
       <div class="l-wrap l-wrap--reading home__center">
-        <h2 class="home__h2">{{ t('home.zero.title') }}</h2>
-        <p class="l-lede home__body home__body--center">{{ t('home.zero.body') }}</p>
+        <MonoLabel>{{ t('home.zero.kicker') }}</MonoLabel>
+        <h2 class="home__h2 home__h2--claim">{{ t('home.zero.title') }}</h2>
+      </div>
+      <HomeTrailerCast>
         <TrailerPlayer
           ref="trailer"
-          class="home__trailer"
           :you-tube-id="game.trailerYouTubeId"
           :title="t('home.zero.trailerTitle')"
           :placeholder="t('home.zero.trailerPlaceholder')"
         />
-        <MonoLabel tone="faint" class="home__spacer">{{ t('home.zero.caption') }}</MonoLabel>
-        <UiButton variant="quiet" :to="to('learn')">{{ t('home.zero.link') }}</UiButton>
+        <MonoLabel tone="faint" class="home__center home__caption">{{ t('home.zero.caption') }}</MonoLabel>
+      </HomeTrailerCast>
+      <div class="l-wrap home__center">
+        <UiButton variant="quiet" :to="to('learn', {}, { hash: '#videos' })">{{ t('home.zero.link') }}</UiButton>
       </div>
     </section>
 
@@ -356,11 +366,6 @@ function scrollCast(direction: 1 | -1): void {
   margin-top: var(--space-5);
 }
 
-.home__body--center {
-  margin-inline: auto;
-  max-width: 48ch;
-}
-
 .home__center {
   text-align: center;
 }
@@ -369,9 +374,12 @@ function scrollCast(direction: 1 | -1): void {
   background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
 }
 
-.home__trailer {
-  margin-top: var(--space-7);
-  text-align: left;
+.home__h2--claim {
+  margin-top: var(--space-3);
+}
+
+.home__caption {
+  margin-top: var(--space-3);
 }
 
 .home__spacer {

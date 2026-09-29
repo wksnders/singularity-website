@@ -35,6 +35,8 @@ export interface LidSceneOpts {
   /** Side column only: the lid lands full-width, scaled `k` about `ox`. */
   intro: Readonly<Ref<{ k: number; ox: number } | null>>;
   tones: string[];
+  /** After each frame that changed something: reads here see the lid where the frame put it. */
+  onFrame?: () => void;
 }
 
 const FOLLOW_MS = 55;
@@ -57,12 +59,20 @@ const RESTORED_AT = 40;
 /** Ms the entrance clock jumps ahead when skipped. */
 const SKIP_BOOST = 8000;
 const IN_VIEW_MARGIN = '20% 0px';
+/** Share of its width a figure may spill past its strip's sides. */
+const FIGURE_SPILL = '60%';
 const SKIP_EVENTS = [...SCROLL_INPUTS, 'scroll'] as const;
 /* The router's own scroll on arrival must not count as the reader skipping. */
 const SKIP_SCROLL_AFTER = 300;
 /** Px from the lid's visible foot to the tags button's top; `_OPEN` for reduced motion, where the split starts open. */
 const TAGS_LIFT = HERO.rail + HERO.tagsButton + HERO.tagsGap;
 const TAGS_LIFT_OPEN = SPLIT.clear + HERO.tagsButton + HERO.tagsGap;
+
+/** Which strip a viewport x falls in, on the lid's rect. */
+const stripAt = (x: number, r: DOMRect) => {
+  const n = lidStrips.length;
+  return Math.min(n - 1, Math.max(0, Math.floor((x - r.left) / (r.width / n))));
+};
 
 /* Module scope: the entrance plays once per page load. */
 let arrived = false;
@@ -226,7 +236,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const W = boxW;
     const H = boxH;
     const pw = W / n;
-    const vh = screenH - opts.band.value;
+    const vh = Math.max(1, screenH - opts.band.value);
 
     const dt = Math.min(MAX_STEP_MS, Math.max(0, now - (lastNow ?? now)));
     lastNow = now;
@@ -438,7 +448,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
                 ext: pw,
                 map: ([x, y]) => [hw + (x - u0 - hw) / kf, y < -far / 2 ? cTop : hh + (y - v0 - hh) / kf],
               })
-            : `inset(${cTop.toFixed(1)}px -60% ${cBot.toFixed(1)}px -60%)`;
+            : `inset(${cTop.toFixed(1)}px -${FIGURE_SPILL} ${cBot.toFixed(1)}px -${FIGURE_SPILL})`;
       }
       cur[i] = { x: i * pw + ox * (1 - sc), y: ty + oy * (1 - sc) + introY, w: pw * sc, h: H * sc, ei, travel };
     });
@@ -465,10 +475,11 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
 
     const mark = els.mark.value;
     if (mark) {
-      /* Paced like the split: counting the narrow scrub's hold sinks the mark onto the arrow. */
+      /* Leaves out the narrow scrub's hold, as the split does; with it the mark sinks onto the arrow. */
       const markY = sy - (sp - sA);
       mark.style.transform = `translate3d(-50%,${(-camY * MARK_PAN + markY * MARK_PARALLAX * moving).toFixed(2)}px,0)`;
     }
+    opts.onFrame?.();
     return true;
   }
 
@@ -484,8 +495,6 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     lastNow = null;
     raf = requestAnimationFrame(loop);
   }
-
-  const stripAt = (x: number, r: DOMRect) => Math.min(n - 1, Math.max(0, Math.floor((x - r.left) / (r.width / n))));
 
   function onTap(event: PointerEvent): void {
     if (event.pointerType === 'mouse' || opts.hover.value || opts.narrow.value) return;

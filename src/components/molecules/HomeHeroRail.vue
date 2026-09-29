@@ -8,7 +8,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
-import { useHeldReadout, type FitSteps } from '@/composables/useHeldReadout';
+import { fitLine, useHeldReadout, type FitSteps } from '@/composables/useHeldReadout';
 import { useMediaQuery } from '@/composables/useMediaQuery';
 import { game } from '@/data/universe';
 import { HERO, type LidReadout } from '@/site/lidSplitScene';
@@ -39,7 +39,7 @@ const HEX = { pad: 52, slopes: 17, edge: 8 };
 const GLYPH_CHARS = 2;
 /** Px: the cue plate's padding either side of its text, and its gap from the cradle. */
 const PLATE = { pad: 18, gap: 14 };
-/* The chain's gap either side of "/". */
+/** Px: .c-home-rail__chain's gap, once each side of "/". */
 const chainGaps = tokenPx('--space-2') * 2;
 
 const modesLine = computed(() => t('home.hero.modesLine', { modes: t('home.hero.modes'), players: game.players }));
@@ -72,14 +72,24 @@ const namedText = ref<HTMLElement | null>(null);
 const STEPS: FitSteps = [
   ['var(--size-mono-s)', 'var(--track-mono)'],
   ['var(--size-mono-s)', 'var(--track-mono-tight)'],
-  ['10px', 'var(--track-mono-tight)'],
-  ['9px', 'var(--track-mono-tight)'],
+  ['0.625rem', 'var(--track-mono-tight)'],
+  ['0.5625rem', 'var(--track-mono-tight)'],
 ];
 const shown = useHeldReadout(
   () => props.named,
   STEPS,
   () => [[namedBox.value, namedText.value]],
 );
+
+const categoryEl = ref<HTMLElement | null>(null);
+const modesEl = ref<HTMLElement | null>(null);
+
+function fitLines(): void {
+  for (const el of [categoryEl.value, modesEl.value]) if (el) fitLine(el, el, STEPS);
+}
+
+onMounted(fitLines);
+watch(size, fitLines, { flush: 'post' });
 
 const spoken = computed(() => {
   const [min, max] = game.players.split('\u2013');
@@ -90,7 +100,7 @@ const spoken = computed(() => {
   });
 });
 
-const reduce = useMediaQuery('(prefers-reduced-motion: reduce)');
+const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 let unwatchPop: (() => void) | null = null;
 
 function play(el: HTMLElement): void {
@@ -100,7 +110,7 @@ function play(el: HTMLElement): void {
   /* Reduced motion keeps the fade and the flash, not the scale. */
   el.animate(
     [
-      { opacity: 0, scale: reduce.value ? 1 : 0.72, filter: 'brightness(2.2)' },
+      { opacity: 0, scale: reduced.value ? 1 : 0.72, filter: 'brightness(2.2)' },
       { opacity: 1, offset: 0.55, filter: 'brightness(1.4)' },
       { opacity: 1, scale: 1, filter: 'brightness(1)' },
     ],
@@ -185,10 +195,10 @@ const bedCut = computed(() => {
           @mouseleave="emit('hexHover', false)"
         >
           <MonoLabel class="c-home-rail__swap" aria-hidden="true">
-            <span class="c-home-rail__say" :class="{ 'is-on': shownLine === 'category' }">
+            <span ref="categoryEl" class="c-home-rail__say" :class="{ 'is-on': shownLine === 'category' }">
               {{ t('home.hero.category') }}
             </span>
-            <span class="c-home-rail__say c-home-rail__say--lit" :class="{ 'is-on': shownLine === 'modes' }">
+            <span ref="modesEl" class="c-home-rail__say c-home-rail__say--lit" :class="{ 'is-on': shownLine === 'modes' }">
               {{ modesLine }}
               <CardGlyph name="player" />
             </span>
@@ -233,6 +243,8 @@ const bedCut = computed(() => {
   /* The hex and cue plates, inside --rail-h. */
   --hex-top: 4px;
   --hex-h: 24px;
+  /* Each side of a line: keeps it clear of the hex's cut ends. */
+  --say-inset: 20px;
   position: absolute;
   inset: auto 0 0;
   height: var(--rail-h);
@@ -330,7 +342,8 @@ const bedCut = computed(() => {
 .c-home-rail__cue,
 .c-home-rail__hex::before,
 .c-home-rail__cue::before {
-  --hex-cut: 12px;
+  /* 45° ends: half the plate's height. */
+  --hex-cut: calc(var(--hex-h) / 2);
 
   clip-path: polygon(
     var(--hex-cut) 0,
@@ -355,7 +368,7 @@ const bedCut = computed(() => {
 
 .c-home-rail__hex::before,
 .c-home-rail__cue::before {
-  --hex-cut: 10px;
+  --hex-cut: calc(var(--hex-h) / 2 - 2px);
 
   content: '';
   position: absolute;
@@ -376,8 +389,12 @@ const bedCut = computed(() => {
   white-space: nowrap;
 }
 
+/* Clipped: fitLine reads each line's own overflow. */
 .c-home-rail__say {
   grid-area: 1 / 1;
+  justify-self: center;
+  max-width: calc(100% - 2 * var(--say-inset));
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -405,9 +422,6 @@ const bedCut = computed(() => {
 }
 
 .c-home-rail__say--named {
-  justify-self: center;
-  max-width: calc(100% - 40px);
-  overflow: hidden;
   text-indent: 0;
 }
 

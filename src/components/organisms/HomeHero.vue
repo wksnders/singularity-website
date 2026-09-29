@@ -10,12 +10,13 @@ import HomeHeroRail from '@/components/molecules/HomeHeroRail.vue';
 import SiteLockup from '@/components/molecules/SiteLockup.vue';
 import { useLidSplitScene } from '@/composables/useLidSplitScene';
 import { echoNav, releaseHomeHero, reportHomeHero } from '@/composables/useChrome';
-import { useMediaQuery, viewHeight } from '@/composables/useMediaQuery';
+import { FINE_HOVER, useMediaQuery, viewHeight } from '@/composables/useMediaQuery';
+import { useSeekCatch } from '@/composables/useSeekCatch';
 import { t } from '@/content';
 import { LID, MARK, lidStrips } from '@/data/lidArt';
 import { buyStoreName, characterById, factionById } from '@/data/universe';
 import { currentLocale } from '@/i18n/locales';
-import { SCROLL_INPUTS, jumpTo, plainClick, registerHold, siteLandedAt, siteScrolling } from '@/site/glide';
+import { jumpTo, plainClick, registerHold } from '@/site/glide';
 import { HERO, SEAM, SPLIT } from '@/site/lidSplitScene';
 import type { LidDest, LidReadout } from '@/site/lidSplitScene';
 import { asset, outbound, pictureSources, to } from '@/site/links';
@@ -33,7 +34,7 @@ const WORD_FIT = { min: 10, step: 0.5 };
 const CUE_GONE_AT = 10;
 /** Share of the lid's width. */
 const MARK_NARROW = 0.94;
-/** Px kept between a name tag and the header or the view's foot. */
+/** Px kept between a name tag and the header, the view's foot or the next tag. */
 const TAG_AIR = 8;
 /** Narrow screens: the arrow's centre as a share of the lid's width, between the premise strips; `edge` is px. */
 const ARROW = { at: 0.35, edge: 8 };
@@ -66,17 +67,17 @@ const cast = strips.map((s) => s.readout);
 
 const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 /* Same query as the strip hover rule in the styles below. */
-const hover = useMediaQuery('(hover: hover) and (pointer: fine)');
+const hover = useMediaQuery(FINE_HOVER);
 
 const vw = ref(window.innerWidth);
 const vh = ref(viewHeight());
-/* clientWidth, not innerWidth: the hero's scrollbar appears after first paint and fires no resize. */
-const pageW = ref(document.documentElement.clientWidth);
+/* The body's width, not innerWidth or the root's clientWidth: both include the scrollbar gutter base.css reserves. */
+const pageW = ref(document.body.clientWidth);
 
 function readViewport(): void {
   vw.value = window.innerWidth;
   vh.value = viewHeight();
-  pageW.value = document.documentElement.clientWidth;
+  pageW.value = document.body.clientWidth;
 }
 
 const side = computed(() => vw.value >= SIDE_MIN);
@@ -86,7 +87,7 @@ const colW = computed(() =>
 const boxW = computed(() => pageW.value - colW.value);
 const boxH = computed(() => Math.round((boxW.value * LID.h) / LID.w));
 const bandH = ref(0);
-const view = computed(() => vh.value - bandH.value);
+const view = computed(() => Math.max(1, vh.value - bandH.value));
 const visH = computed(() => Math.min(boxH.value, view.value));
 /** Scroll spent holding the box still. */
 const hold = computed(() => (reduced.value ? 0 : Math.round(visH.value * split.pinLen.value)));
@@ -154,6 +155,10 @@ const split = useLidSplitScene(
       return { k, ox: colW.value / (k - 1) };
     }),
     tones: strips.map((s) => s.tone ?? 'currentColor'),
+    onFrame: () => {
+      report();
+      placeTags();
+    },
   },
 );
 
@@ -171,7 +176,7 @@ const scrubNamed = computed<LidReadout | null>(() => {
 });
 const railLine = computed(() => {
   if (!side.value && scrubNamed.value) return 'named';
-  return split.pastPin.value || hexHover.value ? 'modes' : 'category';
+  return split.scrubEnd.value || split.pastPin.value || hexHover.value ? 'modes' : 'category';
 });
 const hint = computed(() => {
   if (dest.value === 'trailer') return t('home.hero.readout.toTrailer');
@@ -246,8 +251,8 @@ function placeTags(): void {
     const cardW = (tag?.firstElementChild as HTMLElement | null)?.offsetWidth ?? 0;
     /* The strip's own rect, not its share: the split scales it. The side panel's teeth cover the first one's left edge. */
     const s = stripEls.value[i]?.getBoundingClientRect();
-    const left = Math.max(0, s ? s.left - hr.left : i * pw) + (i === 0 && side.value ? HERO.panelOverhang : 0);
-    const width = Math.min(hr.width, s ? s.right - hr.left : (i + 1) * pw) - left;
+    const left = Math.max(0, s ? s.left - hr.left : i * pw) + (i === 0 && side.value ? HERO.panelOverhang : 0) + TAG_AIR / 2;
+    const width = Math.min(hr.width, s ? s.right - hr.left : (i + 1) * pw) - TAG_AIR / 2 - left;
     const cardX = Math.max(0, Math.min(tipX - left - cardW / 2, width - cardW));
     return {
       style: {
@@ -277,7 +282,7 @@ watch(split.tagsReady, (ready) => {
 });
 
 const premise = (strip: (typeof strips)[number]) =>
-  strip.premise === 'first' ? t('home.hero.premise.first') : `${t('home.hero.premise.second')} →`;
+  strip.premise === 'first' ? t('home.hero.premise.lead') : `${t('home.hero.premise.end')} →`;
 
 function fitWords(): void {
   const lines = wordEls.value.map((a) => a.parentElement).filter((p): p is HTMLElement => !!p);
@@ -355,82 +360,14 @@ function revealBelow(event: FocusEvent): void {
   }
 }
 
-/* A whole scroll, rest to rest, with no reader input and not made by the site is the browser seeking (find-in-page, a text link, a screen reader). Judged once it ends. */
-/** Ms without a scroll event that counts as at rest. */
-const REST_MS = 150;
-/** Ms before a scroll starts that reader input still claims it. */
-const INPUT_LEAD = 500;
-/** Share of the view a seek must cover: smaller scrolls are left alone. */
-const SEEK_MIN = 0.1;
-/* touchmove: once the browser takes a pan it cancels the pointer, so a paused drag isn't held. */
-const INPUT_EVENTS = [...SCROLL_INPUTS, 'touchmove', 'touchend'] as const;
-/** Px left of the page's scrollbar where pointer movement counts as reader input: Firefox's scrollbar sends no pointer events. */
-const SCROLLBAR_REACH = 48;
-let restY = 0;
-let startedAt = -1;
-let inputAt = -Infinity;
-let bySite = false;
-let restTimer = 0;
-const noteInput = () => (inputAt = performance.now());
-const POINTER_HOLD = ['pointerdown', 'pointerup', 'pointercancel', 'contextmenu'] as const;
-let pointerHeld = false;
-let autoscroll = false;
-let heldDuring = false;
-/* A held pointer is the reader however long it pauses: a scrollbar drag sends nothing between press and release. A middle press counts until the next press: autoscroll runs with the button up. */
-function pressed(event: PointerEvent | MouseEvent): void {
-  pointerHeld = event.type === 'pointerdown';
-  if (pointerHeld) autoscroll = event.button === 1 && !(event.target as Element | null)?.closest?.('a[href]');
-}
-/* A release can land outside the window; the next move says whether a button is still down. */
-function moved(event: PointerEvent): void {
-  pointerHeld = event.buttons > 0;
-  if (event.clientX >= pageW.value - SCROLLBAR_REACH) noteInput();
-}
-const letGo = () => (pointerHeld = autoscroll = false);
-
-function seekEnded(): void {
-  const byReader = heldDuring || inputAt >= startedAt - INPUT_LEAD;
-  const from = restY;
-  const y = window.scrollY;
-  startedAt = -1;
-  restY = y;
-  if (!docked.value || bySite || byReader || siteLandedAt(y) || y - from < vh.value * SEEK_MIN) return;
-  const left = holdLeft(from);
-  if (left < 1) return;
-  jumpTo(y + left);
-  restY = window.scrollY;
-}
-
-function trackSeek(): void {
-  if (startedAt < 0) {
-    startedAt = performance.now();
-    bySite = false;
-    heldDuring = false;
-  }
-  bySite ||= siteScrolling();
-  heldDuring ||= pointerHeld || autoscroll;
-  clearTimeout(restTimer);
-  restTimer = window.setTimeout(seekEnded, REST_MS);
-}
-
-function onScroll(): void {
-  trackSeek();
-  report();
-  placeTags();
-}
+useSeekCatch({ docked, holdLeft, vh, pageW });
 
 let resize: ResizeObserver | null = null;
 let unregisterHold = () => {};
 
 onMounted(async () => {
   window.addEventListener('resize', readViewport);
-  window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('pointerdown', dropTags, { passive: true });
-  for (const name of INPUT_EVENTS) window.addEventListener(name, noteInput, { passive: true });
-  for (const name of POINTER_HOLD) window.addEventListener(name, pressed, { passive: true });
-  window.addEventListener('pointermove', moved, { passive: true });
-  window.addEventListener('blur', letGo);
-  restY = window.scrollY;
   unregisterHold = registerHold((el) => (docked.value && below.value?.contains(el) ? holdLeft(window.scrollY) : 0));
   resize = new ResizeObserver(readViewport);
   resize.observe(document.documentElement);
@@ -444,13 +381,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', readViewport);
-  window.removeEventListener('scroll', onScroll);
   window.removeEventListener('pointerdown', dropTags);
-  for (const name of INPUT_EVENTS) window.removeEventListener(name, noteInput);
-  for (const name of POINTER_HOLD) window.removeEventListener(name, pressed);
-  window.removeEventListener('pointermove', moved);
-  window.removeEventListener('blur', letGo);
-  clearTimeout(restTimer);
   unregisterHold();
   resize?.disconnect();
   releaseHomeHero();
@@ -666,7 +597,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
           @universe="reveal"
         />
 
-        <!-- After the side panel so Tab reaches its calls to action first. -->
+        <!-- After the side panel so Tab reaches its calls to action first. aria-disabled, not disabled: focus must survive the split. -->
         <button
           v-if="tagsButton"
           ref="tagButton"
@@ -807,11 +738,13 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 }
 
 .c-lid__pad {
+  --pad: 10px;
+
   position: absolute;
-  right: -5px;
-  top: -4px;
-  width: 10px;
-  height: 10px;
+  right: calc(var(--pad) / -2);
+  top: calc((var(--trace) - var(--pad)) / 2);
+  width: var(--pad);
+  height: var(--pad);
   border: 2px solid rgba(var(--rgb-accent), 0.6);
   border-radius: var(--radius-pill);
   background: var(--color-bg);
@@ -823,11 +756,13 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 }
 
 .c-lid__packet {
+  --packet: 6px;
+
   position: absolute;
   left: 0;
-  top: -2px;
+  top: calc((var(--trace) - var(--packet)) / 2);
   width: 64px;
-  height: 6px;
+  height: var(--packet);
   border-radius: var(--radius-pill);
   background: linear-gradient(90deg, transparent, var(--color-ink-bright) 60%, transparent);
   box-shadow: 0 0 12px rgba(var(--rgb-accent), 0.8);
@@ -1087,7 +1022,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
     transform var(--dur-2) var(--ease-out);
 }
 
-/* As UiButton's disabled state. */
+/* This rule and the next mirror .c-btn:disabled in UiButton.vue. */
 .c-lid__tags[aria-disabled='true'] {
   cursor: not-allowed;
 }

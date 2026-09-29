@@ -27,8 +27,6 @@ export const lidStrips: LidStrip[] = [
     characterId: 'scrapper',
     head: [0.1525, 0.612],
     box: [0, 0.5835, 0.2716, 0.9132],
-    notch: DEFAULT_NOTCH,
-    notchDepth: 0.21,
     premise: 'first',
   },
   {

@@ -243,8 +243,8 @@
       "universe": "Enter the universe",
       "tagsLabel": "Character names",
       "premise": {
-        "first": "Enter the…",
-        "second": "server"
+        "lead": "Enter the…",
+        "end": "server"
       },
       "readout": {
         "character": "Character",
@@ -285,12 +285,23 @@
       }
     },
     "zero": {
+      "kicker": "The card game of total control",
       "title": "No dice. No shuffle. No luck.",
-      "body": "There is always a best line and always a reason you lost. See it in the trailer.",
       "trailerTitle": "Singularity.exe trailer",
       "trailerPlaceholder": "[ trailer poster frame — 16:9 ]",
       "caption": "Captioned · plays inline",
-      "link": "How it works"
+      "link": "Watch a full game →",
+      "stacks": {
+        "hint": "Hover a card to see its stack · click to zoom",
+        "hintTouch": "Tap a card to see its stack",
+        "open": "{name} · {deck} · {kind} · {source}",
+        "label": "{name} card. {deck} {kind}: {programs}.",
+        "labelAlone": "{name} card.",
+        "kind": {
+          "starter": "starter deck",
+          "list": "decklist"
+        }
+      }
     },
     "cast": {
       "kicker": "The characters",

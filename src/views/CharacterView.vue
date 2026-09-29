@@ -25,7 +25,7 @@ import type { StackSlot } from '@/components/organisms/StackBuilder.vue';
 import { useCardParam } from '@/composables/useCardParam';
 import { useDocumentTitle } from '@/composables/useDocumentTitle';
 import { useEntityDoc } from '@/composables/useEntityDoc';
-import { prefersReducedMotion, useMediaQuery } from '@/composables/useMediaQuery';
+import { useMediaQuery } from '@/composables/useMediaQuery';
 import { usePoolPanel } from '@/composables/usePoolPanel';
 import { provideSections } from '@/composables/useSections';
 import { useStack } from '@/composables/useStack';
@@ -53,6 +53,7 @@ import {
   stories,
 } from '@/data/universe';
 import { pad } from '@/site/format';
+import { glideToTop } from '@/site/glide';
 import { chapterHash, pictureSources, outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
@@ -89,7 +90,7 @@ const printingId = computed(() => cardParam.printing.value ?? 'standard');
 
 function choosePrinting(id: string): void {
   cardParam.setPrinting(id);
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  void glideToTop();
 }
 
 const printings = computed(() => (character.value ? printingsOf(character.value) : []));

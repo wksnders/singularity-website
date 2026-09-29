@@ -95,7 +95,7 @@ export const SCRUB = {
   tagsFadeMin: 60,
 };
 
-/** Px: the rail's height, the name-tags button, the button's air from what it sits beside, and how far the side panel reaches over the lid. The components set their CSS from these. */
+/** Px: the rail's height, the name-tags button, the button's gap from the rail and from the teeth or lid edge, and how far the side panel reaches over the lid. The components set their CSS from these. */
 export const HERO = { rail: 36, tagsButton: 52, tagsGap: 4, panelOverhang: 16 };
 
 /** Px. HomeHero hands them to its CSS. */
