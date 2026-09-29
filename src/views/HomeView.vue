@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
@@ -13,6 +12,7 @@ import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
 import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
+import IncursionsBand from '@/components/organisms/IncursionsBand.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
@@ -193,21 +193,7 @@ function scrollCast(direction: 1 | -1): void {
       </div>
     </section>
 
-    <section class="l-band l-band--line-top home__incursions">
-      <div class="l-wrap">
-        <ThreatBadge>{{ t('home.incursions.badge') }}</ThreatBadge>
-        <h2 class="home__h2 home__h2--tight">{{ t('home.incursions.title') }}</h2>
-        <p class="l-lede home__body">{{ t('home.incursions.body') }}</p>
-        <p class="home__facts">
-          <span>{{ game.incursionsPlayers }} {{ t('home.incursions.players') }}</span>
-          <span>{{ t('home.incursions.solo') }}</span>
-          <span>{{ t('home.incursions.inBox') }}</span>
-        </p>
-        <UiButton :to="to('incursions')" class="home__spacer">
-          {{ t('home.incursions.cta') }}
-        </UiButton>
-      </div>
-    </section>
+    <IncursionsBand />
 
     <section id="story" class="l-band">
       <div class="l-wrap">
@@ -353,10 +339,6 @@ function scrollCast(direction: 1 | -1): void {
   font-size: var(--size-h2);
 }
 
-.home__h2--tight {
-  max-width: 22ch;
-}
-
 .home__h3 {
   margin-top: var(--space-3);
   font-size: clamp(1.375rem, 3.4vw, 2rem);
@@ -424,11 +406,6 @@ function scrollCast(direction: 1 | -1): void {
   scroll-snap-align: start;
 }
 
-.home__incursions {
-  --faction: var(--color-threat);
-}
-
-.home__facts,
 .home__channels {
   margin-top: var(--space-6);
   display: flex;
@@ -437,19 +414,6 @@ function scrollCast(direction: 1 | -1): void {
   font-family: var(--font-mono);
   font-size: var(--size-mono-s);
   letter-spacing: var(--track-mono-tight);
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
-}
-
-.home__facts span {
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid rgba(var(--rgb-ink), 0.2);
-  border-radius: var(--radius-pill);
-  white-space: nowrap;
-}
-
-.home__channels {
-  text-transform: none;
   color: var(--color-ink-faint);
 }
 

@@ -35,7 +35,9 @@ export interface LidSceneOpts {
   /** Side column only: the lid lands full-width, scaled `k` about `ox`. */
   intro: Readonly<Ref<{ k: number; ox: number } | null>>;
   tones: string[];
-  /** After each frame that changed something: reads here see the lid where the frame put it. */
+  /** The wordmark has left the top of the screen. */
+  markGone: Readonly<Ref<boolean>>;
+  /** At the start of each frame, before its writes: reads see the lid where the last frame put it (the loop runs two frames past the last change). */
   onFrame?: () => void;
 }
 
@@ -68,7 +70,7 @@ const SKIP_SCROLL_AFTER = 300;
 const TAGS_LIFT = HERO.rail + HERO.tagsButton + HERO.tagsGap;
 const TAGS_LIFT_OPEN = SPLIT.clear + HERO.tagsButton + HERO.tagsGap;
 
-/** Which strip a viewport x falls in, on the lid's rect. */
+/** The strip under viewport x, by equal shares of the lid's rect. */
 const stripAt = (x: number, r: DOMRect) => {
   const n = lidStrips.length;
   return Math.min(n - 1, Math.max(0, Math.floor((x - r.left) / (r.width / n))));
@@ -102,6 +104,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let fieldAt = '';
   const origins: string[] = [];
   let follow: number | null = null;
+  let lastMarkY: number | null = null;
+  let frozenMarkY: number | null = null;
   let lastNow: number | null = null;
   let sig: string | null = null;
   let hovSettled = true;
@@ -223,6 +227,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   function frame(now: number): boolean {
     const box = els.box.value;
     if (!box || !reg || !els.strips.value.length) return false;
+    opts.onFrame?.();
     /* All reads before the first write: a read after a write forces a second style pass. */
     const scrolled = window.scrollY;
     const hr = box.getBoundingClientRect();
@@ -476,10 +481,14 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const mark = els.mark.value;
     if (mark) {
       /* Leaves out the narrow scrub's hold, as the split does; with it the mark sinks onto the arrow. */
-      const markY = sy - (sp - sA);
+      const free = sy - (sp - sA);
+      /* Once off the top, the mark stays put until the reader scrolls back past where it left: the split's parallax would bring it back. */
+      if (opts.markGone.value && frozenMarkY === null) frozenMarkY = lastMarkY ?? free;
+      if (frozenMarkY !== null && free <= frozenMarkY) frozenMarkY = null;
+      const markY = frozenMarkY ?? free;
+      lastMarkY = markY;
       mark.style.transform = `translate3d(-50%,${(-camY * MARK_PAN + markY * MARK_PARALLAX * moving).toFixed(2)}px,0)`;
     }
-    opts.onFrame?.();
     return true;
   }
 

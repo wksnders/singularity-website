@@ -7,12 +7,13 @@ import { SCROLL_INPUTS, jumpTo, siteLandedAt, siteScrolling } from '@/site/glide
 const REST_MS = 150;
 /** Ms before a scroll starts that reader input still claims it. */
 const INPUT_LEAD = 500;
-/** Share of the view a seek must cover: smaller scrolls are left alone. */
+/** Share of the view a seek must cover. */
 const SEEK_MIN = 0.1;
-/* touchmove: a pan fires pointercancel, so pointerHeld misses touch drags; this counts them as input. */
+/* Touch: a pan fires pointercancel, so pointerHeld misses touch drags; these count them as input. */
 const INPUT_EVENTS = [...SCROLL_INPUTS, 'touchmove', 'touchend'] as const;
 /** Px left of the page's scrollbar where pointer movement counts as reader input: Firefox's scrollbar sends no pointer events. */
 const SCROLLBAR_REACH = 48;
+/* contextmenu: the menu can swallow the pointerup. */
 const POINTER_HOLD = ['pointerdown', 'pointerup', 'pointercancel', 'contextmenu'] as const;
 
 export interface SeekCatchOpts {

@@ -2,7 +2,6 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import CardImage from '@/components/atoms/CardImage.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import MissingCardNote from '@/components/molecules/MissingCardNote.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { useCardParam } from '@/composables/useCardParam';
 import { FINE_HOVER, useMediaQuery } from '@/composables/useMediaQuery';
@@ -78,6 +77,7 @@ const zoomed = computed(() => (zoom.slug.value ? cardBySlug(zoom.slug.value) : n
 
 /* `detail` is 0 for a keyboard click (Enter or Space). */
 function onClick(card: CastCard, event: MouseEvent): void {
+  /* Not every browser's click carries pointerType. */
   const own = (event as PointerEvent).pointerType;
   const via = event.detail === 0 ? 'key' : own || pressedWith || 'mouse';
   pressedWith = null;
@@ -158,7 +158,6 @@ onBeforeUnmount(() => {
     </div>
 
     <MonoLabel :tone="opened ? 'accent' : 'muted'" class="c-home-cast__caption" aria-hidden="true">{{ caption }}</MonoLabel>
-    <MissingCardNote class="c-home-cast__missing" :slug="zoom.missing.value" @dismiss="zoom.dismissMissing()" />
 
     <CardDetail
       :open="zoom.open.value"
@@ -187,7 +186,6 @@ onBeforeUnmount(() => {
 
 .c-home-cast__stage {
   grid-column: 1 / -1;
-  /* An open stack rises this far past the caption under the player. */
   margin-bottom: var(--space-2);
 }
 
@@ -276,15 +274,10 @@ onBeforeUnmount(() => {
   text-align: center;
 }
 
-/* Two lines where an open caption wraps, so the page below doesn't jump. */
+/* Two lines of the line-height above: room for an open caption's second line. */
 @media (max-width: 759px) {
   .c-home-cast__caption {
     min-height: 3.2em;
   }
-}
-
-.c-home-cast__missing {
-  margin: var(--space-3) auto 0;
-  padding: 0 var(--gutter);
 }
 </style>

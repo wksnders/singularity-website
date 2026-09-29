@@ -16,11 +16,12 @@ const router = useRouter();
 const home = computed(() => to('home'));
 const atHome = computed(() => router.resolve(home.value).path === route.path);
 
-/* At Home the link can't navigate, so it scrolls instead. */
 function toTop(event: MouseEvent): void {
   if (!atHome.value) return;
   event.preventDefault();
-  void glideToTop().then(() => document.getElementById('main')?.focus({ preventScroll: true }));
+  void glideToTop().then((arrived) => {
+    if (arrived) document.getElementById('main')?.focus({ preventScroll: true });
+  });
 }
 </script>
 

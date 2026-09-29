@@ -55,5 +55,5 @@ export const lidStrips: LidStrip[] = [
   },
 ];
 
-/* `.exe`'s foot sits at 41% of the lid's height and 92% of the logo canvas's. `aspect` must match SiteLockup's logo size. */
-export const MARK = { aspect: 254 / 720, footOnLid: 0.41, footInMark: 0.92 };
+/* Fractions: footOnLid of the lid's height; footInMark (.exe's foot) and wordFoot (the wordmark's) of the logo canvas's height. `aspect` must match SiteLockup's width and height. */
+export const MARK = { aspect: 254 / 720, footOnLid: 0.41, footInMark: 0.92, wordFoot: 0.744 };

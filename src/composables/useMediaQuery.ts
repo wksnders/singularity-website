@@ -1,6 +1,6 @@
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
-/** A mouse or trackpad that can hover. The CSS rules keyed on hover repeat this query. */
+/** A mouse or trackpad that can hover. HomeHero's strip hover @media repeats it. */
 export const FINE_HOVER = '(hover: hover) and (pointer: fine)';
 
 /* For behaviour CSS cannot express, not styling: `useChrome` owns the shared `wide`, this is per-component. */

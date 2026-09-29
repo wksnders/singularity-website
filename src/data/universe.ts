@@ -1338,6 +1338,18 @@ export const rogueAIs: RogueAI[] = [
   },
 ];
 
+/** Home's Incursions backdrop, left to right. Phones show only the first five (IncursionsBand's nth-child rule). */
+export const bossWall: string[] = [
+  'invader',
+  'calebrena-i',
+  'xr-81',
+  'ender-blossom',
+  'deconstructor',
+  'devolver',
+  'moo-mua',
+  'calebrena-ii',
+].map((slug) => `/incursions/${slug}-480.webp`);
+
 /* Only the core box is described today: the others exist but have not been named to the site, and inventing names here would put fictional products in front of buyers (see the three-level note above Box in types.ts). */
 export const boxes: Box[] = [
   {

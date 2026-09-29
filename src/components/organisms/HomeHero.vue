@@ -71,7 +71,7 @@ const hover = useMediaQuery(FINE_HOVER);
 
 const vw = ref(window.innerWidth);
 const vh = ref(viewHeight());
-/* The body's width, not innerWidth or the root's clientWidth: both include the scrollbar gutter base.css reserves. */
+/* The body's width: innerWidth and the root's clientWidth can both count base.css's scrollbar gutter. */
 const pageW = ref(document.body.clientWidth);
 
 function readViewport(): void {
@@ -130,6 +130,9 @@ const keep = (list: HTMLElement[], i: number) => (el: Element | ComponentPublicI
   if (node) list[i] = node;
 };
 
+/* The wordmark's foot, not the canvas's: the badge below it fades out once the wordmark is off the top. */
+const wordGone = ref(false);
+
 const split = useLidSplitScene(
   {
     runway,
@@ -155,6 +158,7 @@ const split = useLidSplitScene(
       return { k, ox: colW.value / (k - 1) };
     }),
     tones: strips.map((s) => s.tone ?? 'currentColor'),
+    markGone: wordGone,
     onFrame: () => {
       report();
       placeTags();
@@ -222,6 +226,9 @@ const artAlt = computed(() => {
   return t('home.hero.artAlt', { count: strips.length, cast: list });
 });
 const tagSpots = ref<{ style: Record<string, string>; shown: boolean }[]>([]);
+let spotsKey = '';
+const tagsOverMark = ref(false);
+const markDim = computed(() => tagsOn.value && !side.value && tagsOverMark.value);
 
 function toggleTags(): void {
   if (!split.settled.value || !split.tagsReady.value) return;
@@ -239,7 +246,9 @@ function placeTags(): void {
   const nav = tokenPx('--nav-height');
   const highest = Math.max(0, -hr.top) + nav + TAG_AIR;
   const lowest = Math.min(hr.height, vh.value - hr.top) - TAG_AIR;
-  tagSpots.value = figureEls.value.map((fig, i) => {
+  const m = mark.value?.getBoundingClientRect();
+  let overMark = false;
+  const spots = figureEls.value.map((fig, i) => {
     /* The figure spans its strip's `box` on the lid. */
     const [x0, y0, x1, y1] = lidStrips[i].box;
     const [fx, fy] = lidStrips[i].head;
@@ -254,6 +263,12 @@ function placeTags(): void {
     const left = Math.max(0, s ? s.left - hr.left : i * pw) + (i === 0 && side.value ? HERO.panelOverhang : 0) + TAG_AIR / 2;
     const width = Math.min(hr.width, s ? s.right - hr.left : (i + 1) * pw) - TAG_AIR / 2 - left;
     const cardX = Math.max(0, Math.min(tipX - left - cardW / 2, width - cardW));
+    const shown = tipY - h >= highest && tipY <= lowest;
+    if (shown && m) {
+      const x = hr.left + left + cardX;
+      const y = hr.top + tipY;
+      overMark ||= x < m.right && x + cardW > m.left && y > m.top && y - h < m.top + m.height * MARK.wordFoot;
+    }
     return {
       style: {
         left: `${left.toFixed(1)}px`,
@@ -263,9 +278,16 @@ function placeTags(): void {
         '--tip-x': `${(tipX - left).toFixed(1)}px`,
       },
       /* A tag whose head is off screen or under the header points at nothing. */
-      shown: tipY - h >= highest && tipY <= lowest,
+      shown,
     };
   });
+  /* Runs every animation frame while the tags are on: unchanged spots must not re-render the hero. */
+  const key = JSON.stringify(spots);
+  if (key !== spotsKey) {
+    spotsKey = key;
+    tagSpots.value = spots;
+  }
+  tagsOverMark.value = overMark;
 }
 
 
@@ -337,8 +359,9 @@ const scrolledAway = ref(false);
 function report(): void {
   const b = box.value;
   const m = split.settled.value ? mark.value?.getBoundingClientRect() : null;
+  wordGone.value = split.settled.value && (!m || m.top + m.height * MARK.wordFoot < 0);
   /* offsetHeight: the entrance scales the box from its top edge, so its rect's bottom runs long. */
-  reportHomeHero(!b || b.getBoundingClientRect().top + b.offsetHeight <= 0, split.settled.value && (!m || m.bottom < 0));
+  reportHomeHero(!b || b.getBoundingClientRect().top + b.offsetHeight <= 0, wordGone.value);
   scrolledAway.value = window.scrollY > CUE_GONE_AT;
 }
 
@@ -502,8 +525,8 @@ watch([boxW, boxH, vh, side, bandH], async () => {
             <svg ref="wiresSvg" class="c-lid__svg" aria-hidden="true" />
             <svg ref="busesSvg" class="c-lid__svg" aria-hidden="true" />
 
-            <h1 ref="mark" class="c-lid__mark" :style="{ width: `${markW}px`, top: `${markTop}px` }">
-              <SiteLockup :sizes="`${markW}px`" :signed="split.badgeIn.value" />
+            <h1 ref="mark" class="c-lid__mark" :class="{ 'is-dim': markDim }" :style="{ width: `${markW}px`, top: `${markTop}px` }">
+              <SiteLockup :sizes="`${markW}px`" :signed="split.badgeIn.value" :faded="wordGone" />
             </h1>
 
             <div class="c-lid__layer" aria-hidden="true">
@@ -869,6 +892,11 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   pointer-events: none;
   transform: translateX(-50%);
   will-change: transform;
+  transition: opacity var(--dur-2) var(--ease-linear);
+}
+
+.c-lid__mark.is-dim {
+  opacity: 0.15;
 }
 
 .c-lid__arrow {
@@ -992,7 +1020,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 }
 
 .c-lid__tag-name {
-  font-size: var(--size-mono-s);
+  font-size: var(--size-xs);
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-ink);
@@ -1065,9 +1093,11 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   padding: var(--space-6) var(--gutter) var(--space-4);
 }
 
-.c-lid__watch {
+/* Large text sizes: wraps rather than overflowing the band. */
+.c-btn.c-lid__watch {
   align-self: stretch;
-  min-height: 52px;
+  white-space: normal;
+  text-align: center;
 }
 
 .c-lid__play {
@@ -1109,6 +1139,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 
 /* Undoes base.css's reduced-motion cut for fades and colour changes; slides stay off. Durations match each rule's own. HomeHeroRail and HomeHeroPanel do the same for theirs. */
 @media (prefers-reduced-motion: reduce) {
+  .c-lid__mark,
   .c-lid__trace,
   .c-lid__pad,
   .c-lid__word,

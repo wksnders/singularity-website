@@ -7,13 +7,15 @@ defineProps<{
   sizes: string;
   /** Shows the `.exe` badge. */
   signed: boolean;
+  /** Fades the badge out in place. */
+  faded?: boolean;
 }>();
 
 const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`);
 </script>
 
 <template>
-  <span class="c-lockup" :class="{ 'is-signed': signed }">
+  <span class="c-lockup" :class="{ 'is-signed': signed, 'is-faded': faded }">
     <picture>
       <source type="image/webp" :srcset="logoSrcset('singularity-logo', 'webp')" :sizes="sizes" />
       <img
@@ -77,5 +79,17 @@ const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`)
 .c-lockup.is-signed .c-lockup__badge {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+
+.c-lockup.is-faded .c-lockup__badge {
+  opacity: 0;
+}
+
+/* Undoes base.css's reduced-motion cut for the badge's fade; its movement stays off. */
+@media (prefers-reduced-motion: reduce) {
+  .c-lockup__badge {
+    transition-property: opacity;
+    transition-duration: var(--dur-4) !important;
+  }
 }
 </style>

@@ -50,6 +50,8 @@
   --size-mono-xs: 0.625rem;
   --size-mono-s: 0.6875rem;
   --size-mono-m: 0.75rem;
+  /* 11px TEXT — the smallest body text: the lid's name tags. */
+  --size-xs: 0.6875rem;
   --size-s: 0.8125rem;
   --size-m: 0.875rem;
   /* 15px TEXT — link rows and strip names. Never for an input: see --size-field. */

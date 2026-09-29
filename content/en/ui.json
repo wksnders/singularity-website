@@ -316,12 +316,10 @@
     },
     "incursions": {
       "badge": "Co-op & solo",
-      "title": "Incursions: take on a rogue AI, 1–4 players",
-      "body": "The boss plays itself — entirely from its own cards and rules, with no human decisions. Everyone at the table is on the same side.",
+      "title": "Incursions: face the threat together, {players} players",
+      "body": "The boss plays itself — entirely from its own cards and rules, with no human decisions. Everyone at the table is on the same side, solo included. It's in the Incursions box.",
       "players": "players",
-      "solo": "Solo OK",
-      "inBox": "Its own box · same launch day",
-      "cta": "Meet the rogue AIs"
+      "cta": "Explore the Incursions"
     },
     "chapter": {
       "kicker": "The story so far",

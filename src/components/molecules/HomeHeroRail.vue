@@ -4,7 +4,7 @@ let popped = false;
 </script>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
@@ -72,8 +72,9 @@ const namedText = ref<HTMLElement | null>(null);
 const STEPS: FitSteps = [
   ['var(--size-mono-s)', 'var(--track-mono)'],
   ['var(--size-mono-s)', 'var(--track-mono-tight)'],
-  ['0.625rem', 'var(--track-mono-tight)'],
+  ['var(--size-mono-xs)', 'var(--track-mono-tight)'],
   ['0.5625rem', 'var(--track-mono-tight)'],
+  ['0.5rem', 'var(--track-mono-tight)'],
 ];
 const shown = useHeldReadout(
   () => props.named,
@@ -83,12 +84,27 @@ const shown = useHeldReadout(
 
 const categoryEl = ref<HTMLElement | null>(null);
 const modesEl = ref<HTMLElement | null>(null);
+const cueEl = ref<HTMLElement | null>(null);
+const glyphOff = ref(false);
 
-function fitLines(): void {
-  for (const el of [categoryEl.value, modesEl.value]) if (el) fitLine(el, el, STEPS);
+const overflows = (el: HTMLElement) => el.scrollWidth > el.clientWidth + 1;
+
+async function fitLines(): Promise<void> {
+  glyphOff.value = false;
+  await nextTick();
+  for (const el of [categoryEl.value, modesEl.value, cueEl.value]) if (el) fitLine(el, el, STEPS);
+  const modes = modesEl.value;
+  if (!modes || !overflows(modes)) return;
+  /* Still too wide at the smallest step: the player glyph goes, then the line fits again from the top step. */
+  glyphOff.value = true;
+  await nextTick();
+  fitLine(modes, modes, STEPS);
 }
 
-onMounted(fitLines);
+onMounted(() => {
+  void fitLines();
+  void document.fonts?.ready.then(fitLines);
+});
 watch(size, fitLines, { flush: 'post' });
 
 const spoken = computed(() => {
@@ -200,9 +216,9 @@ const bedCut = computed(() => {
             </span>
             <span ref="modesEl" class="c-home-rail__say c-home-rail__say--lit" :class="{ 'is-on': shownLine === 'modes' }">
               {{ modesLine }}
-              <CardGlyph name="player" />
+              <CardGlyph v-if="!glyphOff" name="player" />
             </span>
-            <span class="c-home-rail__say c-home-rail__say--cue" :class="{ 'is-on': shownLine === 'cue' }">
+            <span ref="cueEl" class="c-home-rail__say c-home-rail__say--cue" :class="{ 'is-on': shownLine === 'cue' }">
               {{ t('home.hero.readout.cue') }}
             </span>
             <span
@@ -240,9 +256,9 @@ const bedCut = computed(() => {
   --rail-bed: #161620;
   --rail-lit: rgba(var(--rgb-accent), 0.7);
   --rail-hex-edge: rgba(var(--rgb-accent), 0.55);
-  /* The hex and cue plates, inside --rail-h. */
+  /* Shared by the hex and the cue plate. */
   --hex-top: 4px;
-  --hex-h: 24px;
+  --hex-h: clamp(24px, 2 * var(--size-mono-s), calc(var(--rail-h) - 2 * var(--hex-top)));
   /* Each side of a line: keeps it clear of the hex's cut ends. */
   --say-inset: 20px;
   position: absolute;
@@ -397,7 +413,8 @@ const bedCut = computed(() => {
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* safe: a line that still overflows clips at its end, not at both. */
+  justify-content: safe center;
   gap: 6px;
   color: var(--color-ink-muted);
   opacity: 0;

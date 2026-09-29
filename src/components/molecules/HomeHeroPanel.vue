@@ -93,9 +93,9 @@ const factionEl = ref<HTMLElement | null>(null);
 const STEPS: FitSteps = [
   ['var(--size-s)', 'var(--track-mono)'],
   ['var(--size-s)', 'var(--track-mono-tight)'],
-  ['0.75rem', 'var(--track-mono-tight)'],
-  ['0.6875rem', 'var(--track-mono-tight)'],
-  ['0.625rem', 'var(--track-mono-tight)'],
+  ['var(--size-mono-m)', 'var(--track-mono-tight)'],
+  ['var(--size-mono-s)', 'var(--track-mono-tight)'],
+  ['var(--size-mono-xs)', 'var(--track-mono-tight)'],
 ];
 
 const shown = useHeldReadout(
@@ -165,7 +165,7 @@ function universe(on: boolean): void {
       </div>
 
       <BaseLink
-        :to="to('universe', {}, { hash: '#world' })"
+        :to="to('universe')"
         class="c-mono c-home-panel__universe"
         :class="{ 'is-lit': universeLit }"
         @mouseenter="universe(true)"

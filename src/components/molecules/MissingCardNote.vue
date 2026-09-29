@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** The line a page shows when `?card=` named nothing real. One component because it has to appear on every page that opens cards: `useCardParam` strips the bad slug on sight, so without it the URL silently loses a parameter and the reader is told nothing. */
+/** Shown when `?card=` names no card, on every page that lists cards: useCardParam strips the bad slug, so without this the reader is told nothing. Home strips it silently. */
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 

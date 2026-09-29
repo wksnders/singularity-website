@@ -223,6 +223,13 @@ const overArt = computed(() => onHome.value && !solid.value && megaOpen.value ==
   color: var(--color-ink-bright);
 }
 
+/* Undoes base.css's reduced-motion cut: the echo only fades colour, in step with HomeHero's .c-lid__word. */
+@media (prefers-reduced-motion: reduce) {
+  .c-nav__item {
+    transition-duration: var(--dur-2) !important;
+  }
+}
+
 .c-nav__link {
   padding: var(--space-3);
   font-size: var(--size-m);
