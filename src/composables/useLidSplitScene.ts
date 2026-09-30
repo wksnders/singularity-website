@@ -6,7 +6,7 @@ import { easeCamera, easeEmphasis, easeOutCubic, smoothstep } from '@/site/easin
 import { SCROLL_INPUTS } from '@/site/glide';
 import { ENTRANCE, HERO, SCRUB, SEAM, SPLIT, figureSize, notchPolygon, registration, type Registration } from '@/site/lidSplitScene';
 import { createCircuit, type Circuit, type StripBox, type Zone } from '@/site/lidCircuit';
-import { token, tokenMs } from '@/site/tokens';
+import { token, tokenMs, tokenPx } from '@/site/tokens';
 
 export interface LidSceneEls {
   runway: Ref<HTMLElement | null>;
@@ -56,6 +56,9 @@ const FLIP_REWIND = 0.06;
 const FAST_MIN = 0.29;
 const MARK_PARALLAX = 0.18;
 const MARK_PAN = 0.3;
+const HEAD_TOP = Math.min(...lidStrips.map((s) => s.head[1]));
+/** Px of air between the nav and the highest head at the camera's first framing. */
+const HEADROOM = 24;
 /** Px: a page restored further down than this skips the entrance. */
 const RESTORED_AT = 40;
 /** Ms the entrance clock jumps ahead when skipped. */
@@ -101,6 +104,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let boxW = 0;
   let boxH = 0;
   let screenH = 0;
+  let navH = 0;
   let fieldAt = '';
   const origins: string[] = [];
   let follow: number | null = null;
@@ -125,10 +129,16 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let io: IntersectionObserver | null = null;
   let circuit: Circuit | null = null;
 
+  /* Px the camera starts below the lid's top: its foot, but never so low that a head sits under the nav. */
+  function camStart(H: number, vh: number): number {
+    const tall = opts.intro.value ? H * opts.intro.value.k : H;
+    return Math.max(0, Math.min(tall - vh, HEAD_TOP * tall - navH - HEADROOM));
+  }
+
   function panDuration(H: number, vh: number): number {
     const intro = opts.intro.value;
     if (opts.reduced.value) return 0;
-    const d = Math.max(0, (intro ? H * intro.k : H) - vh);
+    const d = camStart(H, vh);
     const ms = ENTRANCE.panBase + d * ENTRANCE.panPerPx;
     if (intro) return Math.round(Math.max(ENTRANCE.introMin, Math.min(ENTRANCE.introMax, ms)));
     return d < ENTRANCE.panMin ? 0 : Math.round(Math.min(ENTRANCE.camMax, ms));
@@ -154,6 +164,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     boxW = box.clientWidth;
     boxH = box.clientHeight;
     screenH = viewHeight();
+    navH = tokenPx('--nav-height');
     const pw = boxW / n;
     const r = registration(pw, boxH, n);
     reg = r;
@@ -301,7 +312,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     } else sig = null;
 
     /* The camera pans the stage. */
-    const camY = entranceOn && T.cam ? (Math.max(0, (intro ? H * intro.k : H) - screenH) * (1 - ce)) / kI : 0;
+    const camY = entranceOn && T.cam ? (camStart(H, screenH) * (1 - ce)) / kI : 0;
     const stage = els.stage.value;
     if (stage) stage.style.transform = camY > 0.05 ? `translate3d(0,${(-camY).toFixed(2)}px,0)` : '';
     const vt = Math.min(H - 1, Math.max(0, -hr.top) / kI + camY);
