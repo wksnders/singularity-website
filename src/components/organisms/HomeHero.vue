@@ -9,7 +9,7 @@ import HomeHeroPanel from '@/components/molecules/HomeHeroPanel.vue';
 import HomeHeroRail from '@/components/molecules/HomeHeroRail.vue';
 import SiteLockup from '@/components/molecules/SiteLockup.vue';
 import { useLidSplitScene } from '@/composables/useLidSplitScene';
-import { echoNav, releaseHomeHero, reportHomeHero } from '@/composables/useChrome';
+import { echoNav, releaseHomeHero, reportHeroIntro, reportHomeHero } from '@/composables/useChrome';
 import { FINE_HOVER, useMediaQuery, viewHeight } from '@/composables/useMediaQuery';
 import { useSeekCatch } from '@/composables/useSeekCatch';
 import { t } from '@/content';
@@ -74,10 +74,22 @@ const vh = ref(viewHeight());
 /* The body's width: innerWidth and the root's clientWidth can both count base.css's scrollbar gutter. */
 const pageW = ref(document.body.clientWidth);
 
+/** Ms after the last viewport change before a live resize counts as over. */
+const RESIZE_SETTLE = 200;
+const resizing = ref(false);
+let settleTimer = 0;
+
 function readViewport(): void {
-  vw.value = window.innerWidth;
-  vh.value = viewHeight();
-  pageW.value = document.body.clientWidth;
+  const w = window.innerWidth;
+  const h = viewHeight();
+  const pw = document.body.clientWidth;
+  if (w === vw.value && h === vh.value && pw === pageW.value) return;
+  vw.value = w;
+  vh.value = h;
+  pageW.value = pw;
+  resizing.value = true;
+  window.clearTimeout(settleTimer);
+  settleTimer = window.setTimeout(() => (resizing.value = false), RESIZE_SETTLE);
 }
 
 const side = computed(() => vw.value >= SIDE_MIN);
@@ -101,8 +113,14 @@ const markTop = computed(() =>
   Math.round(boxH.value * MARK.footOnLid - markW.value * MARK.aspect * MARK.footInMark),
 );
 const sideH = computed(() => Math.min(vh.value, boxH.value));
-const stripPx = computed(() => Math.round(boxW.value / strips.length));
-const figurePx = (box: [number, number, number, number]) => Math.round((box[2] - box[0]) * boxW.value);
+/* Srcset `sizes` only: grows once a resize ends, never shrinks. WebKit re-picks a candidate on every sizes change, so tracking every px refetches and redecodes mid-drag. */
+const sizedW = ref(boxW.value);
+watch([boxW, resizing], () => {
+  if (!resizing.value && boxW.value > sizedW.value) sizedW.value = boxW.value;
+});
+const stripPx = computed(() => Math.round(sizedW.value / strips.length));
+const figurePx = (box: [number, number, number, number]) => Math.round((box[2] - box[0]) * sizedW.value);
+const markPx = computed(() => Math.round(sizedW.value * (side.value ? 1 : MARK_NARROW)));
 
 const runway = ref<HTMLElement | null>(null);
 const below = ref<HTMLElement | null>(null);
@@ -159,6 +177,7 @@ const split = useLidSplitScene(
     }),
     tones: strips.map((s) => s.tone ?? 'currentColor'),
     markGone: wordGone,
+    resizing,
     onFrame: () => {
       report();
       placeTags();
@@ -384,11 +403,14 @@ function revealBelow(event: FocusEvent): void {
 }
 
 useSeekCatch({ docked, holdLeft, vh, pageW });
+watch(split.entrance, reportHeroIntro);
 
 let resize: ResizeObserver | null = null;
 let unregisterHold = () => {};
 
 onMounted(async () => {
+  /* The watch only sees changes: a skipped entrance stays null and must still release the nav. */
+  reportHeroIntro(split.entrance.value);
   window.addEventListener('resize', readViewport);
   window.addEventListener('pointerdown', dropTags, { passive: true });
   unregisterHold = registerHold((el) => (docked.value && below.value?.contains(el) ? holdLeft(window.scrollY) : 0));
@@ -405,9 +427,15 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', readViewport);
   window.removeEventListener('pointerdown', dropTags);
+  window.clearTimeout(settleTimer);
   unregisterHold();
   resize?.disconnect();
   releaseHomeHero();
+});
+
+/* A safety net: frames painted while the browser fell behind a drag may have missed the final size. */
+watch(resizing, (on) => {
+  if (!on) place();
 });
 
 watch([boxW, boxH, vh, side, bandH], async () => {
@@ -526,7 +554,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
             <svg ref="busesSvg" class="c-lid__svg" aria-hidden="true" />
 
             <h1 ref="mark" class="c-lid__mark" :class="{ 'is-dim': markDim }" :style="{ width: `${markW}px`, top: `${markTop}px` }">
-              <SiteLockup :sizes="`${markW}px`" :signed="split.badgeIn.value" :faded="wordGone" />
+              <SiteLockup :sizes="`${markPx}px`" :signed="split.badgeIn.value" :faded="wordGone" />
             </h1>
 
             <div class="c-lid__layer" aria-hidden="true">
@@ -672,6 +700,8 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 
 .c-lid__pin {
   position: sticky;
+  /* A frame painted before the resize handlers catch up must not widen the page. Clip, not hidden: hidden makes a scroll container. */
+  overflow-x: clip;
   z-index: var(--z-raised);
   background: var(--color-bg);
 }
@@ -864,17 +894,22 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   transition: filter var(--dur-2) var(--ease-linear);
 }
 
-/* Set by useLidSplitScene's scrub. */
+/* Set by useLidSplitScene's scrub. Every state lists brightness then drop-shadow: on a composited layer WebKit keeps the old brightness when the new list is a lone drop-shadow, and keeps a shadow until the list is none. */
 .c-lid__figure.is-named {
-  filter: drop-shadow(0 0 14px rgba(var(--rgb-accent), 0.45));
+  filter: brightness(1) drop-shadow(0 0 14px rgba(var(--rgb-accent), 0.45));
 }
 
 .c-lid__figure.is-dim {
-  filter: brightness(0.55);
+  filter: brightness(0.55) drop-shadow(0 0 14px rgba(var(--rgb-accent), 0));
 }
 
 .c-lid__figure.is-dark {
-  filter: brightness(0.4);
+  filter: brightness(0.4) drop-shadow(0 0 14px rgba(var(--rgb-accent), 0));
+}
+
+/* The spotlight snaps; only the final dim fades. */
+.c-lid__figure:is(.is-named, .is-dim) {
+  transition: none;
 }
 
 .c-lid__figure img {

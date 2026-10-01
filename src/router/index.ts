@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 import { LOCALE_ROUTE_PATTERN, setLocale } from '@/i18n/locales';
 import { t } from '@/content';
+import { endHeroIntro } from '@/composables/useChrome';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { glideToElement, jumpTo } from '@/site/glide';
 
@@ -165,6 +166,8 @@ router.beforeEach((target) => {
 router.afterEach(async (target, from) => {
   const key = target.meta.titleKey;
   if (typeof key === 'string') document.title = t(key);
+  /* Home's entrance hides and dims the nav on a cold load only. Must run before Home mounts, or the nav dips on in-app arrival. */
+  if (from !== START_LOCATION) endHeroIntro();
 
   /* Move focus to <main> (tabindex="-1") so keyboard and screen-reader users land on the new page, except on cold load, on a hash target (scrollBehavior owns those), and on a same-path change, where useQueryFilter's router.replace would steal focus mid-keystroke. */
   if (from === START_LOCATION) return;

@@ -7,8 +7,8 @@ import { t } from '@/content';
 import { primaryNav } from '@/site/ia';
 import { outbound, to } from '@/site/links';
 import { useChrome } from '@/composables/useChrome';
-import { useRoute } from 'vue-router';
-import { computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { computed, ref, watch } from 'vue';
 
 const {
   wide,
@@ -16,6 +16,7 @@ const {
   heroGone,
   heroMarkGone,
   navEcho,
+  heroIntro,
   navHidden,
   megaOpen,
   menuOpen,
@@ -26,6 +27,7 @@ const {
 } = useChrome();
 
 const route = useRoute();
+const router = useRouter();
 
 /* Keyboard and touch never fire mouseleave. */
 watch(() => route.fullPath, () => closeMega());
@@ -39,10 +41,17 @@ function onFocusOut(event: FocusEvent): void {
   if (next && !(event.currentTarget as HTMLElement).contains(next)) closeMega();
 }
 
-const onHome = computed(() => route.name === 'home');
+/* The app mounts before the first navigation resolves: until then, read the address it will land on. A failed first navigation counts as not Home. */
+const ready = ref(false);
+router.isReady().then(
+  () => (ready.value = true),
+  () => (ready.value = true),
+);
+const onHome = computed(() => (ready.value ? route.name : router.resolve(router.options.history.location).name) === 'home');
 const solid = computed(() => (onHome.value ? heroGone.value : scrolled.value));
 const markHidden = computed(() => onHome.value && !heroMarkGone.value);
 const overArt = computed(() => onHome.value && !solid.value && megaOpen.value === null);
+const intro = computed(() => (onHome.value ? heroIntro.value : null));
 </script>
 
 <template>
@@ -53,6 +62,8 @@ const overArt = computed(() => onHome.value && !solid.value && megaOpen.value ==
       'is-hidden': navHidden,
       'is-mega': megaOpen !== null,
       'is-over-art': overArt,
+      'is-intro-wait': intro === 'wait',
+      'is-intro-play': intro === 'play',
     }"
     @mouseleave="closeMega()"
     @focusout="onFocusOut"
@@ -174,6 +185,25 @@ const overArt = computed(() => onHome.value && !solid.value && megaOpen.value ==
 
 .c-nav.is-hidden {
   transform: translateY(-100%);
+}
+
+.c-nav__links,
+.c-nav__buy,
+.c-nav__burger {
+  transition: opacity var(--dur-4) var(--ease-out);
+}
+
+/* Home's entrance: hidden until the art arrives, links quiet until the badge shows. Hover and focus override both so the nav stays reachable. */
+.c-nav.is-intro-wait:not(:hover, :focus-within) :is(.c-nav__links, .c-nav__buy, .c-nav__burger) {
+  opacity: 0;
+}
+
+.c-nav.is-intro-play:not(:hover, :focus-within) :is(.c-nav__links, .c-nav__burger) {
+  opacity: 0.75;
+}
+
+.c-nav:is(:hover, :focus-within) :is(.c-nav__links, .c-nav__buy, .c-nav__burger) {
+  transition-duration: 0s;
 }
 
 .c-nav__bar {
@@ -331,6 +361,19 @@ const overArt = computed(() => onHome.value && !solid.value && megaOpen.value ==
 
   .c-nav__buy {
     padding-inline: var(--space-3);
+  }
+}
+
+/* Same breakpoint as useChrome's WIDE_QUERY: a frame painted before its change event runs must still show the right bar. */
+@media (max-width: 899px) {
+  .c-nav__links {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .c-nav__burger {
+    display: none;
   }
 }
 

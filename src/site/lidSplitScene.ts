@@ -83,6 +83,9 @@ export const ENTRANCE = {
   /** From decode to the first frame. */
   startDelay: 40,
   decodeCap: 1200,
+  /** A frame gap longer than `stall` (a stall, or frames not shown) advances the entrance by only `stallStep`. */
+  stall: 250,
+  stallStep: 16,
 };
 
 /** `perFigure` is in visible heights of scroll; `from` and `to` are shares of the split's progress. */

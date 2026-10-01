@@ -37,6 +37,8 @@ export interface LidSceneOpts {
   tones: string[];
   /** The wordmark has left the top of the screen. */
   markGone: Readonly<Ref<boolean>>;
+  /** A live window resize is under way. */
+  resizing: Readonly<Ref<boolean>>;
   /** At the start of each frame, before its writes: reads see the lid where the last frame put it (the loop runs two frames past the last change). */
   onFrame?: () => void;
 }
@@ -57,7 +59,7 @@ const FAST_MIN = 0.29;
 const MARK_PARALLAX = 0.18;
 const MARK_PAN = 0.3;
 const HEAD_TOP = Math.min(...lidStrips.map((s) => s.head[1]));
-/** Px of air between the nav and the highest head at the camera's first framing. */
+/** Px between the nav and the highest head when the camera starts. */
 const HEADROOM = 24;
 /** Px: a page restored further down than this skips the entrance. */
 const RESTORED_AT = 40;
@@ -88,6 +90,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   const open = ref(false);
   const pastPin = ref(false);
   const settled = ref(false);
+  /** 'wait' while the art decodes, 'play' until the badge shows; null when skipped or done. */
+  const entrance = ref<'wait' | 'play' | null>(null);
   const badgeIn = ref(false);
   const scrubIndex = ref(-1);
   const scrubEnd = ref(false);
@@ -113,7 +117,12 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let lastNow: number | null = null;
   let sig: string | null = null;
   let hovSettled = true;
-  let t0 = Infinity;
+  /** Entrance ms, advanced per frame so a stall pauses it instead of eating it. -Infinity until the wait ends. */
+  let clock = -Infinity;
+  /* Not reset by wake(): the entrance clock needs the true gap between frames. */
+  let lastClock: number | null = null;
+  /** The decode wait is over; the next frame starts the clock. */
+  let released = false;
   let skipAt: number | null = null;
   let scrubKey: string | null = null;
   let tagOpacity = -1;
@@ -128,6 +137,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let inView = true;
   let io: IntersectionObserver | null = null;
   let circuit: Circuit | null = null;
+  /* The only rule for running packets: they repaint the whole lid each frame, so they wait out the entrance and any resize. */
+  const packetsOn = () => inView && settled.value && !opts.resizing.value;
 
   /* Px the camera starts below the lid's top: its foot, but never so low that a head sits under the nav. */
   function camStart(H: number, vh: number): number {
@@ -263,8 +274,17 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const sy = follow;
 
     const T = timeline(H, screenH);
+    if (released && clock === -Infinity) {
+      clock = -ENTRANCE.startDelay;
+      if (!settled.value && skipAt === null) entrance.value = 'play';
+    } else if (clock !== -Infinity) {
+      const gap = Math.max(0, now - (lastClock ?? now));
+      clock += gap > ENTRANCE.stall ? ENTRANCE.stallStep : gap;
+    }
+    lastClock = now;
     const boost = skipAt !== null ? smoothstep((now - skipAt) / ENTRANCE.skip) * SKIP_BOOST : 0;
-    const t = now - t0 + boost;
+    const t = clock + boost;
+    if (entrance.value === 'play' && t >= T.badgeAt) entrance.value = null;
     const ce = entranceOn && T.cam ? easeCamera((t - T.camAt) / Math.max(1, T.cam)) : 1;
     const intro = opts.intro.value;
     const zi = intro && entranceOn ? 1 - ce : 0;
@@ -466,7 +486,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
               })
             : `inset(${cTop.toFixed(1)}px -${FIGURE_SPILL} ${cBot.toFixed(1)}px -${FIGURE_SPILL})`;
       }
-      cur[i] = { x: i * pw + ox * (1 - sc), y: ty + oy * (1 - sc) + introY, w: pw * sc, h: H * sc, ei, travel };
+      cur[i] = { x: i * pw + ox * (1 - sc), y: ty + oy * (1 - sc) + introY, w: pw * sc, h: H * sc, ei, travel, inL: iL * sc, inR: iR * sc };
     });
     hovSettled = still;
 
@@ -477,6 +497,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
         (skipAt === null || now - skipAt > ENTRANCE.skip + ENTRANCE.skipTail));
     if (done && !settled.value) {
       settled.value = true;
+      entrance.value = null;
       arrived = true;
       releaseSkip();
     }
@@ -537,6 +558,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     sig = null;
   });
 
+  watch([settled, opts.resizing], () => circuit?.play(packetsOn()));
+
   watch([opts.reduced, opts.band, opts.intro], () => {
     sig = null;
     wake();
@@ -560,6 +583,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     if (settled.value || skipAt !== null) return;
     if (event.type === 'scroll' && performance.now() - mountedAt < SKIP_SCROLL_AFTER) return;
     skipAt = performance.now();
+    released = true;
+    entrance.value = null;
     sig = null;
     wake();
   }
@@ -579,25 +604,27 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const { zones, wires, buses } = els.circuit;
     if (zones.value && wires.value && buses.value) {
       circuit = createCircuit({ zones: zones.value, wires: wires.value, buses: buses.value }, opts.tones);
+      circuit.play(packetsOn());
     }
 
     if (opts.reduced.value && !arrived && window.scrollY <= RESTORED_AT) {
       els.box.value?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: tokenMs('--dur-4'), easing: token('--ease-out') });
     }
-    if (arrived || opts.reduced.value || window.scrollY > RESTORED_AT) t0 = -1e9;
+    if (arrived || opts.reduced.value || window.scrollY > RESTORED_AT) clock = 1e9;
     else {
       for (const name of SKIP_EVENTS) window.addEventListener(name, onSkip, { passive: true });
+      entrance.value = 'wait';
       const figures = els.figures.value.map((fig) => fig.querySelector('img'));
       const decoded = [...els.arts.value, ...figures].map((img) =>
-        img instanceof HTMLImageElement ? img.decode().catch(() => undefined) : undefined,
+        img instanceof HTMLImageElement && img.decode ? img.decode().catch(() => undefined) : undefined,
       );
       Promise.race([
         Promise.all(decoded),
         new Promise((resolve) => setTimeout(resolve, ENTRANCE.decodeCap)),
       ]).then(() => {
-        if (t0 !== Infinity) return;
-        t0 = performance.now() + ENTRANCE.startDelay;
+        released = true;
         sig = null;
+        wake();
       });
     }
 
@@ -608,7 +635,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
         const on = entries.some((e) => e.isIntersecting);
         if (on === inView) return;
         inView = on;
-        circuit?.play(on);
+        circuit?.play(packetsOn());
         if (on) {
           sig = null;
           wake();
@@ -638,6 +665,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     pastPin,
     settled,
     badgeIn,
+    entrance,
     pinLen,
     scrubIndex,
     scrubEnd,

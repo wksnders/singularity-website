@@ -2,9 +2,12 @@
 
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
+/* SiteHeader's CSS mirrors this breakpoint. */
 const WIDE_QUERY = '(min-width: 900px)';
 const SOLID_AT = 80;
 const RETRACT_AFTER = 240;
+/** Ms from app mount: the nav shows even if the hero never reports (slow or failed Home chunk). */
+const INTRO_FAILSAFE = 1600;
 
 const wide = ref(false);
 const scrolled = ref(false);
@@ -13,6 +16,10 @@ const heroGone = ref(false);
 const heroMarkGone = ref(false);
 let heroHolds = false;
 const navEcho = ref<string | null>(null);
+/* Starts at 'wait': on a cold Home load the header paints before the hero mounts and reports. A hash deep link never hides it. */
+const heroIntro = ref<'wait' | 'play' | null>(window.location.hash ? null : 'wait');
+/* Once over, the entrance never hides or dims the nav again this page load. */
+let introOver = heroIntro.value === null;
 const navHidden = ref(false);
 const megaOpen = ref<string | null>(null);
 const menuOpen = ref(false);
@@ -59,6 +66,18 @@ export function releaseHomeHero(): void {
   reportHomeHero(false, false);
   heroHolds = false;
   navEcho.value = null;
+  endHeroIntro();
+}
+
+export function reportHeroIntro(phase: 'wait' | 'play' | null): void {
+  if (introOver) return;
+  heroIntro.value = phase;
+  if (phase === null) introOver = true;
+}
+
+export function endHeroIntro(): void {
+  introOver = true;
+  heroIntro.value = null;
 }
 
 export function echoNav(key: string | null): void {
@@ -84,6 +103,9 @@ export function useChrome() {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', onKeydown);
     onScroll();
+    setTimeout(() => {
+      if (heroIntro.value === 'wait') endHeroIntro();
+    }, INTRO_FAILSAFE);
   });
 
   onBeforeUnmount(() => {
@@ -100,6 +122,7 @@ export function useChrome() {
     heroGone: readonly(heroGone),
     heroMarkGone: readonly(heroMarkGone),
     navEcho: readonly(navEcho),
+    heroIntro: readonly(heroIntro),
     navHidden: readonly(navHidden),
     megaOpen: readonly(megaOpen),
     menuOpen,

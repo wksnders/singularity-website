@@ -81,6 +81,9 @@ export interface StripBox {
   h: number;
   ei: number;
   travel: number;
+  /** Px the hover pulls the strip's left and right edges in. */
+  inL: number;
+  inR: number;
 }
 
 export interface Zone {
@@ -330,13 +333,16 @@ export function createCircuit(svgs: { zones: SVGSVGElement; wires: SVGSVGElement
       const a = o.cur[w.a];
       const b = o.cur[w.b];
       if (!a || !b) continue;
-      const Ax = a.x + a.w;
+      const ax = a.x + a.w;
+      const bx = b.x;
+      /* Ends follow the strips' edges as drawn (a hover pulls an edge in, and an end left behind shows); the run and the bend don't, so the trace holds still. */
+      const Ax = ax - a.inR;
       const Ay = a.y + a.h * w.ta;
-      const Bx = b.x;
+      const Bx = bx + b.inL;
       const By = b.y + b.h * w.tb;
-      const mx = Ax + (Bx - Ax) * WIRE_TURN;
+      const mx = ax + (bx - ax) * WIRE_TURN;
       const my = (Ay + By) / 2;
-      const c = Math.min(BEND, Math.abs(By - Ay) / 2, Math.abs(Bx - Ax) / 4);
+      const c = Math.min(BEND, Math.abs(By - Ay) / 2, Math.abs(bx - ax) / 4);
       const sgn = Math.sign(By - Ay) || 1;
       pulse(w.A, [[Ax, Ay], [mx - c, Ay], [mx, Ay + sgn * c], [mx, my]], o.reduced, SPEED.wire, w.phase, true);
       pulse(w.B, [[Bx, By], [mx + c, By], [mx, By - sgn * c], [mx, my]], o.reduced, SPEED.wire, w.phase + 0.5, true);
