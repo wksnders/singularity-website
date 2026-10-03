@@ -1,8 +1,6 @@
 /* Ids, relations, colours and facts only — every user-visible sentence lives in content/<locale>/, where a doc of the same slug overrides the name/epithet/tagline fallbacks here. */
 
 // Reference spec: docs/architecture/modules.md#types
-// CARD art (`cardArt`) is the printed card, rules text and all: never crop it and never use it as a backdrop, because a crop removes printed rules.
-// TODO add in cool parallax with this when we eventually have the art, parked till we get art.
 
 export interface Art {
   src: string | null;
