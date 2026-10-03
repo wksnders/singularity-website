@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
@@ -14,10 +15,24 @@ const bossMotion = (i: number) => ({
 const hideBrokenArt = (event: Event) => {
   (event.target as HTMLImageElement).style.visibility = 'hidden';
 };
+
+const root = ref<HTMLElement | null>(null);
+const offscreen = ref(false);
+let io: IntersectionObserver | null = null;
+
+onMounted(() => {
+  if (!('IntersectionObserver' in window) || !root.value) return;
+  io = new IntersectionObserver(([entry]) => {
+    offscreen.value = !entry.isIntersecting;
+  });
+  io.observe(root.value);
+});
+
+onBeforeUnmount(() => io?.disconnect());
 </script>
 
 <template>
-  <section class="l-band l-band--line-top c-incursions">
+  <section ref="root" class="l-band l-band--line-top c-incursions" :class="{ 'is-offscreen': offscreen }">
     <div class="c-incursions__wall" aria-hidden="true">
       <!-- Two identical sets: the track scrolls by one set's width and loops seamlessly. -->
       <div class="c-incursions__track">
@@ -103,6 +118,11 @@ const hideBrokenArt = (event: Event) => {
   .c-incursions__boss:nth-child(n + 6) {
     display: none;
   }
+}
+
+.c-incursions.is-offscreen .c-incursions__track,
+.c-incursions.is-offscreen .c-incursions__boss {
+  animation-play-state: paused;
 }
 
 @keyframes c-incursions-scroll {
