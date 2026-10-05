@@ -1,43 +1,44 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
-import BaseLink from '@/components/atoms/BaseLink.vue';
 import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import UiButton from '@/components/atoms/UiButton.vue';
+import HomeHeroBand from '@/components/molecules/HomeHeroBand.vue';
+import HomeHeroFoot from '@/components/molecules/HomeHeroFoot.vue';
 import HomeHeroPanel from '@/components/molecules/HomeHeroPanel.vue';
-import HomeHeroRail from '@/components/molecules/HomeHeroRail.vue';
 import SiteLockup from '@/components/molecules/SiteLockup.vue';
 import { useLidSplitScene } from '@/composables/useLidSplitScene';
 import { echoNav, releaseHomeHero, reportHeroIntro, reportHomeHero } from '@/composables/useChrome';
 import { FINE_HOVER, useMediaQuery, viewHeight } from '@/composables/useMediaQuery';
 import { useSeekCatch } from '@/composables/useSeekCatch';
+import { useViewport } from '@/composables/useViewport';
 import { t } from '@/content';
 import { LID, MARK, lidStrips } from '@/data/lidArt';
 import { buyStoreName, characterById, factionById } from '@/data/universe';
 import { currentLocale } from '@/i18n/locales';
-import { jumpTo, plainClick, registerHold } from '@/site/glide';
-import { HERO, SEAM, SPLIT } from '@/site/lidSplitScene';
+import { jumpTo, registerHold } from '@/site/glide';
+import { FOOT, HERO, PANEL, SEAM, SPLIT } from '@/site/lidSplitScene';
 import type { LidDest, LidReadout } from '@/site/lidSplitScene';
-import { asset, outbound, pictureSources, to } from '@/site/links';
+import { sheenUrl } from '@/site/lidGloss';
+import { asset, pictureSources, to } from '@/site/links';
 import { patternUrl } from '@/site/patterns';
 import { token, tokenPx } from '@/site/tokens';
 
 const emit = defineEmits<{ watch: [] }>();
 
-/* Viewport, not lid width: the side column narrows the lid. */
-const SIDE_MIN = 760;
-const COLUMN = { share: 0.3, min: 320, max: 440 };
+/* Viewport, not lid width (the side column narrows the lid), and in em so a larger browser text size needs a wider screen; a phone held sideways takes it too, so its Watch button pins in the panel. HomeView, HomeTrailerCast and HomeTrailerDial repeat it in their @media. */
+const SIDE_QUERY = '(min-width: 47.5em), (orientation: landscape) and (min-width: 34em)';
+const COLUMN = { share: 434 / 1280, min: 300, max: 440 };
 /** Px: the premise words shrink from their CSS size by `step` until they fit, down to `min`. */
 const WORD_FIT = { min: 10, step: 0.5 };
-/** Px of page scroll that hides the scroll cue. */
-const CUE_GONE_AT = 10;
 /** Share of the lid's width. */
 const MARK_NARROW = 0.94;
 /** Px kept between a name tag and the header, the view's foot or the next tag. */
 const TAG_AIR = 8;
 /** Narrow screens: the arrow's centre as a share of the lid's width, between the premise strips; `edge` is px. */
 const ARROW = { at: 0.35, edge: 8 };
+/** Share of the view the pinned lid keeps where the whole lid can't fit: short of it, the foot drops its cables, then the Watch/Buy pair stops pinning. */
+const LID_MIN_SHARE = 0.6;
 /** Ms for a packet to cross the trace when the Universe link is hovered. */
 const PACKET_MS = 420;
 /** Px: the trace's thickness, and how far it starts left of the words. */
@@ -69,54 +70,89 @@ const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 /* Same query as the strip hover rule in the styles below. */
 const hover = useMediaQuery(FINE_HOVER);
 
-const vw = ref(window.innerWidth);
-const vh = ref(viewHeight());
-/* The body's width: innerWidth and the root's clientWidth can both count base.css's scrollbar gutter. */
-const pageW = ref(document.body.clientWidth);
+const { vh, svh, pageW, resizing } = useViewport();
 
-/** Ms after the last viewport change before a live resize counts as over. */
-const RESIZE_SETTLE = 200;
-const resizing = ref(false);
-let settleTimer = 0;
-
-function readViewport(): void {
-  const w = window.innerWidth;
-  const h = viewHeight();
-  const pw = document.body.clientWidth;
-  if (w === vw.value && h === vh.value && pw === pageW.value) return;
-  vw.value = w;
-  vh.value = h;
-  pageW.value = pw;
-  resizing.value = true;
-  window.clearTimeout(settleTimer);
-  settleTimer = window.setTimeout(() => (resizing.value = false), RESIZE_SETTLE);
-}
-
-const side = computed(() => vw.value >= SIDE_MIN);
+const side = useMediaQuery(SIDE_QUERY);
+/** Narrow screens: the Watch button isn't whole on screen yet, so the readout plate points down to it. */
+const watchBelow = ref(false);
 const colW = computed(() =>
   side.value ? Math.max(COLUMN.min, Math.min(COLUMN.max, Math.round(pageW.value * COLUMN.share))) : 0,
 );
 const boxW = computed(() => pageW.value - colW.value);
+const panelOverhang = computed(() => Math.round((PANEL.overhang * colW.value) / PANEL.ref));
 const boxH = computed(() => Math.round((boxW.value * LID.h) / LID.w));
 const bandH = ref(0);
-const view = computed(() => Math.max(1, vh.value - bandH.value));
+/* Until the band is measured, footFit guesses as if it had no height: the cable run must not mount (and start loading) on that guess. */
+const measured = ref(false);
+let footMeasured: () => void = () => undefined;
+const footReady = new Promise<void>((resolve) => (footMeasured = resolve));
+/** Px: the readout plate's height, which grows with the text. */
+const plateH = ref(FOOT.plateH);
+const footS = computed(() => boxW.value / FOOT.ref);
+/* Only a pinned pair counts as holding the whole lid: an unpinned pair can't dock. */
+const footFit = computed(() => {
+  const full = Math.round(FOOT.height * footS.value);
+  const bar = Math.round((FOOT.barTop + FOOT.barH) * footS.value);
+  const options = [
+    { foot: full, cables: true, pinned: true },
+    { foot: bar, cables: false, pinned: true },
+    { foot: bar, cables: false, pinned: false },
+  ];
+  /* From the small viewport, so the rung doesn't change (and the cables pop in) as a phone's browser bars hide. */
+  const view = (o: (typeof options)[number]) => svh.value - o.foot - (o.pinned ? bandH.value : 0);
+  return (
+    options.find((o) => o.pinned && view(o) >= boxH.value) ??
+    options.find((o) => view(o) >= svh.value * LID_MIN_SHARE) ??
+    options[options.length - 1]
+  );
+});
+const bandPinned = computed(() => footFit.value.pinned);
+/** Px pinned under the lid: everything that sizes the pin, the hold or the dock reads this one value. */
+const footH = computed(() => footFit.value.foot + (bandPinned.value ? bandH.value : 0));
+/** Px of the lid's foot the painted foot covers. */
+const lift = computed(() =>
+  Math.round(Math.max(-FOOT.barTop * footS.value, -FOOT.plateMid * footS.value + plateH.value / 2)),
+);
+const premiseBottom = computed(() => SPLIT.premiseBottom + lift.value);
+/** Px above the pin's foot where the side panel stops travelling. */
+const panelRelease = computed(() =>
+  Math.max(0, Math.round(footFit.value.foot - (FOOT.teeth + FOOT.panelRest) * footS.value)),
+);
+/** Px of the pin's foot kept on screen while it holds: on side layouts only down to the panel's foot, so the hold starts as the panel comes to rest. */
+const pinFoot = computed(() => footH.value - (side.value ? panelRelease.value : 0));
+/** Px the foot's art hangs below the pin; HomeView's trailer band pads for it. */
+const overhang = computed(() => {
+  if (!footFit.value.cables) return 0;
+  const run = FOOT.runTop * footS.value + pageW.value * FOOT.runAspect - footH.value;
+  const tab = side.value
+    ? (PANEL.tab.drawn * colW.value) / PANEL.ref - PANEL.tab.tuck - panelRelease.value
+    : 0;
+  return Math.max(0, Math.ceil(Math.max(run, tab)));
+});
+const view = computed(() => Math.max(1, vh.value - pinFoot.value));
 const visH = computed(() => Math.min(boxH.value, view.value));
 /** Scroll spent holding the box still. */
 const hold = computed(() => (reduced.value ? 0 : Math.round(visH.value * split.pinLen.value)));
-const runwayH = computed(() => (reduced.value ? undefined : `${boxH.value + bandH.value + hold.value}px`));
+const runwayH = computed(() => (reduced.value ? undefined : `${boxH.value + footH.value + hold.value}px`));
 const pinTop = computed(() => Math.min(0, view.value - boxH.value));
-/* Not when the lid overflows the screen: docking there changes nothing on screen but still throws browser scrolls short. */
-const docked = computed(() => hold.value > 0 && pinTop.value === 0);
-const dockTop = computed(() => pinTop.value + boxH.value + bandH.value);
+/* Docks only with the lid and the whole foot on screen and the pair pinned: an overflowing lid still throws browser scrolls short, an unpinned pair sits under the docked band, and a foot below the fold would dock the band off screen. */
+const docked = computed(() => hold.value > 0 && vh.value - footH.value >= boxH.value && bandPinned.value);
+const dockTop = computed(() => pinTop.value + boxH.value + footH.value);
 const markW = computed(() => Math.round(boxW.value * (side.value ? 1 : MARK_NARROW)));
 const markTop = computed(() =>
   Math.round(boxH.value * MARK.footOnLid - markW.value * MARK.aspect * MARK.footInMark),
 );
-const sideH = computed(() => Math.min(vh.value, boxH.value));
-/* Srcset `sizes` only: grows once a resize ends, never shrinks. WebKit re-picks a candidate on every sizes change, so tracking every px refetches and redecodes mid-drag. */
+/* Down to the panel's resting foot, not just the lid: on screens taller than the lid the plate must still reach the teeth. */
+const sideH = computed(() => Math.min(vh.value, boxH.value + footFit.value.foot - panelRelease.value));
+/* Srcset `sizes` only, and it grows once a resize ends but never shrinks: WebKit re-picks a candidate on every sizes change, so tracking every px refetches and redecodes mid-drag. */
 const sizedW = ref(boxW.value);
-watch([boxW, resizing], () => {
-  if (!resizing.value && boxW.value > sizedW.value) sizedW.value = boxW.value;
+const sizedColW = ref(colW.value);
+watch([boxW, colW, resizing], () => {
+  /* A column that first appears mid-drag takes its width at once: sizes of 0px would fetch the smallest candidates first. */
+  if (sizedColW.value === 0) sizedColW.value = colW.value;
+  if (resizing.value) return;
+  if (boxW.value > sizedW.value) sizedW.value = boxW.value;
+  if (colW.value > sizedColW.value) sizedColW.value = colW.value;
 });
 const stripPx = computed(() => Math.round(sizedW.value / strips.length));
 const figurePx = (box: [number, number, number, number]) => Math.round((box[2] - box[0]) * sizedW.value);
@@ -133,15 +169,24 @@ const sidePanel = ref<ComponentPublicInstance | null>(null);
 const tagButton = ref<HTMLElement | null>(null);
 const packet = ref<HTMLElement | null>(null);
 const mark = ref<HTMLElement | null>(null);
-const railRef = ref<InstanceType<typeof HomeHeroRail> | null>(null);
+const footRef = ref<InstanceType<typeof HomeHeroFoot> | null>(null);
 const trace = ref<HTMLElement | null>(null);
-const band = ref<HTMLElement | null>(null);
+const band = ref<ComponentPublicInstance | null>(null);
 const arrow = ref<ComponentPublicInstance | null>(null);
 /* Shallow: the loop reads these every frame and must never trigger a render. */
 const stripEls = shallowRef<HTMLElement[]>([]);
 const artEls = shallowRef<HTMLElement[]>([]);
 const figureEls = shallowRef<HTMLElement[]>([]);
 const wordEls = shallowRef<HTMLElement[]>([]);
+/* Plain arrays: only the loop reads them. */
+const glossGlow: HTMLElement[] = [];
+const glossBloom: HTMLElement[] = [];
+const glossBand: HTMLElement[] = [];
+/* Must match the rungs on the CDN. */
+const GLOSS_WIDTHS: Record<string, number[]> = { glow: [480, 640, 960], bloom: [480] };
+const glossSrc = (id: string, layer: string, w: number, ext = 'webp') => asset(`/box-gloss/gloss-${id}-${layer}-${w}.${ext}`);
+const glossSrcset = (id: string, layer: string, ext = 'webp') =>
+  GLOSS_WIDTHS[layer].map((w) => `${glossSrc(id, layer, w, ext)} ${w}w`).join(', ');
 
 const keep = (list: HTMLElement[], i: number) => (el: Element | ComponentPublicInstance | null) => {
   const node = el && '$el' in el ? (el.$el as HTMLElement) : (el as HTMLElement | null);
@@ -161,23 +206,42 @@ const split = useLidSplitScene(
     arts: artEls,
     figures: figureEls,
     circuit: { zones: zonesSvg, wires: wiresSvg, buses: busesSvg },
-    hex: () => railRef.value?.hex ?? null,
+    plate: () => footRef.value?.plate ?? null,
+    foot: () => (footRef.value?.$el as HTMLElement | undefined) ?? null,
+    /* Only the foot art on screen: below the fold it would hold the entrance back for nothing. */
+    extraArt: async () => {
+      await footReady;
+      await nextTick();
+      const bottom = viewHeight();
+      return [...(footRef.value?.images?.querySelectorAll('img') ?? [])].filter((img) => {
+        const r = img.getBoundingClientRect();
+        return r.bottom > 0 && r.top < bottom;
+      });
+    },
     field: () => (sidePanel.value?.$el as HTMLElement | undefined) ?? null,
     tagButton: () => tagButton.value,
+    gloss: () =>
+      strips.map((_, i) => {
+        const glow = glossGlow[i];
+        const bloom = glossBloom[i];
+        const band = glossBand[i];
+        return glow?.isConnected && bloom?.isConnected ? { glow, bloom, band: band?.isConnected ? band : null } : null;
+      }),
   },
   {
     reduced,
     hover,
     narrow: computed(() => !side.value),
-    band: bandH,
+    band: pinFoot,
     intro: computed(() => {
       if (!side.value || boxW.value >= pageW.value) return null;
       const k = pageW.value / boxW.value;
-      return { k, ox: colW.value / (k - 1) };
+      return { k, ox: colW.value / (k - 1), left: colW.value };
     }),
     tones: strips.map((s) => s.tone ?? 'currentColor'),
     markGone: wordGone,
     resizing,
+    lift,
     onFrame: () => {
       report();
       placeTags();
@@ -186,12 +250,17 @@ const split = useLidSplitScene(
 );
 
 const revealHover = ref(false);
-const hexHover = ref(false);
+const plateHover = ref(false);
 const dest = ref<LidDest | null>(null);
 
 const named = computed<LidReadout | null>(() => {
   const i = split.hovered.value;
   return !revealHover.value && i >= 0 ? strips[i].readout : null;
+});
+
+const trayHue = computed(() => {
+  const i = side.value ? (revealHover.value ? -1 : split.hovered.value) : split.scrubIndex.value;
+  return i >= 0 ? strips[i].trayHue : null;
 });
 const scrubNamed = computed<LidReadout | null>(() => {
   const i = split.scrubIndex.value;
@@ -199,7 +268,8 @@ const scrubNamed = computed<LidReadout | null>(() => {
 });
 const railLine = computed(() => {
   if (!side.value && scrubNamed.value) return 'named';
-  return split.scrubEnd.value || split.pastPin.value || hexHover.value ? 'modes' : 'category';
+  if (!side.value && watchBelow.value) return 'scroll';
+  return split.scrubEnd.value || split.pastPin.value || plateHover.value ? 'modes' : 'category';
 });
 const hint = computed(() => {
   if (dest.value === 'trailer') return t('home.hero.readout.toTrailer');
@@ -229,8 +299,8 @@ function reveal(on: boolean): void {
   revealHover.value = on && hover.value && split.settled.value;
 }
 
-function onHexHover(on: boolean): void {
-  hexHover.value = on && hover.value && split.settled.value;
+function onPlateHover(on: boolean): void {
+  plateHover.value = on && hover.value && split.settled.value;
 }
 
 const tagsOn = ref(false);
@@ -268,7 +338,7 @@ function placeTags(): void {
   const m = mark.value?.getBoundingClientRect();
   let overMark = false;
   const spots = figureEls.value.map((fig, i) => {
-    /* The figure spans its strip's `box` on the lid. */
+
     const [x0, y0, x1, y1] = lidStrips[i].box;
     const [fx, fy] = lidStrips[i].head;
     const f = fig.getBoundingClientRect();
@@ -279,7 +349,7 @@ function placeTags(): void {
     const cardW = (tag?.firstElementChild as HTMLElement | null)?.offsetWidth ?? 0;
     /* The strip's own rect, not its share: the split scales it. The side panel's teeth cover the first one's left edge. */
     const s = stripEls.value[i]?.getBoundingClientRect();
-    const left = Math.max(0, s ? s.left - hr.left : i * pw) + (i === 0 && side.value ? HERO.panelOverhang : 0) + TAG_AIR / 2;
+    const left = Math.max(0, s ? s.left - hr.left : i * pw) + (i === 0 && side.value ? panelOverhang.value : 0) + TAG_AIR / 2;
     const width = Math.min(hr.width, s ? s.right - hr.left : (i + 1) * pw) - TAG_AIR / 2 - left;
     const cardX = Math.max(0, Math.min(tipX - left - cardW / 2, width - cardW));
     const shown = tipY - h >= highest && tipY <= lowest;
@@ -342,7 +412,8 @@ function fitWords(): void {
 watch(split.settled, report);
 
 function place(): void {
-  bandH.value = band.value?.offsetHeight ?? 0;
+  bandH.value = (band.value?.$el as HTMLElement | undefined)?.offsetHeight ?? 0;
+  plateH.value = footRef.value?.plate?.offsetHeight || FOOT.plateH;
   split.measure();
   placeTags();
   nextTick(placeTags);
@@ -354,7 +425,7 @@ function place(): void {
     const W = frame.clientWidth;
     const cx = Math.min(W - ARROW.edge - w / 2, Math.max(ARROW.edge + w / 2, W * ARROW.at));
     btn.style.left = `${cx.toFixed(1)}px`;
-    btn.style.top = `${(frame.clientHeight - SPLIT.premiseBottom - SPLIT.premiseLink / 2).toFixed(1)}px`;
+    btn.style.top = `${(frame.clientHeight - premiseBottom.value - SPLIT.premiseLink / 2).toFixed(1)}px`;
   }
   const [first, second] = [wordEls.value[0], wordEls.value[wordEls.value.length - 1]];
   if (!side.value || !first?.isConnected || !second?.isConnected) return;
@@ -372,7 +443,6 @@ function place(): void {
   }
 }
 
-const scrolledAway = ref(false);
 
 /* Until settled, the camera has moved the mark, so its rect is ignored. */
 function report(): void {
@@ -381,10 +451,10 @@ function report(): void {
   wordGone.value = split.settled.value && (!m || m.top + m.height * MARK.wordFoot < 0);
   /* offsetHeight: the entrance scales the box from its top edge, so its rect's bottom runs long. */
   reportHomeHero(!b || b.getBoundingClientRect().top + b.offsetHeight <= 0, wordGone.value);
-  scrolledAway.value = window.scrollY > CUE_GONE_AT;
+  const watch = side.value ? null : (band.value?.$el as HTMLElement | undefined)?.querySelector('.c-home-band__watch');
+  watchBelow.value = !!watch && watch.getBoundingClientRect().bottom > vh.value + 0.5;
 }
 
-/** Scroll the hold still has to spend, measured from page scroll `y`. */
 function holdLeft(y: number): number {
   const start = (runway.value?.getBoundingClientRect().top ?? 0) + window.scrollY - pinTop.value;
   return Math.max(0, start + hold.value - Math.max(y, start));
@@ -405,19 +475,17 @@ function revealBelow(event: FocusEvent): void {
 useSeekCatch({ docked, holdLeft, vh, pageW });
 watch(split.entrance, reportHeroIntro);
 
-let resize: ResizeObserver | null = null;
 let unregisterHold = () => {};
 
 onMounted(async () => {
   /* The watch only sees changes: a skipped entrance stays null and must still release the nav. */
   reportHeroIntro(split.entrance.value);
-  window.addEventListener('resize', readViewport);
   window.addEventListener('pointerdown', dropTags, { passive: true });
   unregisterHold = registerHold((el) => (docked.value && below.value?.contains(el) ? holdLeft(window.scrollY) : 0));
-  resize = new ResizeObserver(readViewport);
-  resize.observe(document.documentElement);
   /* Before the tick: a cold hash load scrolls to its target on that tick, and needs the band's height. */
-  bandH.value = band.value?.offsetHeight ?? 0;
+  bandH.value = (band.value?.$el as HTMLElement | undefined)?.offsetHeight ?? 0;
+  measured.value = true;
+  footMeasured();
   await nextTick();
   place();
   report();
@@ -425,11 +493,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', readViewport);
   window.removeEventListener('pointerdown', dropTags);
-  window.clearTimeout(settleTimer);
   unregisterHold();
-  resize?.disconnect();
   releaseHomeHero();
 });
 
@@ -438,7 +503,7 @@ watch(resizing, (on) => {
   if (!on) place();
 });
 
-watch([boxW, boxH, vh, side, bandH], async () => {
+watch([boxW, boxH, vh, side, footH], async () => {
   await nextTick();
   place();
   report();
@@ -446,14 +511,14 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 </script>
 
 <template>
-  <div class="c-home-hero" :style="{ '--hold': `${docked ? hold : 0}px` }">
+  <div class="c-home-hero" :style="{ '--hold': `${docked ? hold : 0}px`, '--hero-overhang': `${overhang}px` }">
     <div
       ref="runway"
       class="c-lid"
       :style="{
         height: runwayH,
         '--n': strips.length,
-        '--premise-bottom': `${SPLIT.premiseBottom}px`,
+        '--premise-bottom': `${premiseBottom}px`,
         '--premise-link': `${SPLIT.premiseLink}px`,
         '--trace': `${TRACE}px`,
         '--tags-button': `${HERO.tagsButton}px`,
@@ -574,21 +639,38 @@ watch([boxW, boxH, vh, side, bandH], async () => {
                   />
                   <img :src="strip.figureSrc" alt="" decoding="async" />
                 </picture>
+                <div v-if="split.gloss.value" class="c-lid__gloss">
+                  <img
+                    :ref="keep(glossBloom, i)"
+                    class="c-lid__gloss-layer"
+                    :src="glossSrc(strip.characterId, 'bloom', GLOSS_WIDTHS.bloom[0])"
+                    :srcset="glossSrcset(strip.characterId, 'bloom')"
+                    :sizes="`${figurePx(strip.box)}px`"
+                    alt=""
+                    decoding="async"
+                  />
+                  <picture>
+                    <source type="image/avif" :srcset="glossSrcset(strip.characterId, 'glow', 'avif')" :sizes="`${figurePx(strip.box)}px`" />
+                    <img
+                      :ref="keep(glossGlow, i)"
+                      class="c-lid__gloss-layer"
+                      :src="glossSrc(strip.characterId, 'glow', GLOSS_WIDTHS.glow[0])"
+                      :srcset="glossSrcset(strip.characterId, 'glow')"
+                      :sizes="`${figurePx(strip.box)}px`"
+                      alt=""
+                      decoding="async"
+                    />
+                  </picture>
+                  <div
+                    v-if="sheenUrl(strip.characterId)"
+                    class="c-lid__gloss-sheen"
+                    :style="{ '--sheen': `url(${sheenUrl(strip.characterId)})` }"
+                  >
+                    <div :ref="keep(glossBand, i)" class="c-lid__gloss-band" />
+                  </div>
+                </div>
               </div>
             </div>
-
-            <HomeHeroRail
-              ref="railRef"
-              :line="railLine"
-              :named="side ? null : scrubNamed"
-              :cue="revealHover"
-              :width="boxW"
-              :cast="side ? null : cast"
-              :away="side ? !split.settled.value : !split.badgeIn.value"
-              :pop="side ? 'scroll' : split.badgeIn.value ? 'now' : 'wait'"
-              :quiet="side"
-              @hex-hover="onHexHover"
-            />
 
             <RouterLink
               v-if="!side"
@@ -621,24 +703,37 @@ watch([boxW, boxH, vh, side, bandH], async () => {
           <p :id="artAltId" hidden>{{ artAlt }}</p>
         </div>
 
-        <div v-if="!side" ref="band" class="c-lid__band">
-          <UiButton
-            variant="primary"
-            class="c-lid__watch"
-            :to="to('home', {}, { hash: '#trailer' })"
-            @click="plainClick($event) && emit('watch')"
-          >
-            <span class="c-lid__play" aria-hidden="true" />{{ t('home.hero.watch') }}
-          </UiButton>
-          <BaseLink :link="outbound('buy')" class="c-lid__buy">{{ t('home.hero.buy') }} →</BaseLink>
-        </div>
+        <HomeHeroFoot
+          ref="footRef"
+          :line="railLine"
+          :named="side ? null : scrubNamed"
+          :cue="revealHover"
+          :width="boxW"
+          :left="colW"
+          :height="footFit.foot"
+          :sized-width="sizedW"
+          :cables="footFit.cables && measured"
+          :tray-hue="trayHue"
+          :sized-page="sizedW + sizedColW"
+          :cast="side ? null : cast"
+          :away="side ? !split.settled.value : !split.badgeIn.value"
+          :pop="side ? 'scroll' : split.badgeIn.value ? 'now' : 'wait'"
+          :quiet="side"
+          @plate-hover="onPlateHover"
+        />
+
+        <HomeHeroBand v-if="!side && bandPinned" ref="band" @watch="emit('watch')" />
 
         <HomeHeroPanel
           v-if="side"
           ref="sidePanel"
           :width="colW"
           :height="sideH"
+          :release="panelRelease"
+          :sized-width="sizedColW"
+          :tab="footFit.cables && measured"
           :named="named"
+          :cast="cast"
           :hint="hint"
           :hint-lit="revealHover || dest !== null"
           :universe-lit="revealHover"
@@ -648,13 +743,13 @@ watch([boxW, boxH, vh, side, bandH], async () => {
           @universe="reveal"
         />
 
-        <!-- After the side panel so Tab reaches its calls to action first. aria-disabled, not disabled: focus must survive the split. -->
+        <!-- After the side panel so Tab reaches its calls to action first; aria-disabled, not disabled, so focus survives the split. -->
         <button
           v-if="tagsButton"
           ref="tagButton"
           type="button"
           class="c-lid__tags"
-          :style="{ left: `${side ? colW + HERO.panelOverhang + HERO.tagsGap : HERO.tagsGap}px` }"
+          :style="{ left: `${side ? colW + panelOverhang + HERO.tagsGap : HERO.tagsGap}px` }"
           :aria-pressed="tagsOn"
           :aria-disabled="!split.tagsReady.value || undefined"
           :aria-label="t('home.hero.tagsLabel')"
@@ -663,11 +758,9 @@ watch([boxW, boxH, vh, side, bandH], async () => {
           <span class="c-lid__tags-disc"><CardGlyph name="player" /></span>
         </button>
       </div>
-
-      <p v-if="boxH + bandH > vh && !scrolledAway && split.badgeIn.value" class="c-lid__cue" aria-hidden="true">
-        <span class="c-lid__chevron" />
-      </p>
     </div>
+
+    <HomeHeroBand v-if="!side && !bandPinned" ref="band" @watch="emit('watch')" />
 
     <div
       class="c-home-hero__below"
@@ -700,7 +793,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
 
 .c-lid__pin {
   position: sticky;
-  /* A frame painted before the resize handlers catch up must not widen the page. Clip, not hidden: hidden makes a scroll container. */
+  /* Clip, not hidden (hidden makes a scroll container): a frame painted before the resize handlers catch up must not widen the page. */
   overflow-x: clip;
   z-index: var(--z-raised);
   background: var(--color-bg);
@@ -894,7 +987,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   transition: filter var(--dur-2) var(--ease-linear);
 }
 
-/* Set by useLidSplitScene's scrub. Every state lists brightness then drop-shadow: on a composited layer WebKit keeps the old brightness when the new list is a lone drop-shadow, and keeps a shadow until the list is none. */
+/* Set by useLidSplitScene's scrub; every state lists brightness then drop-shadow, because on a composited layer WebKit keeps the old brightness when the new list is a lone drop-shadow, and keeps a shadow until the list is none. */
 .c-lid__figure.is-named {
   filter: brightness(1) drop-shadow(0 0 14px rgba(var(--rgb-accent), 0.45));
 }
@@ -916,6 +1009,42 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   width: 100%;
   height: 100%;
   max-width: none;
+}
+
+/* Baked (lidGloss.ts): the scene writes only these opacities and the band's transform. */
+.c-lid__gloss {
+  position: absolute;
+  inset: 0;
+}
+
+.c-lid__gloss-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.c-lid__gloss-sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask: var(--sheen) 0 0 / 100% 100% no-repeat;
+  mask: var(--sheen) 0 0 / 100% 100% no-repeat;
+}
+
+.c-lid__gloss-band {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 300%;
+  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+  transform: translate3d(-76.67%, 0, 0);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-lid__gloss-sheen {
+    display: none;
+  }
 }
 
 .c-lid__mark {
@@ -1118,61 +1247,7 @@ watch([boxW, boxH, vh, side, bandH], async () => {
   color: var(--color-bg);
 }
 
-.c-lid__band {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  max-width: var(--width-reading);
-  margin: 0 auto;
-  padding: var(--space-6) var(--gutter) var(--space-4);
-}
-
-/* Large text sizes: wraps rather than overflowing the band. */
-.c-btn.c-lid__watch {
-  align-self: stretch;
-  white-space: normal;
-  text-align: center;
-}
-
-.c-lid__play {
-  width: 0;
-  height: 0;
-  margin-right: var(--space-2);
-  border-left: 9px solid currentColor;
-  border-top: 5.5px solid transparent;
-  border-bottom: 5.5px solid transparent;
-}
-
-.c-lid__buy {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: var(--size-body-l);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.c-lid__cue {
-  position: fixed;
-  left: 50%;
-  bottom: 22px;
-  z-index: var(--z-sticky);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.c-lid__chevron {
-  display: block;
-  width: 12px;
-  height: 12px;
-  border-right: 2px solid rgba(var(--rgb-ink), 0.85);
-  border-bottom: 2px solid rgba(var(--rgb-ink), 0.85);
-  transform: rotate(45deg);
-  filter: drop-shadow(0 1px 3px var(--color-bg)) drop-shadow(0 0 10px rgba(var(--rgb-bg), 0.9));
-}
-
-/* Undoes base.css's reduced-motion cut for fades and colour changes; slides stay off. Durations match each rule's own. HomeHeroRail and HomeHeroPanel do the same for theirs. */
+/* Undoes base.css's reduced-motion cut for fades and colour changes (slides stay off), at each rule's own duration; HomeHeroFoot and HomeHeroPanel do the same for theirs. */
 @media (prefers-reduced-motion: reduce) {
   .c-lid__mark,
   .c-lid__trace,

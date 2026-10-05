@@ -18,6 +18,12 @@ export interface LidStrip {
   flush?: boolean;
   detailOpacity?: number;
   premise?: 'first' | 'second';
+  /** Deg: the foot's tray windows turn this far while the strip is named. */
+  trayHue: number;
+  /** Deg: the trailer band's dials turn this far while this character's stack is open. */
+  dialHue: number;
+  /** Left to right in each of the trailer band's trunks. */
+  trunkSlot: number;
 }
 
 /* Print order, left to right. Even indexes rise and odd ones drop, so reordering changes which strips uncover the premise. */
@@ -28,6 +34,9 @@ export const lidStrips: LidStrip[] = [
     head: [0.1525, 0.612],
     box: [0, 0.5835, 0.2716, 0.9132],
     premise: 'first',
+    trayHue: 290,
+    dialHue: 301,
+    trunkSlot: 1,
   },
   {
     factionId: 'celestial-shogunate',
@@ -36,6 +45,9 @@ export const lidStrips: LidStrip[] = [
     box: [0.2173, 0.5308, 0.5028, 0.9846],
     flush: true,
     detailOpacity: 0.55,
+    trayHue: 22,
+    dialHue: 32,
+    trunkSlot: 0,
   },
   {
     factionId: 'hana-mori',
@@ -45,6 +57,9 @@ export const lidStrips: LidStrip[] = [
     notch: [[0, 0.45], [0.125, 0.45], [0.179, 1], [0.375, 1], [0.47, 0], [0.878, 0], [0.918, 0.45], [1, 0.45]],
     notchDepth: 0.09,
     premise: 'second',
+    trayHue: 134,
+    dialHue: 144,
+    trunkSlot: 2,
   },
   {
     factionId: 'subnet-86',
@@ -52,8 +67,11 @@ export const lidStrips: LidStrip[] = [
     head: [0.8075, 0.645],
     box: [0.7201, 0.1516, 1, 0.9969],
     detailOpacity: 0.55,
+    trayHue: 180,
+    dialHue: 190,
+    trunkSlot: 3,
   },
 ];
 
-/* Fractions: footOnLid of the lid's height; footInMark (.exe's foot) and wordFoot (the wordmark's) of the logo canvas's height. `aspect` must match SiteLockup's width and height. */
+/* Fractions: footOnLid of the lid's height, footInMark (.exe's foot) and wordFoot (the wordmark's) of the logo canvas's height; `aspect` must match SiteLockup's width and height. */
 export const MARK = { aspect: 254 / 720, footOnLid: 0.41, footInMark: 0.92, wordFoot: 0.744 };

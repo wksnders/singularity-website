@@ -26,7 +26,7 @@ import { allPrograms, cardFace } from './programs';
 
 const noArt = { src: null, alt: '', artist: null };
 
-/** Rungs character-art.py writes. WebP stops low: alpha triples it. */
+/** Rungs character-art.py writes; WebP stops low because alpha triples its size. */
 export const ART_WIDTHS = { avif: [640, 1280, 1920, 2560], webp: [640, 1280] };
 
 /* The locale suffix is stripped because one illustration serves every localisation; card faces keep the full id because those are language-specific. */
@@ -57,6 +57,8 @@ export const game = {
   /* Press, trade and licensing share this one inbox; each surface labels it for its own context. */
   enquiriesEmail: 'singularity-press@octothorpe.com',
   trailerYouTubeId: '_eyxoFI4F-8',
+
+  trailerPoster: '/trailer/poster-1280.webp',
   rulesUpdated: '2026-08-16' as string | null,
   copyrightYear: 2026,
 };
@@ -167,7 +169,7 @@ function assertTryRoutes(): void {
 }
 assertTryRoutes();
 
-/** Five formats, confirmed. Not a competitive/co-op pair. */
+/** Five formats, not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
   { id: 'ffa', name: 'Free-for-all' },
   { id: 'duel', name: '1v1 duel' },
@@ -176,7 +178,7 @@ export const modes: PlayMode[] = [
   { id: 'incursions', name: 'Incursions (co-op & solo)', players: '1\u20134' },
 ];
 
-/** `focalX` crops the 4/3 shelf tiles only. The Faction hero overrides it. */
+/** `focalX` crops the 4/3 shelf tiles only; the Faction hero overrides it. */
 const plate = (id: string, focalX: number): Art => ({
   src: `/environments/${id}-1600.jpg`,
   alt: '',
@@ -1278,7 +1280,7 @@ export const characters: Character[] = [
     flavour:
       'Patience. As trite as it is, great leaps forward often require a few steps back.',
   }),
-  /* Written in faction blocks, READ in `order`. Moving a row changes nothing. */
+  /* Written in faction blocks, READ in `order`: moving a row changes nothing. */
 ].sort((a, b) => a.order - b.order);
 
 /** Dev-only: catches a typo'd brand id or a `factionIds` that disagrees with the character's brands, both of which render a plausible wrong page. */
@@ -1338,7 +1340,7 @@ export const rogueAIs: RogueAI[] = [
   },
 ];
 
-/** Home's Incursions backdrop, left to right. Phones show only the first five (IncursionsBand's nth-child rule). */
+/** Home's Incursions backdrop, left to right; phones show only the first five (IncursionsBand's nth-child rule). */
 export const bossWall: string[] = [
   'invader',
   'calebrena-i',
@@ -1423,7 +1425,7 @@ function assertProductShape(): void {
 }
 assertProductShape();
 
-/** The core SKU. Never index products[] by position. */
+/** The core SKU: never index products[] by position. */
 export const coreProduct = products.find((p) => p.id === 'core-edition') ?? products[0];
 
 export const coreBox = boxes.find((b) => b.id === 'core-box') ?? boxes[0];
@@ -1453,7 +1455,7 @@ export const chapters: Chapter[] = [
   },
 ];
 
-/** Story-graph nodes. Pins come from castIds — no separate map data. */
+/** Story-graph nodes: pins come from castIds, with no separate map data. */
 export const stories: Story[] = [
   { id: 'story-01', chapterId: 'chapter-01', title: '[PLACEHOLDER story 01]', castIds: ['hanbei', 'kodama'] },
   { id: 'story-02', chapterId: 'chapter-01', title: '[PLACEHOLDER story 02]', castIds: ['toshiro', 'archidex'] },
@@ -1498,7 +1500,7 @@ export const newsCategories: NewsCategory[] = [
   { id: 'errata', name: 'Errata' },
 ];
 
-/* press-assets.py writes these and fails if they drift. Do not hand-edit. */
+/* press-assets.py writes these and fails if they drift: do not hand-edit. */
 const pressCover = (id: string, alt: string, focal?: { x: number; y: number }): Art => ({
   src: `/press/covers/${id}-560.webp`,
   alt,
@@ -1559,7 +1561,7 @@ export const wallpaperKinds: WallpaperKind[] = [
   { id: 'avatar', name: 'Avatar', size: '512 × 512' },
 ];
 
-/** Download gallery entries. `file` is null until the real exports land. */
+/** Download gallery entries; `file` is null until the real exports land. */
 export const wallpapers = [
   { id: 'wall-01', kind: 'desktop', file: null as string | null },
   { id: 'wall-02', kind: 'desktop', file: null as string | null },
@@ -1649,7 +1651,7 @@ export const factionsOf = (character: Character): Faction[] =>
         .map((id) => factionById(id))
         .filter((f): f is Faction => Boolean(f));
 
-/** Every brand a character plays: `brandIds` in printed order, then `personalBrandId`. Concatenated, never one in place of the other. */
+/** Every brand a character plays: `brandIds` in printed order, then `personalBrandId`, concatenated and never one in place of the other. */
 export const brandsOf = (character: Character): Brand[] =>
   [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
     .map((id) => brandById(id))
@@ -1659,7 +1661,7 @@ export const brandsOf = (character: Character): Brand[] =>
 export const membersOfFaction = (factionId: string) =>
   characters.filter((c) => c.factionIds !== 'any' && c.factionIds.includes(factionId));
 
-/** `active` is a faction id, `'universal'` for the any-faction characters alone, or null for no filter. Any-faction characters are exempt from a faction filter, not excluded. */
+/** `active` is a faction id, `'universal'` for the any-faction characters alone, or null for no filter; any-faction characters are exempt from a faction filter, not excluded. */
 export function matchesFactionFilter(character: Character, active: string | null): boolean {
   if (!active) return true;
   if (active === 'universal') return character.factionIds === 'any';

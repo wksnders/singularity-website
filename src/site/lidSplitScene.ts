@@ -71,8 +71,7 @@ export const ENTRANCE = {
   panMin: 24,
   introMin: 900,
   introMax: 1300,
-  /** Px, and a scale. */
-  fieldSlide: 64,
+  /** How much larger the side column starts the intro: its scale is 1 + fieldGrow. */
   fieldGrow: 0.05,
   badge: 320,
   /** Before the camera stops. */
@@ -98,10 +97,45 @@ export const SCRUB = {
   tagsFadeMin: 60,
 };
 
-/** Px: the rail's height, the name-tags button, the button's gap from the rail and from the teeth or lid edge, and how far the side panel reaches over the lid. The components set their CSS from these. */
-export const HERO = { rail: 36, tagsButton: 52, tagsGap: 4, panelOverhang: 16 };
+/** Px: the name-tags button, and its gap from the foot and from the teeth or lid edge. The components set their CSS from these. */
+export const HERO = { tagsButton: 52, tagsGap: 4 };
 
-/** Px. HomeHero hands them to its CSS. */
+/** The side panel's plate, in px at a column `ref` wide; HomeHeroPanel draws at the same scale. */
+export const PANEL = {
+  ref: 434,
+  overhang: 16,
+  /** The tab under the panel's foot, in the baked art's px: image size with shadow room, drawn height, tuck under the panel, and where its engraving sits. */
+  tab: { w: 480, h: 250, drawn: 212, tuck: 5, label: { x: 112.2, top: 35.4, size: 14, track: 2.4 } },
+};
+
+/** The painted foot under the lid, in px at a lid `ref` wide, y down from the lid's foot and `trays` as left edges; the art's crops (frame bar, fill and tray windows) must change with these. */
+export const FOOT = {
+  ref: 846,
+  height: 182.4,
+  barTop: -47.6,
+  barH: 123.375,
+  fillLeft: -54,
+  fillW: 165,
+  trays: [44, 468],
+  trayTop: -4.6,
+  trayW: 334,
+  trayH: 52,
+  /** The readout plate's centre, and its least width. */
+  plateMid: -29.6,
+  plateW: 254,
+  plateMin: 240,
+  /** Px at any scale: the plate's height before the text grows it. */
+  plateH: 30,
+  /** The bar's teeth tips, and how far below them the side panel's foot comes to rest. */
+  teeth: 73.1,
+  panelRest: 18,
+  /** The cable run: its top (lid scale), its art's height per px of page width, and its baked shadow's extra height. */
+  runTop: 58.4,
+  runAspect: 386 / 2315,
+  runShadow: 42 / 2315,
+};
+
+/** Px; HomeHero hands them to its CSS. */
 export const SEAM = { wide: 4, narrow: 3, overhang: 60 };
 
 type Point = [number, number];

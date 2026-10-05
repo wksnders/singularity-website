@@ -27,7 +27,7 @@
   --color-accent-wash: rgba(221, 228, 255, 0.14);
   --color-on-accent: #0a0715;
 
-  /* Only the damage glyphs are printed in colour. These are the dark-surface set; a light surface redefines the three on its own element with the values beside them, which are a shade deeper so the glyph holds on white. */
+  /* Only the damage glyphs print in colour: these are the dark-surface set, and a light surface redefines the three on its own element with the values beside them, a shade deeper so the glyph holds on white. */
   --color-glyph-power: #e83a5b; /* on light: #e73148 */
   --color-glyph-ai: #71abdd; /* on light: #5689c8 */
   --color-glyph-corruption: #99c556; /* on light: #6eb74e */
@@ -44,7 +44,7 @@
 
   --font-display: 'Unbounded', 'Space Grotesk', sans-serif;
   --font-body: 'Space Grotesk', system-ui, sans-serif;
-  /* HomeHeroRail's monoAdvance assumes this face's 0.6em advance. */
+  /* HomeHeroFoot's monoAdvance assumes this face's 0.6em advance. */
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --size-mono-xs: 0.625rem;
@@ -65,7 +65,7 @@
   --size-h1: clamp(1.5rem, 7.6vw, 5.75rem);
   /* The `h1` of every page below the home hero. */
   --size-h1-page: clamp(1.875rem, 5.6vw, 3.5rem);
-  /* A mono label standing alone takes --track-mono. One in a row of peers, or inside a pill or segmented control, takes -tight: that is where a string 30–40% longer runs out of room first. */
+  /* A lone mono label takes --track-mono; one in a row of peers, or inside a pill or segmented control, takes -tight, where a string 30–40% longer runs out of room first. */
   --track-mono: 0.16em;
   --track-mono-tight: 0.1em;
 
@@ -112,6 +112,13 @@
   --z-modal: 70;
   /* Above siblings INSIDE a component's own stacking context; never a page-level position. */
   --z-raised: 1;
+
+  /* Home's phone spine: a hex-grille strip 72px wide. */
+  --spine-grille:
+    linear-gradient(90deg, #0b0d12, #5e6e80 35%, #c2d0de 55%, #3e4a58 80%, #0b0d12) left / 6px 100% no-repeat,
+    linear-gradient(90deg, #0b0d12, #3e4a58 20%, #c2d0de 45%, #5e6e80 65%, #0b0d12) right / 6px 100% no-repeat,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.55), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.55)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='21'%3E%3Crect width='12' height='21' fill='%232A303B'/%3E%3Cpath fill='%2307070F' d='M6 -0.55L11.023 2.35L11.023 8.15L6 11.05L0.977 8.15L0.977 2.35ZM0 9.95L5.023 12.85L5.023 18.65L0 21.55L-5.023 18.65L-5.023 12.85ZM12 9.95L17.023 12.85L17.023 18.65L12 21.55L6.977 18.65L6.977 12.85ZM6 20.45L11.023 23.35L11.023 29.15L6 32.05L0.977 29.15L0.977 23.35ZM0 -11.05L5.023 -8.15L5.023 -2.35L0 0.55L-5.023 -2.35L-5.023 -8.15ZM12 -11.05L17.023 -8.15L17.023 -2.35L12 0.55L6.977 -2.35L6.977 -8.15Z'/%3E%3C/svg%3E") 6px 0 / 12px 21px;
 
   --dur-1: 120ms;
   --dur-2: 200ms;

@@ -5,6 +5,7 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
+import { asset, pictureSources } from '@/site/links';
 
 const props = withDefaults(
   defineProps<{
@@ -12,9 +13,16 @@ const props = withDefaults(
     title: string;
     placeholder?: string;
     ratio?: string;
+    /** An asset path: the still, logo included. */
+    poster?: string | null;
+    /** Holds the poster back: on Home, until the hero's entrance is over. */
+    deferPoster?: boolean;
   }>(),
-  { placeholder: '[ poster frame — 16:9 ]', ratio: '16 / 9' },
+  { placeholder: '[ poster frame — 16:9 ]', ratio: '16 / 9', poster: null, deferPoster: false },
 );
+
+/* Matches the player's width: 640px at most, the reading column's padding below that. */
+const POSTER_SIZES = '(min-width: 680px) 640px, calc(100vw - 40px)';
 
 const playing = ref(false);
 
@@ -28,7 +36,13 @@ const src = () =>
 
 <template>
   <div class="c-video">
-    <ArtFrame :ratio="ratio" radius="l" :placeholder="placeholder" />
+    <div v-if="poster" class="c-video__poster" :style="{ aspectRatio: ratio }" aria-hidden="true">
+      <picture v-if="!deferPoster">
+        <source v-for="source in pictureSources(poster)" :key="source.type" :type="source.type" :srcset="source.srcset" :sizes="POSTER_SIZES" />
+        <img class="c-video__poster-img" :src="asset(poster)" alt="" loading="lazy" decoding="async" />
+      </picture>
+    </div>
+    <ArtFrame v-else :ratio="ratio" radius="l" :placeholder="placeholder" />
 
     <button
       v-if="!playing"
@@ -67,6 +81,23 @@ const src = () =>
   border: 1px solid rgba(var(--rgb-ink), 0.12);
   border-radius: var(--radius-l);
   overflow: hidden;
+}
+
+.c-video__poster {
+  position: relative;
+  background: var(--color-surface);
+}
+
+.c-video__poster picture {
+  display: contents;
+}
+
+.c-video__poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .c-video__play {

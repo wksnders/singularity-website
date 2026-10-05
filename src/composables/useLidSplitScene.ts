@@ -6,6 +6,7 @@ import { easeCamera, easeEmphasis, easeOutCubic, smoothstep } from '@/site/easin
 import { SCROLL_INPUTS } from '@/site/glide';
 import { ENTRANCE, HERO, SCRUB, SEAM, SPLIT, figureSize, notchPolygon, registration, type Registration } from '@/site/lidSplitScene';
 import { createCircuit, type Circuit, type StripBox, type Zone } from '@/site/lidCircuit';
+import { GLOSS_ON, createGloss, type FigureSpan, type GlossEls } from '@/site/lidGloss';
 import { token, tokenMs, tokenPx } from '@/site/tokens';
 
 export interface LidSceneEls {
@@ -21,10 +22,16 @@ export interface LidSceneEls {
     wires: Ref<SVGSVGElement | null>;
     buses: Ref<SVGSVGElement | null>;
   };
-  /** A pointer on the rail hex hovers no strip. */
-  hex: () => HTMLElement | null;
+  /** A pointer on the readout plate hovers no strip. */
+  plate: () => HTMLElement | null;
+  /** Pinned under the lid: takes the lid's intro scale. */
+  foot: () => HTMLElement | null;
+  /** More art the entrance waits for, besides the strips and figures. */
+  extraArt: () => HTMLImageElement[] | Promise<HTMLImageElement[]>;
   field: () => HTMLElement | null;
   tagButton: () => HTMLElement | null;
+  /** Per figure, its gloss layers once `gloss` has mounted them. */
+  gloss: () => (GlossEls | null)[];
 }
 
 export interface LidSceneOpts {
@@ -32,13 +39,15 @@ export interface LidSceneOpts {
   hover: Readonly<Ref<boolean>>;
   narrow: Readonly<Ref<boolean>>;
   band: Readonly<Ref<number>>;
-  /** Side column only: the lid lands full-width, scaled `k` about `ox`. */
-  intro: Readonly<Ref<{ k: number; ox: number } | null>>;
+  /** Side column only: the lid lands full-width, scaled `k` about `ox`; `left` is the lid's left edge on the page. */
+  intro: Readonly<Ref<{ k: number; ox: number; left: number } | null>>;
   tones: string[];
   /** The wordmark has left the top of the screen. */
   markGone: Readonly<Ref<boolean>>;
   /** A live window resize is under way. */
   resizing: Readonly<Ref<boolean>>;
+  /** Px of the lid's foot under the painted foot: the premise words, the tags button and the rising strips clear it. */
+  lift: Readonly<Ref<number>>;
   /** At the start of each frame, before its writes: reads see the lid where the last frame put it (the loop runs two frames past the last change). */
   onFrame?: () => void;
 }
@@ -54,7 +63,7 @@ const FAR = 3;
 const OPEN_AT = 0.97;
 /** Share of the visible height to scroll back before the rail flips back. */
 const FLIP_REWIND = 0.06;
-/** Slowest rise towards `SPLIT.clear`, px per px of scroll. */
+/** Slowest rise towards the strips' clearance, px per px of scroll. */
 const FAST_MIN = 0.29;
 const MARK_PARALLAX = 0.18;
 const MARK_PAN = 0.3;
@@ -71,9 +80,6 @@ const FIGURE_SPILL = '60%';
 const SKIP_EVENTS = [...SCROLL_INPUTS, 'scroll'] as const;
 /* The router's own scroll on arrival must not count as the reader skipping. */
 const SKIP_SCROLL_AFTER = 300;
-/** Px from the lid's visible foot to the tags button's top; `_OPEN` for reduced motion, where the split starts open. */
-const TAGS_LIFT = HERO.rail + HERO.tagsButton + HERO.tagsGap;
-const TAGS_LIFT_OPEN = SPLIT.clear + HERO.tagsButton + HERO.tagsGap;
 
 /** The strip under viewport x, by equal shares of the lid's rect. */
 const stripAt = (x: number, r: DOMRect) => {
@@ -97,6 +103,10 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   const scrubEnd = ref(false);
   const tagsReady = ref(false);
 
+  const gloss = computed(() => GLOSS_ON && !opts.narrow.value && settled.value);
+  const glow = createGloss(n);
+  let glossBusy = false;
+
   const pinLen = computed(() =>
     opts.narrow.value ? SPLIT.pin + n * SCRUB.perFigure : SPLIT.pin,
   );
@@ -104,7 +114,6 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let reg: Registration | null = null;
   let sizes: { w: number; h: number }[] = [];
   let runwayTop = 0;
-  let fieldW = 0;
   let boxW = 0;
   let boxH = 0;
   let screenH = 0;
@@ -117,7 +126,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
   let lastNow: number | null = null;
   let sig: string | null = null;
   let hovSettled = true;
-  /** Entrance ms, advanced per frame so a stall pauses it instead of eating it. -Infinity until the wait ends. */
+  /** Entrance ms, advanced per frame so a stall pauses it instead of eating it; -Infinity until the wait ends. */
   let clock = -Infinity;
   /* Not reset by wake(): the entrance clock needs the true gap between frames. */
   let lastClock: number | null = null;
@@ -181,7 +190,6 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     reg = r;
     sizes = lidStrips.map((s) => figureSize(s, r));
     runwayTop = runway.getBoundingClientRect().top + window.scrollY;
-    fieldW = els.field()?.offsetWidth ?? 0;
     for (const img of els.arts.value) {
       Object.assign(img.style, {
         left: `${r.ax}px`,
@@ -200,7 +208,6 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     wake();
   }
 
-  /** `t` runs 0 to 1 across the fade. */
   function fadeTags(t: number, red: boolean, focused: Element | null): void {
     const btn = els.tagButton();
     const fade = !settled.value ? 0 : Math.max(0, Math.min(1, 1 - t));
@@ -254,10 +261,12 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const scrolled = window.scrollY;
     const hr = box.getBoundingClientRect();
     const pointer = opts.hover.value && settled.value;
-    const hx = pointer ? els.hex()?.getBoundingClientRect() : undefined;
+    const hx = pointer ? els.plate()?.getBoundingClientRect() : undefined;
     const held = document.activeElement;
 
     const red = opts.reduced.value;
+    const lift = opts.lift.value;
+    const clear = SPLIT.clear + lift;
     const moving = red ? 0 : 1;
     const entranceOn = !red;
     const W = boxW;
@@ -289,14 +298,24 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const intro = opts.intro.value;
     const zi = intro && entranceOn ? 1 - ce : 0;
     const kI = 1 + ((intro?.k ?? 1) - 1) * zi;
+    const foot = els.foot();
     if (zi > 0.001 && intro) {
       box.style.transformOrigin = `${intro.ox.toFixed(1)}px 0`;
       box.style.transform = `scale(${kI.toFixed(4)})`;
-    } else if (box.style.transform) box.style.transform = '';
+      if (foot) {
+        /* The lid's own origin, seen from the foot: its foot stays on the lid's. */
+        foot.style.transformOrigin = `${(intro.left + intro.ox).toFixed(1)}px ${(-H).toFixed(1)}px`;
+        foot.style.transform = box.style.transform;
+      }
+    } else if (box.style.transform) {
+      box.style.transform = '';
+      if (foot) foot.style.transform = '';
+    }
     const field = els.field();
+    /* Moves exactly as far as the lid's left edge (colW·zi), so the teeth stay fully over the art: any other distance opens gaps between them. */
     const fieldNext =
       zi > 0.001
-        ? `translateX(${(-(fieldW + ENTRANCE.fieldSlide) * zi).toFixed(1)}px) scale(${(1 + ENTRANCE.fieldGrow * zi).toFixed(4)})`
+        ? `translateX(${(-(intro?.left ?? 0) * zi).toFixed(1)}px) scale(${(1 + ENTRANCE.fieldGrow * zi).toFixed(4)})`
         : '';
     if (field && fieldNext !== fieldAt) {
       field.style.transformOrigin = '100% 50%';
@@ -321,24 +340,23 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     else unscrub();
 
     const onHex = !!hx && hx.width > 0 && px >= hx.left && px <= hx.right && py >= hx.top && py <= hx.bottom;
-    const inside = pointer && !onHex && px >= hr.left && px <= hr.right && py >= hr.top && py <= hr.bottom;
+    const inside = pointer && !onHex && px >= hr.left && px <= hr.right && py >= hr.top && py <= hr.bottom - lift;
     const hoverI = inside ? stripAt(px, hr) : settled.value ? tapped : -1;
     hovered.value = hoverI;
 
-    if (settled.value && hovSettled && sy === raw) {
+    if (settled.value && hovSettled && !glossBusy && sy === raw) {
       const next = `${sy}|${hoverI}|${W}|${H}|${red}`;
       if (next === sig) return false;
       sig = next;
     } else sig = null;
 
-    /* The camera pans the stage. */
     const camY = entranceOn && T.cam ? (camStart(H, screenH) * (1 - ce)) / kI : 0;
     const stage = els.stage.value;
     if (stage) stage.style.transform = camY > 0.05 ? `translate3d(0,${(-camY).toFixed(2)}px,0)` : '';
     const vt = Math.min(H - 1, Math.max(0, -hr.top) / kI + camY);
     const vb = Math.max(vt + 1, Math.min(H, (screenH - hr.top) / kI + camY));
     const btn = els.tagButton();
-    const btnTop = `${Math.round(Math.max(0, vb - (red ? TAGS_LIFT_OPEN : TAGS_LIFT)))}px`;
+    const btnTop = `${Math.round(Math.max(0, vb - (red ? clear : lift) - HERO.tagsButton - HERO.tagsGap))}px`;
     if (btn && btn.style.top !== btnTop) btn.style.top = btnTop;
 
     const far = H * FAR;
@@ -348,6 +366,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const stripW = pw * (1 + (SPLIT.overlapPct * n) / 100);
     const r = reg;
     const cur: StripBox[] = [];
+    const spans: FigureSpan[] = [];
     let still = true;
 
     els.strips.value.forEach((el, i) => {
@@ -382,8 +401,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       const sD = Math.min(sA, hv * SPLIT.driftCap);
       let ty0 = sD * SPLIT.drift;
       if (up) {
-        const sClear = Math.max(1, Math.min(SPLIT.clear / FAST_MIN, hv * SPLIT.pin * SPLIT.clearWithin));
-        ty0 = -(sD <= sClear ? sD * (SPLIT.clear / sClear) : SPLIT.clear + (sD - sClear) * SPLIT.drift);
+        const sClear = Math.max(1, Math.min(clear / FAST_MIN, hv * SPLIT.pin * SPLIT.clearWithin));
+        ty0 = -(sD <= sClear ? sD * (clear / sClear) : clear + (sD - sClear) * SPLIT.drift);
       }
       const ty = strip.flush ? Math.max(ty0, (H - oy) * (1 - sc)) : ty0;
       const origin = `${ox.toFixed(1)}px ${oy.toFixed(1)}px`;
@@ -456,6 +475,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
           cz !== 1
             ? ` translate(${ccx.toFixed(1)}px,${ccy.toFixed(1)}px) scale(${cz.toFixed(4)}) translate(${(-ccx).toFixed(1)}px,${(-ccy).toFixed(1)}px)`
             : '';
+        spans[i] = [hr.top + ty + introY + oy + (v0 - oy) * sc, hr.top + ty + introY + oy + (v0 + size.h - oy) * sc];
         fig.style.transform = `translate3d(${(i * pw).toFixed(2)}px,${(ty + introY).toFixed(2)}px,0) translate(${ox.toFixed(1)}px,${oy.toFixed(1)}px) ${scale} translate(${(-ox).toFixed(1)}px,${(-oy).toFixed(1)}px)${settle} translate(${u0.toFixed(2)}px,${v0.toFixed(2)}px)${grow}`;
         /* Top and foot only: a figure may cross its seam. */
         const cTop = Math.max(0, hh - (v0 + hh) / kf);
@@ -489,6 +509,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       cur[i] = { x: i * pw + ox * (1 - sc), y: ty + oy * (1 - sc) + introY, w: pw * sc, h: H * sc, ei, travel, inL: iL * sc, inR: iR * sc };
     });
     hovSettled = still;
+    glossBusy = gloss.value && glow.update(els.gloss(), spans, sy * moving, Math.max(1, hv), screenH, red, dt);
 
     const done =
       !entranceOn ||
@@ -560,7 +581,14 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
 
   watch([settled, opts.resizing], () => circuit?.play(packetsOn()));
 
-  watch([opts.reduced, opts.band, opts.intro], () => {
+  watch(gloss, () => {
+    glow.forget();
+    glossBusy = false;
+    sig = null;
+    wake();
+  });
+
+  watch([opts.reduced, opts.band, opts.intro, opts.lift], () => {
     sig = null;
     wake();
   });
@@ -615,11 +643,10 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       for (const name of SKIP_EVENTS) window.addEventListener(name, onSkip, { passive: true });
       entrance.value = 'wait';
       const figures = els.figures.value.map((fig) => fig.querySelector('img'));
-      const decoded = [...els.arts.value, ...figures].map((img) =>
-        img instanceof HTMLImageElement && img.decode ? img.decode().catch(() => undefined) : undefined,
-      );
+      const decode = (imgs: unknown[]) =>
+        Promise.all(imgs.map((img) => (img instanceof HTMLImageElement && img.decode ? img.decode().catch(() => undefined) : undefined)));
       Promise.race([
-        Promise.all(decoded),
+        Promise.all([decode([...els.arts.value, ...figures]), Promise.resolve(els.extraArt()).then(decode)]),
         new Promise((resolve) => setTimeout(resolve, ENTRANCE.decodeCap)),
       ]).then(() => {
         released = true;
@@ -670,6 +697,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     scrubIndex,
     scrubEnd,
     tagsReady,
+    gloss,
     measure,
   };
 }

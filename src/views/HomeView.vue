@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* Module order below the hero is fixed and the count is a ceiling, not a target: adding one is an editorial decision. */
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
@@ -16,6 +16,7 @@ import IncursionsBand from '@/components/organisms/IncursionsBand.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
+import { useChrome } from '@/composables/useChrome';
 import { viewHeight } from '@/composables/useMediaQuery';
 import { getDoc, getDocs, metaString, t } from '@/content';
 import {
@@ -60,6 +61,7 @@ const latestNews = computed(() =>
 );
 
 const route = useRoute();
+const { heroIntro } = useChrome();
 const trailer = ref<InstanceType<typeof TrailerPlayer> | null>(null);
 
 /* Where the heading would push the player below the fold, the section's scroll margin aims the player instead; glides and anchor jumps read it. */
@@ -83,6 +85,11 @@ function aimTrailer(): void {
   section.style.scrollMarginTop = `${top - offset}px`;
 }
 
+/* After Vue's update: the hero's overhang, which pads the section, follows the same resize. */
+function aimLater(): void {
+  void nextTick(aimTrailer);
+}
+
 /* Already at #trailer, the router won't navigate, so the glide starts here. */
 async function watchTrailer(): Promise<void> {
   aimTrailer();
@@ -93,11 +100,11 @@ async function watchTrailer(): Promise<void> {
 
 onMounted(() => {
   aimTrailer();
-  window.addEventListener('resize', aimTrailer);
+  window.addEventListener('resize', aimLater);
   void document.fonts?.ready.then(aimTrailer);
 });
 
-onBeforeUnmount(() => window.removeEventListener('resize', aimTrailer));
+onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 
 const rotator = ref<HTMLElement | null>(null);
 function scrollCast(direction: 1 | -1): void {
@@ -110,7 +117,7 @@ function scrollCast(direction: 1 | -1): void {
 <template>
   <HomeHero @watch="watchTrailer">
     <section id="trailer" tabindex="-1" class="l-band l-band--line-bottom home__claim">
-      <div class="l-wrap l-wrap--reading home__center">
+      <div class="l-wrap l-wrap--reading home__center home__claim-head">
         <MonoLabel>{{ t('home.zero.kicker') }}</MonoLabel>
         <h2 class="home__h2 home__h2--claim">{{ t('home.zero.title') }}</h2>
       </div>
@@ -118,10 +125,14 @@ function scrollCast(direction: 1 | -1): void {
         <TrailerPlayer
           ref="trailer"
           :you-tube-id="game.trailerYouTubeId"
+          :poster="game.trailerPoster"
+          :defer-poster="heroIntro !== null"
           :title="t('home.zero.trailerTitle')"
           :placeholder="t('home.zero.trailerPlaceholder')"
         />
-        <MonoLabel tone="faint" class="home__center home__caption">{{ t('home.zero.caption') }}</MonoLabel>
+        <MonoLabel class="home__center home__caption">
+          <span class="home__caption-pad">{{ t('home.zero.caption') }}</span>
+        </MonoLabel>
       </HomeTrailerCast>
       <div class="l-wrap home__center">
         <UiButton variant="quiet" :to="to('learn', {}, { hash: '#videos' })">{{ t('home.zero.link') }}</UiButton>
@@ -353,15 +364,68 @@ function scrollCast(direction: 1 | -1): void {
 }
 
 .home__claim {
-  background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg) 100%);
+  /* Clears the art HomeHero hangs over this band's top. */
+  --claim-pad: max(var(--band-y), calc(var(--hero-overhang, 0px) + var(--space-6)));
+
+  position: relative;
+  /* The trailer's traces and spine run past the page edge. Clip, not hidden: hidden makes a scroll container. */
+  overflow-x: clip;
+  padding-top: var(--claim-pad);
+  background: var(--color-bg);
+}
+
+.home__claim-head {
+  position: relative;
+  z-index: var(--z-raised);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.85);
+}
+
+/* Phones: the spine from the band's top to the player (HomeHeroBand draws the hero's half); the bottom inset must equal the cast grid's top margin. Off under HomeHero's SIDE_QUERY, below. */
+.home__claim-head::before,
+.home__claim-head::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: calc(-1 * var(--claim-pad));
+  bottom: calc(-1 * var(--space-7));
+  pointer-events: none;
+}
+
+.home__claim-head::before {
+  left: calc(50% - 36px);
+  width: 72px;
+  background: var(--spine-grille);
+}
+
+/* Scrim: keeps the heading readable over the grille. */
+.home__claim-head::after {
+  left: calc(50% - 76px);
+  width: 152px;
+  background: radial-gradient(60% 40% at 50% 62%, rgba(var(--rgb-bg), 0.9), rgba(var(--rgb-bg), 0.55) 60%, transparent);
+}
+
+/* HomeHero's SIDE_QUERY. */
+@media (min-width: 47.5em), (orientation: landscape) and (min-width: 34em) {
+  .home__claim-head::before,
+  .home__claim-head::after {
+    content: none;
+  }
 }
 
 .home__h2--claim {
   margin-top: var(--space-3);
 }
 
+/* Above the trunks that run down behind it. */
 .home__caption {
+  position: relative;
+  z-index: var(--z-raised);
   margin-top: var(--space-3);
+}
+
+.home__caption-pad {
+  padding: 0 10px;
+  background: var(--color-bg);
 }
 
 .home__spacer {

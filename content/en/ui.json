@@ -229,7 +229,8 @@
   "home": {
     "hero": {
       "category": "Deterministic card game",
-      "modes": "Solo, duel or co-op",
+      "modes": "Duel or co-op",
+      "tabLabel": "Autumn · N01",
       "modesLine": "{modes} · {players}",
       "playersIcon": "players",
       "title": "Humans abandoned physical reality.",
@@ -247,11 +248,13 @@
         "end": "server"
       },
       "readout": {
+        "modes": "Solo, duel or co-op",
         "character": "Character",
         "faction": "Faction",
         "hint": "Hover a character to name them",
         "hintTap": "Tap a character to name them",
         "cue": "Universe introduction",
+        "scroll": "Scroll · trailer below ↓",
         "goesTo": "Goes to · {place}",
         "toTrailer": "Plays · the trailer"
       }
@@ -294,7 +297,8 @@
       "stacks": {
         "hint": "Hover a card to see its stack · click to zoom",
         "hintTouch": "Tap a card to see its stack",
-        "open": "{name} · {deck} · {kind} · {source}",
+        "openDeck": "{deck} · {kind} · {source}",
+        "openSep": " ·\u00a0",
         "label": "{name} card. {deck} {kind}: {programs}.",
         "labelAlone": "{name} card.",
         "kind": {
