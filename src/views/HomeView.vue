@@ -60,6 +60,8 @@ const latestNews = computed(() =>
     .slice(0, 3),
 );
 
+const claim = computed(() => t('home.zero.title').match(/[^.!?]+[.!?]*/g)?.map((part) => part.trim()) ?? []);
+
 const route = useRoute();
 const { heroIntro } = useChrome();
 const trailer = ref<InstanceType<typeof TrailerPlayer> | null>(null);
@@ -119,7 +121,11 @@ function scrollCast(direction: 1 | -1): void {
     <section id="trailer" tabindex="-1" class="l-band l-band--line-bottom home__claim">
       <div class="l-wrap l-wrap--reading home__center home__claim-head">
         <MonoLabel>{{ t('home.zero.kicker') }}</MonoLabel>
-        <h2 class="home__h2 home__h2--claim">{{ t('home.zero.title') }}</h2>
+        <h2 class="home__h2 home__h2--claim">
+          <template v-for="(part, i) in claim" :key="i">
+            <span class="home__claim-part">{{ part }}</span>{{ i < claim.length - 1 ? ' ' : '' }}
+          </template>
+        </h2>
       </div>
       <HomeTrailerCast>
         <TrailerPlayer
@@ -135,7 +141,7 @@ function scrollCast(direction: 1 | -1): void {
         </MonoLabel>
       </HomeTrailerCast>
       <div class="l-wrap home__center">
-        <UiButton variant="quiet" :to="to('learn', {}, { hash: '#videos' })">{{ t('home.zero.link') }}</UiButton>
+        <UiButton variant="quiet" class="home__claim-link" :to="to('learn', {}, { hash: '#videos' })">{{ t('home.zero.link') }}</UiButton>
       </div>
     </section>
 
@@ -332,6 +338,13 @@ function scrollCast(direction: 1 | -1): void {
   color: rgba(var(--rgb-ink), 0.28);
 }
 
+/* Where the price sits on its own line. */
+@media (max-width: 26.5em) {
+  .home__offer-price::before {
+    content: none;
+  }
+}
+
 .home__offer-price strong {
   font-weight: 700;
   color: var(--color-ink-muted);
@@ -414,6 +427,26 @@ function scrollCast(direction: 1 | -1): void {
 
 .home__h2--claim {
   margin-top: var(--space-3);
+}
+
+.home__claim-part {
+  display: inline-block;
+}
+
+/* The 44px target, over the dial's empty foot: padding would move the quiet button's underline. */
+.home__claim-link {
+  position: relative;
+  z-index: var(--z-raised);
+}
+
+.home__claim-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: 44px;
+  translate: -50% -50%;
 }
 
 /* Above the trunks that run down behind it. */
