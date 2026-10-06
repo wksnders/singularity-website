@@ -450,7 +450,9 @@ function report(): void {
   const m = split.settled.value ? mark.value?.getBoundingClientRect() : null;
   wordGone.value = split.settled.value && (!m || m.top + m.height * MARK.wordFoot < 0);
   /* offsetHeight: the entrance scales the box from its top edge, so its rect's bottom runs long. */
-  reportHomeHero(!b || b.getBoundingClientRect().top + b.offsetHeight <= 0, wordGone.value);
+  const gone = !b || b.getBoundingClientRect().top + b.offsetHeight <= 0;
+  /* Side layouts: the header's logo sits over the panel, which is still passing under it after the wordmark leaves, so it waits for the solid header. */
+  reportHomeHero(gone, side.value ? gone : wordGone.value);
   const watch = side.value ? null : (band.value?.$el as HTMLElement | undefined)?.querySelector('.c-home-band__watch');
   watchBelow.value = !!watch && watch.getBoundingClientRect().bottom > vh.value + 0.5;
 }

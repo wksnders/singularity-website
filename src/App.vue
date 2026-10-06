@@ -19,4 +19,9 @@ import SiteFooter from '@/components/organisms/SiteFooter.vue';
 main:focus {
   outline: none;
 }
+
+main:empty {
+  min-height: 100vh;
+  min-height: 100svh;
+}
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* Click-to-play only: the iframe mounts on a user gesture and cc_load_policy=1 keeps captions on by default. */
-import { ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
@@ -25,6 +25,13 @@ const props = withDefaults(
 const POSTER_SIZES = '(min-width: 680px) 640px, calc(100vw - 40px)';
 
 const playing = ref(false);
+const frame = ref<HTMLIFrameElement | null>(null);
+
+watch(playing, async (on) => {
+  if (!on) return;
+  await nextTick();
+  frame.value?.focus({ preventScroll: true });
+});
 
 /* Autoplay needs a recent user gesture: call soon after a click. */
 defineExpose({ play: () => (playing.value = true) });
@@ -56,6 +63,7 @@ const src = () =>
 
     <iframe
       v-else-if="youTubeId"
+      ref="frame"
       class="c-video__frame"
       :src="src()"
       :title="title"
