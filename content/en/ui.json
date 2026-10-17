@@ -332,11 +332,33 @@
       "cta": "Read the chapter",
       "artPlaceholder": "[ chapter key art ]"
     },
-    "ways": {
-      "title": "Ways in",
-      "buy": {
-        "title": "Buy the Box",
-        "body": "Core set, expansion and Incursions — all launching day one. No random boosters, ever."
+    "tryIt": {
+      "title": "Try it free. Then make it yours.",
+      "tts": {
+        "title": "Tabletop Simulator",
+        "body": "The table is already set: {a} against {b}, and the mod’s scripting handles the busywork.",
+        "link": "Get the mod on Steam →",
+        "placeholder": "[ Tabletop Simulator — the table set, 16:9 ]"
+      },
+      "pnp": {
+        "title": "Print & play",
+        "body": "Print, cut, play. Free to download: the competitive cards from the core set and the first expansion, as print-ready sheets.",
+        "link": "Download the sheets →"
+      },
+      "copy": "Copy link for my computer",
+      "copied": "Link copied. Open it on your computer.",
+      "box": {
+        "title": "Your server awaits",
+        "placeholder": "[ core box render — 1:1 ]",
+        "years": "Over a decade of creativity.",
+        "colors": "Colors adjusted, again, tuned to perfection.",
+        "testing": "Thousands of hours at the testing table.",
+        "line": "Over a decade of creativity, colors tuned to perfection, thousands of hours at the testing table.",
+        "buy": "Buy the box · from {price}",
+        "buyNoPrice": "Buy the box",
+        "notReady": "Not ready?",
+        "rules": "Read the rules",
+        "cards": "Browse every card"
       }
     },
     "news": {

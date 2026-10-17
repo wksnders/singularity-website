@@ -7,12 +7,12 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
-import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
 import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
 import IncursionsBand from '@/components/organisms/IncursionsBand.vue';
+import TryItBand from '@/components/organisms/TryItBand.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
@@ -23,7 +23,6 @@ import {
   chapters,
   characters,
   coreProduct,
-  tryRoutes,
   factions,
   game,
 } from '@/data/universe';
@@ -237,20 +236,7 @@ function scrollCast(direction: 1 | -1): void {
     </section>
 
     <!-- Holds the only filled CTA below the fold. -->
-    <section id="learn" class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <h2 class="home__h2">{{ t('home.ways.title') }}</h2>
-        <div class="l-grid l-grid--wide home__spacer">
-          <ContentCard
-            featured
-            :title="t('home.ways.buy.title')"
-            :body="t('home.ways.buy.body')"
-            :link="outbound('buy')"
-          />
-          <TryRouteCard v-for="route in tryRoutes" :key="route.id" :route="route" />
-        </div>
-      </div>
-    </section>
+    <TryItBand />
 
     <section v-if="latestNews.length" id="news" class="l-band">
       <div class="l-wrap">
