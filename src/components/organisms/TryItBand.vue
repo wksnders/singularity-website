@@ -124,7 +124,6 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
               <li>{{ t('home.tryIt.box.colors') }}</li>
               <li>{{ t('home.tryIt.box.testing') }}</li>
             </ul>
-            <p class="c-try__line">{{ t('home.tryIt.box.line') }}</p>
             <div class="c-try__foot">
               <UiButton variant="primary" :link="outbound('buy')" class="c-try__buy">
                 {{
@@ -319,22 +318,15 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
 }
 
 .c-try__list {
-  display: none;
+  display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
   margin: 10px 0 0;
   padding: 0;
   list-style: none;
   font-size: var(--size-body-s);
   line-height: 1.45;
-  color: rgba(var(--rgb-ink), 0.82);
-}
-
-.c-try__line {
-  margin-top: var(--space-2);
-  font-size: var(--size-body-s);
-  line-height: 1.5;
-  color: rgba(var(--rgb-ink), 0.82);
+  color: var(--color-ink);
 }
 
 .c-try__foot {
@@ -440,14 +432,6 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
   .c-try__render {
     width: 100%;
     margin: 0 auto;
-  }
-
-  .c-try__list {
-    display: flex;
-  }
-
-  .c-try__line {
-    display: none;
   }
 }
 
