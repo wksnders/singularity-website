@@ -5,6 +5,7 @@
   --rgb-bg-alt: 10, 10, 20;
   --rgb-surface: 16, 16, 28;
   --rgb-surface-raised: 18, 18, 30;
+  --rgb-surface-sunk: 12, 12, 23;
   --rgb-ink: 242, 241, 250;
   --rgb-accent: 221, 228, 255;
   --rgb-on-accent: 10, 7, 21;
@@ -24,8 +25,17 @@
 
   --color-accent: #dde4ff;
   --color-accent-text: #c6d0f7;
+  --rgb-accent-text: 198, 208, 247;
   --color-accent-wash: rgba(221, 228, 255, 0.14);
   --color-on-accent: #0a0715;
+
+  --color-plate-top: #1e1b36;
+  --color-plate: #16142b;
+  --rgb-plate: 22, 20, 43;
+  --color-plate-deep: #121024;
+  --color-uv: #5e4fef;
+  --rgb-uv: 94, 79, 239;
+  --rgb-uv-glow: 123, 108, 255;
 
   /* Only the damage glyphs print in colour: these are the dark-surface set, and a light surface redefines the three on its own element with the values beside them, a shade deeper so the glyph holds on white. */
   --color-glyph-power: #e83a5b; /* on light: #e73148 */
@@ -47,6 +57,8 @@
   /* HomeHeroFoot's monoAdvance assumes this face's 0.6em advance. */
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
+  /* The smallest mono: only for a label under a name or on a photo. */
+  --size-mono-2xs: 0.5625rem;
   --size-mono-xs: 0.625rem;
   --size-mono-s: 0.6875rem;
   --size-mono-m: 0.75rem;

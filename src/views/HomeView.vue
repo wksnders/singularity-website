@@ -7,43 +7,28 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
-import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
+import CommunityBand from '@/components/organisms/CommunityBand.vue';
+import HomeCastRail from '@/components/organisms/HomeCastRail.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
 import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
 import IncursionsBand from '@/components/organisms/IncursionsBand.vue';
 import TryItBand from '@/components/organisms/TryItBand.vue';
 import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
-import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
 import { useChrome } from '@/composables/useChrome';
 import { viewHeight } from '@/composables/useMediaQuery';
 import { getDoc, getDocs, metaString, t } from '@/content';
 import {
   chapters,
-  characters,
   coreProduct,
   factions,
   game,
 } from '@/data/universe';
-import { factionTags } from '@/site/characters';
 import { pad } from '@/site/format';
 import { afterGlide, glideToElement } from '@/site/glide';
 import { chapterHash, outbound, to } from '@/site/links';
 import { tokenPx } from '@/site/tokens';
-
-/* Capped for page weight. */
-const ROTATOR_MAX = 20;
-
-const rotatorCast = computed(() => {
-  const lead = factions
-    .map((faction) =>
-      characters.find((c) => Array.isArray(c.factionIds) && c.factionIds[0] === faction.id),
-    )
-    .filter((c): c is (typeof characters)[number] => Boolean(c));
-  const seen = new Set(lead.map((c) => c.id));
-  return [...lead, ...characters.filter((c) => !seen.has(c.id))].slice(0, ROTATOR_MAX);
-});
 
 /* The newest PUBLISHED chapter, deliberately not the newest product. */
 const currentChapter = computed(
@@ -106,13 +91,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
-
-const rotator = ref<HTMLElement | null>(null);
-function scrollCast(direction: 1 | -1): void {
-  const el = rotator.value;
-  if (!el) return;
-  el.scrollBy({ left: direction * Math.min(el.clientWidth * 0.8, 640), behavior: 'smooth' });
-}
 </script>
 
 <template>
@@ -162,37 +140,7 @@ function scrollCast(direction: 1 | -1): void {
 
     <WaysToPlayBand />
 
-    <section class="l-band">
-      <div class="l-wrap home__rotator-head">
-        <div>
-          <MonoLabel tone="accent">{{ t('home.cast.kicker') }}</MonoLabel>
-          <h2 class="home__h2">{{ t('home.cast.title') }}</h2>
-          <MonoLabel tone="faint">
-            {{ characters.length }} {{ t('universe.characters.count') }}
-          </MonoLabel>
-        </div>
-        <div class="home__rotator-nav">
-          <button type="button" :aria-label="t('home.cast.prev')" @click="scrollCast(-1)">←</button>
-          <button type="button" :aria-label="t('home.cast.next')" @click="scrollCast(1)">→</button>
-        </div>
-      </div>
-      <div ref="rotator" class="home__rotator">
-        <EntityTile
-          v-for="character in rotatorCast"
-          :key="character.id"
-          class="home__rotator-item"
-          :to="to('character', { characterId: character.id })"
-          :art="character.cardArt"
-          :epithet="character.epithet"
-          :name="character.name"
-          :tags="factionTags(character)"
-          :placeholder="t('character.cardArtPlaceholder')"
-        />
-      </div>
-      <div class="l-wrap home__spacer">
-        <UiButton variant="quiet" :to="to('characters')">{{ t('home.cast.link') }}</UiButton>
-      </div>
-    </section>
+    <HomeCastRail />
 
     <section class="l-band l-band--alt l-band--line-top">
       <div class="l-wrap">
@@ -257,23 +205,7 @@ function scrollCast(direction: 1 | -1): void {
       </div>
     </section>
 
-    <section id="community" class="l-band l-band--line-top">
-      <div class="l-wrap l-split">
-        <div class="l-split__main">
-          <h2 class="home__h3">{{ t('home.community.title') }}</h2>
-          <p class="l-lede home__body">{{ t('home.community.body') }}</p>
-          <p class="home__channels">
-            <span>#rules-desk</span><span>#incursion-logs</span><span>#deck-lab</span>
-          </p>
-          <UiButton :link="outbound('discord')" class="home__spacer">
-            {{ t('home.community.cta') }}
-          </UiButton>
-        </div>
-        <div class="l-split__aside">
-          <NewsletterForm />
-        </div>
-      </div>
-    </section>
+    <CommunityBand />
   </HomeHero>
 </template>
 
@@ -449,62 +381,6 @@ function scrollCast(direction: 1 | -1): void {
 
 .home__spacer {
   margin-top: var(--space-5);
-}
-
-.home__rotator-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
-.home__rotator-nav {
-  display: flex;
-  gap: var(--space-2);
-  flex: 0 0 auto;
-}
-
-.home__rotator-nav button {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-ink);
-  cursor: pointer;
-}
-
-.home__rotator {
-  margin-top: var(--space-7);
-  display: flex;
-  gap: var(--space-4);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 0 var(--gutter) var(--space-2);
-  scrollbar-width: none;
-}
-
-.home__rotator-item {
-  flex: 0 0 min(72vw, 300px);
-  scroll-snap-align: start;
-}
-
-.home__channels {
-  margin-top: var(--space-6);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
-  color: var(--color-ink-faint);
-}
-
-.home__channels span {
-  padding: 6px var(--space-3);
-  border: 1px solid rgba(var(--rgb-ink), 0.14);
-  border-radius: var(--radius-s);
-  white-space: nowrap;
 }
 
 .home__chapter {

@@ -204,12 +204,13 @@
     }
   },
   "newsletter": {
-    "kicker": "Dispatches",
-    "lede": "Set announcements, chapter releases and Convergence votes — no more than a few times a month.",
+    "kicker": "Straight to your inbox",
+    "title": "Know when a vote opens.",
+    "lede": "New sets, chapter releases, and Convergence votes. A few emails a month.",
     "label": "Email address",
     "placeholder": "you@somewhere.net",
     "submit": "Sign up",
-    "fine": "A few times a month, and one click to leave. [PLACEHOLDER — privacy line]",
+    "fine": "Votes happen on Discord; the email links straight to the poll. One click to leave. [PLACEHOLDER — privacy line]",
     "done": "You're on the list — a confirmation is on its way.",
     "closed": "Sign-ups are not open yet. There is nowhere for this to send, so the form stays shut rather than pretending.",
     "error": "That didn't send, your address never left this page, so you are not on the list yet. Try again in a few minutes."
@@ -308,11 +309,12 @@
       }
     },
     "cast": {
-      "kicker": "The characters",
-      "title": "The characters",
+      "title": "{count} characters. Find yours.",
+      "list": "Characters",
       "prev": "Previous characters",
       "next": "More characters",
-      "link": "Browse every character"
+      "allLabel": "All characters",
+      "browse": "Browse the roster"
     },
     "factions": {
       "kicker": "The factions",
@@ -341,7 +343,7 @@
         "placeholder": "[ Tabletop Simulator — the table set, 16:9 ]"
       },
       "pnp": {
-        "title": "Print & play",
+        "title": "Print & Play",
         "body": "Print, cut, play. Free to download: the competitive cards from the core set and the first expansion, as print-ready sheets.",
         "link": "Download the sheets →"
       },
@@ -367,9 +369,20 @@
       "artPlaceholder": "[ news image 16:9 ]"
     },
     "community": {
-      "title": "Play with the people who build it",
-      "body": "Rules questions, deck talk, and Incursion post-mortems from people who lost the same way you did.",
-      "cta": "Join the Discord"
+      "credits": "As played by",
+      "kind": {
+        "playthrough": "Playthrough",
+        "review": "Review",
+        "teach": "How to play",
+        "stream": "Stream"
+      },
+      "coverage": "All coverage",
+      "title": "Find a game tonight.",
+      "body": "Players trade decks, settle rules questions and set up games on the official Discord.",
+      "cta": "Join the Discord",
+      "photoAlt": "Players mid-game at the Singularity tables, Gen Con 2026",
+      "photoPlaceholder": "[ Gen Con 2026 photo ]",
+      "photoCaption": "Gen Con 2026"
     }
   },
   "soon": {
@@ -1445,7 +1458,7 @@
         "note": "Captioned"
       },
       "printAndPlay": {
-        "label": "Print & play",
+        "label": "Print & Play",
         "note": "Free to download · needs a printer"
       },
       "paths": {
@@ -1571,7 +1584,7 @@
       },
       "printAndPlay": {
         "kicker": "Free to download",
-        "title": "Print & play",
+        "title": "Print & Play",
         "body": "Print-ready sheets for the core set and the first expansion."
       },
       "tts": {
