@@ -142,7 +142,7 @@ async function onSubmit(): Promise<void> {
   flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: var(--color-ink-faint);
 }
 

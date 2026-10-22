@@ -1,5 +1,6 @@
 /* Import order is the cascade order: tokens.css must load before base.css and layout.css, which consume its custom properties. */
 
+@import './fonts.css';
 @import './tokens.css';
 @import './base.css';
 @import './layout.css';

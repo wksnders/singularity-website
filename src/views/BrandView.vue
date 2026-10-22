@@ -302,10 +302,11 @@ const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) 
 .brand__quote-by {
   display: block;
   margin-top: var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-s);
   font-style: normal;
-  letter-spacing: var(--track-mono);
+  letter-spacing: var(--track-label);
   color: var(--color-ink-soft);
 }
 

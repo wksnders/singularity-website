@@ -12,7 +12,7 @@ import { game } from '@/data/universe';
 import { PANEL, type LidDest, type LidReadout } from '@/site/lidSplitScene';
 import { plainClick } from '@/site/glide';
 import { asset, outbound, to } from '@/site/links';
-import { token, tokenPx } from '@/site/tokens';
+import { LABEL_CAPS_ADVANCE, token, tokenPx } from '@/site/tokens';
 
 const props = defineProps<{
   /** Px: the column; the plate reaches past it over the lid. */
@@ -66,10 +66,8 @@ const inset = computed(() => Math.max(20, 48 * ps.value));
 const plate = ref<HTMLElement | null>(null);
 const pocket = ref<HTMLElement | null>(null);
 const names = ref<HTMLElement | null>(null);
-/** The foot art without its socket, and the readout over the room it leaves: only where the longest name won't fit at --size-mono-xs. */
+/** The foot art without its socket, and the readout over the room it leaves: only where the longest name won't fit at --size-label-xs. */
 const footOpen = ref(false);
-/** A mono glyph's advance, in em. */
-const MONO_ADVANCE = 0.6;
 
 /* Arithmetic, not a measurement of the names on show: the art must not switch as different names are hovered. */
 function checkRoom(): void {
@@ -77,7 +75,7 @@ function checkRoom(): void {
   if (!grid) return;
   const labelW = Math.max(0, ...[...grid.querySelectorAll<HTMLElement>('.c-home-panel__label')].map((l) => l.offsetWidth));
   const room = PLATE.footW * ps.value - labelW - (parseFloat(getComputedStyle(grid).columnGap) || 0);
-  const advance = tokenPx('--size-mono-xs') * (MONO_ADVANCE + parseFloat(token('--track-mono-tight')));
+  const advance = tokenPx('--size-label-xs') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label-tight')));
   const longest = Math.max(0, ...props.cast.flatMap((r) => [r.character.length, r.faction.length]));
   footOpen.value = longest * advance > room;
 }
@@ -135,6 +133,8 @@ onMounted(() => {
   observer = new ResizeObserver(fit);
   if (plate.value) observer.observe(plate.value);
   if (wrapImg.value?.complete && wrapImg.value.naturalWidth) wrapIn.value = true;
+  /* The observer misses the swap to the real fonts: the plate's min-height keeps its box the same size. */
+  void document.fonts?.ready.then(fit);
 });
 
 onBeforeUnmount(() => observer?.disconnect());
@@ -145,12 +145,12 @@ const nameEl = ref<HTMLElement | null>(null);
 const factionEl = ref<HTMLElement | null>(null);
 
 const STEPS: FitSteps = [
-  ['var(--size-mono-m)', 'var(--track-mono)'],
-  ['var(--size-mono-m)', 'var(--track-mono-tight)'],
-  ['var(--size-mono-s)', 'var(--track-mono-tight)'],
-  ['var(--size-mono-xs)', 'var(--track-mono-tight)'],
-  ['0.5625rem', 'var(--track-mono-tight)'],
-  ['0.5rem', 'var(--track-mono-tight)'],
+  ['var(--size-label-m)', 'var(--track-label)'],
+  ['var(--size-label-m)', 'var(--track-label-tight)'],
+  ['var(--size-label-s)', 'var(--track-label-tight)'],
+  ['var(--size-label-xs)', 'var(--track-label-tight)'],
+  ['var(--size-label-2xs)', 'var(--track-label-tight)'],
+  ['0.6rem', 'var(--track-label-tight)'],
 ];
 
 const shown = useHeldReadout(
@@ -427,7 +427,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  font-size: clamp(var(--size-mono-s), 0.86vw, 0.875rem);
+  font-size: clamp(var(--size-label-s), 1.032vw, 1.05rem);
   line-height: 1.6;
 }
 
@@ -439,7 +439,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 
 .c-home-panel__title {
   margin: max(6px, calc(8px * var(--ps))) 0 0;
-  font-size: clamp(1.25rem, 1.875vw, 2rem);
+  font-size: clamp(1.312rem, 1.969vw, 2.1rem);
   line-height: 1.12;
   text-wrap: balance;
 }
@@ -526,7 +526,6 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  font-weight: 500;
   transition:
     opacity var(--dur-2) var(--ease-out),
     color var(--dur-2) var(--ease-linear);
@@ -570,20 +569,16 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   transform: none;
 }
 
-.c-home-panel__label {
-  font-weight: 500;
-}
-
 .c-home-panel__value {
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
+  font-family: var(--font-label);
+  font-size: var(--size-label-m);
   font-weight: 600;
   line-height: 18px;
-  letter-spacing: var(--track-mono);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink);
 }

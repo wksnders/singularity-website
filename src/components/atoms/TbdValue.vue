@@ -15,7 +15,8 @@ defineProps<{ value?: string | null }>();
   border: 1px dashed var(--color-line-dashed);
   border-radius: 6px;
   color: var(--color-ink-soft);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
   font-size: var(--size-s);
   white-space: nowrap;
 }
@@ -24,6 +25,7 @@ defineProps<{ value?: string | null }>();
   border-style: solid;
   border-color: var(--color-line);
   color: var(--color-ink);
+  font-weight: 500;
   white-space: normal;
 }
 </style>

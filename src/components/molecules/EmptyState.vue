@@ -45,6 +45,7 @@ defineEmits<{ action: [] }>();
 
 .c-empty__title {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--size-body-l);
   color: var(--color-ink);
 }

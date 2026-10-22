@@ -178,7 +178,7 @@ export const modes: PlayMode[] = [
   { id: 'incursions', name: 'Incursions (co-op & solo)', players: '1\u20134' },
 ];
 
-/** `focalX` crops the 4/3 shelf tiles only; the Faction hero overrides it. */
+/** `focalX` crops the 4/3 shelf tiles and the Home faction band's slices; the Faction hero overrides it. */
 const plate = (id: string, focalX: number): Art => ({
   src: `/environments/${id}-1600.jpg`,
   alt: '',

@@ -49,7 +49,8 @@ defineEmits<{ card: [id: string] }>();
 }
 
 .c-rt__tok {
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
   font-size: 0.9em;
 }
  
@@ -70,7 +71,8 @@ defineEmits<{ card: [id: string] }>();
 
 .c-rt__card::after {
   content: ' ⌄';
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
   font-size: 0.8em;
   color: var(--color-ink-faint);
 }

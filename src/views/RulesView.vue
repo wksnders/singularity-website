@@ -468,9 +468,10 @@ watch(() => route.hash, applyHash);
 }
 
 .rules__letter {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-m);
+  letter-spacing: var(--track-label);
   color: var(--color-ink-faint);
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-line-strong);

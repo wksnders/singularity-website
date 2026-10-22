@@ -147,7 +147,8 @@ watch(
   border-radius: var(--radius-m);
   background: var(--color-surface);
   color: var(--color-ink);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  line-height: 1;
   line-height: 1;
   cursor: pointer;
 }
@@ -191,7 +192,7 @@ watch(
 
 .c-zoom__name {
   margin-top: var(--space-3);
-  font-size: 1.375rem;
+  font-size: 1.444rem;
 }
 
 .c-zoom__rows {

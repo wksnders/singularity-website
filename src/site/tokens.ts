@@ -3,6 +3,9 @@ const root = () => getComputedStyle(document.documentElement);
 
 export const token = (name: string): string => root().getPropertyValue(name).trim();
 
+/** --font-label 600's mean capital advance in em, for sizing a box to caps text by arithmetic: re-measure it if the face changes. */
+export const LABEL_CAPS_ADVANCE = 0.53;
+
 export const tokenMs = (name: string): number => parseFloat(token(name));
 
 /** Px, for a px, rem or unitless token. */

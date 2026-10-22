@@ -87,7 +87,7 @@ withDefaults(
   margin-top: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .c-card--featured .c-card__title {

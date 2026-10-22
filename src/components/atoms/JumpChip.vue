@@ -38,9 +38,10 @@ defineProps<{
   padding-inline: var(--space-3);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
   white-space: nowrap;

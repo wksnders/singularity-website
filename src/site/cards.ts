@@ -420,7 +420,7 @@ export function placeholderOf(row: CardRow, face: 'art' | 'card'): string {
   return t('cardsPage.slots.art');
 }
 
-/** The mono line above the card's name. Names the KIND first: the dialog is reached from four surfaces. */
+/** The label line above the card's name. Names the KIND first: the dialog is reached from four surfaces. */
 export function zoomKicker(row: CardRow): string {
   const upper = (value: string) => value.toLocaleUpperCase();
   const setLabel = upper(t(`cards.sets.${row.set}`));

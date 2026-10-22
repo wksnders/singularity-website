@@ -169,7 +169,8 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
 .unv__name {
   margin-top: var(--space-2);
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  font-size: clamp(1.575rem, 4.2vw, 2.363rem);
 }
 
 .unv__brand-title {
@@ -179,7 +180,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
   margin-top: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .unv__slots {
@@ -196,8 +197,9 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
   aspect-ratio: var(--ratio-card);
   border: 1px dashed var(--color-line-dashed);
   border-radius: var(--radius-s);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-xs);
   color: var(--color-ink-faint);
 }
 </style>

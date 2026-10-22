@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
- * Mono annotation: kickers, eyebrows, placeholder captions. Never body copy.
+ * Caps label, class `.c-mono`: kickers, eyebrows, placeholder captions. Never body copy.
  *
- * `.c-mono` is also the skin for mono buttons and links, which is why the base rule sets no colour. Two things follow:
+ * `.c-mono` is also the skin for label buttons and links, which is why the base rule sets no colour. Two things follow:
  * THIS ATOM MUST STAY IN THE ENTRY CHUNK (the site chrome imports it), or a view that wears the class without importing the atom loses it.
  * Being in the entry chunk also means every lazy view's CSS loads after it, so a view class may override `.c-mono` at equal specificity. Chrome components share the entry chunk and get no such order: they override with their own two-class selector, or write the declarations from the tokens.
  */
@@ -24,18 +24,19 @@ withDefaults(
 
 <style>
 .c-mono {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
 }
 
 .c-mono--xs {
-  font-size: var(--size-mono-xs);
+  font-size: var(--size-label-xs);
 }
 
 .c-mono--m {
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
 }
 
 .c-mono--accent {

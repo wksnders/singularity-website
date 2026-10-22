@@ -263,7 +263,7 @@ function pinColor(characterId: string): string | null {
 <style>
 .story__title {
   margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
+  font-size: var(--size-h1-page);
 }
 
 .story__lede,
@@ -301,13 +301,14 @@ function pinColor(characterId: string): string | null {
 
 .story__lead-title {
   margin-top: var(--space-3);
-  font-size: clamp(1.375rem, 3.4vw, 2rem);
+  font-size: clamp(1.444rem, 3.57vw, 2.1rem);
 }
 
 .story__recap {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.1em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }
@@ -331,9 +332,10 @@ function pinColor(characterId: string): string | null {
 }
 
 .story__beat-anchor {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.14em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }
@@ -366,9 +368,10 @@ function pinColor(characterId: string): string | null {
 }
 
 .story__pin-empty {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.12em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }
@@ -380,18 +383,19 @@ function pinColor(characterId: string): string | null {
 }
 
 .story__pin-epithet {
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: var(--color-ink-muted);
 }
 
 .story__pin-name {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--size-h3);
 }
 
 .story__pin-faction {
   margin-top: var(--space-1);
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: var(--color-ink-faint);
 }
 
@@ -409,9 +413,10 @@ function pinColor(characterId: string): string | null {
 }
 
 .story__column-head a {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: 0.12em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
 }
 
@@ -435,7 +440,7 @@ function pinColor(characterId: string): string | null {
   margin-top: var(--space-2);
   font-family: var(--font-display);
   font-size: var(--size-body-l);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .story__pins {
@@ -456,7 +461,7 @@ function pinColor(characterId: string): string | null {
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--color-ink-muted);
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -481,16 +486,17 @@ function pinColor(characterId: string): string | null {
   border: 1px solid rgba(var(--rgb-accent), 0.55);
   border-radius: var(--radius-pill);
   background: var(--color-accent-wash);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .story__vote-title {
   margin-top: var(--space-4);
-  font-size: clamp(1.375rem, 3.4vw, 2rem);
+  font-size: clamp(1.444rem, 3.57vw, 2.1rem);
   max-width: 28ch;
 }
 </style>

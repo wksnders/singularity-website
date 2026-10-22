@@ -112,8 +112,8 @@ async function onSubmit(): Promise<void> {
 
 .c-newsletter__title {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 1.25rem;
+  font-weight: 700;
+  font-size: 1.312rem;
   line-height: 1.15;
 }
 
@@ -200,7 +200,7 @@ async function onSubmit(): Promise<void> {
 
 .c-newsletter__fine {
   margin-top: 10px;
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   line-height: 1.5;
   color: var(--color-ink-soft);
 }

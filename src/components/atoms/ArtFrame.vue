@@ -116,8 +116,9 @@ const loose = () => props.natural && Boolean(props.art?.src);
 }
 
 .c-art__caption {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-s);
   letter-spacing: 0.04em;
   color: rgba(var(--rgb-ink), 0.55);
 }

@@ -829,7 +829,7 @@ provideSections(() =>
   background: transparent;
   color: var(--color-ink-soft);
   /* A segment of one pill, so tight: three labels share its width. */
-  letter-spacing: var(--track-mono-tight);
+  letter-spacing: var(--track-label-tight);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -923,7 +923,7 @@ provideSections(() =>
 }
 
 .char__intro {
-  --char-name-size: clamp(2rem, 6.4vw, 4rem);
+  --char-name-size: clamp(2.1rem, 6.72vw, 4.2rem);
   --char-quote-size: clamp(1.0625rem, 2.2vw, 1.3125rem);
 
   margin-top: var(--space-2);

@@ -66,10 +66,10 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 </template>
 
 <style>
-/* Every caption is laid out (only the open one shows), so opening a stack moves neither the plate nor the page below. `--lines` is the default the script may raise. */
+/* Every caption is laid out (only the open one shows), so opening a stack moves neither the plate nor the page below. `--lines` must hold the longest caption at each width. */
 .c-home-dial {
   --lines: 3;
-  --line: calc(1.4 * var(--size-mono-s));
+  --line: calc(1.4 * var(--size-label-s));
   --line-pad: 4px;
   --dial: max(60px, calc(var(--lines) * var(--line) + 2 * var(--line-pad)));
 
@@ -161,23 +161,23 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 @media (max-width: 389px) {
   .c-home-dial {
     --lines: 4;
-    --line: calc(1.4 * var(--size-mono-xs));
+    --line: calc(1.4 * var(--size-label-xs));
   }
 
   .c-home-dial__line {
     padding-inline: 14px;
-    font-size: var(--size-mono-xs);
+    font-size: var(--size-label-xs);
   }
 }
 
 @media (max-width: 339px) {
   .c-home-dial {
-    --lines: 5;
+    --lines: 6;
   }
 
   .c-home-dial__line {
     padding-inline: 10px;
-    letter-spacing: var(--track-mono-tight);
+    letter-spacing: var(--track-label-tight);
   }
 }
 

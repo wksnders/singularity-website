@@ -171,7 +171,10 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
 <style>
 .faction__name {
   margin-top: var(--space-6);
-  font-size: clamp(2rem, 6.4vw, 4rem);
+  font-family: var(--font-faction);
+  font-size: min(clamp(2rem, 6.4vw, 4rem), 15vw);
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .faction__tagline {
@@ -198,9 +201,10 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }

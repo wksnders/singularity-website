@@ -357,8 +357,9 @@ onMounted(() => {
   padding: 3px 7px;
   border: 1px solid var(--color-line-strong);
   border-radius: 6px;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-xs);
   color: var(--color-ink-faint);
 }
 
@@ -377,9 +378,10 @@ onMounted(() => {
   border: 0;
   background: none;
   color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
@@ -413,9 +415,10 @@ onMounted(() => {
 
 .cards__sort-pick-text {
   overflow: hidden;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
@@ -482,9 +485,10 @@ onMounted(() => {
 
 .cards__facet-label {
   flex: 0 0 auto;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }
@@ -535,9 +539,10 @@ onMounted(() => {
 
 .cards__count {
   margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }
@@ -644,8 +649,9 @@ onMounted(() => {
 
 .cards__foot-note {
   max-width: 60ch;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-xs);
   line-height: 1.7;
   color: var(--color-ink-faint);
 }

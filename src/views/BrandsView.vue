@@ -252,7 +252,10 @@ const conditionOf = (brand: Brand): string => {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: clamp(1.5rem, 3.8vw, 2.125rem);
+  font-family: var(--font-faction);
+  font-size: clamp(1.575rem, 3.99vw, 2.231rem);
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .brands__tagline {

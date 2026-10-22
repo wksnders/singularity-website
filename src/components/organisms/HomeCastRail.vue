@@ -42,7 +42,6 @@ const thumb = ref<HTMLElement | null>(null);
 
 const atStart = ref(true);
 const atEnd = ref(false);
-const hovered = ref(false);
 /* Id → turn delay in ms; never delete an entry, or that card turns back face down. */
 const up = reactive(new Map<string, number>());
 
@@ -185,10 +184,6 @@ function onCardFocus(event: FocusEvent): void {
   el.scrollTo({ left: Math.max(0, Math.min(max, slot * stride(el))), behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
 
-function onZoneEnter(event: PointerEvent): void {
-  if (event.pointerType === 'mouse') hovered.value = true;
-}
-
 onMounted(() => {
   void nextTick(measure);
   window.addEventListener('resize', schedule);
@@ -207,15 +202,7 @@ onBeforeUnmount(() => {
       <h2 id="cast-rail-title" class="c-cast-rail__title">{{ t('home.cast.title', { count: total }) }}</h2>
     </div>
 
-    <div
-      ref="zone"
-      class="c-cast-rail__zone"
-      :class="{ 'is-hovered': hovered }"
-      @pointerenter="onZoneEnter"
-      @pointerleave="hovered = false"
-      @focusin="hovered = true"
-      @focusout="hovered = false"
-    >
+    <div ref="zone" class="c-cast-rail__zone">
       <!-- Out of the Tab order: the next Tab would scroll back whatever a paddle paged. -->
       <template v-if="paddles">
         <button
@@ -500,18 +487,19 @@ onBeforeUnmount(() => {
 
 .c-cast-rail__count-n {
   font-family: var(--font-display);
-  font-size: clamp(1.625rem, 3vw, 2rem);
+  font-size: clamp(1.706rem, 3.15vw, 2.1rem);
   /* Capped by the panel's width, or large text pushes the panel off a 200px card. */
-  font-size: min(clamp(1.625rem, 3vw, 2rem), 18cqi);
-  font-weight: 500;
+  font-size: min(clamp(1.706rem, 3.15vw, 2.1rem), 28cqi);
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.005em;
 }
 
 .c-cast-rail__count-label {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--color-accent-text);
 }
@@ -573,12 +561,6 @@ onBeforeUnmount(() => {
   box-shadow:
     inset 0 0 0 1px rgba(var(--rgb-accent), 0.5),
     0 0 24px rgba(var(--rgb-accent), 0.14);
-  opacity: 0;
-  transition: opacity 180ms linear;
-}
-
-.c-cast-rail__zone.is-hovered .c-cast-rail__icon {
-  opacity: 1;
 }
 
 .c-cast-rail__track {

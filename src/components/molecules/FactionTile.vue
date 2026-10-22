@@ -82,10 +82,10 @@ const sources = computed(() =>
 
 .c-faction__name {
   display: flex;
-  align-items: center;
+  align-items: first baseline;
   gap: var(--space-2);
-  font-family: var(--font-display);
-  font-size: var(--size-body-l);
+  font-family: var(--font-faction);
+  font-size: 1.125rem;
   font-weight: 400;
 }
 

@@ -141,7 +141,7 @@ const lines = computed<CardLine[]>(() =>
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: var(--color-ink-faint);
 }
 

@@ -432,7 +432,7 @@ onBeforeUnmount(() => {
 .c-brand-hero__name {
   position: relative;
   max-width: 54cqw;
-  font-size: clamp(1.9rem, min(6.4cqw, 6.8svh), 3.75rem);
+  font-size: clamp(1.995rem, min(6.72cqw, 7.14svh), 3.938rem);
   line-height: 1.04;
 }
 
@@ -440,9 +440,10 @@ onBeforeUnmount(() => {
   position: relative;
   max-width: 54cqw;
   margin-top: var(--space-3);
-  font-family: var(--font-mono);
-  font-size: clamp(var(--size-mono-xs), 1.4cqw, var(--size-mono-s));
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: clamp(var(--size-label-xs), 1.4cqw, var(--size-label-s));
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--faction-text);
 }

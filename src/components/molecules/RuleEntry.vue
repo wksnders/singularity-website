@@ -111,8 +111,10 @@ const chunks = computed(() => {
 }
 
 .c-rule__term {
-  font-size: 1.375rem;
-  font-weight: 500;
+  font-size: 1.444rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   line-height: 1.3;
 }
 

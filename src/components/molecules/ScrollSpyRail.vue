@@ -92,9 +92,10 @@ const heading = (i: number) =>
 
 .c-rail__group {
   margin-top: var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
   opacity: 0.7;
@@ -104,6 +105,7 @@ const heading = (i: number) =>
   text-transform: none;
   letter-spacing: 0;
   font-family: var(--font-body);
+  font-weight: 400;
   font-size: var(--size-s);
 }
 
@@ -111,9 +113,10 @@ const heading = (i: number) =>
   display: flex;
   gap: var(--space-2);
   align-items: baseline;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }

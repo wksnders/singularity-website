@@ -176,7 +176,7 @@ onBeforeUnmount(() => io?.disconnect());
 .c-incursions__title {
   max-width: 22ch;
   margin-top: var(--space-5);
-  font-size: clamp(1.625rem, 4.6vw, 2.75rem);
+  font-size: clamp(1.706rem, 4.83vw, 2.888rem);
   line-height: 1.08;
 }
 

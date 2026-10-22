@@ -152,8 +152,9 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   height: 32px;
   display: grid;
   place-items: center;
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-2xs);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-2xs);
   color: var(--color-accent-text);
 }
 
@@ -188,9 +189,10 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__kind {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-2xs);
-  letter-spacing: 0.12em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-2xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: rgba(var(--rgb-ink), 0.66);
 }
@@ -243,9 +245,10 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   z-index: 1;
   right: var(--space-4);
   top: calc(var(--hang-h) + var(--space-2));
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-2xs);
-  letter-spacing: 0.14em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-2xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: rgba(var(--rgb-ink), 0.75);
   pointer-events: none;
@@ -292,8 +295,8 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   align-items: center;
   gap: 14px;
   font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 1.625rem;
+  font-weight: 700;
+  font-size: 1.706rem;
   line-height: 1.08;
 }
 
@@ -443,7 +446,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   }
 
   .c-community__title {
-    font-size: clamp(1.75rem, 2.6vw, 2.125rem);
+    font-size: clamp(1.838rem, 2.73vw, 2.231rem);
   }
 
   .c-community__join {

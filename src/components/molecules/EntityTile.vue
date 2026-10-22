@@ -86,7 +86,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
 
 .c-tile__epithet {
   display: block;
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   letter-spacing: 0.06em;
   color: var(--color-ink-muted);
 }
@@ -94,9 +94,10 @@ const sources = () => pictureSources(props.art?.src ?? null);
 .c-tile__badge {
   display: block;
   margin-bottom: var(--space-1);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
   white-space: nowrap;
@@ -106,7 +107,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
   margin-top: var(--space-1);
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .c-tile__tags {
@@ -120,7 +121,7 @@ const sources = () => pictureSources(props.art?.src ?? null);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: var(--color-ink-muted);
 }
 </style>

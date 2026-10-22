@@ -132,7 +132,7 @@ const columns = computed(() => {
 .c-mega__note {
   display: block;
   margin-top: 2px;
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   color: rgba(var(--rgb-ink), 0.55);
 }
 
@@ -162,6 +162,7 @@ const columns = computed(() => {
   left: var(--space-3);
   bottom: 10px;
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--size-body-s);
 }
 </style>

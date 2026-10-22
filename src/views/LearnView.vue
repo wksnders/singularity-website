@@ -204,7 +204,7 @@ const rulesHub = [
 .learn__mode-name {
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: var(--space-2);
 }
 
@@ -239,9 +239,10 @@ const rulesHub = [
   padding: 2px 6px;
   border-radius: 4px;
   background: rgba(var(--rgb-bg), 0.8);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: 0.1em;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   color: var(--color-ink);
 }
 
@@ -259,8 +260,9 @@ const rulesHub = [
 .learn__video-meta {
   display: block;
   margin-top: var(--space-1);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-s);
   color: var(--color-ink-faint);
 }
 </style>

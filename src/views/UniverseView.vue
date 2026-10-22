@@ -353,16 +353,15 @@ function clearAll(): void {
 
 .universe__title {
   margin-top: var(--space-5);
-  font-size: clamp(2rem, 6vw, 3.75rem);
+  font-size: clamp(2.1rem, 6.3vw, 3.938rem);
 }
 
 .universe__subhead {
   margin-top: var(--space-5);
   max-width: 24ch;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-weight: 500;
   line-height: 1.3;
   color: var(--color-ink);
 }
@@ -374,9 +373,10 @@ function clearAll(): void {
 
 .universe__pending {
   padding-block: var(--space-4) var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: 0.12em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   color: rgba(var(--rgb-ink), 0.32);
 }
 
@@ -390,12 +390,12 @@ function clearAll(): void {
 
 .universe__h2 {
   margin-top: var(--space-3);
-  font-size: clamp(1.5rem, 3.8vw, 2.25rem);
+  font-size: clamp(1.575rem, 3.99vw, 2.363rem);
 }
 
 .universe__h3 {
   margin-top: var(--space-4);
-  font-size: clamp(1.375rem, 3.4vw, 2rem);
+  font-size: clamp(1.444rem, 3.57vw, 2.1rem);
   max-width: 24ch;
 }
 

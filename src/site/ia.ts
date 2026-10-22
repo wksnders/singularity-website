@@ -25,7 +25,7 @@ export interface IaSection {
   mega?: IaGroup[];
   /** Right-hand art column in the mega panel. */
   featuredCharacter?: boolean;
-  /** Mono jump chips under the entry in the mobile sheet. */
+  /** Label jump chips under the entry in the mobile sheet. */
   jumps?: IaItem[];
 }
 

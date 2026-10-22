@@ -172,7 +172,7 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
   align-items: center;
   gap: var(--space-4);
   margin-top: var(--space-4);
-  font-size: clamp(2rem, 6.4vw, 4rem);
+  font-size: clamp(2.1rem, 6.72vw, 4.2rem);
 }
 
 .inc1__lede {
@@ -187,7 +187,8 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-5);
   margin-top: var(--space-5);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
   font-size: var(--size-s);
   color: var(--color-ink-soft);
 }

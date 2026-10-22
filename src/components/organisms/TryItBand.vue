@@ -253,7 +253,7 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
 .c-try__title {
   font-family: var(--font-display);
   font-size: var(--size-body-l);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .c-try__body {
@@ -313,8 +313,8 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
 
 .c-try__box-title {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
-  font-weight: 500;
+  font-size: clamp(1.312rem, 2.31vw, 1.575rem);
+  font-weight: 700;
 }
 
 .c-try__list {
@@ -413,7 +413,7 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
   }
 
   .c-try__title {
-    font-size: 1.3125rem;
+    font-size: 1.378rem;
   }
 
   .c-try__link {

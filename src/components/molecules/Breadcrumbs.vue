@@ -91,9 +91,10 @@ defineProps<{
 .c-crumbs__current,
 .c-crumbs__position,
 .c-crumbs__hop {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-m);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
 }
 

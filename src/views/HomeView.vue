@@ -7,9 +7,9 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
-import FactionTile from '@/components/molecules/FactionTile.vue';
 import CommunityBand from '@/components/organisms/CommunityBand.vue';
 import HomeCastRail from '@/components/organisms/HomeCastRail.vue';
+import HomeFactionBand from '@/components/organisms/HomeFactionBand.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
 import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
 import IncursionsBand from '@/components/organisms/IncursionsBand.vue';
@@ -22,7 +22,6 @@ import { getDoc, getDocs, metaString, t } from '@/content';
 import {
   chapters,
   coreProduct,
-  factions,
   game,
 } from '@/data/universe';
 import { pad } from '@/site/format';
@@ -142,20 +141,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 
     <HomeCastRail />
 
-    <section class="l-band l-band--alt l-band--line-top">
-      <div class="l-wrap">
-        <MonoLabel tone="accent">{{ t('home.factions.kicker') }}</MonoLabel>
-        <h2 class="home__h2">{{ t('home.factions.title') }}</h2>
-        <div class="l-grid home__spacer">
-          <FactionTile
-            v-for="faction in factions"
-            :key="faction.id"
-            :faction="faction"
-            :placeholder="t('universe.factionArtPlaceholder')"
-          />
-        </div>
-      </div>
-    </section>
+    <HomeFactionBand />
 
     <IncursionsBand />
 
@@ -283,7 +269,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 
 .home__h3 {
   margin-top: var(--space-3);
-  font-size: clamp(1.375rem, 3.4vw, 2rem);
+  font-size: clamp(1.444rem, 3.57vw, 2.1rem);
 }
 
 .home__body {

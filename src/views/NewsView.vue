@@ -142,7 +142,7 @@ const kicker = (post: Doc) =>
 <style>
 .news__title {
   margin-top: var(--space-5);
-  font-size: clamp(1.875rem, 5.6vw, 3.5rem);
+  font-size: var(--size-h1-page);
 }
 
 .news__lede {
@@ -166,10 +166,10 @@ const kicker = (post: Doc) =>
 }
 
 .news__group-title {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  font-weight: 400;
-  letter-spacing: 0.14em;
+  font-family: var(--font-label);
+  font-size: var(--size-label-s);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink-faint);
 }

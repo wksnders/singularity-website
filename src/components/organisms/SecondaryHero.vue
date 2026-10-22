@@ -41,9 +41,10 @@ withDefaults(defineProps<{ glow?: string; note?: string }>(), {
 
 .c-subhero__note {
   margin-top: var(--space-8);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-xs);
-  letter-spacing: 0.12em;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-xs);
+  letter-spacing: var(--track-label);
   color: rgba(var(--rgb-ink), 0.32);
 }
 </style>

@@ -45,9 +45,10 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
   border: 0;
   background: transparent;
   color: var(--color-ink-soft);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   cursor: pointer;
 }

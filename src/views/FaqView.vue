@@ -406,7 +406,7 @@ const routing = [
   content: '▾';
   flex: 0 0 auto;
   color: var(--color-ink-faint);
-  font-size: var(--size-mono-m);
+  font-size: var(--size-label-m);
   transition: rotate var(--dur-2) var(--ease-out);
 }
 
@@ -416,7 +416,7 @@ const routing = [
 
 .faq__question {
   font-size: var(--size-h3);
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.4;
   color: var(--color-ink);
 }

@@ -52,16 +52,19 @@
   --color-line-dashed: rgba(242, 241, 250, 0.25);
   --scrim-bottom: linear-gradient(to top, rgba(7, 7, 15, 0.95) 0%, rgba(7, 7, 15, 0.1) 70%);
 
-  --font-display: 'Unbounded', 'Space Grotesk', sans-serif;
-  --font-body: 'Space Grotesk', system-ui, sans-serif;
-  /* HomeHeroFoot's monoAdvance assumes this face's 0.6em advance. */
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* Every family is self-hosted in fonts.css with only the weights in use: titles 700, labels 600 in caps and 500 otherwise. */
+  --font-display: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --font-body: 'Barlow', system-ui, sans-serif;
+  /* LABEL_CAPS_ADVANCE (src/site/tokens.ts) is measured from this face: re-derive it if the face changes. */
+  --font-label: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif;
+  /* Faction names only, at 18px and up. */
+  --font-faction: 'Osaka Singularity', 'Barlow', system-ui, sans-serif;
 
-  /* The smallest mono: only for a label under a name or on a photo. */
-  --size-mono-2xs: 0.5625rem;
-  --size-mono-xs: 0.625rem;
-  --size-mono-s: 0.6875rem;
-  --size-mono-m: 0.75rem;
+  /* The smallest label: only for a label under a name or on a photo. */
+  --size-label-2xs: 0.675rem;
+  --size-label-xs: 0.75rem;
+  --size-label-s: 0.825rem;
+  --size-label-m: 0.9rem;
   /* 11px TEXT — the smallest body text: the lid's name tags. */
   --size-xs: 0.6875rem;
   --size-s: 0.8125rem;
@@ -72,14 +75,14 @@
   --size-field: 1rem;
   --size-body: 1rem;
   --size-body-l: 1.0625rem;
-  --size-h3: 1.1875rem;
-  --size-h2: clamp(1.625rem, 4.4vw, 2.5rem);
-  --size-h1: clamp(1.5rem, 7.6vw, 5.75rem);
+  --size-h3: 1.25rem;
+  --size-h2: clamp(1.706rem, 4.62vw, 2.625rem);
+  --size-h1: clamp(1.575rem, 7.98vw, 6.038rem);
   /* The `h1` of every page below the home hero. */
-  --size-h1-page: clamp(1.875rem, 5.6vw, 3.5rem);
-  /* A lone mono label takes --track-mono; one in a row of peers, or inside a pill or segmented control, takes -tight, where a string 30–40% longer runs out of room first. */
-  --track-mono: 0.16em;
-  --track-mono-tight: 0.1em;
+  --size-h1-page: clamp(1.969rem, 5.88vw, 3.675rem);
+  /* A lone label takes --track-label; one in a row of peers, or inside a pill or segmented control, takes -tight, where a string 30–40% longer runs out of room first. */
+  --track-label: 0.08em;
+  --track-label-tight: 0.06em;
 
   --space-1: 4px;
   --space-2: 8px;

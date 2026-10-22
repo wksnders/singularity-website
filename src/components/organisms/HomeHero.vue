@@ -930,10 +930,10 @@ watch([boxW, boxH, vh, side, footH], async () => {
   text-align: center;
   font-family: var(--font-display);
   /* The largest size fitWords may give them. */
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.181rem;
+  font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.005em;
   white-space: nowrap;
   text-shadow: 0 0 18px rgba(var(--rgb-accent), 0.35);
 }
@@ -1074,10 +1074,11 @@ watch([boxW, boxH, vh, side, footH], async () => {
   align-items: center;
   height: var(--premise-link);
   padding: 0 30px 0 22px;
-  font-family: var(--font-display);
-  font-size: var(--size-s);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-family: var(--font-label);
+  font-size: var(--size-label-s);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
   white-space: nowrap;
   color: var(--color-accent);
   opacity: 0;

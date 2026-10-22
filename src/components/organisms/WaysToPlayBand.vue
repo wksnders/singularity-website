@@ -237,10 +237,10 @@ const patternStyle = {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
   font-size: var(--size-body);
-  font-weight: 500;
-  letter-spacing: var(--track-mono-tight);
+  font-weight: 600;
+  letter-spacing: var(--track-label-tight);
   text-transform: uppercase;
   color: var(--ways-key);
 }
@@ -272,7 +272,7 @@ const patternStyle = {
 
 .c-ways__h {
   margin-top: var(--space-4);
-  font-size: clamp(1.875rem, 5.2vw, 3rem);
+  font-size: clamp(1.969rem, 5.46vw, 3.15rem);
   line-height: 1.02;
 }
 
@@ -281,7 +281,6 @@ const patternStyle = {
   max-width: 24ch;
   font-size: clamp(1.125rem, 2.6vw, 1.375rem);
   line-height: 1.45;
-  letter-spacing: -0.01em;
   color: var(--color-ink);
 }
 

@@ -120,7 +120,8 @@ watch(
   border-radius: 10px;
   background: transparent;
   color: var(--color-ink);
-  font-size: 1.125rem;
+  font-size: 1.5rem;
+  line-height: 1;
   cursor: pointer;
 }
 
@@ -139,7 +140,8 @@ watch(
   display: block;
   padding: var(--space-4) var(--space-1) var(--space-2);
   font-family: var(--font-display);
-  font-size: 1.375rem;
+  font-weight: 700;
+  font-size: 1.444rem;
   color: var(--color-ink);
 }
 
@@ -169,9 +171,10 @@ watch(
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  letter-spacing: var(--track-mono-tight);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label-tight);
   color: var(--color-ink-muted);
   white-space: nowrap;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/* One primary CTA per screen; `text` is not a CTA but the small mono control (clear, dismiss, copy, expand) that acts on the page and never navigates. */
+/* One primary CTA per screen; `text` is not a CTA but the small label control (clear, dismiss, copy, expand) that acts on the page and never navigates. */
 import BaseLink from './BaseLink.vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';
@@ -103,10 +103,10 @@ withDefaults(
   border-radius: var(--radius-s);
   background: none;
   color: var(--color-ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
-  font-weight: 400;
-  letter-spacing: var(--track-mono);
+  font-family: var(--font-label);
+  font-size: var(--size-label-s);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
 }
 

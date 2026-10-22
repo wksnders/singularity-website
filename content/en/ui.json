@@ -318,7 +318,9 @@
     },
     "factions": {
       "kicker": "The factions",
-      "title": "Pick a side, or read them all"
+      "title": "Pick a side, or read them all",
+      "number": "Faction {n}",
+      "link": "See the whole universe"
     },
     "incursions": {
       "badge": "Co-op & solo",

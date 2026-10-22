@@ -97,8 +97,8 @@ withDefaults(
 
 .c-brand__name {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
-  font-weight: 400;
+  font-size: clamp(1.312rem, 2.52vw, 1.575rem);
+  font-weight: 700;
   line-height: 1.1;
   overflow-wrap: anywhere;
 }
@@ -118,7 +118,8 @@ withDefaults(
 
 .c-brand__note {
   margin-top: 2px;
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
   font-size: var(--size-s);
   line-height: 1.5;
   color: var(--color-ink-soft);

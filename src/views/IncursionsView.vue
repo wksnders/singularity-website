@@ -320,7 +320,8 @@ const exits = computed(() =>
 
 .inc__design-cost {
   flex: 0 0 auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
+  font-weight: 500;
   color: var(--faction-text);
 }
 
@@ -383,8 +384,8 @@ const exits = computed(() =>
 
 .inc__stat-value {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.575rem;
+  font-weight: 700;
 }
 
 .inc__steps {
@@ -404,7 +405,7 @@ const exits = computed(() =>
   margin-top: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .inc__step-body {
@@ -440,7 +441,7 @@ const exits = computed(() =>
   gap: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .inc__more {

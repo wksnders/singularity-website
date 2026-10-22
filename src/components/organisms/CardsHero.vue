@@ -203,9 +203,9 @@ const heroStyle = computed(() => ({
 .c-cards-hero__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-size: clamp(2.363rem, 6.3vw, 4.2rem);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.005em;
   color: color-mix(in srgb, var(--color-accent) 80%, var(--color-ink-bright));
   text-shadow:
     0 0 10px rgba(var(--rgb-accent), 0.45),

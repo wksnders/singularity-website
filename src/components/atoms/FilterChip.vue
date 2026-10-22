@@ -64,8 +64,9 @@ defineEmits<{ toggle: [] }>();
 }
 
 .c-chip__count {
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-s);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-s);
   color: var(--color-ink-soft);
 }
 </style>

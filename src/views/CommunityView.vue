@@ -554,8 +554,9 @@ const factSheet = computed(() => [
   padding: var(--space-2) var(--space-3);
   border: 1px solid rgba(var(--rgb-ink), 0.14);
   border-radius: var(--radius-s);
-  font-family: var(--font-mono);
-  font-size: var(--size-mono-m);
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: var(--size-label-m);
   color: var(--color-ink-faint);
   white-space: nowrap;
 }
@@ -631,7 +632,7 @@ const factSheet = computed(() => [
 .comm__h3 {
   font-family: var(--font-display);
   font-size: var(--size-h3);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .comm__meta {
@@ -668,7 +669,7 @@ const factSheet = computed(() => [
 .comm__member-name {
   font-family: var(--font-display);
   font-size: var(--size-body);
-  font-weight: 400;
+  font-weight: 700;
 }
 
 </style>

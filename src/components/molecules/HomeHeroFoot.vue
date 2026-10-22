@@ -14,7 +14,7 @@ import { useMediaQuery } from '@/composables/useMediaQuery';
 import { game } from '@/data/universe';
 import { FOOT, type LidReadout } from '@/site/lidSplitScene';
 import { asset } from '@/site/links';
-import { token, tokenMs, tokenPx } from '@/site/tokens';
+import { LABEL_CAPS_ADVANCE, token, tokenMs, tokenPx } from '@/site/tokens';
 
 const props = defineProps<{
   /** 'scroll' points down to a Watch button that isn't whole on screen. */
@@ -52,8 +52,7 @@ const TRAY_TINT_SAT = 1.05;
 const srcset = (name: string, widths: number[], ext = 'webp') =>
   widths.map((w) => `${asset(`/box-frame/${name}-${w}.${ext}`)} ${w}w`).join(', ');
 
-/* Px per character: Plex Mono's 0.6em advance plus the tracking. */
-const monoAdvance = tokenPx('--size-mono-s') * (0.6 + parseFloat(token('--track-mono')));
+const labelAdvance = tokenPx('--size-label-s') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label')));
 /** Px: the plate's width beyond its text, and the air kept from the lid's edges. */
 const PLATE = { pad: 52, edge: 8 };
 /** The player glyph's width, in characters. */
@@ -74,10 +73,10 @@ const plateWidth = computed(() => {
     t('home.hero.readout.scroll').length,
   );
   const cap = Math.floor(props.width - PLATE.edge * 2);
-  let w = Math.round(labelChars * monoAdvance + PLATE.pad);
+  let w = Math.round(labelChars * labelAdvance + PLATE.pad);
   if (props.cast) {
     const chainChars = Math.max(...props.cast.map((r) => r.character.length + r.faction.length + 1));
-    w = Math.max(w, Math.round(chainChars * monoAdvance + chainGaps + PLATE.pad));
+    w = Math.max(w, Math.round(chainChars * labelAdvance + chainGaps + PLATE.pad));
   }
   return Math.min(cap, Math.max(w, FOOT.plateMin, Math.round(FOOT.plateW * s.value)));
 });
@@ -90,11 +89,11 @@ defineExpose({ plate, images });
 const namedBox = ref<HTMLElement | null>(null);
 const namedText = ref<HTMLElement | null>(null);
 const STEPS: FitSteps = [
-  ['var(--size-mono-s)', 'var(--track-mono)'],
-  ['var(--size-mono-s)', 'var(--track-mono-tight)'],
-  ['var(--size-mono-xs)', 'var(--track-mono-tight)'],
-  ['0.5625rem', 'var(--track-mono-tight)'],
-  ['0.5rem', 'var(--track-mono-tight)'],
+  ['var(--size-label-s)', 'var(--track-label)'],
+  ['var(--size-label-s)', 'var(--track-label-tight)'],
+  ['var(--size-label-xs)', 'var(--track-label-tight)'],
+  ['var(--size-label-2xs)', 'var(--track-label-tight)'],
+  ['0.6rem', 'var(--track-label-tight)'],
 ];
 const shown = useHeldReadout(
   () => props.named,
@@ -296,7 +295,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 <style>
 .c-home-foot {
   /* Grows with the text: the plate never clips its own label. */
-  --plate-h: max(var(--plate-h-min), calc(2 * var(--size-mono-s) + 8px));
+  --plate-h: max(var(--plate-h-min), calc(2 * var(--size-label-s) + 8px));
   /* Each side of a line: keeps it clear of the plate's cut ends. */
   --say-inset: 20px;
   position: relative;
@@ -469,7 +468,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   margin: 0;
   overflow: hidden;
   line-height: calc(var(--plate-h) - 6px);
-  text-indent: var(--track-mono);
+  text-indent: var(--track-label);
   text-align: center;
   white-space: nowrap;
   text-shadow: 0 0 8px rgba(var(--rgb-accent), 0.35);
@@ -504,7 +503,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 }
 
 .c-home-foot__say--lit {
-  font-weight: 500;
+  font-weight: 700;
   color: var(--color-ink);
 }
 
@@ -516,7 +515,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: 500;
+  font-weight: 700;
   color: var(--color-ink);
 }
 
@@ -529,7 +528,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 }
 
 .c-home-foot__say--cue {
-  font-weight: 500;
+  font-weight: 700;
   color: var(--color-accent);
 }
 
