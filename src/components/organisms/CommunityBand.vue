@@ -7,7 +7,7 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
 import { t } from '@/content';
 import { communityPhoto, creators, type Creator } from '@/data/community';
-import { outbound, to } from '@/site/links';
+import { outbound, pictureSources, to } from '@/site/links';
 import type { ResolvedLink } from '@/site/links';
 
 const creatorLink = (c: Creator): ResolvedLink => (c.href ? { href: c.href, external: true } : outbound('youtube'));
@@ -49,7 +49,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 
     <div class="c-community__scene">
       <div class="c-community__photo">
-        <ArtFrame :art="photo" ratio="auto" :placeholder="t('home.community.photoPlaceholder')" sizes="100vw" />
+        <ArtFrame :art="photo" ratio="auto" :placeholder="t('home.community.photoPlaceholder')" :sources="pictureSources(communityPhoto)" sizes="100vw" />
         <span class="c-community__caption" aria-hidden="true">{{ t('home.community.photoCaption') }}</span>
       </div>
 

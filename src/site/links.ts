@@ -63,6 +63,8 @@ export function asset(path: string): string {
 const PRESS_WIDTHS = { avif: [560, 1080], webp: [560, 1080] };
 const BOX_WIDTHS = { avif: [360, 480, 720, 960, 1200], webp: [480, 960] };
 const TRAILER_WIDTHS = { avif: [640, 960, 1280], webp: [640, 1280] };
+/** Rungs private/community-derive.py writes; capped at the photo's own width. */
+const COMMUNITY_WIDTHS = { avif: [480, 699], webp: [699] };
 
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
@@ -71,6 +73,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/press/covers/', PRESS_WIDTHS],
   ['/box-core/', BOX_WIDTHS],
   ['/trailer/', TRAILER_WIDTHS],
+  ['/community/', COMMUNITY_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {

@@ -19,4 +19,4 @@ export const creators: Creator[] = [
 ];
 
 /** Null shows the placeholder frame. */
-export const communityPhoto: string | null = null;
+export const communityPhoto: string | null = '/community/gencon-2026-hall-tables-699.webp';
