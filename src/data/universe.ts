@@ -2,10 +2,13 @@
 
 import type {
   Art,
+  Boss,
+  BossGroup,
   Box,
   Brand,
   Chapter,
   Character,
+  Clip,
   Faction,
   FormEndpoint,
   NewsCategory,
@@ -1340,17 +1343,152 @@ export const rogueAIs: RogueAI[] = [
   },
 ];
 
-/** Home's Incursions backdrop, left to right; phones show only the first five (IncursionsBand's nth-child rule). */
+/* Painting files are named for the printed id without its locale suffix, as character art is; widths must match PAINTINGS in private/incursions-derive.py. */
+export const bossPainting = (printedId: string, width: number) =>
+  `/incursions/${printedId.replace(/-[A-Z]{2}$/, '')}-${width}.webp`;
+
+const boss = (input: Omit<Boss, 'set' | 'art'>): Boss => ({
+  ...input,
+  set: 'INC',
+  art: { ...noArt, src: bossPainting(input.cardId, 960), alt: `${input.name}, ${input.epithet}, boss painting` },
+});
+
+export const bosses: Boss[] = [
+  boss({
+    id: 'deconstructor',
+    cardId: 'TI-002X-EN',
+    order: 10,
+    name: 'Deconstructor',
+    epithet: 'Hivespawn',
+    encounterId: 'invader',
+    hp: '16',
+    abilityName: 'Mindless Wreck',
+    abilityText: 'Patches targeting characters in other squads get cost +1.',
+    secondText: 'When Deconstructor crashes, either choose an overwritten program to return to any position in its origin stack, or draw an Architech Design.',
+    flavour: 'A husk. A small fragment of something that was once whole.',
+  }),
+  boss({
+    id: 'invader',
+    cardId: 'TI-001X-EN',
+    order: 20,
+    name: 'Invader',
+    epithet: 'Dimensional Horror',
+    encounterId: 'invader',
+    hp: '24',
+    abilityName: 'Substance Instability',
+    abilityText: 'When a command deals damage to Invader, Invader also loses X [H]. X is equal to the damage dealt.',
+    secondText: null,
+    flavour: 'An interconnected hivemind whose reach extends deep into the network\'s recesses.',
+  }),
+  boss({
+    id: 'moo-mua',
+    cardId: 'TI-003X-EN',
+    order: 30,
+    name: 'Moo Mua',
+    epithet: 'Necrotic Sovereign',
+    encounterId: 'paths-of-terminus',
+    hp: '4 + 3 [x] [#P]',
+    abilityName: null,
+    abilityText: 'When Moo Mua is crashed, place her Crash Protocol face-up on the battlefield as active. Then, the current player draws one Architech Design.',
+    secondText: null,
+    flavour: 'In the distance, on the path to destruction, an army amasses.',
+  }),
+  boss({
+    id: 'ender-blossom',
+    cardId: 'TI-004X-EN',
+    order: 40,
+    name: 'Ender Blossom',
+    epithet: 'Mutated Calyx',
+    encounterId: 'paths-of-terminus',
+    hp: '4 + 3 [x] [#P]',
+    abilityName: null,
+    abilityText: 'When Ender Blossom is crashed, place her Crash Protocol face-up on the battlefield as active. Then, the current player draws one Architech Design.',
+    secondText: null,
+    flavour: 'A mass warping of flora: an environment marred by the path of dissolution.',
+  }),
+  boss({
+    id: 'devolver',
+    cardId: 'TI-005X-EN',
+    order: 50,
+    name: 'Devolver',
+    epithet: 'Accursed Harvester',
+    encounterId: 'paths-of-terminus',
+    hp: '4 + 3 [x] [#P]',
+    abilityName: null,
+    abilityText: 'When Devolver is crashed, place his Crash Protocol face-up on the battlefield as active. Then, the current player draws one Architech Design.',
+    secondText: null,
+    flavour: 'An insatiable hunger spurred on by an emaciated host. A twisted herald on the path to absolution.',
+  }),
+  boss({
+    id: 'xr-81',
+    cardId: 'TI-006X-EN',
+    order: 60,
+    name: 'XR-81',
+    epithet: 'Nanite Virus',
+    encounterId: 'paths-of-terminus',
+    hp: '4 + 3 [x] [#P]',
+    abilityName: null,
+    abilityText: 'When XR-81 is crashed, place her Crash Protocol face-up on the battlefield as active. Then, the current player draws one Architech Design.',
+    secondText: null,
+    flavour: 'The sky darkens and simulated reality spasms. A harbinger on the path to salvation.',
+  }),
+  boss({
+    id: 'calebrena-world-builder',
+    cardId: 'TI-007X-EN',
+    order: 70,
+    name: 'Calebrena',
+    epithet: 'World Builder',
+    encounterId: 'calebrena',
+    hp: '12 [x] [#P]',
+    abilityName: null,
+    abilityText: 'Calebrena and the squad she is in cannot be targeted while she has bastion tokens. When a Hand crashes, remove a bastion token from Calebrena.',
+    secondText: 'Calebrena and Hands cannot be cycled or suspended while they have armor.',
+    flavour: 'Fragments of memory architecture and corrupted soul-code. Unsatisfactory. Objectionable.',
+  }),
+  boss({
+    id: 'calebrena-world-breaker',
+    cardId: 'TI-008X-EN',
+    order: 80,
+    name: 'Calebrena',
+    epithet: 'World Breaker',
+    encounterId: 'calebrena',
+    hp: '12 [x] [#P]',
+    abilityName: null,
+    abilityText: 'Programs activated by gripped characters get cost +1 when targeting Calebrena.',
+    secondText: 'Calebrena and Hands cannot be cycled or suspended while they have armor.',
+    flavour: 'An atmosphere of unacceptable imperfection. A blight on a network in need of cleansing.',
+  }),
+];
+
+/** BossWallBand's drifting backdrop, left to right; phones show only the first five (its nth-child rule). */
 export const bossWall: string[] = [
   'invader',
-  'calebrena-i',
+  'calebrena-world-builder',
   'xr-81',
   'ender-blossom',
   'deconstructor',
   'devolver',
   'moo-mua',
-  'calebrena-ii',
-].map((slug) => `/incursions/${slug}-480.webp`);
+  'calebrena-world-breaker',
+].map((id) => bossPainting(bosses.find((b) => b.id === id)?.cardId ?? id, 480));
+
+/** Display order; the first boss is shown on load. */
+export const bossGroups: BossGroup[] = [
+  { encounterId: 'paths-of-terminus', bossIds: ['xr-81', 'ender-blossom', 'devolver', 'moo-mua'] },
+  { encounterId: 'calebrena', bossIds: ['calebrena-world-builder', 'calebrena-world-breaker'] },
+  { encounterId: 'invader', bossIds: ['invader', 'deconstructor'] },
+];
+
+function assertBossShape(): void {
+  if (import.meta.env.PROD) return;
+  const listed = bossGroups.flatMap((g) => g.bossIds);
+  for (const b of bosses) {
+    if (!rogueAIs.some((r) => r.id === b.encounterId)) console.warn(`[universe] boss "${b.id}" has unknown encounter "${b.encounterId}".`);
+    if (listed.filter((id) => id === b.id).length !== 1) console.warn(`[universe] boss "${b.id}" must appear exactly once in bossGroups.`);
+  }
+  for (const id of listed) if (!bosses.some((b) => b.id === id)) console.warn(`[universe] bossGroups lists unknown boss "${id}".`);
+}
+assertBossShape();
 
 /* Only the core box is described today: the others exist but have not been named to the site, and inventing names here would put fictional products in front of buyers (see the three-level note above Box in types.ts). */
 export const boxes: Box[] = [
@@ -1462,6 +1600,15 @@ export const stories: Story[] = [
   { id: 'story-03', chapterId: 'chapter-02', title: '[PLACEHOLDER story 03]', castIds: ['magus', 'lux'] },
   { id: 'story-04', chapterId: 'chapter-02', title: '[PLACEHOLDER story 04]', castIds: ['character-12', 'character-16'] },
 ];
+
+export const clips: Clip[] = [
+  { id: 'one-turn', title: '[PLACEHOLDER — one turn]', kind: 'One turn', durationSec: 38, stillNote: '[ 9:16 still — one turn ]' },
+  { id: 'stacking', title: '[PLACEHOLDER — stacking a deck]', kind: 'Deck', durationSec: 30, stillNote: '[ 9:16 still — stacking ]' },
+  { id: 'clip-3', title: '[PLACEHOLDER — clip]', kind: '[ clip ]', durationSec: 45, stillNote: '[ 9:16 still ]' },
+  { id: 'clip-4', title: '[PLACEHOLDER — clip]', kind: '[ clip ]', durationSec: 22, stillNote: '[ 9:16 still ]' },
+  { id: 'clip-5', title: '[PLACEHOLDER — clip]', kind: '[ clip ]', durationSec: 41, stillNote: '[ 9:16 still ]' },
+  { id: 'clip-6', title: '[PLACEHOLDER — clip]', kind: '[ clip ]', durationSec: 27, stillNote: '[ 9:16 still ]' },
+].map((clip) => ({ ...clip, youTubeId: null, poster: { ...noArt } }));
 
 export const videos: Video[] = [
   {

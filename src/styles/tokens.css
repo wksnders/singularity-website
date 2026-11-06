@@ -33,6 +33,7 @@
   --color-plate: #16142b;
   --rgb-plate: 22, 20, 43;
   --color-plate-deep: #121024;
+  --color-hardware: #0d0d19;
   --color-uv: #5e4fef;
   --rgb-uv: 94, 79, 239;
   --rgb-uv-glow: 123, 108, 255;
@@ -46,6 +47,8 @@
 
   --color-threat: #c04971;
   --color-threat-text: #e58ba6;
+  --rgb-threat-text: 229, 139, 166;
+  --color-threat-deep: #1b0f1b;
 
   --color-line: rgba(242, 241, 250, 0.1);
   --color-line-strong: rgba(242, 241, 250, 0.18);

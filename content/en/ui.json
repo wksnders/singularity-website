@@ -318,7 +318,7 @@
     },
     "factions": {
       "kicker": "The factions",
-      "title": "Pick a side, or read them all",
+      "title": "Pick a side, or play them all",
       "number": "Faction {n}",
       "link": "See the whole universe"
     },
@@ -327,7 +327,17 @@
       "title": "Incursions: face the threat together, {players} players",
       "body": "The boss plays itself — entirely from its own cards and rules, with no human decisions. Everyone at the table is on the same side, solo included. It's in the Incursions box.",
       "players": "players",
-      "cta": "Explore the Incursions"
+      "cta": "Explore the Incursions",
+      "prev": "Previous boss",
+      "next": "Next boss",
+      "show": "Show {name}"
+    },
+    "clips": {
+      "title": "Watch now:",
+      "link": "See more",
+      "prev": "Previous clips",
+      "next": "More clips",
+      "meta": "{kind} · {time}"
     },
     "chapter": {
       "kicker": "The story so far",

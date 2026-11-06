@@ -10,6 +10,7 @@ import { t } from '@/content';
 import { endHeroIntro } from '@/composables/useChrome';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { glideToElement, jumpTo } from '@/site/glide';
+import { isHidden, to } from '@/site/links';
 
 /* Locale prefix appears only once a code is added to LOCALES; public anchors and query params never change either way. */
 const prefix = LOCALE_ROUTE_PATTERN ? `/:locale(${LOCALE_ROUTE_PATTERN})?` : '';
@@ -161,6 +162,7 @@ export const router = createRouter({
 
 router.beforeEach((target) => {
   setLocale(target.params.locale);
+  if (isHidden({ name: target.name ?? undefined })) return to('soon');
 });
 
 router.afterEach(async (target, from) => {

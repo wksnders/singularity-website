@@ -9,6 +9,13 @@ import type { ArtSource, OutboundKey, TryRoute } from '@/data/types';
 
 const HAS_LOCALE_SEGMENT = LOCALE_ROUTE_PATTERN.length > 0;
 
+/** Hidden route names: the router redirects them to Soon and each isHidden() guard drops its link (named-route objects only); public/sitemap.xml must be edited by hand to match. */
+const HIDDEN_ROUTES: ReadonlySet<string> = new Set(['story', 'news']);
+
+export function isHidden(target: RouteLocationRaw | undefined): boolean {
+  return typeof target === 'object' && 'name' in target && HIDDEN_ROUTES.has(String(target.name));
+}
+
 export function to(
   name: string,
   params: Record<string, string> = {},
@@ -65,6 +72,8 @@ const BOX_WIDTHS = { avif: [360, 480, 720, 960, 1200], webp: [480, 960] };
 const TRAILER_WIDTHS = { avif: [640, 960, 1280], webp: [640, 1280] };
 /** Rungs private/community-derive.py writes; capped at the photo's own width. */
 const COMMUNITY_WIDTHS = { avif: [480, 699], webp: [699] };
+/** Rungs private/incursions-derive.py writes. */
+const INCURSION_WIDTHS = { avif: [240, 480, 960], webp: [480, 960] };
 
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
@@ -74,6 +83,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/box-core/', BOX_WIDTHS],
   ['/trailer/', TRAILER_WIDTHS],
   ['/community/', COMMUNITY_WIDTHS],
+  ['/incursions/', INCURSION_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {

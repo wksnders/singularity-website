@@ -150,6 +150,24 @@ export interface RogueAI {
   brand: string | null;
 }
 
+/** An Incursion boss: printed as a character card, but kept out of `characters` because its HP can be a printed formula and it belongs to an encounter, not a faction. */
+export interface Boss extends Pick<Character, 'id' | 'cardId' | 'order' | 'name' | 'epithet' | 'set' | 'abilityText' | 'flavour' | 'art'> {
+  /** A `rogueAIs` id. */
+  encounterId: string;
+  /** As printed, glyph tokens and all: a number or a formula such as "4 + 3 [x] [#P]". */
+  hp: string;
+  /** null where the card prints no ability name. */
+  abilityName: string | null;
+  /** The card's second rules paragraph, where it has one. */
+  secondText: string | null;
+}
+
+export interface BossGroup {
+  encounterId: string;
+  /** `bosses` ids, in gallery order. */
+  bossIds: string[];
+}
+
 // Reference spec: docs/architecture/modules.md#types
 // `Product.boxCount` is the claim and `Product.boxIds` the enumeration; `assertProductShape()` in universe.ts requires they agree.
 
@@ -218,6 +236,18 @@ export interface Video {
   captioned: boolean;
   presenter: string | null;
   durationSec: number | null;
+}
+
+/** A short clip on Home's clips rail; a null `youTubeId` links the card to outbound('youtube'). */
+export interface Clip {
+  id: string;
+  title: string;
+  kind: string;
+  youTubeId: string | null;
+  durationSec: number | null;
+  poster: Art;
+  /** Caption of the empty poster while `poster.src` is null. */
+  stillNote: string;
 }
 
 export interface NewsCategory {

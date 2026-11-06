@@ -23,7 +23,7 @@ import {
 import { brandOneLiner, brandRowNote } from '@/site/brands';
 import { cardRows, defaultFacets, matches } from '@/site/cards';
 import { factionTags } from '@/site/characters';
-import { environmentSources, to } from '@/site/links';
+import { environmentSources, isHidden, to } from '@/site/links';
 import type { Character } from '@/data/types';
 
 const props = defineProps<{ factionId: string }>();
@@ -141,6 +141,7 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
     <section class="l-band l-band--line-top">
       <div class="l-wrap l-grid l-grid--wide">
         <ContentCard
+          v-if="!isHidden(to('story'))"
           :heading-level="2"
           :to="to('story', {}, { hash: '#chapters' })"
           :kicker="t('ia.story.label')"

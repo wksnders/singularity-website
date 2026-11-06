@@ -9,6 +9,7 @@ import { t } from '@/content';
 import { starterDecks } from '@/data/starterStacks';
 import { characters, coreProduct, tryRoutes } from '@/data/universe';
 import { outbound, pictureSources, to, tryRouteLink } from '@/site/links';
+import { patternUrl } from '@/site/patterns';
 import type { ResolvedLink } from '@/site/links';
 import type { Art } from '@/data/types';
 
@@ -59,10 +60,13 @@ function copyLink(key: string, link: ResolvedLink): void {
 }
 
 const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' : 'home.tryIt.copy');
+
+const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 </script>
 
 <template>
-  <section id="learn" class="l-band--alt l-band--line-top c-try" aria-labelledby="try-it-title">
+  <section id="learn" class="l-band--alt c-try" :style="texture" aria-labelledby="try-it-title">
+    <div class="c-try__texture" aria-hidden="true"></div>
     <div class="l-wrap">
       <h2 id="try-it-title" class="c-try__h">{{ t('home.tryIt.title') }}</h2>
 
@@ -150,11 +154,34 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
 
 <style>
 .c-try {
-  padding-block: clamp(48px, 8vw, 80px);
+  --fade-mid: 90px;
+  --fade-end: 200px;
+
+  position: relative;
+  isolation: isolate;
+  padding-block: var(--band-y) clamp(48px, 8vw, 80px);
+}
+
+/* Ink-on-transparency art, so it is a mask and the tint is the background; the fade must die above the card scans. */
+.c-try__texture {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--color-ink);
+  opacity: 0.07;
+  mask-image: var(--try-pattern), linear-gradient(to bottom, #000 0, rgba(0, 0, 0, 0.55) var(--fade-mid), transparent var(--fade-end));
+  mask-size: 390px, 100% 100%;
+  mask-repeat: repeat, no-repeat;
+  mask-composite: intersect;
+  -webkit-mask-image: var(--try-pattern), linear-gradient(to bottom, #000 0, rgba(0, 0, 0, 0.55) var(--fade-mid), transparent var(--fade-end));
+  -webkit-mask-size: 390px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  /* A different keyword from the standard `intersect`, not a prefix of it. */
+  -webkit-mask-composite: source-in;
 }
 
 .c-try__h {
-  max-width: 22ch;
   font-size: var(--size-h2);
   line-height: 1.1;
   text-wrap: balance;
@@ -377,6 +404,11 @@ const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' 
 }
 
 @media (min-width: 720px) {
+  .c-try {
+    --fade-mid: 110px;
+    --fade-end: 250px;
+  }
+
   .c-try__grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:

@@ -9,6 +9,7 @@ import UiButton from '@/components/atoms/UiButton.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
 import CommunityBand from '@/components/organisms/CommunityBand.vue';
 import HomeCastRail from '@/components/organisms/HomeCastRail.vue';
+import HomeClipsBand from '@/components/organisms/HomeClipsBand.vue';
 import HomeFactionBand from '@/components/organisms/HomeFactionBand.vue';
 import HomeHero from '@/components/organisms/HomeHero.vue';
 import HomeTrailerCast from '@/components/organisms/HomeTrailerCast.vue';
@@ -26,7 +27,7 @@ import {
 } from '@/data/universe';
 import { pad } from '@/site/format';
 import { afterGlide, glideToElement } from '@/site/glide';
-import { chapterHash, outbound, to } from '@/site/links';
+import { chapterHash, isHidden, outbound, to } from '@/site/links';
 import { tokenPx } from '@/site/tokens';
 
 /* The newest PUBLISHED chapter, deliberately not the newest product. */
@@ -145,7 +146,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 
     <IncursionsBand />
 
-    <section id="story" class="l-band">
+    <section v-if="!isHidden(to('story'))" id="story" class="l-band">
       <div class="l-wrap">
         <MonoLabel tone="accent">{{ t('home.chapter.kicker') }}</MonoLabel>
         <div class="l-surface l-surface--pad home__chapter">
@@ -169,10 +170,12 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
       </div>
     </section>
 
+    <HomeClipsBand />
+
     <!-- Holds the only filled CTA below the fold. -->
     <TryItBand />
 
-    <section v-if="latestNews.length" id="news" class="l-band">
+    <section v-if="latestNews.length && !isHidden(to('news'))" id="news" class="l-band">
       <div class="l-wrap">
         <div class="home__news-head">
           <h2 class="home__h2">{{ t('home.news.title') }}</h2>

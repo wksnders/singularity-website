@@ -1,6 +1,6 @@
 /* Every destination's `also` must list only live, public destinations, so a /soon visit never dead-ends. */
 
-import { to } from '@/site/links';
+import { isHidden, to } from '@/site/links';
 import type { LinkSpec } from '@/site/links';
 
 export interface SoonAlso extends LinkSpec {
@@ -84,9 +84,16 @@ const FALLBACK_ALSO: SoonAlso[] = [
   { key: 'ia.news.label', to: to('news') },
 ];
 
-export const NOT_FOUND: SoonDestination = { id: 'not-found', kind: 'missing', also: FALLBACK_ALSO };
+/* A destination whose every `also` is hidden falls back, so the list is never empty. */
+function live(also: SoonAlso[]): SoonAlso[] {
+  const shown = also.filter((item) => !isHidden(item.to));
+  return shown.length ? shown : FALLBACK_ALSO.filter((item) => !isHidden(item.to));
+}
+
+export const NOT_FOUND: SoonDestination = { id: 'not-found', kind: 'missing', also: live(FALLBACK_ALSO) };
 
 export function soonDestination(hash: string): SoonDestination {
   const id = hash.replace(/^#/, '');
-  return DESTINATIONS.find((d) => d.id === id) ?? { id: 'generic', kind: 'page', also: FALLBACK_ALSO };
+  const hit = DESTINATIONS.find((d) => d.id === id);
+  return hit ? { ...hit, also: live(hit.also) } : { id: 'generic', kind: 'page', also: live(FALLBACK_ALSO) };
 }

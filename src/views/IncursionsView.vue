@@ -21,7 +21,7 @@ import { architechDesigns } from '@/data/programs';
 import { game, rogueAIs } from '@/data/universe';
 import { expandIcons } from '@/site/cardText';
 import { pad } from '@/site/format';
-import { outbound, to } from '@/site/links';
+import { isHidden, outbound, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
@@ -65,12 +65,14 @@ const exits = computed(() =>
     { key: 'learn', to: to('learn', {}, { hash: '#paths' }) },
     { key: 'cards', to: to('cards') },
     { key: 'story', to: to('story') },
-  ].map((exit) => ({
-    ...exit,
-    kicker: t(`incursions.next.${exit.key}.kicker`),
-    title: t(`incursions.next.${exit.key}.title`),
-    body: t(`incursions.next.${exit.key}.body`),
-  })),
+  ]
+    .filter((exit) => !isHidden(exit.to))
+    .map((exit) => ({
+      ...exit,
+      kicker: t(`incursions.next.${exit.key}.kicker`),
+      title: t(`incursions.next.${exit.key}.title`),
+      body: t(`incursions.next.${exit.key}.body`),
+    })),
 );
 </script>
 
@@ -176,7 +178,11 @@ const exits = computed(() =>
         </div>
       </div>
 
-      <BandFoot :to="to('story', {}, { hash: '#ch-02' })" :label="t('incursions.exitChapter')" />
+      <BandFoot
+        v-if="!isHidden(to('story'))"
+        :to="to('story', {}, { hash: '#ch-02' })"
+        :label="t('incursions.exitChapter')"
+      />
     </SectionBand>
 
     <SectionBand

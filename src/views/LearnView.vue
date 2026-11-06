@@ -14,7 +14,7 @@ import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
 import { modes, TRY_TIERS, tryRoutesOfTier, videos } from '@/data/universe';
-import { outbound, soon, to } from '@/site/links';
+import { isHidden, outbound, soon, to } from '@/site/links';
 import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
 import type { TryTier } from '@/data/types';
@@ -157,7 +157,7 @@ const rulesHub = [
         />
       </div>
     </div>
-    <BandFoot :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
+    <BandFoot v-if="!isHidden(to('story'))" :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
   </SectionBand>
 </template>
 

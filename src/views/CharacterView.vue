@@ -54,7 +54,7 @@ import {
 } from '@/data/universe';
 import { pad } from '@/site/format';
 import { glideToTop } from '@/site/glide';
-import { chapterHash, pictureSources, outbound, to } from '@/site/links';
+import { chapterHash, isHidden, pictureSources, outbound, to } from '@/site/links';
 
 const props = defineProps<{ characterId: string }>();
 
@@ -358,8 +358,10 @@ const appearsIn = computed(() =>
     })),
 );
 
+const storyShown = !isHidden(to('story'));
+
 provideSections(() =>
-  (hasLore.value ? ['cards', 'lore', 'stories'] : ['cards', 'stories']).map((id) => ({ id })),
+  ['cards', ...(hasLore.value ? ['lore'] : []), ...(storyShown ? ['stories'] : [])].map((id) => ({ id })),
 );
 </script>
 
@@ -652,6 +654,7 @@ provideSections(() =>
       </SectionBand>
 
       <SectionBand
+        v-if="storyShown"
         id="stories"
         class="l-band--alt l-band--line-top"
         :heading="t('character.appearsIn')"

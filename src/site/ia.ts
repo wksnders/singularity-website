@@ -1,7 +1,7 @@
 /* Curated, editorial list: a route existing is not a reason to add an entry here. */
 
 import type { RouteLocationRaw } from 'vue-router';
-import { to } from '@/site/links';
+import { isHidden, to } from '@/site/links';
 import type { LinkSpec } from '@/site/links';
 
 export interface IaItem extends LinkSpec {
@@ -174,9 +174,11 @@ const community: IaSection = {
   ],
 };
 
-export const primaryNav: IaSection[] = [universe, story, learn, news, community];
+export const primaryNav: IaSection[] = [universe, story, learn, news, community].filter(
+  (section) => !isHidden(section.to),
+);
 
-export const footerColumns: IaGroup[] = [
+const footerAll: IaGroup[] = [
   {
     key: 'footer.universe',
     items: [
@@ -231,6 +233,10 @@ export const footerColumns: IaGroup[] = [
     ],
   },
 ];
+
+export const footerColumns: IaGroup[] = footerAll
+  .map((group) => ({ ...group, items: group.items.filter((item) => !isHidden(item.to)) }))
+  .filter((group) => group.items.length > 0);
 
 /** Socials render from data URLs, not from the IA (they are outbound). */
 export const socialKeys = ['discord', 'youtube', 'instagram', 'twitter', 'boardgamegeek'] as const;

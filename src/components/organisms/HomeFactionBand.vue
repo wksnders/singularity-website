@@ -9,8 +9,8 @@ import { pad } from '@/site/format';
 import { environmentSources, to } from '@/site/links';
 
 const count = factions.length;
-/* Each slice is about 1/count of the band from 960px; the extra 2vw covers the overlap at the seams. */
-const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
+/* From 960px each slice crops a painting scaled to the band's full height, which is wider than the slice; keep in step with --band-h. */
+const sizes = '(min-width: 960px) 1950px, 100vw';
 </script>
 
 <template>
@@ -60,8 +60,13 @@ const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
       </li>
     </ul>
 
+    <!-- IncursionsBand tucks its ground under this foot: its margin-top and padding-top are measured against the foot's height and padding. -->
     <div class="c-factions__foot">
-      <div class="c-factions__foot-in">
+      <div class="c-factions__rail">
+        <span class="c-factions__rail-line" aria-hidden="true"></span>
+        <span class="c-factions__rail-plate" aria-hidden="true"></span>
+        <span class="c-factions__rail-step" aria-hidden="true"></span>
+        <span class="c-factions__rail-lit" aria-hidden="true"></span>
         <BaseLink :to="to('universe')" class="c-factions__more">
           {{ t('home.factions.link') }} <span aria-hidden="true">→</span>
         </BaseLink>
@@ -72,11 +77,12 @@ const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
 
 <style>
 
+/* Transparent and above the next band, so IncursionsBand's ground shows under the rail's slanted foot. */
 .c-factions {
   container-type: inline-size;
   position: relative;
+  z-index: var(--z-raised);
   overflow: hidden;
-  background: var(--color-bg);
 }
 
 .c-factions__head {
@@ -200,16 +206,79 @@ const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
 }
 
 .c-factions__foot {
-  padding: var(--space-6) var(--gutter) 56px;
+  padding-bottom: 56px;
+}
+
+/* Hangs from the last row's bottom edge, which drops 20px across the band. */
+.c-factions__rail {
+  position: relative;
+  z-index: 2;
+  height: 46px;
+  margin-top: -21px;
+  transform: rotate(atan2(20px, 100cqw));
+  transform-origin: 0 0;
+}
+
+.c-factions__rail-line,
+.c-factions__rail-plate,
+.c-factions__rail-step,
+.c-factions__rail-lit {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* The fill sits 1.5px horizontally inside every edge of the line's shape, so the line reads as an outline. */
+.c-factions__rail-line {
+  inset: 0;
+  background: rgba(var(--rgb-accent-text), 0.5);
+  clip-path: polygon(0 0, 100% 0, 100% 24px, 270px 24px, 248px 100%, 0 100%);
+}
+
+.c-factions__rail-plate {
+  inset: 2px 0 1.5px;
+  background: var(--color-hardware);
+  clip-path: polygon(0 0, 100% 0, 100% 20.5px, 270px 20.5px, 248px 100%, 0 100%);
+}
+
+.c-factions__rail-step {
+  display: none;
+}
+
+/* Must follow the fills in the markup, so the lit edge covers the hardware too. */
+.c-factions__rail-lit {
+  inset: 2px 0 auto;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(var(--rgb-accent-text), 0.12), rgba(var(--rgb-accent-text), 0));
 }
 
 .c-factions__more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  column-gap: 0.25em;
+  width: 248px;
+  height: 44px;
+  padding-left: var(--gutter);
+  font-size: var(--size-body);
   font-weight: 600;
+  white-space: nowrap;
   color: var(--color-accent);
 }
 
+.c-factions__more:hover {
+  color: var(--color-ink-bright);
+}
+
+/* Inset: an outer ring is cut off by the band's overflow and the screen edge. */
+.c-factions__more:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
 @media (min-width: 960px) {
-  /* --tilt-d is how far the band's edges rise across its width: one slope shared by the clip, the tab and the link. */
+  /* --tilt-d is how far the band's edges rise across its width: one slope shared by the clip, the tab and the foot. */
   .c-factions {
     --tilt: 3.4deg;
   }
@@ -217,7 +286,7 @@ const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
   .c-factions > * {
     --tilt-d: calc(100cqw * tan(var(--tilt)));
     --edge: max(var(--gutter), (100cqw - var(--width-content)) / 2 + var(--gutter));
-    --band-h: 400px;
+    --band-h: 620px;
   }
 
   .c-factions__head {
@@ -334,21 +403,101 @@ const sizes = `(min-width: 960px) ${Math.ceil(100 / count) + 2}vw, 100vw`;
     font-size: var(--size-body-s);
   }
 
-  /* The band's bottom edge is lower where the link starts than at the screen's right edge, by --edge times the slope. */
   .c-factions__foot {
-    padding: 0 var(--edge) 64px;
-    margin-top: calc(18px - var(--tilt-d) + var(--edge) * tan(var(--tilt)));
+    padding-bottom: 72px;
+  }
+
+  /* Pivots on the band's bottom-right corner, so its top edge is the band's bottom edge. */
+  .c-factions__rail {
+    height: 68px;
+    margin-top: calc(-1 * var(--tilt-d) - 1px);
+    transform: rotate(calc(-1 * var(--tilt)));
+    transform-origin: 100% 0;
+  }
+
+  /* Left of IncursionsBand's spine column (--edge + 480px to + 552px) the pieces are placed from the left edge; the link's tab from the right. */
+  .c-factions__rail-line {
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 24px,
+      calc(100% - var(--edge)) 24px,
+      calc(100% - var(--edge) - 44px) 100%,
+      calc(100% - var(--edge) - 288px) 100%,
+      calc(100% - var(--edge) - 332px) 24px,
+      calc(var(--edge) + 552px) 24px,
+      calc(var(--edge) + 552px) 2px,
+      0 2px
+    );
+  }
+
+  .c-factions__rail-plate {
+    clip-path: polygon(
+      calc(var(--edge) + 553.5px) 0,
+      100% 0,
+      100% 21px,
+      calc(100% - var(--edge) - 1.5px) 21px,
+      calc(100% - var(--edge) - 45.5px) 100%,
+      calc(100% - var(--edge) - 286.5px) 100%,
+      calc(100% - var(--edge) - 330.5px) 21px,
+      calc(var(--edge) + 553.5px) 21px
+    );
   }
 
   .c-factions__more {
-    white-space: nowrap;
+    right: calc(var(--edge) + 44px);
+    left: auto;
+    justify-content: center;
+    width: 244px;
+    padding-left: 0;
+  }
+}
+
+/* Room for the stepped tab left of the spine; narrower, the plate starts flush at the spine instead. */
+@media (min-width: 1024px) {
+  .c-factions__rail-line {
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 24px,
+      calc(100% - var(--edge)) 24px,
+      calc(100% - var(--edge) - 44px) 100%,
+      calc(100% - var(--edge) - 288px) 100%,
+      calc(100% - var(--edge) - 332px) 24px,
+      calc(var(--edge) + 594px) 24px,
+      calc(var(--edge) + 572px) 2px,
+      calc(var(--edge) + 460px) 2px,
+      calc(var(--edge) + 433px) 26px,
+      calc(var(--edge) + 317.5px) 26px,
+      calc(var(--edge) + 306.75px) 14px,
+      calc(var(--edge) + 218.75px) 14px,
+      calc(var(--edge) + 208px) 2px,
+      0 2px
+    );
   }
 
-  .c-factions__foot-in {
-    display: flex;
-    justify-content: flex-end;
-    transform: rotate(calc(-1 * var(--tilt)));
-    transform-origin: 100% 0;
+  .c-factions__rail-plate {
+    clip-path: polygon(
+      calc(var(--edge) + 574px) 0,
+      100% 0,
+      100% 21px,
+      calc(100% - var(--edge) - 1.5px) 21px,
+      calc(100% - var(--edge) - 45.5px) 100%,
+      calc(100% - var(--edge) - 286.5px) 100%,
+      calc(100% - var(--edge) - 330.5px) 21px,
+      calc(var(--edge) + 595px) 21px
+    );
+  }
+
+  /* The 45° cuts are pre-skewed for --tilt; recompute them if --tilt changes. */
+  .c-factions__rail-step {
+    display: block;
+    top: 2px;
+    left: calc(var(--edge) + 209.5px);
+    width: 249px;
+    height: 22.5px;
+    background: var(--color-hardware);
+    clip-path: polygon(0 0, 249px 0, 223.7px 22.5px, 108.2px 22.5px, 97.4px 10.5px, 9.4px 10.5px);
   }
 }
 </style>
