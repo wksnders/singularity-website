@@ -218,12 +218,13 @@ const px = (v: number) => `${v.toFixed(1)}px`;
           :style="{ aspectRatio: 1 / (FOOT.runAspect + FOOT.runShadow) }"
         />
       </picture>
+      <!-- Cut at the lid's edge: left of it, the panel's transparent socket would show it. -->
       <img
         class="c-home-foot__fill"
         :src="asset('/box-frame/fill-160.webp')"
         alt=""
         decoding="async"
-        :style="{ left: px(left + FOOT.fillLeft * s), width: px(FOOT.fillW * s) }"
+        :style="{ left: px(left + FOOT.fillLeft * s), width: px(FOOT.fillW * s), clipPath: `inset(0 0 0 ${px(-FOOT.fillLeft * s)})` }"
       />
       <picture>
         <source type="image/avif" :srcset="srcset('bar', BAR_WIDTHS, 'avif')" :sizes="`${Math.round(sizedWidth)}px`" />
@@ -338,7 +339,6 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 .c-home-foot__bar {
   left: var(--lid-left);
   width: var(--lid-width);
-  clip-path: polygon(11.94% 0, 88.53% 0, 88.53% 16.05%, 100% 16.05%, 100% 100%, 11.94% 100%);
   pointer-events: auto;
 }
 
