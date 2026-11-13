@@ -218,7 +218,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
           :style="{ aspectRatio: 1 / (FOOT.runAspect + FOOT.runShadow) }"
         />
       </picture>
-      <!-- Cut at the lid's edge: left of it, the panel's transparent socket would show it. -->
+      <!-- Cut at the lid's edge, or the panel's transparent socket shows it. -->
       <img
         class="c-home-foot__fill"
         :src="asset('/box-frame/fill-160.webp')"

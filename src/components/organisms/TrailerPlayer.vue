@@ -4,6 +4,7 @@ import { nextTick, ref, watch } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
+import { useWarmArt } from '@/composables/useWarmArt';
 import { t } from '@/content';
 import { asset, pictureSources } from '@/site/links';
 
@@ -36,6 +37,8 @@ watch(playing, async (on) => {
 /* Autoplay needs a recent user gesture: call soon after a click. */
 defineExpose({ play: () => (playing.value = true) });
 
+const warm = useWarmArt();
+
 /* Keep the youtube-nocookie host: it sets no tracking cookie until playback starts, which is what keeps this out of consent-banner scope. */
 const src = () =>
   `https://www.youtube-nocookie.com/embed/${props.youTubeId}?autoplay=1&cc_load_policy=1`;
@@ -46,7 +49,7 @@ const src = () =>
     <div v-if="poster" class="c-video__poster" :style="{ aspectRatio: ratio }" aria-hidden="true">
       <picture v-if="!deferPoster">
         <source v-for="source in pictureSources(poster)" :key="source.type" :type="source.type" :srcset="source.srcset" :sizes="POSTER_SIZES" />
-        <img class="c-video__poster-img" :src="asset(poster)" alt="" loading="lazy" decoding="async" />
+        <img class="c-video__poster-img" :src="asset(poster)" alt="" :loading="warm ? 'eager' : 'lazy'" decoding="async" />
       </picture>
     </div>
     <ArtFrame v-else :ratio="ratio" radius="l" :placeholder="placeholder" />

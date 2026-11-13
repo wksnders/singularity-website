@@ -172,6 +172,9 @@ function assertTryRoutes(): void {
 }
 assertTryRoutes();
 
+/** Null shows the placeholder frame. */
+export const ttsShot: string | null = '/try-it/tabletop-simulator-1200.webp';
+
 /** Five formats, not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
   { id: 'ffa', name: 'Free-for-all' },

@@ -7,7 +7,7 @@ import { useCopy } from '@/composables/useCopy';
 import { FINE_HOVER, useMediaQuery } from '@/composables/useMediaQuery';
 import { t } from '@/content';
 import { starterDecks } from '@/data/starterStacks';
-import { characters, coreProduct, tryRoutes } from '@/data/universe';
+import { characters, coreProduct, tryRoutes, ttsShot } from '@/data/universe';
 import { outbound, pictureSources, to, tryRouteLink } from '@/site/links';
 import { patternUrl } from '@/site/patterns';
 import type { ResolvedLink } from '@/site/links';
@@ -39,6 +39,9 @@ const routeLink = (id: string): ResolvedLink => {
   return tryRouteLink(route);
 };
 const ttsLink = routeLink('tts');
+const ttsArt: Art = { src: ttsShot, alt: '' };
+/* The cover-cropped picture's drawn width at each .c-try__pic size; change with that CSS. */
+const TTS_SIZES = '(min-width: 1024px) 510px, (min-width: 720px) 46vw, 210px';
 const pnpLink = routeLink('printAndPlay');
 
 const [deckA, deckB] = starterDecks.filter((deck) => deck.kind === 'starter');
@@ -73,7 +76,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
       <div class="c-try__grid">
         <div class="c-try__free c-try__free--tts">
           <div class="c-try__pic c-try__pic--tts" aria-hidden="true">
-            <ArtFrame :art="null" ratio="auto" :placeholder="t('home.tryIt.tts.placeholder')" />
+            <ArtFrame :art="ttsArt" ratio="auto" :placeholder="t('home.tryIt.tts.placeholder')" :sources="pictureSources(ttsShot)" :sizes="TTS_SIZES" />
           </div>
           <div class="c-try__text">
             <h3 class="c-try__title">{{ t('home.tryIt.tts.title') }}</h3>

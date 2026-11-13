@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Decorative art passes alt: ""; all other alt text comes from the data record.
+import { useWarmArt } from '@/composables/useWarmArt';
 import { asset } from '@/site/links';
 import type { Art, ArtSource } from '@/data/types';
 
@@ -35,6 +36,8 @@ const props = withDefaults(
   },
 );
 
+const warm = useWarmArt();
+
 const src = (art: Art) => (art.src ? asset(art.src) : null);
 
 const objectPosition = (art: Art) => {
@@ -65,8 +68,8 @@ const loose = () => props.natural && Boolean(props.art?.src);
         class="c-art__img"
         :src="src(art)!"
         :alt="art.alt"
-        :loading="eager ? 'eager' : 'lazy'"
-        :fetchpriority="eager ? 'high' : 'auto'"
+        :loading="eager || warm ? 'eager' : 'lazy'"
+        :fetchpriority="eager ? 'high' : warm ? 'low' : 'auto'"
         decoding="async"
         :style="{ objectPosition: objectPosition(art), objectFit: fit }"
       />

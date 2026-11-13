@@ -19,6 +19,7 @@ import WaysToPlayBand from '@/components/organisms/WaysToPlayBand.vue';
 import TrailerPlayer from '@/components/organisms/TrailerPlayer.vue';
 import { useChrome } from '@/composables/useChrome';
 import { viewHeight } from '@/composables/useMediaQuery';
+import { provideWarmArt } from '@/composables/useWarmArt';
 import { getDoc, getDocs, metaString, t } from '@/content';
 import {
   chapters,
@@ -48,6 +49,8 @@ const claim = computed(() => t('home.zero.title').match(/[^.!?]+[.!?]*/g)?.map((
 
 const route = useRoute();
 const { heroIntro } = useChrome();
+/* After the hero's entrance, so the bands below never compete with its art. */
+provideWarmArt(computed(() => heroIntro.value === null));
 const trailer = ref<InstanceType<typeof TrailerPlayer> | null>(null);
 
 /* Where the heading would push the player below the fold, the section's scroll margin aims the player instead; glides and anchor jumps read it. */
