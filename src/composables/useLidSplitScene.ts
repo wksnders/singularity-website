@@ -609,7 +609,17 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
 
   function onSkip(event: Event): void {
     if (settled.value || skipAt !== null) return;
-    if (event.type === 'scroll' && performance.now() - mountedAt < SKIP_SCROLL_AFTER) return;
+    if (event.type === 'scroll' && performance.now() - mountedAt < SKIP_SCROLL_AFTER) {
+      /* The router restores a reload's position after mount, landing past RESTORED_AT skips the entrance animation*/
+      if (window.scrollY > RESTORED_AT) {
+        clock = 1e9;
+        released = true;
+        entrance.value = null;
+        sig = null;
+        wake();
+      }
+      return;
+    }
     skipAt = performance.now();
     released = true;
     entrance.value = null;
