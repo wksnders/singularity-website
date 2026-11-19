@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WallHero from '@/components/organisms/WallHero.vue';
 import type { WallColumn, WallImage } from '@/components/organisms/WallHero.vue';
+import { pageScale } from '@/site/pageScale';
 
 const props = defineProps<{
   cards: WallImage[];
@@ -26,7 +27,7 @@ let frame = 0;
 
 function measure(): void {
   frame = 0;
-  vw.value = window.innerWidth;
+  vw.value = window.innerWidth / pageScale.value;
 }
 
 function onResize(): void {
@@ -98,11 +99,11 @@ const columns = computed<WallColumn[]>(() => {
     width: card,
     height: cardH,
     style: {
-      '--wall-size': `${card}px`,
-      '--wall-item-h': `${cardH}px`,
-      '--wall-gap': `${gap}px`,
-      '--wall-radius': `${Math.round(card * 0.05)}px`,
-      translate: `0 ${(STAGGER[c % STAGGER.length] * pitch.value).toFixed(1)}px`,
+      '--wall-size': `${card * pageScale.value}px`,
+      '--wall-item-h': `${cardH * pageScale.value}px`,
+      '--wall-gap': `${gap * pageScale.value}px`,
+      '--wall-radius': `${Math.round(card * 0.05) * pageScale.value}px`,
+      translate: `0 ${STAGGER[c % STAGGER.length] * pitch.value * pageScale.value}px`,
     },
     cells: Array.from({ length: rows.value }, (_, r) => {
       const index = (c * 7 + r * 3) % n;
@@ -112,11 +113,11 @@ const columns = computed<WallColumn[]>(() => {
 });
 
 const heroStyle = computed(() => ({
-  '--cards-gap': `${layout.value.gap}px`,
-  '--cards-overlap': `${props.overlap}px`,
-  '--cards-fade': `${props.overlap}px`,
-  '--cards-fade-extended': `${props.overlap + layout.value.extend}px`,
-  '--wall-glow-at': `50% ${Math.round(layout.value.hero * 0.46)}px`,
+  '--cards-gap': `${layout.value.gap * pageScale.value}px`,
+  '--cards-overlap': `${props.overlap * pageScale.value}px`,
+  '--cards-fade': `${props.overlap * pageScale.value}px`,
+  '--cards-fade-extended': `${(props.overlap + layout.value.extend) * pageScale.value}px`,
+  '--wall-glow-at': `50% ${Math.round(layout.value.hero * 0.46) * pageScale.value}px`,
 }));
 </script>
 
@@ -141,8 +142,8 @@ const heroStyle = computed(() => ({
 <style>
 .c-cards-hero {
   flex-direction: column;
-  min-height: 260px;
-  padding: calc(var(--nav-height) - 8px) var(--gutter) var(--cards-overlap);
+  min-height: 16.25rem;
+  padding: calc(var(--nav-height) - 0.5rem) var(--gutter) var(--cards-overlap);
   --wall-fade: var(--cards-fade);
 }
 
@@ -152,9 +153,9 @@ const heroStyle = computed(() => ({
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25em) {
   .c-cards-hero {
-    min-height: 340px;
+    min-height: 21.25rem;
   }
 }
 
@@ -162,8 +163,8 @@ const heroStyle = computed(() => ({
   inset: auto;
   left: 50%;
   top: 50%;
-  width: calc(100% + 200px);
-  height: calc(100% + 21vw);
+  width: calc(100% + 12.5rem);
+  height: calc(100% + 21vw * var(--page-scale));
   transform: translate(-50%, -50%) rotate(-12deg);
 }
 
@@ -194,8 +195,8 @@ const heroStyle = computed(() => ({
   left: 50%;
   top: 50%;
   z-index: -1;
-  width: min(900px, 120vw);
-  height: 340px;
+  width: min(56.25rem, 120vw);
+  height: 21.25rem;
   transform: translate(-50%, -50%);
   background: radial-gradient(closest-side, rgba(var(--rgb-bg), 0.66), transparent);
 }
@@ -208,7 +209,7 @@ const heroStyle = computed(() => ({
   letter-spacing: 0.005em;
   color: color-mix(in srgb, var(--color-accent) 80%, var(--color-ink-bright));
   text-shadow:
-    0 0 10px rgba(var(--rgb-accent), 0.45),
-    0 0 40px color-mix(in srgb, var(--color-accent-text) 30%, transparent);
+    0 0 0.625rem rgba(var(--rgb-accent), 0.45),
+    0 0 2.5rem color-mix(in srgb, var(--color-accent-text) 30%, transparent);
 }
 </style>

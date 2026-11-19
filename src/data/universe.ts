@@ -50,7 +50,7 @@ export const game = {
   incursionsPlayers: '1\u20134',
   /** The core box's competitive modes only, which start at two: not `players`. */
   competitivePlayers: '2\u20134',
-  playTime: '30 min per player',
+  minutesPerPlayer: 30,
   /* No price here: three editions at three prices, so price lives on `products[]`. */
   releaseDate: null as string | null,
   /* The store is the authority on shipping, so keep this null and link out rather than mirror a region list the site cannot keep true. */

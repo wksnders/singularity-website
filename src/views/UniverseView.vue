@@ -316,8 +316,8 @@ function clearAll(): void {
     ),
     repeating-linear-gradient(
       135deg,
-      rgba(var(--rgb-ink), 0.04) 0 12px,
-      rgba(var(--rgb-ink), 0.015) 12px 24px
+      rgba(var(--rgb-ink), 0.04) 0 0.75rem,
+      rgba(var(--rgb-ink), 0.015) 0.75rem 1.5rem
     );
 }
 
@@ -347,7 +347,7 @@ function clearAll(): void {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: clamp(520px, 78vh, 720px);
+  min-height: clamp(32.5rem, 78vh, 45rem);
   padding-block: calc(var(--nav-height) + var(--space-12)) var(--space-8);
 }
 
@@ -411,7 +411,7 @@ function clearAll(): void {
 }
 
 .universe__relic {
-  max-width: 320px;
+  max-width: 20rem;
 }
 
 .universe__closer {

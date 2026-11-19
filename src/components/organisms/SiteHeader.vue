@@ -145,8 +145,8 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
 .c-nav.is-solid {
   background: rgba(var(--rgb-bg), 0.88);
   border-bottom-color: var(--color-line);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(0.875rem);
+  -webkit-backdrop-filter: blur(0.875rem);
 }
 
 .c-nav:not(.is-solid)::before {
@@ -171,8 +171,8 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
 .c-nav.is-over-art .c-nav__chevron {
   color: var(--color-ink);
   text-shadow:
-    0 1px 2px rgba(var(--rgb-bg), 0.9),
-    0 0 12px rgba(var(--rgb-bg), 0.7);
+    0 1px 0.125rem rgba(var(--rgb-bg), 0.9),
+    0 0 0.75rem rgba(var(--rgb-bg), 0.7);
 }
 
 /* Must match MegaPanel's fill. */
@@ -245,8 +245,8 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
   border-radius: var(--radius-s) var(--radius-s) 0 0;
   background: rgba(var(--rgb-accent), 0.22);
   box-shadow:
-    inset 0 -3px 0 var(--color-accent),
-    0 8px 22px -6px rgba(var(--rgb-accent), 0.85);
+    inset 0 -0.1875rem 0 var(--color-accent),
+    0 0.5rem 1.375rem -0.375rem rgba(var(--rgb-accent), 0.85);
 }
 
 .c-nav__item.is-echo .c-nav__link {
@@ -280,9 +280,9 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
 }
 
 .c-nav__chevron {
-  width: 44px;
-  height: 44px;
-  margin-left: -14px;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-left: -0.875rem;
   display: grid;
   place-items: center;
   border: 0;
@@ -297,7 +297,7 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-5);
   border-radius: var(--radius-pill);
   background: var(--color-accent);
@@ -318,25 +318,25 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
 }
 
 .c-nav__burger {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
   border: 1px solid rgba(var(--rgb-ink), 0.16);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background: transparent;
   cursor: pointer;
 }
 
 .c-nav__burger-bars {
   display: block;
-  width: 18px;
-  height: 1.5px;
+  width: 1.125rem;
+  height: 0.0938rem;
   background: var(--color-ink);
   box-shadow:
-    0 6px 0 var(--color-ink),
-    0 -6px 0 var(--color-ink);
+    0 0.375rem 0 var(--color-ink),
+    0 -0.375rem 0 var(--color-ink);
 }
 .c-nav__brand {
   display: flex;
@@ -348,7 +348,7 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
     visibility var(--dur-2) var(--ease-linear);
 }
 
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .c-nav__bar {
     gap: var(--space-3);
   }
@@ -365,19 +365,19 @@ const intro = computed(() => (onHome.value ? heroIntro.value : null));
 }
 
 /* Same breakpoint as useChrome's WIDE_QUERY: a frame painted before its change event runs must still show the right bar. */
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .c-nav__links {
     display: none;
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25em) {
   .c-nav__burger {
     display: none;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 25em) {
   .c-nav__bar {
     gap: var(--space-2);
   }

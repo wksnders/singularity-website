@@ -157,12 +157,12 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 
 <style>
 .c-try {
-  --fade-mid: 90px;
-  --fade-end: 200px;
+  --fade-mid: 5.625rem;
+  --fade-end: 12.5rem;
 
   position: relative;
   isolation: isolate;
-  padding-block: var(--band-y) clamp(48px, 8vw, 80px);
+  padding-block: var(--band-y) clamp(3rem, 8vw, 5rem);
 }
 
 /* Ink-on-transparency art, so it is a mask and the tint is the background; the fade must die above the card scans. */
@@ -174,11 +174,11 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   background: var(--color-ink);
   opacity: 0.07;
   mask-image: var(--try-pattern), linear-gradient(to bottom, #000 0, rgba(0, 0, 0, 0.55) var(--fade-mid), transparent var(--fade-end));
-  mask-size: 390px, 100% 100%;
+  mask-size: 24.375rem, 100% 100%;
   mask-repeat: repeat, no-repeat;
   mask-composite: intersect;
   -webkit-mask-image: var(--try-pattern), linear-gradient(to bottom, #000 0, rgba(0, 0, 0, 0.55) var(--fade-mid), transparent var(--fade-end));
-  -webkit-mask-size: 390px, 100% 100%;
+  -webkit-mask-size: 24.375rem, 100% 100%;
   -webkit-mask-repeat: repeat, no-repeat;
   /* A different keyword from the standard `intersect`, not a prefix of it. */
   -webkit-mask-composite: source-in;
@@ -198,8 +198,8 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
     'tts'
     'pnp'
     'box';
-  gap: 10px;
-  margin-top: clamp(20px, 3vw, 28px);
+  gap: 0.625rem;
+  margin-top: clamp(1.25rem, 3vw, 1.75rem);
 }
 
 .c-try__free--tts {
@@ -212,13 +212,13 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 
 .c-try__free {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.875rem;
   align-items: center;
   padding: var(--space-3);
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-radius: 16px;
+  border-radius: 1rem;
   background: var(--color-surface-raised);
 }
 
@@ -226,7 +226,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .c-try__pic > .c-art {
@@ -248,19 +248,19 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   aspect-ratio: 8.5 / 11;
   padding: 5.5%;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   background: #f4f4f8;
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.6);
   transform: translateX(-50%) rotate(-4deg);
 }
 
-/* Two classes: the 720px rule below moves the front sheet and must not move this one. */
+/* Two classes: the 45em rule below moves the front sheet and must not move this one. */
 .c-try__sheet.c-try__sheet--back {
   display: none;
   top: 14%;
   height: 104%;
   background: #dcdce6;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1.125rem 2.5rem rgba(0, 0, 0, 0.5);
   transform: translateX(-36%) rotate(6deg);
 }
 
@@ -287,7 +287,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 }
 
 .c-try__body {
-  margin-top: 6px;
+  margin-top: 0.375rem;
   font-size: var(--size-m);
   line-height: 1.5;
   color: var(--color-ink-muted);
@@ -297,9 +297,9 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  min-height: 44px;
-  margin-top: 10px;
-  padding: 6px 0 0;
+  min-height: 2.75rem;
+  margin-top: 0.625rem;
+  padding: 0.375rem 0 0;
   border: 0;
   background: none;
   font: inherit;
@@ -321,13 +321,13 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   grid-area: box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  padding: 0 18px 22px;
+  padding: 0 1.125rem 1.375rem;
   border: 1px solid rgba(var(--rgb-accent), 0.42);
   border-radius: var(--radius-l);
   background:
     radial-gradient(ellipse 85% 50% at var(--try-glow), rgba(var(--rgb-accent), 0.2), transparent 70%),
     #151729;
-  box-shadow: 0 0 60px rgba(123, 108, 255, 0.12);
+  box-shadow: 0 0 3.75rem rgba(123, 108, 255, 0.12);
 }
 
 .c-try__render {
@@ -351,7 +351,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin: 10px 0 0;
+  margin: 0.625rem 0 0;
   padding: 0;
   list-style: none;
   font-size: var(--size-body-s);
@@ -367,7 +367,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 }
 
 .c-try__buy {
-  min-height: 52px;
+  min-height: 3.25rem;
 }
 
 .c-try__alt {
@@ -395,7 +395,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 .c-try__alt a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0 var(--space-1);
   font-weight: 500;
   color: var(--color-accent);
@@ -406,10 +406,10 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   text-decoration: none;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45em) {
   .c-try {
-    --fade-mid: 110px;
-    --fade-end: 250px;
+    --fade-mid: 6.875rem;
+    --fade-end: 15.625rem;
   }
 
   .c-try__grid {
@@ -444,7 +444,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   }
 
   .c-try__text {
-    padding: 16px 20px 18px;
+    padding: 1rem 1.25rem 1.125rem;
   }
 
   .c-try__title {
@@ -458,10 +458,10 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   .c-try__box {
     --try-glow: 22% 50%;
 
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 16.25rem minmax(0, 1fr);
     gap: var(--space-7);
     align-items: center;
-    padding: 20px 28px 20px 12px;
+    padding: 1.25rem 1.75rem 1.25rem 0.75rem;
   }
 
   .c-try__render {
@@ -470,7 +470,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .c-try__grid {
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
     grid-template-areas:
@@ -479,21 +479,21 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   }
 
   .c-try__free {
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 16.25rem minmax(0, 1fr);
   }
 
   .c-try__pic {
     aspect-ratio: auto;
-    min-height: 200px;
+    min-height: 12.5rem;
   }
 
   .c-try__text {
     justify-content: center;
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
   }
 
   .c-try__link {
-    margin-top: 10px;
+    margin-top: 0.625rem;
   }
 
   .c-try__box {
@@ -503,7 +503,7 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
     grid-template-rows: auto 1fr;
     gap: 0;
     align-items: stretch;
-    padding: 0 24px 24px;
+    padding: 0 1.5rem 1.5rem;
   }
 
   .c-try__render {

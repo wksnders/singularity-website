@@ -5,10 +5,11 @@ import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import { bossWall, game } from '@/data/universe';
 import { asset, to } from '@/site/links';
+import { pageScale } from '@/site/pageScale';
 
 const bossMotion = (i: number) => ({
-  '--boss-dy': i % 2 ? '12px' : '0px',
-  '--boss-amp': `${(i % 2 ? -1 : 1) * (5 + (i % 3))}px`,
+  '--boss-dy': `${(i % 2 ? 12 : 0) * pageScale.value}px`,
+  '--boss-amp': `${(i % 2 ? -1 : 1) * (5 + (i % 3)) * pageScale.value}px`,
   animationDelay: `${-(i % 3) * 2.2}s`,
 });
 
@@ -68,10 +69,10 @@ onBeforeUnmount(() => io?.disconnect());
 
 /* The overhang covers the corners the turn exposes, plus the float's travel. */
 .c-boss-wall__wall {
-  --boss-gap: clamp(8px, 1vw, 12px);
+  --boss-gap: clamp(0.5rem, 1vw, 0.75rem);
 
   position: absolute;
-  inset: calc(-3vw - 24px) -5%;
+  inset: calc(-3vw - 1.5rem) -5%;
   pointer-events: none;
   transform: rotate(-3deg);
 }
@@ -114,7 +115,7 @@ onBeforeUnmount(() => io?.disconnect());
 }
 
 /* Keep the count in step with bossWall's note in src/data/universe.ts. */
-@media (max-width: 759px) {
+@media (max-width: 47.4375em) {
   .c-boss-wall__boss:nth-child(n + 6) {
     display: none;
   }
@@ -158,7 +159,7 @@ onBeforeUnmount(() => io?.disconnect());
   );
 }
 
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .c-boss-wall__scrim {
     background: linear-gradient(
       100deg,

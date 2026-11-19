@@ -123,7 +123,7 @@ defineProps<{
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-3);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-s);
@@ -134,7 +134,7 @@ defineProps<{
 .c-crumbs__hop--icon {
   display: grid;
   place-items: center;
-  width: 44px;
+  width: 2.75rem;
   padding-inline: 0;
 }
 

@@ -33,7 +33,7 @@ defineEmits<{ toggle: [] }>();
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);

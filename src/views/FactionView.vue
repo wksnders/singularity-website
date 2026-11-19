@@ -82,7 +82,7 @@ const HERO_FOCAL = { x: 0.5, y: 0.58 };
       :placeholder="t('faction.hero.artPlaceholder')"
       :pending-note="faction.environment ? undefined : t('faction.hero.pending')"
       glow="110% 80% at 76% 8%"
-      min-height="min(80dvh, 720px)"
+      min-height="min(80dvh, 45rem)"
     >
       <Breadcrumbs
         :crumbs="[{ label: t('ia.universe.label'), to: to('universe') }, { label: name }]"

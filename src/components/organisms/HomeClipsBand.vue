@@ -23,7 +23,7 @@ const meta = (clip: Clip) =>
 const teeth = { '--rail-img': `url(${asset('/box-core/rail-teeth-528.webp')})` };
 
 /* Touch scrolls the row by hand, so the arrows are for a mouse only. */
-const arrows = useMediaQuery(`${FINE_HOVER} and (min-width: 600px)`);
+const arrows = useMediaQuery(`${FINE_HOVER} and (min-width: 37.5em)`);
 const row = ref<HTMLElement | null>(null);
 const atStart = ref(true);
 const atEnd = ref(false);
@@ -102,8 +102,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
 /* The rails' scale follows the hero side panel's column (PANEL.ref in src/site/lidSplitScene.ts); a tile must be whole px or it seams. */
 .c-clips {
   --clips-pad: max(var(--gutter), (100% - var(--width-content)) / 2);
-  --rail-h: 24px;
-  --rail-tile: 158px;
+  --rail-h: 1.5rem;
+  --rail-tile: 9.875rem;
 
   container-type: inline-size;
   position: relative;
@@ -122,7 +122,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
   z-index: var(--z-raised);
   height: var(--rail-h);
   pointer-events: none;
-  filter: saturate(0.3) brightness(0.82) drop-shadow(0 6px 6px rgba(0, 0, 0, 0.7));
+  filter: saturate(0.3) brightness(0.82) drop-shadow(0 0.375rem 0.375rem rgba(0, 0, 0, 0.7));
 }
 
 .c-clips__rail--top {
@@ -173,7 +173,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
   display: inline-flex;
   align-items: center;
   column-gap: 0.25em;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--size-m);
   font-weight: 500;
   color: var(--color-accent-text);
@@ -189,8 +189,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
 }
 
 .c-clips__arrow {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid rgba(var(--rgb-ink), 0.22);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -222,7 +222,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
 }
 
 .c-clips__item {
-  flex: 0 0 148px;
+  flex: 0 0 9.25rem;
   scroll-snap-align: start;
 }
 
@@ -264,7 +264,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
 .c-clips__text {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0.1875rem;
   min-width: 0;
 }
 
@@ -286,8 +286,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
 
 .c-clips__play {
   position: relative;
-  flex: 0 0 30px;
-  height: 30px;
+  flex: 0 0 1.875rem;
+  height: 1.875rem;
   border-radius: var(--radius-pill);
   background: rgba(var(--rgb-accent), 0.92);
 }
@@ -297,15 +297,15 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: -5px 0 0 -3px;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 8px solid var(--color-on-accent);
+  margin: -0.3125rem 0 0 -0.1875rem;
+  border-top: 0.3125rem solid transparent;
+  border-bottom: 0.3125rem solid transparent;
+  border-left: 0.5rem solid var(--color-on-accent);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45em) {
   .c-clips__body {
-    padding: calc(var(--rail-h) + var(--space-9)) 0 calc(var(--rail-h) + 56px);
+    padding: calc(var(--rail-h) + var(--space-9)) 0 calc(var(--rail-h) + 3.5rem);
   }
 
   .c-clips__row {
@@ -313,23 +313,27 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure));
   }
 
   .c-clips__item {
-    flex-basis: clamp(160px, 15vw, 200px);
+    flex-basis: clamp(10rem, 15vw, 12.5rem);
   }
 }
 
-@media (min-width: 760px) {
+@media (min-width: 47.5em) {
   .c-clips {
-    --rail-h: calc(clamp(300px, 100cqw * 434 / 1280, 440px) * 80 * 846 / (434 * 2360));
-    --rail-tile: calc(clamp(300px, 100cqw * 434 / 1280, 440px) * 528 * 846 / (434 * 2360));
+    --rail-h: calc(clamp(18.75rem, 100cqw * 434 / 1280, 27.5rem) * 80 * 846 / (434 * 2360));
+    --rail-tile: calc(clamp(18.75rem, 100cqw * 434 / 1280, 27.5rem) * 528 * 846 / (434 * 2360));
   }
 }
 
 /* A custom property with an unsupported round() only fails where it is used, so it must be gated, not just ordered. */
 @supports (width: round(1px, 1px)) {
-  @media (min-width: 760px) {
+  .c-clips {
+    --rail-tile: round(9.875rem, 1px);
+  }
+
+  @media (min-width: 47.5em) {
     .c-clips {
-      --rail-h: round(clamp(300px, 100cqw * 434 / 1280, 440px) * 80 * 846 / (434 * 2360), 1px);
-      --rail-tile: round(clamp(300px, 100cqw * 434 / 1280, 440px) * 528 * 846 / (434 * 2360), 1px);
+      --rail-h: round(clamp(18.75rem, 100cqw * 434 / 1280, 27.5rem) * 80 * 846 / (434 * 2360), 1px);
+      --rail-tile: round(clamp(18.75rem, 100cqw * 434 / 1280, 27.5rem) * 528 * 846 / (434 * 2360), 1px);
     }
   }
 

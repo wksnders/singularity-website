@@ -11,9 +11,9 @@ defineProps<{ value?: string | null }>();
 <style>
 .c-tbd {
   display: inline-block;
-  padding: 3px 8px;
+  padding: 0.1875rem 0.5rem;
   border: 1px dashed var(--color-line-dashed);
-  border-radius: 6px;
+  border-radius: 0.375rem;
   color: var(--color-ink-soft);
   font-family: var(--font-label);
   font-weight: 600;

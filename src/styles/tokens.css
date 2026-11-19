@@ -42,8 +42,8 @@
   --color-glyph-power: #e83a5b; /* on light: #e73148 */
   --color-glyph-ai: #71abdd; /* on light: #5689c8 */
   --color-glyph-corruption: #99c556; /* on light: #6eb74e */
-  --glow-accent: 0 0 24px rgba(221, 228, 255, 0.35);
-  --glow-accent-strong: 0 0 40px rgba(221, 228, 255, 0.4);
+  --glow-accent: 0 0 1.5rem rgba(221, 228, 255, 0.35);
+  --glow-accent-strong: 0 0 2.5rem rgba(221, 228, 255, 0.4);
 
   --color-threat: #c04971;
   --color-threat-text: #e58ba6;
@@ -60,7 +60,7 @@
   --font-body: 'Barlow', system-ui, sans-serif;
   /* LABEL_CAPS_ADVANCE (src/site/tokens.ts) is measured from this face: re-derive it if the face changes. */
   --font-label: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif;
-  /* Faction names only, at 18px and up. */
+  /* Faction names only, at 1.125rem and up. */
   --font-faction: 'Osaka Singularity', 'Barlow', system-ui, sans-serif;
 
   /* The smallest label: only for a label under a name or on a photo. */
@@ -68,11 +68,11 @@
   --size-label-xs: 0.75rem;
   --size-label-s: 0.825rem;
   --size-label-m: 0.9rem;
-  /* 11px TEXT — the smallest body text: the lid's name tags. */
+  /* 0.6875rem TEXT — the smallest body text: the lid's name tags. */
   --size-xs: 0.6875rem;
   --size-s: 0.8125rem;
   --size-m: 0.875rem;
-  /* 15px TEXT — link rows and strip names. Never for an input: see --size-field. */
+  /* 0.9375rem TEXT — link rows and strip names. Never for an input: see --size-field. */
   --size-body-s: 0.9375rem;
   /* Never under 16px: iOS Safari zooms the viewport when a focused field's font-size is smaller. */
   --size-field: 1rem;
@@ -87,36 +87,38 @@
   --track-label: 0.08em;
   --track-label-tight: 0.06em;
 
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-9: 36px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-  --band-y: clamp(56px, 9vw, 96px);
-  --band-y-tight: clamp(24px, 4vw, 36px);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --band-y: clamp(3.5rem, 9vw, 6rem);
+  --band-y-tight: clamp(1.5rem, 4vw, 2.25rem);
 
-  --width-content: 1120px;
-  --width-reading: 680px;
-  --gutter: 20px;
-  --nav-height: 64px;
+  --width-content: 70rem;
+  --width-reading: 42.5rem;
+  --gutter: 1.25rem;
+  --nav-height: 4rem;
+  /* Set by src/site/pageScale.ts; base.css sizes the root font by it, so every rem length grows with it and viewport units stay the real window's. */
+  --page-scale: 1;
 
-  /* ScrollSpyRail's matchMedia query hard-codes --width-content + 2 × (--rail-width + --rail-gap) = 1488px; recompute it there if either value below changes. */
-  --rail-width: 160px;
-  --rail-gap: 24px;
+  /* ScrollSpyRail's matchMedia query hard-codes the window width where (--width-content + 2 × (--rail-width + --rail-gap)) × --page-scale first fits, 94.5em; recompute it there if either value below or the scale changes. */
+  --rail-width: 10rem;
+  --rail-gap: 1.5rem;
 
-  --scroll-offset: 96px;
+  --scroll-offset: 6rem;
 
-  --radius-s: 8px;
-  --radius-m: 14px;
-  --radius-l: 20px;
-  --radius-pill: 999px;
+  --radius-s: 0.5rem;
+  --radius-m: 0.875rem;
+  --radius-l: 1.25rem;
+  --radius-pill: 62.4375rem;
 
   /* Every printed card. A frame at this ratio shows `cardArt` and never crops it. */
   --ratio-card: 63 / 88;
@@ -131,12 +133,12 @@
   /* Above siblings INSIDE a component's own stacking context; never a page-level position. */
   --z-raised: 1;
 
-  /* Home's phone spine: a hex-grille strip 72px wide. */
+  /* Home's phone spine: a hex-grille strip 4.5rem wide. */
   --spine-grille:
-    linear-gradient(90deg, #0b0d12, #5e6e80 35%, #c2d0de 55%, #3e4a58 80%, #0b0d12) left / 6px 100% no-repeat,
-    linear-gradient(90deg, #0b0d12, #3e4a58 20%, #c2d0de 45%, #5e6e80 65%, #0b0d12) right / 6px 100% no-repeat,
+    linear-gradient(90deg, #0b0d12, #5e6e80 35%, #c2d0de 55%, #3e4a58 80%, #0b0d12) left / 0.375rem 100% no-repeat,
+    linear-gradient(90deg, #0b0d12, #3e4a58 20%, #c2d0de 45%, #5e6e80 65%, #0b0d12) right / 0.375rem 100% no-repeat,
     linear-gradient(90deg, rgba(0, 0, 0, 0.55), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.55)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='21'%3E%3Crect width='12' height='21' fill='%232A303B'/%3E%3Cpath fill='%2307070F' d='M6 -0.55L11.023 2.35L11.023 8.15L6 11.05L0.977 8.15L0.977 2.35ZM0 9.95L5.023 12.85L5.023 18.65L0 21.55L-5.023 18.65L-5.023 12.85ZM12 9.95L17.023 12.85L17.023 18.65L12 21.55L6.977 18.65L6.977 12.85ZM6 20.45L11.023 23.35L11.023 29.15L6 32.05L0.977 29.15L0.977 23.35ZM0 -11.05L5.023 -8.15L5.023 -2.35L0 0.55L-5.023 -2.35L-5.023 -8.15ZM12 -11.05L17.023 -8.15L17.023 -2.35L12 0.55L6.977 -2.35L6.977 -8.15Z'/%3E%3C/svg%3E") 6px 0 / 12px 21px;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='21'%3E%3Crect width='12' height='21' fill='%232A303B'/%3E%3Cpath fill='%2307070F' d='M6 -0.55L11.023 2.35L11.023 8.15L6 11.05L0.977 8.15L0.977 2.35ZM0 9.95L5.023 12.85L5.023 18.65L0 21.55L-5.023 18.65L-5.023 12.85ZM12 9.95L17.023 12.85L17.023 18.65L12 21.55L6.977 18.65L6.977 12.85ZM6 20.45L11.023 23.35L11.023 29.15L6 32.05L0.977 29.15L0.977 23.35ZM0 -11.05L5.023 -8.15L5.023 -2.35L0 0.55L-5.023 -2.35L-5.023 -8.15ZM12 -11.05L17.023 -8.15L17.023 -2.35L12 0.55L6.977 -2.35L6.977 -8.15Z'/%3E%3C/svg%3E") 0.375rem 0 / 0.75rem 1.3125rem;
 
   --dur-1: 120ms;
   --dur-2: 200ms;
@@ -147,7 +149,7 @@
   --ease-linear: linear;
 
   --elevation-1: 0 0 0 1px var(--color-line);
-  --elevation-2: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --elevation-2: 0 1.5rem 3.75rem rgba(0, 0, 0, 0.6);
 
   /* --faction / --faction-text are supplied at runtime by faction-scoped elements; these are the no-faction fallbacks. */
   --faction: rgba(242, 241, 250, 0.35);

@@ -85,7 +85,7 @@ const marks = computed(() =>
 /* `common` is drawn denser than the faction sheets, so it tiles smaller to match them by eye. */
 const patternStyle = (shelf: Shelf) => ({
   '--brands-pattern': `url(${patternUrl(`${shelf.pattern}-texture`)})`,
-  '--brands-tile': shelf.pattern === 'common' ? '390px' : '520px',
+  '--brands-tile': shelf.pattern === 'common' ? '24.375rem' : '32.5rem',
 });
 
 /* Keyed on how a brand opens, not on who plays it. */
@@ -175,7 +175,7 @@ const conditionOf = (brand: Brand): string => {
 
 <style>
 .brands__intro {
-  padding-block: var(--space-2) clamp(40px, 5vw, 64px);
+  padding-block: var(--space-2) clamp(2.5rem, 5vw, 4rem);
 }
 
 .brands__intro .c-index {
@@ -191,15 +191,15 @@ const conditionOf = (brand: Brand): string => {
 }
 
 .brands__band {
-  --brands-strip: clamp(72px, 10vw, 128px);
-  --brands-fade: clamp(160px, 20vw, 240px);
+  --brands-strip: clamp(4.5rem, 10vw, 8rem);
+  --brands-fade: clamp(10rem, 20vw, 15rem);
   --brands-band: #11111e;
 
   position: relative;
   isolation: isolate;
-  border-top: 3px solid var(--faction);
+  border-top: 0.1875rem solid var(--faction);
   padding-top: var(--brands-strip);
-  padding-bottom: clamp(28px, 4vw, 40px);
+  padding-bottom: clamp(1.75rem, 4vw, 2.5rem);
   background: linear-gradient(
     to bottom,
     var(--color-bg) calc(var(--brands-strip) * 0.55),
@@ -212,7 +212,7 @@ const conditionOf = (brand: Brand): string => {
 }
 
 .brands__band--last {
-  padding-bottom: clamp(48px, 6vw, 72px);
+  padding-bottom: clamp(3rem, 6vw, 4.5rem);
 }
 
 .brands__pattern {
@@ -240,7 +240,7 @@ const conditionOf = (brand: Brand): string => {
 }
 
 .brands__head {
-  padding-block: clamp(24px, 3vw, 32px) clamp(20px, 3vw, 28px);
+  padding-block: clamp(1.5rem, 3vw, 2rem) clamp(1.25rem, 3vw, 1.75rem);
 }
 
 .brands__ordinal {
@@ -269,7 +269,7 @@ const conditionOf = (brand: Brand): string => {
 .brands__grid {
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.25rem), 1fr));
 }
 
 .brands__band .c-bandfoot {

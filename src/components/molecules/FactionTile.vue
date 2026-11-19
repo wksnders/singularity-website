@@ -77,7 +77,7 @@ const sources = computed(() =>
 .c-faction__body {
   display: block;
   padding: var(--space-5);
-  border-top: 2px solid var(--faction);
+  border-top: 0.125rem solid var(--faction);
 }
 
 .c-faction__name {

@@ -1,4 +1,4 @@
-/* All coordinates are px in the cast's own box. */
+/* All coordinates are design px in the cast's own box until drawnWires scales them. */
 
 export type Side = 'l' | 'r';
 
@@ -166,4 +166,11 @@ export function sweepAngle(side: Side, dial: Box, x: number, y: number): number 
   const [bx, by] = mid(dial);
   const a = (Math.atan2(y - by, x - bx) * 180) / Math.PI;
   return ((((side === 'l' ? a - 90 : 90 - a) % 360) + 360) % 360);
+}
+
+/** `wires` laid out in design px, redrawn at `by` times that size: the routes are absolute, so every number in them scales. */
+export function drawnWires(wires: Wire[], by: number): Wire[] {
+  if (by === 1) return wires;
+  const at = (d: string) => d.replace(/-?\d*\.?\d+/g, (n) => (Number(n) * by).toFixed(1));
+  return wires.map((w) => ({ ...w, d: w.d.map(at), route: at(w.route), via: w.via && { x: w.via.x * by, y: w.via.y * by, r: w.via.r * by } }));
 }

@@ -273,7 +273,7 @@ const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) 
   margin-top: var(--space-4);
   max-width: 60ch;
   padding-left: var(--space-4);
-  border-left: 2px solid var(--faction);
+  border-left: 0.125rem solid var(--faction);
   font-size: var(--size-m);
   line-height: 1.6;
   color: var(--color-ink-muted);
@@ -292,7 +292,7 @@ const activeRow = computed(() => (card.slug.value ? cardBySlug(card.slug.value) 
 .brand__quote {
   margin: var(--space-8) 0 0;
   padding-left: var(--space-4);
-  border-left: 2px solid var(--faction);
+  border-left: 0.125rem solid var(--faction);
   max-width: 52ch;
   font-size: var(--size-body-l);
   font-style: italic;

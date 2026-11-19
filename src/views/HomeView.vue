@@ -63,14 +63,17 @@ function aimTrailer(): void {
   const nav = tokenPx('--nav-height');
   /* Flush once its own padding clears the nav: a margin would leave the lid's foot under the header. */
   const margin = parseFloat(css.paddingTop) >= nav ? 0 : parseFloat(css.scrollMarginTop) || 0;
-  const offset = player.getBoundingClientRect().top - section.getBoundingClientRect().top;
+  const box = player.getBoundingClientRect();
+  const offset = box.top - section.getBoundingClientRect().top;
+  /* Not offsetHeight: the trailer block zooms the player, so its own px are not the window's. */
+  const height = box.height;
   const room = viewHeight();
-  if (margin + offset + player.offsetHeight <= room) {
+  if (margin + offset + height <= room) {
     section.style.scrollMarginTop = `${margin}px`;
     return;
   }
   /* Centred, and below the nav when it fits there: the nav hides on the way down. */
-  const top = Math.max(player.offsetHeight <= room - nav ? nav : 0, (room - player.offsetHeight) / 2);
+  const top = Math.max(height <= room - nav ? nav : 0, (room - height) / 2);
   section.style.scrollMarginTop = `${top - offset}px`;
 }
 
@@ -231,11 +234,11 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 }
 
 .home__offer-dot {
-  width: 7px;
-  height: 7px;
+  width: 0.4375rem;
+  height: 0.4375rem;
   border-radius: var(--radius-pill);
   background: var(--color-accent);
-  box-shadow: 0 0 10px 1px rgba(var(--rgb-accent), 0.7);
+  box-shadow: 0 0 0.625rem 1px rgba(var(--rgb-accent), 0.7);
 }
 
 .home__offer-price {
@@ -263,7 +266,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 .home__offer-cta {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -300,7 +303,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 .home__claim-head {
   position: relative;
   z-index: var(--z-raised);
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 0.125rem 1.125rem rgba(0, 0, 0, 0.85);
 }
 
 /* Phones: the spine from the band's top to the player (HomeHeroBand draws the hero's half); the bottom inset must equal the cast grid's top margin. Off under HomeHero's SIDE_QUERY, below. */
@@ -315,15 +318,15 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 }
 
 .home__claim-head::before {
-  left: calc(50% - 36px);
-  width: 72px;
+  left: calc(50% - 2.25rem);
+  width: 4.5rem;
   background: var(--spine-grille);
 }
 
 /* Scrim: keeps the heading readable over the grille. */
 .home__claim-head::after {
-  left: calc(50% - 76px);
-  width: 152px;
+  left: calc(50% - 4.75rem);
+  width: 9.5rem;
   background: radial-gradient(60% 40% at 50% 62%, rgba(var(--rgb-bg), 0.9), rgba(var(--rgb-bg), 0.55) 60%, transparent);
 }
 
@@ -354,8 +357,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
   position: absolute;
   left: 50%;
   top: 50%;
-  width: max(100%, 44px);
-  height: 44px;
+  width: max(100%, 2.75rem);
+  height: 2.75rem;
   translate: -50% -50%;
 }
 
@@ -367,7 +370,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
 }
 
 .home__caption-pad {
-  padding: 0 10px;
+  padding: 0 0.625rem;
   background: var(--color-bg);
 }
 
@@ -379,16 +382,16 @@ onBeforeUnmount(() => window.removeEventListener('resize', aimLater));
   margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(24px, 4vw, 48px);
+  gap: clamp(1.5rem, 4vw, 3rem);
   align-items: center;
 }
 
 .home__chapter-art {
-  flex: 0 0 min(100%, 300px);
+  flex: 0 0 min(100%, 18.75rem);
 }
 
 .home__chapter-body {
-  flex: 1 1 320px;
+  flex: 1 1 20rem;
   min-width: 0;
 }
 

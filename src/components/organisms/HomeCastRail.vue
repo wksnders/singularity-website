@@ -30,10 +30,10 @@ const total = characters.length;
 const cardBack: Art = { src: '/box-core/card-back-960.webp', alt: '' };
 const backSources = pictureSources(cardBack.src);
 
-/* Must follow .c-cast-rail__item's clamp(200px, 24vw, 300px). */
+/* Must follow .c-cast-rail__item's clamp(12.5rem, 24vw, 18.75rem), in px. */
 const CARD_SIZES = '(min-width: 1250px) 300px, (min-width: 834px) 24vw, 200px';
 
-const paddles = useMediaQuery(`${FINE_HOVER} and (min-width: 600px)`);
+const paddles = useMediaQuery(`${FINE_HOVER} and (min-width: 37.5em)`);
 const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 
 const zone = ref<HTMLElement | null>(null);
@@ -337,7 +337,7 @@ onBeforeUnmount(() => {
 
 .c-cast-rail__rail {
   display: flex;
-  gap: 18px;
+  gap: 1.125rem;
   margin: 0;
   padding: var(--pad-top) var(--gutter) var(--pad-bottom);
   list-style: none;
@@ -363,7 +363,7 @@ onBeforeUnmount(() => {
 }
 
 .c-cast-rail__item {
-  flex: 0 0 clamp(200px, 24vw, 300px);
+  flex: 0 0 clamp(12.5rem, 24vw, 18.75rem);
   scroll-snap-align: start;
 }
 
@@ -372,7 +372,7 @@ onBeforeUnmount(() => {
   display: block;
   aspect-ratio: var(--ratio-card);
   border-radius: var(--radius-m);
-  perspective: 1200px;
+  perspective: 75rem;
   color: var(--color-ink);
   text-decoration: none;
   transition: transform var(--dur-2) var(--ease-out);
@@ -381,7 +381,7 @@ onBeforeUnmount(() => {
 @media (hover: hover) and (pointer: fine) {
   .c-cast-rail__card:hover {
     color: var(--color-ink);
-    transform: translateY(-6px);
+    transform: translateY(-0.375rem);
   }
 }
 
@@ -408,7 +408,7 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-m);
   background: var(--color-surface-sunk);
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 1.125rem 2.5rem rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(var(--rgb-ink), 0.1);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -417,7 +417,7 @@ onBeforeUnmount(() => {
 .c-cast-rail__face--back {
   transform: rotateY(180deg);
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 1.125rem 2.5rem rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(var(--rgb-ink), 0.14);
 }
 
@@ -428,24 +428,24 @@ onBeforeUnmount(() => {
 
 .c-cast-rail__face--crowd {
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 1.125rem 2.5rem rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(var(--rgb-accent-text), 0.4),
-    0 0 48px rgba(var(--rgb-accent), 0.12);
+    0 0 3rem rgba(var(--rgb-accent), 0.12);
 }
 
 .c-cast-rail__crowd {
   position: absolute;
   inset: 0;
-  padding: 8px;
+  padding: 0.5rem;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 5px;
+  gap: 0.3125rem;
   align-content: start;
 }
 
 /* On the image: ArtFrame writes its own radius inline on the frame. */
 .c-cast-rail__crowd .c-art__img {
-  border-radius: 5px;
+  border-radius: 0.3125rem;
 }
 
 .c-cast-rail__veil {
@@ -462,17 +462,17 @@ onBeforeUnmount(() => {
 .c-cast-rail__count {
   container-type: inline-size;
   position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
+  left: 0.625rem;
+  right: 0.625rem;
+  bottom: 0.625rem;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 13px 14px 12px;
-  border-radius: 10px;
+  gap: 0.375rem;
+  padding: 0.8125rem 0.875rem 0.75rem;
+  border-radius: 0.625rem;
   background: rgba(var(--rgb-bg), 0.76);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(0.625rem);
   box-shadow:
     inset 0 1px 0 rgba(var(--rgb-accent), 0.22),
     0 0 0 1px rgba(var(--rgb-accent), 0.1);
@@ -482,13 +482,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .c-cast-rail__count-n {
   font-family: var(--font-display);
   font-size: clamp(1.706rem, 3.15vw, 2.1rem);
-  /* Capped by the panel's width, or large text pushes the panel off a 200px card. */
+  /* Capped by the panel's width, or large text pushes the panel off a 12.5rem card. */
   font-size: min(clamp(1.706rem, 3.15vw, 2.1rem), 28cqi);
   font-weight: 700;
   line-height: 1;
@@ -514,7 +514,7 @@ onBeforeUnmount(() => {
   top: var(--pad-top);
   bottom: var(--pad-bottom);
   z-index: 2;
-  width: 120px;
+  width: 7.5rem;
   display: flex;
   align-items: center;
   border: 0;
@@ -540,34 +540,34 @@ onBeforeUnmount(() => {
 .c-cast-rail__paddle--prev {
   left: 0;
   justify-content: flex-start;
-  padding: 0 0 0 22px;
+  padding: 0 0 0 1.375rem;
   background: linear-gradient(to right, rgba(var(--rgb-bg), 0.94) 22%, rgba(var(--rgb-bg), 0));
 }
 
 .c-cast-rail__paddle--next {
   right: 0;
   justify-content: flex-end;
-  padding: 0 22px 0 0;
+  padding: 0 1.375rem 0 0;
   background: linear-gradient(to left, rgba(var(--rgb-bg), 0.94) 22%, rgba(var(--rgb-bg), 0));
 }
 
 .c-cast-rail__icon {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   display: grid;
   place-items: center;
   border-radius: var(--radius-pill);
   background: rgba(var(--rgb-bg), 0.6);
   box-shadow:
     inset 0 0 0 1px rgba(var(--rgb-accent), 0.5),
-    0 0 24px rgba(var(--rgb-accent), 0.14);
+    0 0 1.5rem rgba(var(--rgb-accent), 0.14);
 }
 
 .c-cast-rail__track {
   position: relative;
-  height: 2px;
-  margin-top: 4px;
-  border-radius: 2px;
+  height: 0.125rem;
+  margin-top: 0.25rem;
+  border-radius: 0.125rem;
   background: rgba(var(--rgb-ink), 0.12);
 }
 
@@ -577,7 +577,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   left: 0;
   width: 30%;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   background: var(--color-accent);
 }
 </style>

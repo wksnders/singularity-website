@@ -2,6 +2,7 @@
 // Decorative art passes alt: ""; all other alt text comes from the data record.
 import { useWarmArt } from '@/composables/useWarmArt';
 import { asset } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 import type { Art, ArtSource } from '@/data/types';
 
 export type { ArtSource };
@@ -62,7 +63,7 @@ const loose = () => props.natural && Boolean(props.art?.src);
         :key="source.type"
         :type="source.type"
         :srcset="source.srcset"
-        :sizes="sizes"
+        :sizes="scaledSizes(sizes)"
       />
       <img
         class="c-art__img"
@@ -112,8 +113,8 @@ const loose = () => props.natural && Boolean(props.art?.src);
   text-align: center;
   background: repeating-linear-gradient(
     135deg,
-    rgba(var(--rgb-ink), 0.055) 0 10px,
-    rgba(var(--rgb-ink), 0.02) 10px 20px
+    rgba(var(--rgb-ink), 0.055) 0 0.625rem,
+    rgba(var(--rgb-ink), 0.02) 0.625rem 1.25rem
   );
   box-shadow: inset 0 0 0 1px var(--color-line);
 }

@@ -19,7 +19,7 @@ withDefaults(
   {
     placeholder: '[ key art ]',
     glow: '120% 80% at 20% 10%',
-    minHeight: 'min(92dvh, 860px)',
+    minHeight: 'min(92dvh, 53.75rem)',
   },
 );
 </script>
@@ -91,7 +91,7 @@ withDefaults(
 .c-hero__pending {
   position: absolute;
   right: var(--gutter);
-  bottom: 14px;
+  bottom: 0.875rem;
   z-index: var(--z-raised);
   pointer-events: none;
   font-family: var(--font-label);
@@ -104,6 +104,6 @@ withDefaults(
 .c-hero__body {
   position: relative;
   z-index: var(--z-raised);
-  padding-block: 120px clamp(48px, 7vw, 88px);
+  padding-block: 7.5rem clamp(3rem, 7vw, 5.5rem);
 }
 </style>

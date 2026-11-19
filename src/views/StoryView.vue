@@ -283,19 +283,19 @@ function pinColor(characterId: string): string | null {
   margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(24px, 4vw, 48px);
-  padding: clamp(20px, 3vw, 32px);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
   background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-l);
 }
 
 .story__lead-art {
-  flex: 0 0 min(100%, 320px);
+  flex: 0 0 min(100%, 20rem);
 }
 
 .story__lead-body {
-  flex: 1 1 320px;
+  flex: 1 1 20rem;
   min-width: 0;
 }
 
@@ -327,7 +327,7 @@ function pinColor(characterId: string): string | null {
 
 .story__beat-rail {
   flex: 0 0 auto;
-  width: 2px;
+  width: 0.125rem;
   background: linear-gradient(to bottom, var(--color-accent-wash), transparent);
 }
 
@@ -360,7 +360,7 @@ function pinColor(characterId: string): string | null {
   gap: var(--space-4);
   align-items: center;
   justify-content: space-between;
-  min-height: 96px;
+  min-height: 6rem;
   padding: var(--space-4) var(--space-5);
   background: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -402,7 +402,7 @@ function pinColor(characterId: string): string | null {
 .story__graph {
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16.25rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -430,7 +430,7 @@ function pinColor(characterId: string): string | null {
 .story__node--empty {
   display: grid;
   place-items: center;
-  min-height: 160px;
+  min-height: 10rem;
   background: none;
   border-style: dashed;
   text-align: center;
@@ -455,8 +455,8 @@ function pinColor(characterId: string): string | null {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 36px;
-  padding-inline: 10px;
+  min-height: 2.25rem;
+  padding-inline: 0.625rem;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -482,7 +482,7 @@ function pinColor(characterId: string): string | null {
 
 .story__vote-badge {
   display: inline-block;
-  padding: 6px var(--space-3);
+  padding: 0.375rem var(--space-3);
   border: 1px solid rgba(var(--rgb-accent), 0.55);
   border-radius: var(--radius-pill);
   background: var(--color-accent-wash);

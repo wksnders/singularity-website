@@ -69,12 +69,12 @@ async function onSubmit(): Promise<void> {
 .c-newsletter {
   --tab-w: min(13.375rem, 100% - 2.5rem);
   --tab-h: 1.875rem;
-  --shape: polygon(0 0, var(--tab-w) 0, calc(var(--tab-w) + var(--tab-h)) var(--tab-h), 100% var(--tab-h), 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+  --shape: polygon(0 0, var(--tab-w) 0, calc(var(--tab-w) + var(--tab-h)) var(--tab-h), 100% var(--tab-h), 100% calc(100% - 1.125rem), calc(100% - 1.125rem) 100%, 0 100%);
   --glow-at: 100% 100%;
 
   position: relative;
   isolation: isolate;
-  padding: calc(var(--tab-h) + 14px) 22px 22px;
+  padding: calc(var(--tab-h) + 0.875rem) 1.375rem 1.375rem;
 }
 
 .c-newsletter::before,
@@ -92,7 +92,7 @@ async function onSubmit(): Promise<void> {
 }
 
 .c-newsletter::after {
-  inset: 1.5px;
+  inset: 0.0938rem;
   z-index: -1;
   background:
     radial-gradient(110% 80% at var(--glow-at), rgba(var(--rgb-uv-glow), 0.34), rgba(var(--rgb-uv-glow), 0) 60%),
@@ -125,18 +125,18 @@ async function onSubmit(): Promise<void> {
 }
 
 .c-newsletter__field {
-  margin-top: 14px;
+  margin-top: 0.875rem;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
 }
 
 .c-newsletter__box {
-  --chamfer: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  --chamfer: polygon(0.625rem 0, calc(100% - 0.625rem) 0, 100% 0.625rem, 100% calc(100% - 0.625rem), calc(100% - 0.625rem) 100%, 0.625rem 100%, 0 calc(100% - 0.625rem), 0 0.625rem);
 
   position: relative;
   isolation: isolate;
-  flex: 1 1 150px;
+  flex: 1 1 9.375rem;
   display: flex;
 }
 
@@ -167,8 +167,8 @@ async function onSubmit(): Promise<void> {
 .c-newsletter__submit {
   position: relative;
   isolation: isolate;
-  min-height: 48px;
-  padding: 0 26px;
+  min-height: 3rem;
+  padding: 0 1.625rem;
   border: 0;
   background: transparent;
   color: var(--color-ink-bright);
@@ -177,7 +177,7 @@ async function onSubmit(): Promise<void> {
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  filter: drop-shadow(0 0 14px rgba(var(--rgb-uv-glow), 0.45));
+  filter: drop-shadow(0 0 0.875rem rgba(var(--rgb-uv-glow), 0.45));
 }
 
 .c-newsletter__submit::before {
@@ -186,7 +186,7 @@ async function onSubmit(): Promise<void> {
   inset: 0;
   z-index: -1;
   background: var(--color-uv);
-  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  clip-path: polygon(1rem 0, calc(100% - 1rem) 0, 100% 50%, calc(100% - 1rem) 100%, 1rem 100%, 0 50%);
 }
 
 .c-newsletter__submit:disabled {
@@ -199,7 +199,7 @@ async function onSubmit(): Promise<void> {
 }
 
 .c-newsletter__fine {
-  margin-top: 10px;
+  margin-top: 0.625rem;
   font-size: var(--size-label-m);
   line-height: 1.5;
   color: var(--color-ink-soft);
@@ -207,7 +207,7 @@ async function onSubmit(): Promise<void> {
 
 .c-newsletter__note {
   margin-top: var(--space-3);
-  padding: var(--space-3) 14px;
+  padding: var(--space-3) 0.875rem;
   border: 1px dashed var(--color-line-dashed);
   font-size: var(--size-m);
   line-height: 1.5;
@@ -218,6 +218,6 @@ async function onSubmit(): Promise<void> {
   border: 1px solid rgba(var(--rgb-accent), 0.4);
   background: rgba(var(--rgb-accent), 0.1);
   color: var(--color-ink);
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+  clip-path: polygon(0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% calc(100% - 0.5rem), calc(100% - 0.5rem) 100%, 0.5rem 100%, 0 calc(100% - 0.5rem), 0 0.5rem);
 }
 </style>

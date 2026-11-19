@@ -33,7 +33,7 @@ defineEmits<{ action: [] }>();
   display: grid;
   gap: var(--space-3);
   justify-items: start;
-  padding: clamp(20px, 4vw, 32px);
+  padding: clamp(1.25rem, 4vw, 2rem);
   border: 1px dashed var(--color-line-dashed);
   border-radius: var(--radius-l);
 }

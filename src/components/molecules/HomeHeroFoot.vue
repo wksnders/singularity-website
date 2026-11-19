@@ -14,7 +14,8 @@ import { useMediaQuery } from '@/composables/useMediaQuery';
 import { game } from '@/data/universe';
 import { FOOT, type LidReadout } from '@/site/lidSplitScene';
 import { asset } from '@/site/links';
-import { LABEL_CAPS_ADVANCE, token, tokenMs, tokenPx } from '@/site/tokens';
+import { pageScale } from '@/site/pageScale';
+import { LABEL_CAPS_ADVANCE, token, tokenDesignPx, tokenMs } from '@/site/tokens';
 
 const props = defineProps<{
   /** 'scroll' points down to a Watch button that isn't whole on screen. */
@@ -52,13 +53,13 @@ const TRAY_TINT_SAT = 1.05;
 const srcset = (name: string, widths: number[], ext = 'webp') =>
   widths.map((w) => `${asset(`/box-frame/${name}-${w}.${ext}`)} ${w}w`).join(', ');
 
-const labelAdvance = tokenPx('--size-label-s') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label')));
+const labelAdvance = tokenDesignPx('--size-label-s') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label')));
 /** Px: the plate's width beyond its text, and the air kept from the lid's edges. */
 const PLATE = { pad: 52, edge: 8 };
 /** The player glyph's width, in characters. */
 const GLYPH_CHARS = 2;
 /** Px: .c-home-foot__chain's gap, once each side of "/". */
-const chainGaps = tokenPx('--space-2') * 2;
+const chainGaps = tokenDesignPx('--space-2') * 2;
 
 const s = computed(() => props.width / FOOT.ref);
 const sizedS = computed(() => props.sizedWidth / FOOT.ref);
@@ -179,25 +180,24 @@ watch(() => props.pop, arm);
 
 onBeforeUnmount(() => unwatchPop?.());
 
-const px = (v: number) => `${v.toFixed(1)}px`;
 </script>
 
 <template>
   <div
     class="c-home-foot"
     :style="{
-      height: `${height}px`,
-      '--lid-left': px(left),
-      '--lid-width': px(width),
-      '--run-top': px(FOOT.runTop * s),
-      '--bar-top': px(FOOT.barTop * s),
-      '--bar-h': px(FOOT.barH * s),
-      '--tray-top': px(FOOT.trayTop * s),
-      '--tray-w': px(FOOT.trayW * s),
-      '--tray-h': px(FOOT.trayH * s),
-      '--plate-mid': px(FOOT.plateMid * s),
-      '--plate-w': `${plateWidth}px`,
-      '--plate-h-min': `${FOOT.plateH}px`,
+      height: `${height * pageScale}px`,
+      '--lid-left': `${left * pageScale}px`,
+      '--lid-width': `${width * pageScale}px`,
+      '--run-top': `${FOOT.runTop * s * pageScale}px`,
+      '--bar-top': `${FOOT.barTop * s * pageScale}px`,
+      '--bar-h': `${FOOT.barH * s * pageScale}px`,
+      '--tray-top': `${FOOT.trayTop * s * pageScale}px`,
+      '--tray-w': `${FOOT.trayW * s * pageScale}px`,
+      '--tray-h': `${FOOT.trayH * s * pageScale}px`,
+      '--plate-mid': `${FOOT.plateMid * s * pageScale}px`,
+      '--plate-w': `${plateWidth * pageScale}px`,
+      '--plate-h-min': `${FOOT.plateH * pageScale}px`,
       '--tray-hue': `${trayHue ?? 0}deg`,
       '--tray-sat': trayHue === null ? 1 : TRAY_TINT_SAT,
     }"
@@ -224,7 +224,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
         :src="asset('/box-frame/fill-160.webp')"
         alt=""
         decoding="async"
-        :style="{ left: px(left + FOOT.fillLeft * s), width: px(FOOT.fillW * s), clipPath: `inset(0 0 0 ${px(-FOOT.fillLeft * s)})` }"
+        :style="{ left: `${(left + FOOT.fillLeft * s) * pageScale}px`, width: `${FOOT.fillW * s * pageScale}px`, clipPath: `inset(0 0 0 ${-FOOT.fillLeft * s * pageScale}px)` }"
       />
       <picture>
         <source type="image/avif" :srcset="srcset('bar', BAR_WIDTHS, 'avif')" :sizes="`${Math.round(sizedWidth)}px`" />
@@ -241,7 +241,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
         v-for="(x, i) in FOOT.trays"
         :key="x"
         class="c-home-foot__tray"
-        :style="{ left: px(left + x * s) }"
+        :style="{ left: `${(left + x * s) * pageScale}px` }"
       >
         <img
           :src="asset(`/box-frame/tray-${i ? 'b' : 'a'}-520.webp`)"
@@ -296,9 +296,9 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 <style>
 .c-home-foot {
   /* Grows with the text: the plate never clips its own label. */
-  --plate-h: max(var(--plate-h-min), calc(2 * var(--size-label-s) + 8px));
+  --plate-h: max(var(--plate-h-min), calc(2 * var(--size-label-s) + 0.5rem));
   /* Each side of a line: keeps it clear of the plate's cut ends. */
-  --say-inset: 20px;
+  --say-inset: 1.25rem;
   position: relative;
   background: var(--color-bg);
   pointer-events: none;
@@ -343,7 +343,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 }
 
 .c-home-foot__tray {
-  --cut: 10px;
+  --cut: 0.625rem;
 
   position: absolute;
   top: var(--tray-top);
@@ -382,17 +382,17 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   inset: 0;
   z-index: var(--z-raised);
   box-shadow:
-    inset 0 8px 10px -2px rgba(0, 0, 0, 0.85),
-    inset 0 0 0 1.5px rgba(0, 0, 0, 0.9);
+    inset 0 0.5rem 0.625rem -0.125rem rgba(0, 0, 0, 0.85),
+    inset 0 0 0 0.0938rem rgba(0, 0, 0, 0.9);
 }
 
 .c-home-foot__tray::after {
   left: var(--cut);
   right: var(--cut);
   bottom: 0;
-  height: 1.5px;
+  height: 0.0938rem;
   background: rgba(var(--rgb-accent), 0.5);
-  box-shadow: 0 0 6px rgba(var(--rgb-accent), 0.5);
+  box-shadow: 0 0 0.375rem rgba(var(--rgb-accent), 0.5);
 }
 
 .c-home-foot__readout {
@@ -402,7 +402,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   width: var(--plate-w);
   height: var(--plate-h);
   translate: -50% 0;
-  filter: brightness(1) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.85));
+  filter: brightness(1) drop-shadow(0 0.3125rem 0.3125rem rgba(0, 0, 0, 0.85));
   transition:
     opacity var(--dur-3) var(--ease-out),
     visibility var(--dur-3) var(--ease-linear);
@@ -440,25 +440,25 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   pointer-events: auto;
 }
 
-/* A 3px bevel, then a 2.5px lit ring, each measured square to the 45° cut. */
+/* A 0.1875rem bevel, then a 0.1562rem lit ring, each measured square to the 45° cut. */
 .c-home-foot__screen {
-  --h: calc(var(--plate-h) - 6px);
+  --h: calc(var(--plate-h) - 0.375rem);
 
   position: absolute;
-  inset: 3px calc(3px * 1.41421);
+  inset: 0.1875rem calc(0.1875rem * 1.41421);
   isolation: isolate;
   background: rgba(var(--rgb-accent), 0.22);
 }
 
 .c-home-foot__screen::before {
-  --h: calc(var(--plate-h) - 11px);
+  --h: calc(var(--plate-h) - 0.6875rem);
 
   content: '';
   position: absolute;
-  inset: 2.5px calc(2.5px * 1.41421);
+  inset: 0.1562rem calc(0.1562rem * 1.41421);
   z-index: -1;
   background: var(--color-bg);
-  box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 0.1875rem 0.25rem rgba(0, 0, 0, 0.9);
 }
 
 .c-home-foot__swap {
@@ -467,11 +467,11 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   height: 100%;
   margin: 0;
   overflow: hidden;
-  line-height: calc(var(--plate-h) - 6px);
+  line-height: calc(var(--plate-h) - 0.375rem);
   text-indent: var(--track-label);
   text-align: center;
   white-space: nowrap;
-  text-shadow: 0 0 8px rgba(var(--rgb-accent), 0.35);
+  text-shadow: 0 0 0.5rem rgba(var(--rgb-accent), 0.35);
 }
 
 /* Clipped: fitLine reads each line's own overflow. */
@@ -484,17 +484,17 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   align-items: center;
   /* safe: a line that still overflows clips at its end, not at both. */
   justify-content: safe center;
-  gap: 6px;
+  gap: 0.375rem;
   color: var(--color-ink-soft);
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(0.5rem);
   transition:
     opacity var(--dur-2) var(--ease-out),
     transform var(--dur-2) var(--ease-out);
 }
 
 .c-home-foot__say:first-child {
-  transform: translateY(-8px);
+  transform: translateY(-0.5rem);
 }
 
 .c-home-foot__say.is-on {

@@ -102,7 +102,7 @@ const lines = computed<CardLine[]>(() =>
   position: absolute;
   right: var(--space-2);
   bottom: var(--space-2);
-  padding: 3px 7px;
+  padding: 0.1875rem 0.4375rem;
   border-radius: var(--radius-s);
   background: rgba(var(--rgb-bg), 0.8);
   opacity: 0;
@@ -149,7 +149,7 @@ const lines = computed<CardLine[]>(() =>
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   color: inherit;
 }
 

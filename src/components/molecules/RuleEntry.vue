@@ -206,7 +206,7 @@ const chunks = computed(() => {
 .c-rule__chip {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-3);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);

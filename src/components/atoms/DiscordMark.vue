@@ -1,5 +1,7 @@
 <script setup lang="ts">
 /* Discord's mark is only ever white, black or its own colour: never tinted, glowed or put on a blurple plate. */
+import { pageScale } from '@/site/pageScale';
+
 withDefaults(defineProps<{ size?: number; tone?: 'white' | 'black' }>(), { size: 24, tone: 'white' });
 </script>
 
@@ -8,6 +10,7 @@ withDefaults(defineProps<{ size?: number; tone?: 'white' | 'black' }>(), { size:
     class="c-discord-mark"
     :width="size"
     :height="size"
+    :style="{ width: `${size * pageScale}px`, height: `${size * pageScale}px` }"
     viewBox="0 0 24 24"
     :fill="tone === 'white' ? '#ffffff' : '#000000'"
     aria-hidden="true"

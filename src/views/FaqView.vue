@@ -364,7 +364,7 @@ const routing = [
 .faq__route-link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--size-m);
   color: var(--color-accent-text);
 }
@@ -391,7 +391,7 @@ const routing = [
   gap: var(--space-4);
   align-items: baseline;
   justify-content: space-between;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-block: var(--space-4);
   cursor: pointer;
   list-style: none;
@@ -447,7 +447,7 @@ const routing = [
   background: var(--color-accent-wash);
   color: var(--color-ink);
   border-radius: var(--radius-s);
-  padding-inline: 2px;
+  padding-inline: 0.125rem;
 }
 
 .faq__stuck-title {

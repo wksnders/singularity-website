@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* The plate must stay sticky: it carries the hero's calls to action on side layouts. */
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import CardGlyph from '@/components/atoms/CardGlyph.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
@@ -12,7 +12,8 @@ import { game } from '@/data/universe';
 import { PANEL, type LidDest, type LidReadout } from '@/site/lidSplitScene';
 import { plainClick } from '@/site/glide';
 import { asset, outbound, to } from '@/site/links';
-import { LABEL_CAPS_ADVANCE, token, tokenPx } from '@/site/tokens';
+import { pageScale } from '@/site/pageScale';
+import { LABEL_CAPS_ADVANCE, token, tokenDesignPx } from '@/site/tokens';
 
 const props = defineProps<{
   /** Px: the column; the plate reaches past it over the lid. */
@@ -46,11 +47,13 @@ const TIGHT_BELOW = 700;
 const PLATE = { plate: 450, pocket: 180, slot: 37, foot: 115, footTop: 21, footW: 250, footWOpen: 310, textRight: 102, ctasMax: 360 };
 /** The box wrap behind the plate, registered on the lid, in wrap px: crop edge to lid window, crop size, window width, lift above the plate. */
 const WRAP = { toLid: 1732, w: 1780, h: 2996, lidW: 2360, lift: 80, widths: [890, 1280] };
+/** Measured on the wrap art, in wrap px: its teeth's period, the rows whose edge strip is plain metal, the lowest row a single wrap may bring to the plate's foot, and the lowest a repeated one does; `step` is the most periods between two copies, and `air` the px a join keeps from a window. */
+const WRAP_REPEAT = { pitch: 132, body: [600, 1600], still: 2720, rest: 2620, step: 4, air: 6 };
 /** Px: the lid's width when the column is PANEL.ref wide. */
 const LID_AT_REF = 846;
 
 const ps = computed(() => props.width / PANEL.ref);
-/* Wrap px to page px: the wrap's lid window is drawn at the lid's own scale. */
+/* Wrap px to design px: the wrap's lid window is drawn at the lid's own scale. */
 const wrapScale = (column: number) => ((column / PANEL.ref) * LID_AT_REF) / WRAP.lidW;
 const wrap = computed(() => {
   const k = wrapScale(props.width);
@@ -73,9 +76,9 @@ const footOpen = ref(false);
 function checkRoom(): void {
   const grid = names.value;
   if (!grid) return;
-  const labelW = Math.max(0, ...[...grid.querySelectorAll<HTMLElement>('.c-home-panel__label')].map((l) => l.offsetWidth));
-  const room = PLATE.footW * ps.value - labelW - (parseFloat(getComputedStyle(grid).columnGap) || 0);
-  const advance = tokenPx('--size-label-xs') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label-tight')));
+  const labelW = Math.max(0, ...[...grid.querySelectorAll<HTMLElement>('.c-home-panel__label')].map((l) => l.offsetWidth)) / pageScale.value;
+  const room = PLATE.footW * ps.value - labelW - (parseFloat(getComputedStyle(grid).columnGap) || 0) / pageScale.value;
+  const advance = tokenDesignPx('--size-label-xs') * (LABEL_CAPS_ADVANCE + parseFloat(token('--track-label-tight')));
   const longest = Math.max(0, ...props.cast.flatMap((r) => [r.character.length, r.faction.length]));
   footOpen.value = longest * advance > room;
 }
@@ -84,6 +87,59 @@ const natural = ref(0);
 const tagOff = ref(false);
 const pocketH = ref(PLATE.pocket);
 const plateH = computed(() => Math.max(props.height, natural.value));
+/** Px from the plate's top: the spans where the wrap shows through it. */
+const windows = ref<[number, number][]>([]);
+
+function readWindows(): void {
+  const el = plate.value;
+  if (!el) return;
+  const slots = [...el.querySelectorAll<HTMLElement>('.c-home-panel__slot')];
+  const top = pocket.value;
+  const z = pageScale.value;
+  windows.value = [
+    ...(top ? [[0, (top.offsetTop + top.offsetHeight) / z] as [number, number]] : []),
+    ...slots.map((s, i): [number, number] => [s.offsetTop / z, i === slots.length - 1 ? Infinity : (s.offsetTop + s.offsetHeight) / z]),
+  ];
+}
+
+/* Copies sit a whole number of teeth apart so the teeth meet, and each fades into the next only where the plate is solid over both. */
+const wrapCopies = computed(() => {
+  const { pitch, body, still, rest, step, air } = WRAP_REPEAT;
+  const k = wrapScale(props.width);
+  const { left, top, w, h } = wrap.value;
+  const fade = pitch * k;
+  const foot = (plateH.value - top) / k;
+  const total = foot <= still ? 0 : Math.ceil((foot - rest) / pitch);
+  const count = Math.ceil(total / step);
+  const shifts = Array.from({ length: count + 1 }, (_, i) => (count ? Math.round((i * total) / count) : 0));
+  const joins = shifts.slice(1).map((shift, i) => {
+    const lo = top + (shift * pitch + body[0]) * k + fade / 2;
+    const hi = top + (shifts[i] * pitch + body[1]) * k - fade / 2;
+    const mid = (lo + hi) / 2;
+    const hit = windows.value.find(([a, b]) => mid > a - fade / 2 - air && mid < b + fade / 2 + air);
+    if (!hit) return mid;
+    const sides = [hit[0] - fade / 2 - air, hit[1] + fade / 2 + air].filter((y) => y >= lo && y <= hi);
+    return sides.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid))[0] ?? mid;
+  });
+  return shifts
+    .map((shift, i) => {
+      const y = top + shift * fade;
+      const mask = i < count ? `linear-gradient(#000 ${(joins[i] - fade / 2 - y) * pageScale.value}px, transparent ${(joins[i] + fade / 2 - y) * pageScale.value}px)` : undefined;
+      return {
+        shift,
+        style: {
+          left: `${left * pageScale.value}px`,
+          top: `${y * pageScale.value}px`,
+          width: `${w * pageScale.value}px`,
+          height: `${h * pageScale.value}px`,
+          clipPath: i ? `inset(${(joins[i - 1] - fade / 2 - y) * pageScale.value}px 0 0 0)` : undefined,
+          maskImage: mask,
+          WebkitMaskImage: mask,
+        },
+      };
+    })
+    .reverse();
+});
 let tagRoom = 0;
 let observer: ResizeObserver | null = null;
 
@@ -98,23 +154,24 @@ function fit(): void {
   if (!top) {
     const min = el.style.minHeight;
     el.style.minHeight = '0px';
-    natural.value = el.offsetHeight;
+    natural.value = el.offsetHeight / pageScale.value;
     el.style.minHeight = min;
     checkRoom();
+    void nextTick(readWindows);
     return;
   }
   const tagEl = tag.value?.$el as HTMLElement | undefined;
   if (!tagOff.value && tagEl?.parentElement) {
     /* rowGap reads 'normal' without a gap; NaN here flips tagOff on every call. */
-    tagRoom = tagEl.offsetHeight + (parseFloat(getComputedStyle(tagEl.parentElement).rowGap) || 0);
+    tagRoom = (tagEl.offsetHeight + (parseFloat(getComputedStyle(tagEl.parentElement).rowGap) || 0)) / pageScale.value;
   }
   const most = PLATE.pocket * ps.value;
-  const least = Math.min(most, tokenPx('--nav-height') + tokenPx('--space-2'));
+  const least = Math.min(most, tokenDesignPx('--nav-height') + tokenDesignPx('--space-2'));
   const min = el.style.minHeight;
   const was = top.style.height;
   el.style.minHeight = '0px';
-  top.style.height = `${least}px`;
-  const shown = el.offsetHeight;
+  top.style.height = `${least * pageScale.value}px`;
+  const shown = el.offsetHeight / pageScale.value;
   el.style.minHeight = min;
   top.style.height = was;
   const full = shown + (tagOff.value ? tagRoom : 0);
@@ -123,16 +180,17 @@ function fit(): void {
   pocketH.value = Math.max(least, Math.min(most, least + props.height - rest));
   natural.value = rest - least + pocketH.value;
   checkRoom();
+  void nextTick(readWindows);
 }
 
 /* Low fetch priority: on a slow connection it lands after the panel, so it fades in rather than popping. */
-const wrapImg = ref<HTMLImageElement | null>(null);
 const wrapIn = ref(false);
 
 onMounted(() => {
   observer = new ResizeObserver(fit);
   if (plate.value) observer.observe(plate.value);
-  if (wrapImg.value?.complete && wrapImg.value.naturalWidth) wrapIn.value = true;
+  const wrapImg = plate.value?.querySelector<HTMLImageElement>('.c-home-panel__wrap');
+  if (wrapImg?.complete && wrapImg.naturalWidth) wrapIn.value = true;
   /* The observer misses the swap to the real fonts: the plate's min-height keeps its box the same size. */
   void document.fonts?.ready.then(fit);
 });
@@ -170,35 +228,33 @@ function universe(on: boolean): void {
   if (props.hover || !on) emit('universe', on);
 }
 
-const px = (v: number) => `${v.toFixed(1)}px`;
 </script>
 
 <template>
   <div
     class="c-home-panel"
     :style="{
-      width: px(PLATE.plate * ps),
-      bottom: `${release}px`,
+      width: `${PLATE.plate * ps * pageScale}px`,
+      bottom: `${release * pageScale}px`,
       '--ps': ps,
-      '--slot': px(PLATE.slot * ps),
-      '--foot': px(PLATE.foot * ps),
-      '--foot-top': px(PLATE.footTop * ps),
-      '--foot-w': px((footOpen ? PLATE.footWOpen : PLATE.footW) * ps),
-      '--inset': px(inset),
-      '--text-right': px(PLATE.textRight * ps),
-      '--ctas-max': px(Math.min(PLATE.ctasMax * ps, PLATE.plate * ps - inset - 8)),
+      '--slot': `${PLATE.slot * ps * pageScale}px`,
+      '--foot': `${PLATE.foot * ps * pageScale}px`,
+      '--foot-top': `${PLATE.footTop * ps * pageScale}px`,
+      '--foot-w': `${(footOpen ? PLATE.footWOpen : PLATE.footW) * ps * pageScale}px`,
+      '--inset': `${inset * pageScale}px`,
+      '--text-right': `${PLATE.textRight * ps * pageScale}px`,
+      '--ctas-max': `${Math.min(PLATE.ctasMax * ps, PLATE.plate * ps - inset - 8) * pageScale}px`,
     }"
   >
     <div
       ref="plate"
       class="c-home-panel__plate"
       :class="{ 'is-tight': height < TIGHT_BELOW, 'is-short': short }"
-      :style="{ minHeight: `${height}px`, top: `${Math.min(0, height - plateH)}px` }"
+      :style="{ minHeight: `${height * pageScale}px`, top: `${Math.min(0, height - plateH) * pageScale}px` }"
     >
-      <picture>
+      <picture v-for="copy in wrapCopies" :key="copy.shift">
         <source type="image/avif" :srcset="wrapSrcset('avif')" :sizes="wrapSizes" />
         <img
-          ref="wrapImg"
           class="c-home-panel__wrap"
           :class="{ 'is-in': wrapIn }"
           fetchpriority="low"
@@ -207,12 +263,12 @@ const px = (v: number) => `${v.toFixed(1)}px`;
           :sizes="wrapSizes"
           alt=""
           decoding="async"
-          :style="{ left: px(wrap.left), top: px(wrap.top), width: px(wrap.w), height: px(wrap.h) }"
+          :style="copy.style"
           @load="wrapIn = true"
         />
       </picture>
 
-      <div v-if="!short" ref="pocket" class="c-home-panel__band" :style="{ height: px(pocketH), backgroundImage: band('top') }" aria-hidden="true" />
+      <div v-if="!short" ref="pocket" class="c-home-panel__band" :style="{ height: `${pocketH * pageScale}px`, backgroundImage: band('top') }" aria-hidden="true" />
 
       <div class="c-home-panel__band c-home-panel__pitch" :style="{ backgroundImage: band('text') }">
         <MonoLabel ref="tag" tone="accent" class="c-home-panel__tag" :class="{ 'l-sr-only': tagOff || short }">
@@ -297,13 +353,13 @@ const px = (v: number) => `${v.toFixed(1)}px`;
       v-if="tab && plateH <= height"
       class="c-home-panel__tab"
       :style="{
-        top: `calc(100% - ${PANEL.tab.tuck}px)`,
-        width: px(PANEL.tab.w * ps),
-        height: px(PANEL.tab.h * ps),
-        '--label-x': `${PANEL.tab.label.x}px`,
-        '--label-top': `${PANEL.tab.label.top}px`,
-        '--label-size': `${PANEL.tab.label.size}px`,
-        '--label-track': `${PANEL.tab.label.track}px`,
+        top: `calc(100% - ${PANEL.tab.tuck * pageScale}px)`,
+        width: `${PANEL.tab.w * ps * pageScale}px`,
+        height: `${PANEL.tab.h * ps * pageScale}px`,
+        '--label-x': `${PANEL.tab.label.x * pageScale}px`,
+        '--label-top': `${PANEL.tab.label.top * pageScale}px`,
+        '--label-size': `${PANEL.tab.label.size * pageScale}px`,
+        '--label-track': `${PANEL.tab.label.track * pageScale}px`,
       }"
       aria-hidden="true"
     >
@@ -394,20 +450,20 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 }
 
 .c-home-panel__pitch {
-  padding: calc(4px * var(--ps)) var(--text-right) calc(12px * var(--ps)) var(--inset);
+  padding: calc(0.25rem * var(--ps)) var(--text-right) calc(0.75rem * var(--ps)) var(--inset);
 }
 
 .c-home-panel__act {
   align-items: flex-start;
-  gap: max(8px, calc(12px * var(--ps)));
-  padding: calc(21px * var(--ps)) var(--space-2) calc(14px * var(--ps)) var(--inset);
+  gap: max(0.5rem, calc(0.75rem * var(--ps)));
+  padding: calc(1.3125rem * var(--ps)) var(--space-2) calc(0.875rem * var(--ps)) var(--inset);
 }
 
 /* The art keeps its own height at the band's foot; larger text grows the band upward, filled by the art's top rows stretched. */
 .c-home-panel__base {
   display: flow-root;
   min-height: var(--foot);
-  padding: var(--foot-top) 0 calc(14px * var(--ps)) var(--inset);
+  padding: var(--foot-top) 0 calc(0.875rem * var(--ps)) var(--inset);
   background-position: 0 100%;
   background-size: 100% var(--foot);
 }
@@ -426,28 +482,28 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  font-size: clamp(var(--size-label-s), 1.032vw, 1.05rem);
+  gap: 0.125rem;
+  font-size: clamp(var(--size-label-s), calc(1.032 * var(--hero-vw, 1vw)), 1.05rem);
   line-height: 1.6;
 }
 
 .c-home-panel__modes {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .c-home-panel__title {
-  margin: max(6px, calc(8px * var(--ps))) 0 0;
-  font-size: clamp(1.312rem, 1.969vw, 2.1rem);
+  margin: max(0.375rem, calc(0.5rem * var(--ps))) 0 0;
+  font-size: clamp(1.312rem, calc(1.969 * var(--hero-vw, 1vw)), 2.1rem);
   line-height: 1.12;
   text-wrap: balance;
 }
 
 .c-home-panel__body {
   max-width: 34ch;
-  margin-top: max(16px, calc(34px * var(--ps)));
-  font-size: clamp(0.9375rem, 1.25vw, 1.1875rem);
+  margin-top: max(1rem, calc(2.125rem * var(--ps)));
+  font-size: clamp(0.9375rem, calc(1.25 * var(--hero-vw, 1vw)), 1.1875rem);
   line-height: 1.5;
   text-wrap: pretty;
   color: var(--color-ink-muted);
@@ -457,7 +513,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px var(--space-5);
+  gap: 0.625rem var(--space-5);
   max-width: var(--ctas-max);
 }
 
@@ -472,15 +528,15 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   width: 0;
   height: 0;
   margin-right: var(--space-2);
-  border-left: 9px solid currentColor;
-  border-top: 5.5px solid transparent;
-  border-bottom: 5.5px solid transparent;
+  border-left: 0.5625rem solid currentColor;
+  border-top: 0.3438rem solid transparent;
+  border-bottom: 0.3438rem solid transparent;
 }
 
 .c-home-panel__buy {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--size-body-l);
   font-weight: 700;
   white-space: nowrap;
@@ -495,7 +551,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 .c-home-panel__universe {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
   color: var(--color-ink-soft);
   transition:
@@ -507,14 +563,14 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 .c-home-panel__universe:hover {
   color: var(--color-ink-bright);
   text-decoration: none;
-  text-shadow: 0 0 14px rgba(var(--rgb-accent), 0.8);
+  text-shadow: 0 0 0.875rem rgba(var(--rgb-accent), 0.8);
 }
 
 .c-home-panel__foot {
   position: relative;
   width: var(--foot-w);
   display: grid;
-  min-height: 40px;
+  min-height: 2.5rem;
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-line-strong);
 }
@@ -541,8 +597,8 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 
 .c-home-panel__dot {
   flex: none;
-  width: 6px;
-  height: 6px;
+  width: 0.375rem;
+  height: 0.375rem;
   border: 1px solid currentColor;
   border-radius: var(--radius-pill);
 }
@@ -558,7 +614,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   gap: var(--space-1) var(--space-4);
   align-items: baseline;
   opacity: 0;
-  transform: translateY(4px);
+  transform: translateY(0.25rem);
   transition:
     opacity var(--dur-2) var(--ease-out),
     transform var(--dur-2) var(--ease-out);
@@ -577,7 +633,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
   font-family: var(--font-label);
   font-size: var(--size-label-m);
   font-weight: 600;
-  line-height: 18px;
+  line-height: 1.125rem;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--color-ink);
@@ -592,7 +648,7 @@ const px = (v: number) => `${v.toFixed(1)}px`;
 }
 
 .c-home-panel__plate.is-tight .c-home-panel__body {
-  margin-top: max(8px, calc(16px * var(--ps)));
+  margin-top: max(0.5rem, calc(1rem * var(--ps)));
 }
 
 /* Without the pocket the text band starts at the plate's top, under the nav. */

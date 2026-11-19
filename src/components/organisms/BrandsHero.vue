@@ -4,6 +4,7 @@ import WallHero from '@/components/organisms/WallHero.vue';
 import type { WallColumn } from '@/components/organisms/WallHero.vue';
 import { useMediaQuery } from '@/composables/useMediaQuery';
 import { asset } from '@/site/links';
+import { pageScale } from '@/site/pageScale';
 import type { Crumb } from '@/site/sections';
 
 const props = defineProps<{
@@ -14,7 +15,7 @@ const props = defineProps<{
   logoAlt: string;
 }>();
 
-const wide = useMediaQuery('(min-width: 900px)');
+const wide = useMediaQuery('(min-width: 56.25em)');
 
 const CELLS = 12;
 const PACE = [0.34, 0.55, 0.42, 0.62, 0.48, 0.28];
@@ -33,8 +34,8 @@ const columns = computed<WallColumn[]>(() => {
       height: size,
       style: {
         opacity: FADE[c % FADE.length],
-        '--wall-size': `${size}px`,
-        '--wall-gap': `${Math.round(size * 0.5)}px`,
+        '--wall-size': `${size * pageScale.value}px`,
+        '--wall-gap': `${Math.round(size * 0.5) * pageScale.value}px`,
       },
       cells: Array.from({ length: CELLS }, (_, k) =>
         (c * 3 + k * 5) % 7 < 2 ? null : props.marks[(c * 5 + k * 7) % n],
@@ -67,7 +68,7 @@ const columns = computed<WallColumn[]>(() => {
 
 <style>
 .c-brands-hero {
-  min-height: clamp(340px, calc(40vh + 12vw), 640px);
+  min-height: clamp(21.25rem, calc(40vh + 12vw), 40rem);
 }
 
 .c-brands-hero__body {
@@ -75,7 +76,7 @@ const columns = computed<WallColumn[]>(() => {
   width: 100%;
   max-width: var(--width-content);
   margin: 0 auto;
-  padding: 124px var(--gutter) clamp(40px, 6vw, 80px);
+  padding: 7.75rem var(--gutter) clamp(2.5rem, 6vw, 5rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,7 +99,7 @@ const columns = computed<WallColumn[]>(() => {
 .c-brands-hero__logo {
   position: relative;
   display: block;
-  width: min(76%, 520px);
+  width: min(76%, 32.5rem);
   margin-top: var(--space-2);
 }
 
@@ -114,7 +115,7 @@ const columns = computed<WallColumn[]>(() => {
   width: 100%;
   height: auto;
   filter: invert(1) brightness(0.7) sepia(1) hue-rotate(190deg) saturate(0.8)
-    drop-shadow(0 0 8px rgba(var(--rgb-accent), 0.5))
-    drop-shadow(0 0 32px rgba(198, 208, 247, 0.34));
+    drop-shadow(0 0 0.5rem rgba(var(--rgb-accent), 0.5))
+    drop-shadow(0 0 2rem rgba(198, 208, 247, 0.34));
 }
 </style>

@@ -20,7 +20,7 @@ withDefaults(defineProps<{ alt?: string }>(), { alt: '' });
 <style>
 .c-sitemark {
   display: block;
-  height: clamp(22px, 6dvw, 34px);
+  height: clamp(1.375rem, 6dvw, 2.125rem);
   width: auto;
   filter: invert(1);
 }

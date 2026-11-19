@@ -3,6 +3,7 @@
 import { computed } from 'vue';
 import FactionDot from '@/components/atoms/FactionDot.vue';
 import { asset } from '@/site/links';
+import { pageScale } from '@/site/pageScale';
 
 const props = withDefaults(
   defineProps<{
@@ -39,7 +40,7 @@ const dotSize = () => Math.max(8, Math.round(props.size * 0.32));
     :loading="eager ? 'eager' : 'lazy'"
     :fetchpriority="eager ? 'high' : 'auto'"
     decoding="async"
-    :style="{ width: `${size}px`, height: `${size}px` }"
+    :style="{ width: `${size * pageScale}px`, height: `${size * pageScale}px` }"
   />
   <FactionDot v-else :color="color" :size="dotSize()" />
 </template>

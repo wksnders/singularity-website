@@ -33,7 +33,7 @@ defineExpose({ el });
 .c-field {
   width: 100%;
   min-width: 0;
-  min-height: 48px;
+  min-height: 3rem;
   padding-inline: var(--space-4);
   background: var(--color-bg);
   border: 1px solid var(--color-line-strong);

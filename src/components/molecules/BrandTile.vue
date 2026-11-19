@@ -71,10 +71,10 @@ withDefaults(
 .c-brand__edge {
   position: absolute;
   top: -1px;
-  left: 24px;
-  right: 24px;
-  height: 2px;
-  border-radius: 0 0 2px 2px;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 0.125rem;
+  border-radius: 0 0 0.125rem 0.125rem;
   background: var(--faction, rgba(var(--rgb-ink), 0.28));
 }
 
@@ -117,7 +117,7 @@ withDefaults(
 }
 
 .c-brand__note {
-  margin-top: 2px;
+  margin-top: 0.125rem;
   font-family: var(--font-label);
   font-weight: 500;
   font-size: var(--size-s);

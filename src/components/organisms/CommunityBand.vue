@@ -82,7 +82,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   --hang-w: 9.375rem;
   --hang-h: 2.25rem;
 
-  padding-top: clamp(40px, 6vw, 64px);
+  padding-top: clamp(2.5rem, 6vw, 4rem);
   background: var(--color-bg);
 }
 
@@ -104,7 +104,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 
 .c-community__strip::before {
   z-index: -2;
-  bottom: -1.5px;
+  bottom: -0.0938rem;
   background: rgba(var(--rgb-accent-text), 0.5);
 }
 
@@ -117,9 +117,9 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) 26px;
-  padding-top: 18px;
-  padding-bottom: calc(var(--hang-h) + 14px);
+  gap: var(--space-1) 1.625rem;
+  padding-top: 1.125rem;
+  padding-bottom: calc(var(--hang-h) + 0.875rem);
 }
 
 .c-community__creators {
@@ -133,8 +133,8 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 .c-community__creator {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
+  gap: 0.625rem;
+  min-height: 2.75rem;
   color: var(--color-ink);
   text-decoration: none;
 }
@@ -144,12 +144,12 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__ini {
-  --chamfer: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+  --chamfer: polygon(0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% calc(100% - 0.5rem), calc(100% - 0.5rem) 100%, 0.5rem 100%, 0 calc(100% - 0.5rem), 0 0.5rem);
 
   position: relative;
   isolation: isolate;
-  flex: 0 0 32px;
-  height: 32px;
+  flex: 0 0 2rem;
+  height: 2rem;
   display: grid;
   place-items: center;
   font-family: var(--font-label);
@@ -225,13 +225,13 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 
 /* Inset: on phones the link touches the screen edge, which clips an outer ring. */
 .c-community__coverage:focus-visible {
-  outline-offset: -2px;
-  box-shadow: inset 0 0 0 4px var(--color-accent);
+  outline-offset: -0.125rem;
+  box-shadow: inset 0 0 0 0.25rem var(--color-accent);
 }
 
 .c-community__photo {
   position: relative;
-  height: min(66.667vw, 520px);
+  height: min(66.667vw, 32.5rem);
   margin-top: calc(-1 * var(--hang-h));
 }
 
@@ -255,11 +255,11 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__plate {
-  --shape: polygon(0 0, calc(100% - 48px) 0, 100% 48px, 100% 100%, 0 100%);
+  --shape: polygon(0 0, calc(100% - 3rem) 0, 100% 3rem, 100% 100%, 0 100%);
 
   position: relative;
   isolation: isolate;
-  margin-top: -40px;
+  margin-top: -2.5rem;
 }
 
 .c-community__plate::before,
@@ -272,7 +272,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 
 .c-community__plate::before {
   z-index: -2;
-  top: -1.5px;
+  top: -0.0938rem;
   background: rgba(var(--rgb-accent-text), 0.5);
 }
 
@@ -282,18 +282,18 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__plate-in {
-  padding-top: 52px;
+  padding-top: 3.25rem;
   padding-bottom: var(--space-10);
 }
 
 .c-community__talk {
-  max-width: 640px;
+  max-width: 40rem;
 }
 
 .c-community__title {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 0.875rem;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.706rem;
@@ -309,11 +309,11 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__act {
-  margin-top: 22px;
+  margin-top: 1.375rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3) 18px;
+  gap: var(--space-3) 1.125rem;
 }
 
 /* Same filter list at rest and on hover (WebKit's stale-filter bug). */
@@ -321,12 +321,12 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: 50px;
-  padding: 0 30px;
+  min-height: 3.125rem;
+  padding: 0 1.875rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 0.625rem;
   font-weight: 600;
   white-space: nowrap;
   color: var(--color-bg);
@@ -340,7 +340,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   inset: 0;
   z-index: -1;
   background: var(--color-ink);
-  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  clip-path: polygon(1rem 0, calc(100% - 1rem) 0, 100% 50%, calc(100% - 1rem) 100%, 1rem 100%, 0 50%);
 }
 
 .c-community__join:hover {
@@ -352,7 +352,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   margin-top: var(--space-7);
 }
 
-@media (min-width: 960px) {
+@media (min-width: 60em) {
   .c-community {
     --hang-w: 12.5rem;
     --hang-h: 2.75rem;
@@ -372,8 +372,8 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   }
 
   .c-community__roll {
-    padding-top: 26px;
-    padding-bottom: calc(var(--hang-h) + 22px);
+    padding-top: 1.625rem;
+    padding-bottom: calc(var(--hang-h) + 1.375rem);
   }
 
   .c-community__coverage {
@@ -384,7 +384,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   .c-community__scene {
     position: relative;
     isolation: isolate;
-    min-height: 560px;
+    min-height: 35rem;
     margin-top: calc(-1 * var(--hang-h));
   }
 
@@ -411,7 +411,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   .c-community__caption {
     top: auto;
     right: var(--edge);
-    bottom: 14px;
+    bottom: 0.875rem;
   }
 
   .c-community__photo .c-art__empty {
@@ -431,14 +431,14 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 
   /* Keep the inbox in the grid: pinned absolutely, larger text pushes it out of the band. */
   .c-community__plate-in {
-    min-height: 560px;
-    padding-top: 104px;
+    min-height: 35rem;
+    padding-top: 6.5rem;
     padding-bottom: var(--space-16);
     display: grid;
-    grid-template-columns: minmax(0, 440px) 350px;
+    grid-template-columns: minmax(0, 27.5rem) 21.875rem;
     justify-content: space-between;
     align-items: center;
-    column-gap: 50px;
+    column-gap: 3.125rem;
   }
 
   .c-community__talk {
@@ -454,7 +454,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
   }
 
   .c-community__inbox.c-newsletter {
-    --shape: polygon(0 var(--tab-h), calc(100% - var(--tab-w) - var(--tab-h)) var(--tab-h), calc(100% - var(--tab-w)) 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+    --shape: polygon(0 var(--tab-h), calc(100% - var(--tab-w) - var(--tab-h)) var(--tab-h), calc(100% - var(--tab-w)) 0, 100% 0, 100% calc(100% - 1.125rem), calc(100% - 1.125rem) 100%, 0 100%);
     --glow-at: 0% 100%;
 
     align-self: end;

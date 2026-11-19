@@ -86,7 +86,7 @@ const columns = computed(() => {
   top: 100%;
   border-top: 1px solid var(--color-line);
   background: var(--color-surface);
-  box-shadow: 0 24px 48px rgba(var(--rgb-bg), 0.6);
+  box-shadow: 0 1.5rem 3rem rgba(var(--rgb-bg), 0.6);
 }
 
 .c-mega__inner {
@@ -118,7 +118,7 @@ const columns = computed(() => {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: 40px;
+  min-height: 2.5rem;
   padding-block: 0;
   font-size: var(--size-m);
 }
@@ -131,7 +131,7 @@ const columns = computed(() => {
 
 .c-mega__note {
   display: block;
-  margin-top: 2px;
+  margin-top: 0.125rem;
   font-size: var(--size-label-m);
   color: rgba(var(--rgb-ink), 0.55);
 }
@@ -160,7 +160,7 @@ const columns = computed(() => {
 .c-mega__name {
   position: absolute;
   left: var(--space-3);
-  bottom: 10px;
+  bottom: 0.625rem;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--size-body-s);

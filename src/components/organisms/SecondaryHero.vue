@@ -29,8 +29,8 @@ withDefaults(defineProps<{ glow?: string; note?: string }>(), {
     radial-gradient(var(--glow-origin), rgba(var(--rgb-accent), 0.18) 0%, rgba(var(--rgb-bg), 0) 60%),
     repeating-linear-gradient(
       135deg,
-      rgba(var(--rgb-ink), 0.04) 0 12px,
-      rgba(var(--rgb-ink), 0.015) 12px 24px
+      rgba(var(--rgb-ink), 0.04) 0 0.75rem,
+      rgba(var(--rgb-ink), 0.015) 0.75rem 1.5rem
     );
 }
 

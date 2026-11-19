@@ -134,7 +134,7 @@ const exit = computed(() => {
 <style>
 .c-cdetail__face {
   margin-top: var(--space-4);
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .c-cdetail__printings {

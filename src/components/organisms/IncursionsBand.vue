@@ -162,7 +162,7 @@ const ground = {
   z-index: 0;
   isolation: isolate;
   overflow: hidden;
-  margin-top: -109px;
+  margin-top: -6.8125rem;
   background: var(--color-bg-alt);
 }
 
@@ -175,9 +175,9 @@ const ground = {
   background: var(--color-threat-text);
   opacity: 0.07;
   -webkit-mask-image: var(--incursions-texture);
-  -webkit-mask-size: 300px;
+  -webkit-mask-size: 18.75rem;
   mask-image: var(--incursions-texture);
-  mask-size: 300px;
+  mask-size: 18.75rem;
 }
 
 .c-incursions::before {
@@ -194,9 +194,9 @@ const ground = {
   top: 0;
   bottom: 0;
   left: var(--gutter);
-  width: 40px;
+  width: 2.5rem;
   background: var(--incursions-spine) center top / 100% auto repeat-y;
-  filter: drop-shadow(0 0 18px rgba(var(--rgb-threat), 0.5));
+  filter: drop-shadow(0 0 1.125rem rgba(var(--rgb-threat), 0.5));
 }
 
 .c-incursions__spine--grid {
@@ -210,10 +210,10 @@ const ground = {
     'head'
     'art'
     'controls';
-  gap: clamp(24px, 3vw, 32px) 0;
+  gap: clamp(1.5rem, 3vw, 2rem) 0;
   max-width: var(--width-content);
   margin: 0 auto;
-  padding: 108px var(--gutter) var(--band-y) 76px;
+  padding: 6.75rem var(--gutter) var(--band-y) 4.75rem;
 }
 
 .c-incursions__head {
@@ -230,7 +230,7 @@ const ground = {
 
 .c-incursions__body {
   max-width: 56ch;
-  margin-top: 18px;
+  margin-top: 1.125rem;
   font-size: var(--size-body-l);
   line-height: 1.6;
   color: rgba(var(--rgb-ink), 0.76);
@@ -240,16 +240,16 @@ const ground = {
   grid-area: art;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0.875rem;
   width: 100%;
-  max-width: 448px;
+  max-width: 28rem;
 }
 
 .c-incursions__frame {
   position: relative;
   aspect-ratio: 5 / 7;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   background: var(--color-surface);
 }
 
@@ -277,8 +277,8 @@ const ground = {
 
 .c-incursions__step {
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid rgba(var(--rgb-ink), 0.22);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -297,7 +297,7 @@ const ground = {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 0.3125rem;
   text-align: center;
 }
 
@@ -341,7 +341,7 @@ const ground = {
 
   display: flex;
   flex-wrap: wrap;
-  gap: 14px var(--space-2);
+  gap: 0.875rem var(--space-2);
 }
 
 .c-incursions__group {
@@ -360,18 +360,18 @@ const ground = {
 .c-incursions__thumbs {
   display: flex;
   gap: var(--gap-in);
-  padding: 4px;
-  margin: -4px;
+  padding: 0.25rem;
+  margin: -0.25rem;
 }
 
 .c-incursions__thumb {
   flex: 1 1 0;
-  min-width: 44px;
+  min-width: 2.75rem;
   aspect-ratio: 5 / 7;
   padding: 0;
   overflow: hidden;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   background: var(--color-surface);
   box-shadow: 0 0 0 1px rgba(var(--rgb-ink), 0.14);
   filter: brightness(0.55) saturate(0.7);
@@ -389,19 +389,19 @@ const ground = {
 
 .c-incursions__thumb[aria-pressed='true'] {
   box-shadow:
-    0 0 0 2px var(--color-bg-alt),
-    0 0 0 4px var(--color-threat-text);
+    0 0 0 0.125rem var(--color-bg-alt),
+    0 0 0 0.25rem var(--color-threat-text);
 }
 
 /* After the pressed ring, so keyboard focus still shows on the shown boss. */
 .c-incursions__thumb:focus-visible {
   box-shadow:
-    0 0 0 2px var(--color-bg-alt),
-    0 0 0 4px var(--color-accent);
+    0 0 0 0.125rem var(--color-bg-alt),
+    0 0 0 0.25rem var(--color-accent);
 }
 
 .c-incursions__rule {
-  height: 2px;
+  height: 0.125rem;
   border-radius: 1px;
   background: rgba(var(--rgb-ink), 0.14);
   transition: background 240ms ease;
@@ -428,7 +428,7 @@ const ground = {
 }
 
 .c-incursions__cta-wrap {
-  padding: 4px;
+  padding: 0.25rem;
 }
 
 /* clip-path cuts off an outer focus ring, so focus repaints the outline layer instead. */
@@ -437,15 +437,15 @@ const ground = {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 36px;
+  min-height: 3rem;
+  padding: 0 2.25rem;
   background: rgba(var(--rgb-threat-text), 0.7);
-  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  clip-path: polygon(1rem 0, calc(100% - 1rem) 0, 100% 50%, calc(100% - 1rem) 100%, 1rem 100%, 0 50%);
   color: var(--color-ink);
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
-  outline-offset: -3px;
+  outline-offset: -0.1875rem;
 }
 
 .c-incursions__cta:hover {
@@ -460,9 +460,9 @@ const ground = {
 
 .c-incursions__cta-fill {
   position: absolute;
-  inset: 1.5px;
+  inset: 0.0938rem;
   background: var(--color-threat-deep);
-  clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
+  clip-path: polygon(0.9375rem 0, calc(100% - 0.9375rem) 0, 100% 50%, calc(100% - 0.9375rem) 100%, 0.9375rem 100%, 0 50%);
 }
 
 .c-incursions__cta-label {
@@ -470,14 +470,14 @@ const ground = {
 }
 
 /* Same breakpoint as HomeFactionBand's wide layout: the foot's hardware is placed against this spine column. */
-@media (min-width: 960px) {
+@media (min-width: 60em) {
   .c-incursions {
-    margin-top: -147px;
+    margin-top: -9.1875rem;
   }
 
   .c-incursions__texture {
-    -webkit-mask-size: 360px;
-    mask-size: 360px;
+    -webkit-mask-size: 22.5rem;
+    mask-size: 22.5rem;
   }
 
   .c-incursions::before {
@@ -489,13 +489,13 @@ const ground = {
   }
 
   .c-incursions__grid {
-    grid-template-columns: minmax(0, 448px) 72px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 28rem) 4.5rem minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas:
       'art spine head'
       'art spine controls';
-    column-gap: 32px;
-    padding: 132px var(--gutter) var(--band-y);
+    column-gap: 2rem;
+    padding: 8.25rem var(--gutter) var(--band-y);
   }
 
   .c-incursions__groups {
@@ -512,18 +512,18 @@ const ground = {
   .c-incursions__spine--grid::before {
     content: '';
     position: absolute;
-    inset: -160px 0 -200px;
+    inset: -10rem 0 -12.5rem;
     background: var(--incursions-spine) center top / 100% auto repeat-y;
-    filter: drop-shadow(0 0 26px rgba(var(--rgb-threat), 0.5));
+    filter: drop-shadow(0 0 1.625rem rgba(var(--rgb-threat), 0.5));
   }
 
-  /* One row once the column holds all eight thumbs at the 44px tap target: 8 × 44 + 5 × 6 inner + 2 × 22 between = 426px. */
-  @container inc-controls (min-width: 426px) {
+  /* One row once the column holds all eight thumbs at the 2.75rem tap target: 8 × 2.75 + 5 × 0.375 inner + 2 × 1.375 between = 26.625rem. */
+  @container inc-controls (min-width: 26.625rem) {
     .c-incursions__groups {
-      --gap-in: 6px;
+      --gap-in: 0.375rem;
 
       flex-wrap: nowrap;
-      column-gap: 22px;
+      column-gap: 1.375rem;
     }
 
     .c-incursions__group:first-child {

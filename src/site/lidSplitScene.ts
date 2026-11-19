@@ -1,3 +1,4 @@
+import { pageScale } from '@/site/pageScale';
 import { DEFAULT_NOTCH, LID } from '@/data/lidArt';
 import type { LidStrip, Notch } from '@/data/lidArt';
 
@@ -166,7 +167,7 @@ export function notchPolygon(opts: {
   ];
   const out = pts.map((p) => {
     const [px, py] = map ? map(p) : p;
-    return `${px.toFixed(1)}px ${py.toFixed(1)}px`;
+    return `${(px * pageScale.value).toFixed(1)}px ${(py * pageScale.value).toFixed(1)}px`;
   });
   return `polygon(${out.join(',')})`;
 }

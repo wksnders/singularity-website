@@ -387,7 +387,7 @@ watch(() => route.hash, applyHash);
 .rules__precedence {
   margin-top: var(--space-5);
   padding: var(--space-4);
-  border-left: 2px solid var(--color-accent);
+  border-left: 0.125rem solid var(--color-accent);
   border-radius: 0 var(--radius-m) var(--radius-m) 0;
   background: var(--color-accent-wash);
   font-size: var(--size-body);
@@ -409,7 +409,7 @@ watch(() => route.hash, applyHash);
 }
 
 .rules__az-chip {
-  min-width: 44px;
+  min-width: 2.75rem;
   justify-content: center;
 }
  
@@ -428,7 +428,7 @@ watch(() => route.hash, applyHash);
   right: 0;
   z-index: var(--z-sticky);
   background: rgba(var(--rgb-bg), 0.96);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(0.75rem);
   border-bottom: 1px solid var(--color-line);
 }
 
@@ -443,7 +443,7 @@ watch(() => route.hash, applyHash);
 .c-field.rules__sticky-input {
   flex: 1 1 auto;
   width: auto;
-  min-height: 40px;
+  min-height: 2.5rem;
   padding-inline: var(--space-3);
   background: var(--color-surface);
 }
@@ -454,8 +454,8 @@ watch(() => route.hash, applyHash);
 }
 
 .rules__step button {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);
   background: transparent;

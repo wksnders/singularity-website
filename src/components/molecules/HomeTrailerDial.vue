@@ -70,8 +70,8 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 .c-home-dial {
   --lines: 3;
   --line: calc(1.4 * var(--size-label-s));
-  --line-pad: 4px;
-  --dial: max(60px, calc(var(--lines) * var(--line) + 2 * var(--line-pad)));
+  --line-pad: 0.25rem;
+  --dial: max(3.75rem, calc(var(--lines) * var(--line) + 2 * var(--line-pad)));
 
   position: relative;
   min-height: var(--dial);
@@ -79,7 +79,7 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(100%, 560px);
+  width: min(100%, 35rem);
   margin: 0 auto;
 }
 
@@ -96,8 +96,8 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
   -webkit-tap-highlight-color: transparent;
   transform: rotate(var(--turn));
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    0 0 12px rgba(var(--rgb-accent), 0.14);
+    0 0.25rem 0.75rem rgba(0, 0, 0, 0.6),
+    0 0 0.75rem rgba(var(--rgb-accent), 0.14);
   transition:
     transform var(--dur-3) var(--ease-out),
     box-shadow var(--dur-3) var(--ease-linear);
@@ -105,8 +105,8 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 
 .c-home-dial.is-open .c-home-dial__knob {
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    0 0 12px color-mix(in srgb, var(--dial-tone, var(--color-accent)) 33%, transparent);
+    0 0.25rem 0.75rem rgba(0, 0, 0, 0.6),
+    0 0 0.75rem color-mix(in srgb, var(--dial-tone, var(--color-accent)) 33%, transparent);
 }
 
 /* Same filter functions in every state, or WebKit keeps a stale filter. */
@@ -120,24 +120,24 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 .c-home-dial__plate {
   flex: 1 1 auto;
   min-width: 0;
-  margin: 0 -16px;
+  margin: 0 -1rem;
   background:
     linear-gradient(rgba(var(--rgb-bg), 0.5), rgba(var(--rgb-bg), 0.5)),
     var(--spine, none) center / auto 100% repeat-x;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.5);
 }
 
 .c-home-dial__line {
   display: grid;
   align-items: center;
-  min-height: 36px;
+  min-height: 2.25rem;
   margin: 0;
-  padding: var(--line-pad) 20px;
+  padding: var(--line-pad) 1.25rem;
   line-height: var(--line);
   text-align: center;
   text-shadow:
-    0 1px 3px var(--color-bg),
-    0 0 8px var(--color-bg);
+    0 1px 0.1875rem var(--color-bg),
+    0 0 0.5rem var(--color-bg);
 }
 
 .c-home-dial__name {
@@ -158,25 +158,25 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
 }
 
 /* Small phones: the caption steps down a size and the dials grow to hold its longest wording. */
-@media (max-width: 389px) {
+@media (max-width: 24.3125em) {
   .c-home-dial {
     --lines: 4;
     --line: calc(1.4 * var(--size-label-xs));
   }
 
   .c-home-dial__line {
-    padding-inline: 14px;
+    padding-inline: 0.875rem;
     font-size: var(--size-label-xs);
   }
 }
 
-@media (max-width: 339px) {
+@media (max-width: 21.1875em) {
   .c-home-dial {
     --lines: 6;
   }
 
   .c-home-dial__line {
-    padding-inline: 10px;
+    padding-inline: 0.625rem;
     letter-spacing: var(--track-label-tight);
   }
 }
@@ -188,7 +188,7 @@ const line = ref<InstanceType<typeof MonoLabel> | null>(null);
   }
 
   .c-home-dial__line {
-    padding-inline: 30px;
+    padding-inline: 1.875rem;
   }
 }
 

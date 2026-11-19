@@ -61,7 +61,8 @@
     "play": "Play",
     "pendingKicker": "Trailer",
     "pendingBody": "The film lands before launch. The player is live — the moment a video ID arrives it plays right here, captions on.",
-    "backToPoster": "Back to the poster"
+    "backToPoster": "Back to the poster",
+    "captioned": "CC"
   },
   "cards": {
     "cost": "Cost",
@@ -726,6 +727,7 @@
   "incursion": {
     "hero": {
       "position": "Encounter",
+      "playTime": "{minutes} min per player",
       "kind": "Rogue AI",
       "artPlaceholder": "[ rogue AI art — 21:9 ]",
       "pending": "[ ROGUE AI ART — PENDING ]",
@@ -771,6 +773,7 @@
       "next": "Where next"
     },
     "loreNote": "Lore",
+    "playTime": "{minutes} min",
     "perPlayer": "per player",
     "noGm": "No GM",
     "bossPlaysItself": "The boss plays itself",
@@ -1293,7 +1296,8 @@
       "release": "Release",
       "box": "In the box",
       "ships": "Ships to",
-      "publisher": "Publisher"
+      "publisher": "Publisher",
+      "lengthValue": "{minutes} min per player"
     },
     "support": {
       "triage1": "Rules question? The",

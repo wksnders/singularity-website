@@ -41,7 +41,7 @@ defineEmits<{ select: [id: string] }>();
 
 /* No text-transform: a printing's label is a product name and shows as written. */
 .c-printings__chip {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);

@@ -7,6 +7,7 @@ import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import { t } from '@/content';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
+import { pageScale } from '@/site/pageScale';
 import type { Art } from '@/data/types';
 import type { RouteLocationRaw } from 'vue-router';
 
@@ -70,7 +71,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   const rail = rails.value[groupId];
   if (!rail) return;
   rail.scrollBy({
-    left: direction * Math.min(rail.clientWidth * 0.8, 520),
+    left: direction * Math.min(rail.clientWidth * 0.8, 520 * pageScale.value),
     behavior: prefersReducedMotion() ? 'auto' : 'smooth',
   });
 }
@@ -156,7 +157,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   margin-top: var(--space-8);
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(24px, 3vw, 40px);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
   align-items: flex-start;
 }
 
@@ -166,14 +167,14 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
 .c-pool__panel {
   flex: 0 0 auto;
-  width: 320px;
+  width: 20rem;
   max-width: 100%;
   position: sticky;
   top: calc(var(--nav-height) + var(--space-9));
 }
 
 .c-pool__main {
-  flex: 1 1 420px;
+  flex: 1 1 26.25rem;
   min-width: 0;
 }
 
@@ -194,7 +195,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-s) var(--radius-s) 0 0;
-  border-bottom: 2px solid var(--group-color, var(--color-line-strong));
+  border-bottom: 0.125rem solid var(--group-color, var(--color-line-strong));
   background: linear-gradient(90deg, rgba(var(--rgb-ink), 0.07), transparent 62%);
 }
 
@@ -226,8 +227,8 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 .c-pool__arrow {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);
   background: transparent;
@@ -258,7 +259,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
   display: flex;
   gap: var(--space-3);
 
-  padding: 0 56px var(--space-1) 0;
+  padding: 0 3.5rem var(--space-1) 0;
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
@@ -270,7 +271,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
 .c-pool__tiles--rail > li {
   flex: 0 0 auto;
-  width: 148px;
+  width: 9.25rem;
 }
 
 .c-pool__tile {
@@ -287,7 +288,7 @@ function scrollRail(groupId: string, direction: 1 | -1): void {
 
 .c-pool__tile.is-current {
   border-color: rgba(var(--rgb-accent), 0.55);
-  box-shadow: 0 0 24px var(--color-accent-wash);
+  box-shadow: 0 0 1.5rem var(--color-accent-wash);
 }
 
 .c-pool__foot:not(:empty) {

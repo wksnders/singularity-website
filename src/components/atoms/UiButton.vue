@@ -37,7 +37,7 @@ withDefaults(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 3rem;
   padding-inline: var(--space-6);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
@@ -65,7 +65,7 @@ withDefaults(
 
 .c-btn--primary:hover {
   color: var(--color-on-accent);
-  box-shadow: 0 0 56px rgba(var(--rgb-accent), 0.6);
+  box-shadow: 0 0 3.5rem rgba(var(--rgb-accent), 0.6);
 }
 
 .c-btn--secondary {
@@ -81,7 +81,7 @@ withDefaults(
 
 .c-btn--quiet {
   min-height: 0;
-  padding: 0 0 2px;
+  padding: 0 0 0.125rem;
   border: 0;
   border-bottom: 1px solid rgba(var(--rgb-accent), 0.4);
   border-radius: 0;
@@ -96,8 +96,8 @@ withDefaults(
 
 /* min-width as well as min-height: a label as short as "#" still has to be a 44px target. */
 .c-btn--text {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding-inline: var(--space-1);
   border: 0;
   border-radius: var(--radius-s);

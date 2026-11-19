@@ -103,11 +103,14 @@ function glideTo(target: Target, instant: boolean, alive: () => boolean): Promis
 
 export async function glideToElement(el: HTMLElement, instant = false): Promise<boolean> {
   const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
-  const arrived = await glideTo(
-    () => el.getBoundingClientRect().top + window.scrollY - margin + heldFor(el),
-    instant,
-    () => el.isConnected,
-  );
+  const target = () => el.getBoundingClientRect().top + window.scrollY - margin + heldFor(el);
+  const arrived = await glideTo(target, instant, () => el.isConnected);
+  /* A cold deep link lands before the web fonts swap in and move everything above it; it lands again unless the reader has scrolled since. */
+  if (arrived && instant && document.fonts.status !== 'loaded') {
+    void document.fonts.ready.then(() => {
+      if (!raf && el.isConnected && Math.abs(window.scrollY - jumpedTo) <= 1) settle(target);
+    });
+  }
   if (arrived) {
     if (el.tabIndex < 0 && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });

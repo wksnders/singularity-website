@@ -11,7 +11,8 @@ import { t } from '@/content';
 import { lidStrips } from '@/data/lidArt';
 import { factionById } from '@/data/universe';
 import { runSpark, type SparkWire } from '@/site/castSpark';
-import { castWires, dialTurn, sweepAngle, type Box, type CastGeo, type Side, type Wire } from '@/site/castWires';
+import { castWires, dialTurn, drawnWires, sweepAngle, type Box, type CastGeo, type Side, type Wire } from '@/site/castWires';
+import { pageScale, rectScale, scaledSizes, settledScale, zoomable } from '@/site/pageScale';
 import { seedsFor } from '@/data/starterStacks';
 import { currentLocale } from '@/i18n/locales';
 import { cardBySlug, placeholderOf } from '@/site/cards';
@@ -23,7 +24,9 @@ const PEEK = { rest: 0.045, open: 0.12 };
 /* Matches the styles below: 124px cards from 1100px; under that four across a 640px row, so at most 154px. */
 const CARD_SIZES = '(min-width: 1100px) 124px, min(25vw, 154px)';
 /** The gutter layout's switch: the same width as the @media rule below. */
-const GUTTERS = '(min-width: 1100px)';
+const GUTTERS = '(min-width: 68.75em)';
+/** How many times its size the spine's 1x tile may be drawn. */
+const SPINE_SOFT = 1.3;
 /** Ms the circuits stay lit after a dial tap under reduced motion, in place of the spark. */
 const STILL_LIGHT_MS = 2000;
 
@@ -118,12 +121,18 @@ const gutters = useMediaQuery(GUTTERS);
 const { heroIntro } = useChrome();
 /* CSS backgrounds take no fetchpriority: the spine art waits for the hero's entrance instead. */
 const spineArt = computed(() => heroIntro.value === null);
+/* Where its zoom (below) applies the block is drawn at the page scale squared: past SPINE_SOFT the 2x tile serves every screen, by the settled scale so a narrowing window keeps it. */
+const spineTile = computed(() => {
+  const sharp = `url(${asset('/trailer/spine-h-886.webp')})`;
+  return settledScale.value * (zoomable ? settledScale.value : 1) > SPINE_SOFT ? sharp : `-webkit-image-set(url(${asset('/trailer/spine-h-443.webp')}) 1x, ${sharp} 2x)`;
+});
 const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 const { resizing } = useViewport();
 const colors = cast.map((c) => c.tone ?? 'currentColor');
 const trunkOrder = cast.map((c, i) => ({ i, slot: c.trunkSlot })).sort((a, b) => a.slot - b.slot).map((c) => c.i);
 const geo = shallowRef<CastGeo | null>(null);
-const wires = computed(() => (geo.value ? castWires(geo.value, colors, trunkOrder, half) : []));
+/* Laid out in design px, drawn in the block's own px, which grow with the page. */
+const wires = computed(() => (geo.value ? drawnWires(castWires(geo.value, colors, trunkOrder, half), pageScale.value) : []));
 const turn = computed(() => {
   const g = geo.value;
   const i = cast.findIndex((c) => c.id === open.value);
@@ -143,9 +152,11 @@ function measure(): void {
   const d = dial.value;
   if (!el || !(player instanceof HTMLElement) || !d?.left || !d.right || !d.plate) return;
   const o = el.getBoundingClientRect();
+  /* Design px, which castWires lays out in. */
+  const z = rectScale(el);
   const box = (node: Element): Box => {
     const r = node.getBoundingClientRect();
-    return { x: r.left - o.left, y: r.top - o.top, w: r.width, h: r.height };
+    return { x: (r.left - o.left) / z, y: (r.top - o.top) / z, w: r.width / z, h: r.height / z };
   };
   geo.value = {
     gutters: gutters.value,
@@ -192,7 +203,7 @@ function fire(side: Side): void {
   }
   if (busy[side]) return;
   const d = g.dials[side === 'l' ? 0 : 1];
-  const around = (w: Wire) => (w.via ? sweepAngle(side, d, w.via.x, w.via.y) : 0);
+  const around = (w: Wire) => (w.via ? sweepAngle(side, d, w.via.x / pageScale.value, w.via.y / pageScale.value) : 0);
   const trunks = wires.value.filter((w) => w.kind === 'trunk' && w.side === side);
   if (side === 'r') trunks.reverse();
   let order: number[];
@@ -205,7 +216,7 @@ function fire(side: Side): void {
       const twigs = wires.value.filter((w) => w.kind === 'crown' && w.card === i && w.via);
       const x = twigs.reduce((a, w) => a + (w.via?.x ?? 0), 0) / Math.max(1, twigs.length);
       const y = twigs.reduce((a, w) => a + (w.via?.y ?? 0), 0) / Math.max(1, twigs.length);
-      return sweepAngle(side, d, x, y);
+      return sweepAngle(side, d, x / pageScale.value, y / pageScale.value);
     };
     order = cast.map((_, i) => i).sort((a, b) => centre(a) - centre(b));
   }
@@ -257,13 +268,13 @@ onBeforeUnmount(() => {
   <div
     ref="root"
     class="c-home-cast"
-    :style="geo ? { '--spine-y': `${(geo.player.y + geo.player.h / 2).toFixed(1)}px` } : undefined"
+    :style="geo ? { '--spine-y': `${(geo.player.y + geo.player.h / 2) * pageScale}px` } : undefined"
   >
     <div
       v-if="geo && spineArt"
       class="c-home-cast__spine"
       aria-hidden="true"
-      :style="{ '--spine': `-webkit-image-set(url(${asset('/trailer/spine-h-443.webp')}) 1x, url(${asset('/trailer/spine-h-886.webp')}) 2x)` }"
+      :style="{ '--spine': spineTile }"
     />
     <svg class="c-home-cast__wires" aria-hidden="true">
       <g
@@ -288,7 +299,8 @@ onBeforeUnmount(() => {
     </svg>
     <div class="c-home-cast__grid" :style="{ '--n': cast.length }">
       <!-- First in the DOM: the player leads tab and reading order; the grid places it. -->
-      <div ref="stage" class="c-home-cast__stage">
+      <!-- data-frame-foot: HomeHero turns its frame's rails outward level with this element's top. -->
+      <div ref="stage" class="c-home-cast__stage" data-frame-foot>
         <slot />
       </div>
       <div
@@ -321,10 +333,10 @@ onBeforeUnmount(() => {
             :data-slot="slot"
             :style="{ transform: lift(card, slot) }"
           >
-            <CardImage :art="row.cardArt" :placeholder="placeholderOf(row, 'card')" :sizes="CARD_SIZES" />
+            <CardImage :art="row.cardArt" :placeholder="placeholderOf(row, 'card')" :sizes="scaledSizes(CARD_SIZES)" />
           </span>
           <span :ref="keep(artEls, s ? half + i : i)" class="c-home-cast__character" data-slot="-1">
-            <CardImage :art="card.character.cardArt" :placeholder="placeholderOf(card.character, 'card')" :sizes="CARD_SIZES" />
+            <CardImage :art="card.character.cardArt" :placeholder="placeholderOf(card.character, 'card')" :sizes="scaledSizes(CARD_SIZES)" />
           </span>
         </button>
       </div>
@@ -354,8 +366,10 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
+/* On top of the page's own scale, so the block is drawn at the page scale squared and keeps its share of a wide window. */
 .c-home-cast {
   position: relative;
+  zoom: var(--cast-zoom);
 }
 
 /* The tile's mirror seam must sit on the player's centre line. */
@@ -363,11 +377,11 @@ onBeforeUnmount(() => {
   display: none;
   position: absolute;
   left: 50%;
-  top: calc(var(--spine-y) - 66px);
-  width: 100vw;
-  height: 132px;
+  top: calc(var(--spine-y) - 4.125rem);
+  width: calc(100vw / var(--cast-zoom));
+  height: 8.25rem;
   translate: -50% 0;
-  background: var(--spine) 50vw 0 / 443px 132px repeat-x;
+  background: var(--spine) calc(50vw / var(--cast-zoom)) 0 / 27.6875rem 8.25rem repeat-x;
   pointer-events: none;
 }
 
@@ -490,10 +504,10 @@ onBeforeUnmount(() => {
   z-index: calc(var(--z-raised) + 1);
 }
 
-/* CARD_SIZES in the script matches this switch and the 124px card. */
-@media (min-width: 1100px) {
+/* CARD_SIZES in the script matches this switch and the 7.75rem card. */
+@media (min-width: 68.75em) {
   .c-home-cast__grid {
-    --card-w: min(100%, 124px);
+    --card-w: min(100%, 7.75rem);
 
     grid-template-columns: minmax(0, 1fr) minmax(0, var(--player-w)) minmax(0, 1fr);
     gap: var(--space-4) var(--space-6);
@@ -545,17 +559,17 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: var(--z-raised);
   border-radius: var(--radius-s);
-  box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 -0.5rem 1.125rem rgba(0, 0, 0, 0.6);
   /* The spark's glow animates this list (castSpark.ts REST): one list in every state. */
   filter: brightness(1) drop-shadow(0 0 0 transparent);
 }
 
 .c-home-cast__dial {
-  width: min(100% - 2 * var(--gutter), 560px);
+  width: min(100% - 2 * var(--gutter), 35rem);
   margin-top: var(--space-7);
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 68.75em) {
   .c-home-cast__dial {
     margin-top: var(--space-5);
   }

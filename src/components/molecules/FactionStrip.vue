@@ -41,11 +41,11 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  min-height: 92px;
+  min-height: 5.75rem;
   padding: var(--space-4) var(--space-5);
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-left: 3px solid var(--faction);
+  border-left: 0.1875rem solid var(--faction);
   border-radius: var(--radius-m);
   background: var(--color-surface);
   color: var(--color-ink);
@@ -88,8 +88,8 @@ defineProps<{
   margin-left: auto;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   flex: 0 0 auto;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);

@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { asset, pictureSources } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 import { patternUrl } from '@/site/patterns';
 import type { Program } from '@/data/types';
 import type { Crumb } from '@/site/sections';
@@ -126,7 +127,7 @@ onBeforeUnmount(() => {
                       :key="source.type"
                       :type="source.type"
                       :srcset="source.srcset"
-                      sizes="150px"
+                      :sizes="scaledSizes('150px')"
                     />
                     <img :src="piece.src" alt="" decoding="async" />
                   </picture>
@@ -185,14 +186,14 @@ onBeforeUnmount(() => {
   container-type: inline-size;
   position: relative;
   z-index: var(--z-raised);
-  max-width: 1280px;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
 .c-brand-hero__stage {
   /* Clears the fixed nav and the crumb bar; the ring box shares both insets. */
-  --hero-top: clamp(132px, 18svh, 168px);
-  --hero-bottom: clamp(16px, 2.5svh, 32px);
+  --hero-top: clamp(8.25rem, 18svh, 10.5rem);
+  --hero-bottom: clamp(1rem, 2.5svh, 2rem);
 
   position: relative;
   isolation: isolate;
@@ -200,7 +201,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: min(100svh - var(--nav-height) - var(--space-2), max(560px, 70.3cqw));
+  min-height: min(100svh - var(--nav-height) - var(--space-2), max(35rem, 70.3cqw));
   overflow: hidden;
   padding: var(--hero-top) var(--gutter) var(--hero-bottom);
   text-align: center;
@@ -219,7 +220,7 @@ onBeforeUnmount(() => {
 
 /* Black ink on transparency, so only usable as a mask; the radial layer keeps it off the type. */
 .c-brand-hero__pattern {
-  --hero-tile: clamp(300px, 40vw, 640px);
+  --hero-tile: clamp(18.75rem, 40vw * var(--page-scale), 40rem);
   --hero-clear: 48%;
 
   background: var(--faction-text);
@@ -241,7 +242,7 @@ onBeforeUnmount(() => {
   -webkit-mask-composite: source-in;
 }
 
-@media (min-width: 700px) {
+@media (min-width: 43.75em) {
   .c-brand-hero__pattern {
     --hero-clear: 76%;
   }
@@ -288,26 +289,26 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 26px rgba(var(--rgb-bg), 0.85));
+  filter: drop-shadow(0 0.625rem 1.625rem rgba(var(--rgb-bg), 0.85));
 }
 
 .c-brand-hero__piece--s {
-  width: clamp(46px, min(7.5cqw, 8.8svh), 96px);
-  height: clamp(46px, min(7.5cqw, 8.8svh), 96px);
+  width: clamp(2.875rem, min(7.5cqw, 8.8svh), 6rem);
+  height: clamp(2.875rem, min(7.5cqw, 8.8svh), 6rem);
 }
 
 .c-brand-hero__piece--m {
-  width: clamp(56px, min(9.375cqw, 11svh), 120px);
-  height: clamp(56px, min(9.375cqw, 11svh), 120px);
+  width: clamp(3.5rem, min(9.375cqw, 11svh), 7.5rem);
+  height: clamp(3.5rem, min(9.375cqw, 11svh), 7.5rem);
 }
 
 .c-brand-hero__piece--l {
-  width: clamp(66px, min(11.72cqw, 13.8svh), 150px);
-  height: clamp(66px, min(11.72cqw, 13.8svh), 150px);
+  width: clamp(4.125rem, min(11.72cqw, 13.8svh), 9.375rem);
+  height: clamp(4.125rem, min(11.72cqw, 13.8svh), 9.375rem);
 }
 
 .c-brand-hero__piece--l img {
-  filter: drop-shadow(0 14px 32px rgba(var(--rgb-bg), 0.9));
+  filter: drop-shadow(0 0.875rem 2rem rgba(var(--rgb-bg), 0.9));
 }
 
 .c-brand-hero__well {
@@ -315,8 +316,8 @@ onBeforeUnmount(() => {
   left: 50%;
   top: 50%;
   z-index: 4;
-  width: min(520px, 58%);
-  height: min(400px, 52%);
+  width: min(32.5rem, 58%);
+  height: min(25rem, 52%);
   transform: translate(-50%, -50%);
   pointer-events: none;
   background: radial-gradient(
@@ -331,7 +332,7 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0 0 auto;
   z-index: 7;
-  padding: clamp(74px, 8vw, 88px) var(--space-4) var(--space-5);
+  padding: clamp(4.625rem, 8vw, 5.5rem) var(--space-4) var(--space-5);
   background: linear-gradient(
     to bottom,
     rgba(var(--rgb-bg), 0.95) 0%,
@@ -344,7 +345,7 @@ onBeforeUnmount(() => {
 /* Clips rather than wraps so the bar never grows into the ring; two classes so these hold whichever CSS loads first. */
 .c-brand-hero__bar .c-crumbs {
   flex-wrap: nowrap;
-  max-width: 1280px;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
@@ -374,8 +375,8 @@ onBeforeUnmount(() => {
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(104px, min(21cqw, 23svh), 280px);
-  height: clamp(104px, min(21cqw, 23svh), 280px);
+  width: clamp(6.5rem, min(21cqw, 23svh), 17.5rem);
+  height: clamp(6.5rem, min(21cqw, 23svh), 17.5rem);
   animation: c-brand-hero-mark 700ms var(--ease-out) both;
 }
 
@@ -415,7 +416,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: clamp(-58px, -4.5cqw, -24px);
+  margin-top: clamp(-3.625rem, -4.5cqw, -1.5rem);
 }
 
 .c-brand-hero__title-scrim {
@@ -449,12 +450,12 @@ onBeforeUnmount(() => {
 }
 
 .c-brand-hero__below {
-  padding-block: clamp(20px, 3vw, 28px) clamp(24px, 3.5vw, 32px);
+  padding-block: clamp(1.25rem, 3vw, 1.75rem) clamp(1.5rem, 3.5vw, 2rem);
 }
 
 @keyframes c-brand-hero-arrive {
   from {
-    transform: translateY(38px) scale(0.965);
+    transform: translateY(2.375rem) scale(0.965);
     opacity: 0;
   }
 }

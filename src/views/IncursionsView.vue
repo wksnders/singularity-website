@@ -82,7 +82,7 @@ const exits = computed(() =>
       :placeholder="t('incursions.hero.artPlaceholder')"
       :pending-note="t('incursions.hero.pending')"
       glow="100% 80% at 24% 6%"
-      min-height="min(78dvh, 700px)"
+      min-height="min(78dvh, 43.75rem)"
     >
       <Breadcrumbs
         :crumbs="[
@@ -116,7 +116,7 @@ const exits = computed(() =>
           <MonoLabel tone="faint">{{ t('home.incursions.players') }}</MonoLabel>
         </div>
         <div>
-          <p class="inc__stat-value">30 min</p>
+          <p class="inc__stat-value">{{ t('incursions.playTime', { minutes: game.minutesPerPlayer }) }}</p>
           <MonoLabel tone="faint">{{ t('incursions.perPlayer') }}</MonoLabel>
         </div>
         <div>
@@ -377,7 +377,7 @@ const exits = computed(() =>
 .inc__stats {
   margin-top: var(--space-8);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -385,7 +385,7 @@ const exits = computed(() =>
   padding: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-m);
-  border-bottom: 2px solid var(--faction);
+  border-bottom: 0.125rem solid var(--faction);
 }
 
 .inc__stat-value {
@@ -397,7 +397,7 @@ const exits = computed(() =>
 .inc__steps {
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
   gap: var(--space-4);
   list-style: none;
   counter-reset: none;
@@ -424,7 +424,7 @@ const exits = computed(() =>
 .inc__aside {
   margin-top: var(--space-6);
   padding: var(--space-4) var(--space-5);
-  border-left: 2px solid var(--faction);
+  border-left: 0.125rem solid var(--faction);
   max-width: 68ch;
   font-size: var(--size-m);
   line-height: 1.6;
@@ -433,7 +433,7 @@ const exits = computed(() =>
 
 .inc__boss {
   overflow: hidden;
-  border-bottom: 2px solid var(--faction);
+  border-bottom: 0.125rem solid var(--faction);
 }
 
 .inc__boss-body {
@@ -455,7 +455,7 @@ const exits = computed(() =>
   align-content: center;
   justify-items: center;
   gap: var(--space-2);
-  min-height: 200px;
+  min-height: 12.5rem;
   border: 1px dashed var(--color-line-strong);
   border-radius: var(--radius-l);
   text-align: center;

@@ -9,7 +9,7 @@ import { t } from '@/content';
 <style>
 .c-skip {
   position: absolute;
-  left: -9999px;
+  left: -624.9375rem;
   top: var(--space-2);
   z-index: var(--z-skip);
   padding: var(--space-3) var(--space-4);

@@ -33,13 +33,19 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
   flex-wrap: wrap;
   gap: var(--space-4) var(--space-6);
   align-items: center;
+  min-width: 0;
+}
+
+/* An exit's label can outrun a phone's width, and a button won't wrap on its own. */
+.c-bandfoot__exits > .c-btn {
+  white-space: normal;
 }
 
 .c-bandfoot__up {
   color: var(--color-ink-faint);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25em) {
   .c-bandfoot__up {
     display: none;
   }

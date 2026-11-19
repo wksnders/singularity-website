@@ -2,6 +2,7 @@
 import { nextTick, ref, watch } from 'vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import { useScrollRatchet } from '@/composables/useScrollRatchet';
+import { pageScale, scaledSizes } from '@/site/pageScale';
 import type { ArtSource } from '@/data/types';
 import type { Crumb } from '@/site/sections';
 
@@ -44,7 +45,7 @@ watch(
   <section
     class="c-wall-hero"
     :class="{ 'c-wall-hero--extended': extend }"
-    :style="extend ? { '--wall-extend': `${extend}px` } : undefined"
+    :style="extend ? { '--wall-extend': `${extend * pageScale}px` } : undefined"
   >
     <div class="c-wall-hero__backdrop" aria-hidden="true">
       <div class="c-wall-hero__wall">
@@ -66,7 +67,7 @@ watch(
                       :key="source.type"
                       :type="source.type"
                       :srcset="source.srcset"
-                      :sizes="sizes"
+                      :sizes="sizes && scaledSizes(sizes)"
                     />
                   </template>
                   <img
@@ -209,7 +210,7 @@ watch(
 .c-wall-hero__bar .c-crumbs__link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   color: rgba(var(--rgb-ink), 0.78);
 }
 

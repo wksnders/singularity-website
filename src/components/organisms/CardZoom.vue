@@ -79,7 +79,7 @@ watch(
 
       <!-- CLICK-OUTSIDE LIVES HERE, not on the backdrop: this element is what a click on the dark area lands on. `.self` keeps clicks on the card from closing it. -->
       <div class="c-zoom__shell" @click.self="emit('close')">
-        <!-- The body is centred and capped at 900px, so at wide sizes the dark area either side of the card is the body's own box. -->
+        <!-- The body is centred and capped at 56.25rem, so at wide sizes the dark area either side of the card is the body's own box. -->
         <div class="c-zoom__body" @click.self="emit('close')">
           <div class="c-zoom__figure">
             <!-- THE STAGE IS ALWAYS THE CARD'S SHAPE, FOR BOTH FACES, so the controls below it never move. -->
@@ -131,7 +131,7 @@ watch(
   position: fixed;
   inset: 0;
   background: rgba(var(--rgb-bg), 0.94);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(1.125rem);
 }
 
 .c-zoom__close {
@@ -141,8 +141,8 @@ watch(
   z-index: var(--z-raised);
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-m);
   background: var(--color-surface);
@@ -159,7 +159,7 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 76px var(--space-4) var(--space-8);
+  padding: 4.75rem var(--space-4) var(--space-8);
 }
 
 .c-zoom__body {
@@ -169,25 +169,25 @@ watch(
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  max-width: 900px;
+  max-width: 56.25rem;
 }
 
 .c-zoom__figure {
   flex: 0 0 auto;
-  width: min(100%, 420px);
+  width: min(100%, 26.25rem);
 }
 
-/* Both queries are required: at 560px wide the card is 782px tall, so a short viewport pushes the rules off screen. */
-@media (min-width: 1100px) and (min-height: 900px) {
+/* Both queries are required: at 35rem wide the card is 48.875rem tall, so a short viewport pushes the rules off screen. */
+@media (min-width: 68.75em) and (min-height: 56.25em) {
   .c-zoom__figure {
-    width: min(100%, 560px);
+    width: min(100%, 35rem, (100dvh - 10.625rem) * 63 / 88);
   }
 }
 
 .c-zoom__meta {
-  flex: 1 1 280px;
+  flex: 1 1 17.5rem;
   min-width: 0;
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .c-zoom__name {

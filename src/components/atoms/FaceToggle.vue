@@ -40,7 +40,7 @@ defineEmits<{ 'update:modelValue': [face: 'card' | 'art'] }>();
 .c-face-toggle__btn {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-3);
   border: 0;
   background: transparent;

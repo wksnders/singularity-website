@@ -41,23 +41,23 @@
 .l-grid {
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 }
 
 .l-grid--narrow {
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 }
 
 .l-grid--wide {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16.25rem, 1fr));
 }
 
 .l-grid--tiles {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(11.25rem, 1fr));
 }
 
 .l-grid--cards {
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr));
   gap: var(--space-6) var(--space-4);
   list-style: none;
 }
@@ -65,12 +65,12 @@
 .l-split {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(28px, 5vw, 64px);
+  gap: clamp(1.75rem, 5vw, 4rem);
 }
 
 .l-split__main,
 .l-split__aside {
-  flex: 1 1 300px;
+  flex: 1 1 18.75rem;
   min-width: 0;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .l-surface--pad {
-  padding: clamp(20px, 3vw, 28px);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
 }
 
 .l-sr-only {

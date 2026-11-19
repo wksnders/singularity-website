@@ -105,7 +105,7 @@ const rulesHub = [
       >
         <span class="learn__video-art">
           <ArtFrame :art="null" ratio="16 / 9" :placeholder="t('learn.videos.posterPlaceholder')" />
-          <span v-if="video.captioned" class="learn__cc">CC</span>
+          <span v-if="video.captioned" class="learn__cc">{{ t('video.captioned') }}</span>
         </span>
         <span class="learn__video-body">
           <span class="learn__video-title">{{ video.title }}</span>
@@ -198,7 +198,7 @@ const rulesHub = [
 
 /* Co-op mode takes the threat edge, never a faction colour. */
 .learn__mode--coop {
-  border-bottom: 2px solid var(--color-threat);
+  border-bottom: 0.125rem solid var(--color-threat);
 }
 
 .learn__mode-name {
@@ -236,8 +236,8 @@ const rulesHub = [
   position: absolute;
   right: var(--space-2);
   bottom: var(--space-2);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
   background: rgba(var(--rgb-bg), 0.8);
   font-family: var(--font-label);
   font-weight: 500;

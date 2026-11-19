@@ -8,6 +8,7 @@ import { t } from '@/content';
 import { glideToTop } from '@/site/glide';
 import { footerColumns, socialKeys } from '@/site/ia';
 import { asset, logoSrcset, outbound, resolveLink, to } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 import { game } from '@/data/universe';
 
 const route = useRoute();
@@ -56,13 +57,13 @@ function toTop(event: MouseEvent): void {
           <source
             type="image/webp"
             :srcset="logoSrcset('singularity-logo-exe-center', 'webp')"
-            sizes="(max-width: 360px) 84vw, 300px"
+            :sizes="scaledSizes('(max-width: 360px) 84vw, 300px')"
           />
           <img
             class="c-footer__signoff"
             :src="asset('/logo/singularity-logo-exe-center.png')"
             :srcset="logoSrcset('singularity-logo-exe-center', 'png')"
-            sizes="(max-width: 360px) 84vw, 300px"
+            :sizes="scaledSizes('(max-width: 360px) 84vw, 300px')"
             :alt="t('chrome.logoAlt')"
             width="720"
             height="254"
@@ -84,7 +85,7 @@ function toTop(event: MouseEvent): void {
 .c-footer {
   border-top: 1px solid var(--color-line);
   background: var(--color-bg);
-  padding-block: clamp(48px, 7vw, 72px);
+  padding-block: clamp(3rem, 7vw, 4.5rem);
 }
 
 .c-footer__map {
@@ -108,7 +109,7 @@ function toTop(event: MouseEvent): void {
 .c-footer__social {
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
+  min-height: 3rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
@@ -122,7 +123,7 @@ function toTop(event: MouseEvent): void {
 
 .c-footer__signoff-link {
   display: block;
-  width: min(100%, 300px);
+  width: min(100%, 18.75rem);
   margin-top: var(--space-8);
 }
 

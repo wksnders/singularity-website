@@ -65,14 +65,14 @@ withDefaults(
 
 .c-card--current {
   border-color: rgba(var(--rgb-accent), 0.55);
-  box-shadow: 0 0 32px rgba(var(--rgb-accent), 0.16);
+  box-shadow: 0 0 2rem rgba(var(--rgb-accent), 0.16);
 }
 
 .c-card--featured {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-on-accent);
-  box-shadow: 0 0 40px rgba(var(--rgb-accent), 0.3);
+  box-shadow: 0 0 2.5rem rgba(var(--rgb-accent), 0.3);
 }
 
 .c-card--featured:hover {

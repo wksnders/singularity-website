@@ -7,6 +7,7 @@ import UiButton from '@/components/atoms/UiButton.vue';
 import { useWarmArt } from '@/composables/useWarmArt';
 import { t } from '@/content';
 import { asset, pictureSources } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 
 const props = withDefaults(
   defineProps<{
@@ -48,7 +49,7 @@ const src = () =>
   <div class="c-video">
     <div v-if="poster" class="c-video__poster" :style="{ aspectRatio: ratio }" aria-hidden="true">
       <picture v-if="!deferPoster">
-        <source v-for="source in pictureSources(poster)" :key="source.type" :type="source.type" :srcset="source.srcset" :sizes="POSTER_SIZES" />
+        <source v-for="source in pictureSources(poster)" :key="source.type" :type="source.type" :srcset="source.srcset" :sizes="scaledSizes(POSTER_SIZES)" />
         <img class="c-video__poster-img" :src="asset(poster)" alt="" :loading="warm ? 'eager' : 'lazy'" decoding="async" />
       </picture>
     </div>
@@ -122,22 +123,22 @@ const src = () =>
 }
 
 .c-video__disc {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   display: grid;
   place-items: center;
   border-radius: var(--radius-pill);
   background: rgba(var(--rgb-accent), 0.92);
-  box-shadow: 0 0 40px rgba(var(--rgb-accent), 0.55);
+  box-shadow: 0 0 2.5rem rgba(var(--rgb-accent), 0.55);
 }
 
 .c-video__tri {
   width: 0;
   height: 0;
-  margin-left: 5px;
-  border-left: 18px solid var(--color-on-accent);
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
+  margin-left: 0.3125rem;
+  border-left: 1.125rem solid var(--color-on-accent);
+  border-top: 0.6875rem solid transparent;
+  border-bottom: 0.6875rem solid transparent;
 }
 
 .c-video__frame {

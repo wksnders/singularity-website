@@ -46,22 +46,22 @@ const emit = defineEmits<{ watch: [] }>();
   width: 0;
   height: 0;
   margin-right: var(--space-2);
-  border-left: 9px solid currentColor;
-  border-top: 5.5px solid transparent;
-  border-bottom: 5.5px solid transparent;
+  border-left: 0.5625rem solid currentColor;
+  border-top: 0.3438rem solid transparent;
+  border-bottom: 0.3438rem solid transparent;
 }
 
 .c-home-band__buy {
   position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--size-body-l);
   font-weight: 700;
   white-space: nowrap;
   text-shadow:
-    0 1px 3px var(--color-bg),
-    0 0 12px var(--color-bg);
+    0 1px 0.1875rem var(--color-bg),
+    0 0 0.75rem var(--color-bg);
 }
 
 /* The hero's half of the phone spine (HomeView draws the rest): the insets must match the band's gap and bottom padding, and the tile is anchored to the foot so the hex runs on across the seam. */
@@ -76,16 +76,16 @@ const emit = defineEmits<{ watch: [] }>();
 }
 
 .c-home-band__buy::before {
-  left: calc(50% - 36px);
-  width: 72px;
+  left: calc(50% - 2.25rem);
+  width: 4.5rem;
   background: var(--spine-grille);
-  background-position: left center, right center, center, 6px 100%;
+  background-position: left center, right center, center, 0.375rem 100%;
 }
 
 /* Scrim over the grille, so the label stays readable. */
 .c-home-band__buy::after {
-  left: calc(50% - 76px);
-  width: 152px;
-  background: radial-gradient(55% 32% at 50% calc(var(--space-2) + 22px), rgba(var(--rgb-bg), 0.92), rgba(var(--rgb-bg), 0.6) 60%, transparent);
+  left: calc(50% - 4.75rem);
+  width: 9.5rem;
+  background: radial-gradient(55% 32% at 50% calc(var(--space-2) + 1.375rem), rgba(var(--rgb-bg), 0.92), rgba(var(--rgb-bg), 0.6) 60%, transparent);
 }
 </style>

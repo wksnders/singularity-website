@@ -18,14 +18,16 @@ import { pad } from '@/site/format';
 import { pictureSources, to } from '@/site/links';
 import type { SectionEntry } from '@/site/sections';
 
+const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
+const luxName = computed(() => lux.value?.name ?? '');
+
 const sections = computed<SectionEntry[]>(() => [
-  { id: 'lux', label: 'LuX' },
+  { id: 'lux', label: luxName.value },
   { id: 'personal-brands', label: t('universal.sections.brands') },
 ]);
 
 provideSections(sections);
 
-const lux = computed(() => characters.find((c) => c.id === 'lux') ?? null);
 const luxBrand = computed(() => (lux.value?.personalBrandId ? brandById(lux.value.personalBrandId) : null));
 const luxCards = computed(() => (luxBrand.value ? programsOfBrand(luxBrand.value.id) : []));
 const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
@@ -37,7 +39,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
       :placeholder="t('universal.hero.artPlaceholder')"
       :pending-note="t('universal.hero.pending')"
       glow="90% 70% at 60% 6%"
-      min-height="min(72dvh, 640px)"
+      min-height="min(72dvh, 40rem)"
     >
       <Breadcrumbs
         :crumbs="[
@@ -53,7 +55,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
 
     <ScrollSpyRail :sections="sections" />
 
-    <SectionBand id="lux" class="l-band--line-top" heading="LuX">
+    <SectionBand id="lux" class="l-band--line-top" :heading="luxName">
       <MonoLabel tone="faint">{{ t('universe.anyFaction') }}</MonoLabel>
 
       <div v-if="lux" class="unv__feature">
@@ -99,7 +101,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
       <div class="l-grid l-grid--wide unv__gap">
         <article class="l-surface l-surface--pad">
           <MonoLabel tone="faint">
-            LuX<template v-if="luxCards.length"> · {{ luxCards.length }} {{ t('faction.stats.programs') }}</template>
+            {{ luxName }}<template v-if="luxCards.length"> · {{ luxCards.length }} {{ t('faction.stats.programs') }}</template>
           </MonoLabel>
           <h3 class="unv__brand-title">
             <BrandMark
@@ -148,16 +150,16 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
   margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(24px, 4vw, 48px);
+  gap: clamp(1.5rem, 4vw, 3rem);
   align-items: flex-start;
 }
 
 .unv__feature-art {
-  flex: 0 0 min(100%, 280px);
+  flex: 0 0 min(100%, 17.5rem);
 }
 
 .unv__feature-body {
-  flex: 1 1 320px;
+  flex: 1 1 20rem;
   min-width: 0;
 }
 
@@ -186,7 +188,7 @@ const luxAnnounced = computed(() => luxBrand.value?.announcedCount ?? null);
 .unv__slots {
   margin-top: var(--space-5);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
   gap: var(--space-2);
   list-style: none;
 }

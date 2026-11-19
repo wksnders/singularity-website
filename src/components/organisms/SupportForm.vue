@@ -118,7 +118,7 @@ async function onSubmit(): Promise<void> {
 .c-support__grid {
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
 }
 
 .c-support__field {

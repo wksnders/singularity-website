@@ -111,7 +111,7 @@ const patternStyle = {
   /* The l-wrap gutter, recomputed from the viewport because the band itself is full-bleed. */
   --ways-gutter: max(var(--gutter), (100vw - var(--width-content)) / 2);
   /* Pull equals cut depth, or a hairline of page background shows through the seam. */
-  --ways-seam: 44px;
+  --ways-seam: 2.75rem;
 }
 
 .c-ways__grid {
@@ -127,7 +127,7 @@ const patternStyle = {
 }
 
 .c-ways__half--lit {
-  padding: clamp(40px, 8vw, 56px) var(--gutter) clamp(40px, 7vw, 52px);
+  padding: clamp(2.5rem, 8vw, 3.5rem) var(--gutter) clamp(2.5rem, 7vw, 3.25rem);
   background: var(--color-bg-alt);
 
   --ways-key: var(--color-accent-text);
@@ -136,18 +136,18 @@ const patternStyle = {
 /* Darker than --color-bg on purpose, so the unlit half reads as unlit against the page. */
 .c-ways__half--unlit {
   margin-top: calc(var(--ways-seam) * -1);
-  padding: clamp(56px, 10vw, 72px) var(--gutter) clamp(48px, 8vw, 60px);
+  padding: clamp(3.5rem, 10vw, 4.5rem) var(--gutter) clamp(3rem, 8vw, 3.75rem);
   background: #050509;
   clip-path: polygon(0 var(--ways-seam), 100% 0, 100% 100%, 0 100%);
-  box-shadow: inset 40px 0 80px -40px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 2.5rem 0 5rem -2.5rem rgba(0, 0, 0, 0.9);
 
   --ways-key: var(--color-threat-text);
 }
 
 /* Any narrower and the wedge runs into the competitive copy, which its 42ch cap cannot pad away. */
-@media (min-width: 1100px) {
+@media (min-width: 68.75em) {
   .c-ways {
-    --ways-seam: 76px;
+    --ways-seam: 4.75rem;
   }
 
   .c-ways__grid {
@@ -155,14 +155,14 @@ const patternStyle = {
   }
 
   .c-ways__half--lit {
-    padding: clamp(64px, 7vw, 88px) clamp(36px, 4vw, 56px) clamp(64px, 7vw, 88px)
+    padding: clamp(4rem, 7vw, 5.5rem) clamp(2.25rem, 4vw, 3.5rem) clamp(4rem, 7vw, 5.5rem)
       var(--ways-gutter);
   }
 
   .c-ways__half--unlit {
     margin: 0 0 0 calc(var(--ways-seam) * -1);
-    padding: clamp(64px, 7vw, 88px) var(--ways-gutter) clamp(68px, 8vw, 92px)
-      clamp(104px, 10vw, 128px);
+    padding: clamp(4rem, 7vw, 5.5rem) var(--ways-gutter) clamp(4.25rem, 8vw, 5.75rem)
+      clamp(6.5rem, 10vw, 8rem);
     clip-path: polygon(var(--ways-seam) 0, 100% 0, 100% 100%, 0 100%);
   }
 
@@ -176,8 +176,8 @@ const patternStyle = {
 
 .c-ways__rules {
   background:
-    repeating-linear-gradient(90deg, rgba(var(--rgb-ink), 0.055) 0 1px, transparent 1px 64px),
-    repeating-linear-gradient(0deg, rgba(var(--rgb-ink), 0.055) 0 1px, transparent 1px 64px);
+    repeating-linear-gradient(90deg, rgba(var(--rgb-ink), 0.055) 0 1px, transparent 1px 4rem),
+    repeating-linear-gradient(0deg, rgba(var(--rgb-ink), 0.055) 0 1px, transparent 1px 4rem);
 }
 
 .c-ways__glow--ice {
@@ -217,7 +217,7 @@ const patternStyle = {
   -webkit-mask-composite: source-in;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 68.75em) {
   .c-ways__pattern {
     opacity: 0.28;
   }
@@ -257,9 +257,9 @@ const patternStyle = {
 }
 
 .c-ways__pip {
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--ways-key);
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border: 0.125rem solid var(--ways-key);
   border-radius: var(--radius-pill);
   opacity: 0.55;
 }
@@ -304,7 +304,7 @@ const patternStyle = {
 .c-ways__format {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 2.5rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);

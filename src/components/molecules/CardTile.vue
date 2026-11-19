@@ -68,7 +68,7 @@ const edge = computed(() => factionColorOf(props.row) ?? 'rgba(var(--rgb-ink), 0
   display: block;
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-bottom: 2px solid var(--tile-edge);
+  border-bottom: 0.125rem solid var(--tile-edge);
   border-radius: var(--radius-m);
 }
 

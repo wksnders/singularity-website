@@ -100,7 +100,7 @@ watch(
   display: flex;
   flex-direction: column;
   background: rgba(var(--rgb-bg), 0.92);
-  backdrop-filter: blur(22px);
+  backdrop-filter: blur(1.375rem);
   overflow-y: auto;
 }
 
@@ -114,10 +114,10 @@ watch(
 }
 
 .c-sheet__close {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid rgba(var(--rgb-ink), 0.16);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background: transparent;
   color: var(--color-ink);
   font-size: 1.5rem;
@@ -167,7 +167,7 @@ watch(
 .c-sheet__social {
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
+  min-height: 3rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);

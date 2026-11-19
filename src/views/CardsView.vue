@@ -30,6 +30,7 @@ import {
   sortRows,
 } from '@/site/cards';
 import { asset, pictureSources, soon, to } from '@/site/links';
+import { pageScale } from '@/site/pageScale';
 import type { FacetKey, SortKey } from '@/site/cards';
 
 const OVERLAP = 64;
@@ -77,7 +78,7 @@ const shown = computed(() =>
 
 const groups = computed(() => facetGroups(db.facets.value, searchText.value, widened.value));
 
-const phone = useMediaQuery('(max-width: 599.98px)');
+const phone = useMediaQuery('(max-width: 37.4988em)');
 const extraFacets = computed<FacetKey[]>(() => (phone.value ? [...EXTRA_FACETS, 'box'] : EXTRA_FACETS));
 
 /* AN ACTIVE FACET IS NEVER HIDDEN, even collapsed, or the grid is filtered with no visible cause and nothing but the blanket Clear to undo it. */
@@ -160,7 +161,7 @@ onMounted(() => {
     id="gallery"
     tabindex="-1"
     class="l-wrap cards__gallery"
-    :style="{ '--cards-overlap': `${OVERLAP}px` }"
+    :style="{ '--cards-overlap': `${OVERLAP * pageScale}px` }"
   >
     <div class="cards__bar">
       <div class="cards__tools">
@@ -301,7 +302,7 @@ onMounted(() => {
 <style>
 .cards__gallery {
   position: relative;
-  max-width: 1400px;
+  max-width: 87.5rem;
   padding-bottom: var(--band-y);
 }
 
@@ -319,8 +320,8 @@ onMounted(() => {
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-l);
   background: rgba(var(--rgb-surface), 0.94);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(0.625rem);
+  backdrop-filter: blur(0.625rem);
 }
 
 .cards__tools {
@@ -338,7 +339,7 @@ onMounted(() => {
 
 .cards__search-input {
   width: 100%;
-  min-height: 52px;
+  min-height: 3.25rem;
   padding: 0 var(--space-5);
   border: 1px solid rgba(var(--rgb-accent), 0.5);
   border-radius: var(--radius-pill);
@@ -354,9 +355,9 @@ onMounted(() => {
   top: 50%;
   right: var(--space-4);
   transform: translateY(-50%);
-  padding: 3px 7px;
+  padding: 0.1875rem 0.4375rem;
   border: 1px solid var(--color-line-strong);
-  border-radius: 6px;
+  border-radius: 0.375rem;
   font-family: var(--font-label);
   font-weight: 500;
   font-size: var(--size-label-xs);
@@ -373,8 +374,8 @@ onMounted(() => {
 }
 
 .cards__sort-btn {
-  min-height: 44px;
-  padding: 0 2px;
+  min-height: 2.75rem;
+  padding: 0 0.125rem;
   border: 0;
   background: none;
   color: var(--color-ink-faint);
@@ -401,7 +402,7 @@ onMounted(() => {
   flex: 0 1 auto;
   align-items: center;
   min-width: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0 var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
@@ -409,8 +410,8 @@ onMounted(() => {
 
 .cards__sort-pick:has(.cards__sort-select:focus-visible) {
   box-shadow:
-    0 0 0 2px var(--color-bg),
-    0 0 0 4px var(--color-accent);
+    0 0 0 0.125rem var(--color-bg),
+    0 0 0 0.25rem var(--color-accent);
 }
 
 .cards__sort-pick-text {
@@ -441,7 +442,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-@media (max-width: 599.98px) {
+@media (max-width: 37.4988em) {
   .cards__sort {
     display: none;
   }
@@ -452,7 +453,7 @@ onMounted(() => {
 }
 
 /* Too narrow for the value; the picker still names it. */
-@media (max-width: 359.98px) {
+@media (max-width: 22.4988em) {
   .cards__sort-pick-value {
     display: none;
   }
@@ -498,10 +499,10 @@ onMounted(() => {
   display: flex;
   gap: var(--space-2);
   min-width: 0;
-  margin: -4px;
-  padding: 4px;
+  margin: -0.25rem;
+  padding: 0.25rem;
   overflow-x: auto;
-  scroll-padding-inline: 4px;
+  scroll-padding-inline: 0.25rem;
   scrollbar-width: none;
 }
 
@@ -547,17 +548,17 @@ onMounted(() => {
   color: var(--color-ink-muted);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25em) {
   .cards__bar {
     padding: var(--space-4) var(--space-5);
   }
 
   .cards__search {
-    flex-basis: 280px;
+    flex-basis: 17.5rem;
   }
 
   .cards__search-input {
-    padding-right: 52px;
+    padding-right: 3.25rem;
   }
 
   .cards__key {
@@ -575,7 +576,7 @@ onMounted(() => {
   }
 
   .cards__facet-label {
-    width: 108px;
+    width: 6.75rem;
   }
 
   .cards__facet-options {
@@ -616,7 +617,7 @@ onMounted(() => {
   margin-bottom: var(--space-5);
 }
 
-@media (min-width: 760px) {
+@media (min-width: 47.5em) {
   .cards__grid--even {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -626,7 +627,7 @@ onMounted(() => {
   }
 }
 
-@media (min-width: 1360px) {
+@media (min-width: 85em) {
   .cards__grid--even {
     grid-template-columns: repeat(4, 1fr);
   }

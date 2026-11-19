@@ -71,12 +71,12 @@ const sources = () => pictureSources(props.art?.src ?? null);
   display: block;
   border-radius: var(--radius-m);
   overflow: hidden;
-  border-bottom: 3px solid var(--faction);
+  border-bottom: 0.1875rem solid var(--faction);
   transition: transform var(--dur-2) var(--ease-out);
 }
 
 .c-tile:hover .c-tile__art {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .c-tile__body {

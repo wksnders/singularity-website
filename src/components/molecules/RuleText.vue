@@ -41,7 +41,7 @@ defineEmits<{ card: [id: string] }>();
   color: var(--color-accent-text);
   text-decoration: underline;
   text-decoration-color: rgba(var(--rgb-accent), 0.35);
-  text-underline-offset: 3px;
+  text-underline-offset: 0.1875rem;
 }
 
 .c-rt__ref:hover {
@@ -81,6 +81,6 @@ mark {
   background: var(--color-accent-wash);
   color: var(--color-ink);
   border-radius: var(--radius-s);
-  padding-inline: 2px;
+  padding-inline: 0.125rem;
 }
 </style>

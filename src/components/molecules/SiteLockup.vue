@@ -53,7 +53,7 @@ const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`)
   position: relative;
   display: block;
   width: 100%;
-  filter: drop-shadow(0 10px 30px rgba(var(--rgb-bg), 0.7));
+  filter: drop-shadow(0 0.625rem 1.875rem rgba(var(--rgb-bg), 0.7));
 }
 
 .c-lockup__word {
@@ -69,7 +69,7 @@ const src = (name: string, ext: 'webp' | 'png') => asset(`/logo/${name}.${ext}`)
   width: 100%;
   height: auto;
   opacity: 0;
-  transform: translateY(6px) scale(0.88);
+  transform: translateY(0.375rem) scale(0.88);
   transform-origin: 51.4% 83.5%;
   transition:
     opacity var(--dur-4) var(--ease-out),

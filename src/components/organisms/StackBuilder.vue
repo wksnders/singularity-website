@@ -215,7 +215,7 @@ function copyLink(): void {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-pill);
@@ -236,8 +236,8 @@ function copyLink(): void {
 }
 
 .c-stack__clear {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding-inline: var(--space-4);
   border: 0;
   background: transparent;
@@ -257,14 +257,14 @@ function copyLink(): void {
   margin-top: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 1.6dvw, 20px);
+  gap: clamp(0.625rem, 1.6dvw, 1.25rem);
   align-items: stretch;
 }
 
 .c-stack__owner {
   flex: 0 0 auto;
   align-self: flex-start;
-  width: min(100%, 190px);
+  width: min(100%, 11.875rem);
   min-width: 0;
   padding: 1px;
   border: 1px solid var(--color-line-strong);
@@ -279,7 +279,7 @@ function copyLink(): void {
   list-style: none;
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(8px, 1.4dvw, 16px);
+  gap: clamp(0.5rem, 1.4dvw, 1rem);
 }
 
 .c-stack__slot {
@@ -303,7 +303,7 @@ function copyLink(): void {
 
 .c-stack__slot.is-armed {
   border-color: var(--color-accent);
-  box-shadow: 0 0 22px rgba(var(--rgb-accent), 0.22);
+  box-shadow: 0 0 1.375rem rgba(var(--rgb-accent), 0.22);
 }
 
 .c-stack__slot:not(.is-filled).is-armed {
@@ -315,14 +315,14 @@ function copyLink(): void {
   gap: var(--space-2);
   align-items: center;
   justify-content: space-between;
-  min-height: 28px;
+  min-height: 1.75rem;
 }
 
 .c-stack__slot-label {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 28px;
+  min-height: 1.75rem;
   white-space: nowrap;
 }
 
@@ -332,9 +332,9 @@ function copyLink(): void {
 
 .c-stack__remove {
   flex: 0 0 auto;
-  margin: -8px -8px -8px 0;
-  width: 44px;
-  height: 44px;
+  margin: -0.5rem -0.5rem -0.5rem 0;
+  width: 2.75rem;
+  height: 2.75rem;
   display: grid;
   place-items: center;
   border: 0;
@@ -345,8 +345,8 @@ function copyLink(): void {
 .c-stack__remove > span {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 1.625rem;
+  height: 1.625rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--color-line-dashed);
   background: var(--color-bg);
@@ -385,7 +385,7 @@ function copyLink(): void {
 
 .c-stack__choose-box {
   flex: 0 0 auto;
-  width: 84px;
+  width: 5.25rem;
   aspect-ratio: var(--ratio-card);
   display: grid;
   place-items: center;
@@ -408,7 +408,7 @@ function copyLink(): void {
   margin-top: var(--space-2);
   max-width: 62ch;
   padding: var(--space-3) var(--space-4);
-  border-left: 2px solid rgba(var(--rgb-accent), 0.5);
+  border-left: 0.125rem solid rgba(var(--rgb-accent), 0.5);
   background: rgba(var(--rgb-accent), 0.07);
   font-size: var(--size-m);
   line-height: 1.6;
@@ -431,7 +431,7 @@ function copyLink(): void {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-5);
   border: 1px solid rgba(var(--rgb-accent), 0.55);
   border-radius: var(--radius-pill);
@@ -448,7 +448,7 @@ function copyLink(): void {
 }
 
 .c-stack__note {
-  flex: 1 1 260px;
+  flex: 1 1 16.25rem;
   min-width: 0;
   max-width: 48ch;
   font-size: var(--size-s);
@@ -456,13 +456,13 @@ function copyLink(): void {
   color: var(--color-ink-soft);
 }
 
-@media (min-width: 560px) {
+@media (min-width: 35em) {
   .c-stack__row {
     flex-direction: row;
   }
 
   .c-stack__owner {
-    width: clamp(150px, 17dvw, 210px);
+    width: clamp(9.375rem, 17dvw, 13.125rem);
   }
 
   .c-stack__slots {

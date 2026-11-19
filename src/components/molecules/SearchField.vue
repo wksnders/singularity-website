@@ -59,8 +59,8 @@ defineExpose({ input });
 
 /* Two classes, so this holds whichever of the two components' CSS loads first. */
 .c-search .c-search__input {
-  flex: 1 1 240px;
-  max-width: 420px;
+  flex: 1 1 15rem;
+  max-width: 26.25rem;
 }
 
 .c-search .c-search__clear {

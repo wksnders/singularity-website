@@ -3,7 +3,7 @@
 import { onBeforeUnmount, onMounted, readonly, ref } from 'vue';
 
 /* SiteHeader's CSS mirrors this breakpoint. */
-const WIDE_QUERY = '(min-width: 900px)';
+const WIDE_QUERY = '(min-width: 56.25em)';
 const SOLID_AT = 80;
 const RETRACT_AFTER = 240;
 /** Ms from app mount: the nav shows even if the hero never reports (slow or failed Home chunk). */

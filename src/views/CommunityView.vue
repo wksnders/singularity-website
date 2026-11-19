@@ -82,7 +82,7 @@ const channels = ['rules-desk', 'incursion-logs', 'deck-lab', 'convergence'];
 
 const factSheet = computed(() => [
   { label: t('community.facts.players'), value: game.players, reserved: false },
-  { label: t('community.facts.length'), value: game.playTime, reserved: false },
+  { label: t('community.facts.length'), value: t('community.facts.lengthValue', { minutes: game.minutesPerPlayer }), reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
   { label: t('community.facts.release'), value: game.releaseDate, reserved: true },
   { label: t('community.facts.box'), value: coreBox.summary, reserved: true },
@@ -379,12 +379,12 @@ const factSheet = computed(() => [
 .comm__roster {
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(304px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
   gap: var(--space-5) var(--space-7);
 }
 
 .comm__team-group--artists .comm__roster {
-  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
 }
 
 .comm__member {
@@ -395,13 +395,13 @@ const factSheet = computed(() => [
 }
 
 .comm__portrait {
-  flex: 0 0 88px;
-  width: 88px;
+  flex: 0 0 5.5rem;
+  width: 5.5rem;
 }
 
 .comm__team-group--artists .comm__portrait {
-  flex-basis: 104px;
-  width: 104px;
+  flex-basis: 6.5rem;
+  width: 6.5rem;
 }
 
 .comm__member-text {
@@ -415,7 +415,7 @@ const factSheet = computed(() => [
 }
 
 .comm__team-group--friends .comm__roster {
-  grid-template-columns: repeat(auto-fill, minmax(min(272px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
   gap: 0 var(--space-7);
 }
 
@@ -427,12 +427,12 @@ const factSheet = computed(() => [
 .comm__member-art {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .comm__statement {
   margin-top: var(--space-6);
-  max-width: 760px;
+  max-width: 47.5rem;
 }
 
 .comm__statement-summary {
@@ -441,7 +441,7 @@ const factSheet = computed(() => [
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   list-style: none;
 }
@@ -462,8 +462,8 @@ const factSheet = computed(() => [
 
 .comm__chevron {
   flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   display: grid;
   place-items: center;
   border: 1px solid var(--color-line-strong);
@@ -512,7 +512,7 @@ const factSheet = computed(() => [
 
 .comm__hub-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
   gap: var(--space-3);
 }
 
@@ -604,8 +604,8 @@ const factSheet = computed(() => [
   aspect-ratio: 16 / 9;
   background: repeating-linear-gradient(
     135deg,
-    var(--color-line) 0 10px,
-    transparent 10px 20px
+    var(--color-line) 0 0.625rem,
+    transparent 0.625rem 1.25rem
   );
 }
 
@@ -650,7 +650,7 @@ const factSheet = computed(() => [
 
 .comm__facts > div {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-columns: 7.5rem minmax(0, 1fr);
   gap: var(--space-3);
   align-items: baseline;
 }

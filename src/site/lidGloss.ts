@@ -33,13 +33,13 @@ export interface GlossEls {
   band: HTMLElement | null;
 }
 
-/** Px on screen: a figure's top and bottom. */
+/** Design px on screen: a figure's top and bottom. */
 export type FigureSpan = [top: number, bottom: number];
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 export function createGloss(n: number) {
-  /* Scroll px, not visible heights, where each figure was first seen: a resize must not move it, and scrolling back above it rewinds the glow. */
+  /* Scroll positions in design px, not visible heights, where each figure was first seen: a resize must not move it, and scrolling back above it rewinds the glow. */
   const seenAt: (number | null)[] = new Array(n).fill(null);
   const level = new Array<number>(n).fill(0);
   const written = new Array<string>(n).fill('');
@@ -53,7 +53,7 @@ export function createGloss(n: number) {
     if (el.band) el.band.style.transform = band;
   }
 
-  /** `sy` is scroll px from the page top and `hv` the visible height the ramps are measured in. Returns true while a level is still easing. */
+  /** `sy` is the scroll past the runway's top in design px and `hv` the visible height the ramps are measured in. Returns true while a level is still easing. */
   function update(
     els: (GlossEls | null)[],
     figures: FigureSpan[],

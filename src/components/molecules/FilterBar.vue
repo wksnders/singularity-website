@@ -78,6 +78,6 @@ const activeLabel = computed(
 }
 
 .c-filters__input {
-  max-width: 360px;
+  max-width: 22.5rem;
 }
 </style>

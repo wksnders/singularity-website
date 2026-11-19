@@ -7,7 +7,8 @@ import { SCROLL_INPUTS } from '@/site/glide';
 import { ENTRANCE, HERO, SCRUB, SEAM, SPLIT, figureSize, notchPolygon, registration, type Registration } from '@/site/lidSplitScene';
 import { createCircuit, type Circuit, type StripBox, type Zone } from '@/site/lidCircuit';
 import { GLOSS_ON, createGloss, type FigureSpan, type GlossEls } from '@/site/lidGloss';
-import { token, tokenMs, tokenPx } from '@/site/tokens';
+import { layoutRect, pageScale } from '@/site/pageScale';
+import { token, tokenDesignPx, tokenMs } from '@/site/tokens';
 
 export interface LidSceneEls {
   runway: Ref<HTMLElement | null>;
@@ -81,8 +82,8 @@ const SKIP_EVENTS = [...SCROLL_INPUTS, 'scroll'] as const;
 /* The router's own scroll on arrival must not count as the reader skipping. */
 const SKIP_SCROLL_AFTER = 300;
 
-/** The strip under viewport x, by equal shares of the lid's rect. */
-const stripAt = (x: number, r: DOMRect) => {
+/** The strip under client x, by equal shares of the lid's rect, both in design px. */
+const stripAt = (x: number, r: Pick<DOMRect, 'left' | 'width'>) => {
   const n = lidStrips.length;
   return Math.min(n - 1, Math.max(0, Math.floor((x - r.left) / (r.width / n))));
 };
@@ -181,27 +182,27 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const box = els.box.value;
     const runway = els.runway.value;
     if (!box || !runway) return;
-    boxW = box.clientWidth;
-    boxH = box.clientHeight;
-    screenH = viewHeight();
-    navH = tokenPx('--nav-height');
+    boxW = box.clientWidth / pageScale.value;
+    boxH = box.clientHeight / pageScale.value;
+    screenH = viewHeight() / pageScale.value;
+    navH = tokenDesignPx('--nav-height');
     const pw = boxW / n;
     const r = registration(pw, boxH, n);
     reg = r;
     sizes = lidStrips.map((s) => figureSize(s, r));
-    runwayTop = runway.getBoundingClientRect().top + window.scrollY;
+    runwayTop = layoutRect(runway).top + window.scrollY / pageScale.value;
     for (const img of els.arts.value) {
       Object.assign(img.style, {
-        left: `${r.ax}px`,
-        top: `${r.oyRest}px`,
-        width: `${r.aw}px`,
-        height: `${r.ah}px`,
+        left: `${r.ax * pageScale.value}px`,
+        top: `${r.oyRest * pageScale.value}px`,
+        width: `${r.aw * pageScale.value}px`,
+        height: `${r.ah * pageScale.value}px`,
         transformOrigin: '0 0',
       });
     }
     els.figures.value.forEach((el, i) => {
-      el.style.width = `${sizes[i].w}px`;
-      el.style.height = `${sizes[i].h}px`;
+      el.style.width = `${sizes[i].w * pageScale.value}px`;
+      el.style.height = `${sizes[i].h * pageScale.value}px`;
     });
     sig = null;
     frame(performance.now());
@@ -258,10 +259,11 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     if (!box || !reg || !els.strips.value.length) return false;
     opts.onFrame?.();
     /* All reads before the first write: a read after a write forces a second style pass. */
-    const scrolled = window.scrollY;
-    const hr = box.getBoundingClientRect();
+    const scrolled = window.scrollY / pageScale.value;
+    const hr = layoutRect(box);
     const pointer = opts.hover.value && settled.value;
-    const hx = pointer ? els.plate()?.getBoundingClientRect() : undefined;
+    const plate = pointer ? els.plate() : null;
+    const hx = plate ? layoutRect(plate) : undefined;
     const held = document.activeElement;
 
     const red = opts.reduced.value;
@@ -300,11 +302,11 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     const kI = 1 + ((intro?.k ?? 1) - 1) * zi;
     const foot = els.foot();
     if (zi > 0.001 && intro) {
-      box.style.transformOrigin = `${intro.ox.toFixed(1)}px 0`;
+      box.style.transformOrigin = `${(intro.ox * pageScale.value).toFixed(1)}px 0`;
       box.style.transform = `scale(${kI.toFixed(4)})`;
       if (foot) {
         /* The lid's own origin, seen from the foot: its foot stays on the lid's. */
-        foot.style.transformOrigin = `${(intro.left + intro.ox).toFixed(1)}px ${(-H).toFixed(1)}px`;
+        foot.style.transformOrigin = `${((intro.left + intro.ox) * pageScale.value).toFixed(1)}px ${(-H * pageScale.value).toFixed(1)}px`;
         foot.style.transform = box.style.transform;
       }
     } else if (box.style.transform) {
@@ -315,7 +317,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
     /* Moves exactly as far as the lid's left edge (colW·zi), so the teeth stay fully over the art: any other distance opens gaps between them. */
     const fieldNext =
       zi > 0.001
-        ? `translateX(${(-(intro?.left ?? 0) * zi).toFixed(1)}px) scale(${(1 + ENTRANCE.fieldGrow * zi).toFixed(4)})`
+        ? `translateX(${(-(intro?.left ?? 0) * zi * pageScale.value).toFixed(1)}px) scale(${(1 + ENTRANCE.fieldGrow * zi).toFixed(4)})`
         : '';
     if (field && fieldNext !== fieldAt) {
       field.style.transformOrigin = '100% 50%';
@@ -352,11 +354,11 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
 
     const camY = entranceOn && T.cam ? (camStart(H, screenH) * (1 - ce)) / kI : 0;
     const stage = els.stage.value;
-    if (stage) stage.style.transform = camY > 0.05 ? `translate3d(0,${(-camY).toFixed(2)}px,0)` : '';
+    if (stage) stage.style.transform = camY > 0.05 ? `translate3d(0,${(-camY * pageScale.value).toFixed(2)}px,0)` : '';
     const vt = Math.min(H - 1, Math.max(0, -hr.top) / kI + camY);
     const vb = Math.max(vt + 1, Math.min(H, (screenH - hr.top) / kI + camY));
     const btn = els.tagButton();
-    const btnTop = `${Math.round(Math.max(0, vb - (red ? clear : lift) - HERO.tagsButton - HERO.tagsGap))}px`;
+    const btnTop = `${Math.round(Math.max(0, vb - (red ? clear : lift) - HERO.tagsButton - HERO.tagsGap)) * pageScale.value}px`;
     if (btn && btn.style.top !== btnTop) btn.style.top = btnTop;
 
     const far = H * FAR;
@@ -405,12 +407,12 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
         ty0 = -(sD <= sClear ? sD * (clear / sClear) : clear + (sD - sClear) * SPLIT.drift);
       }
       const ty = strip.flush ? Math.max(ty0, (H - oy) * (1 - sc)) : ty0;
-      const origin = `${ox.toFixed(1)}px ${oy.toFixed(1)}px`;
+      const origin = `${(ox * pageScale.value).toFixed(1)}px ${(oy * pageScale.value).toFixed(1)}px`;
       if (origins[i] !== origin) {
         el.style.transformOrigin = origin;
         origins[i] = origin;
       }
-      el.style.transform = `translate3d(0,${(ty + introY).toFixed(2)}px,0) ${scale}`;
+      el.style.transform = `translate3d(0,${((ty + introY) * pageScale.value).toFixed(2)}px,0) ${scale}`;
 
       const target = !red && hoverI === i ? 1 : 0;
       hov[i] += (target - hov[i]) * ease;
@@ -436,7 +438,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
               map: ins > 0.2 ? ([x, y]) => [Math.min(pw - iR, Math.max(iL, x)), y] : undefined,
             })
           : ins > 0.2
-            ? `inset(0 ${iR.toFixed(2)}px 0 ${iL.toFixed(2)}px)`
+            ? `inset(0 ${(iR * pageScale.value).toFixed(2)}px 0 ${(iL * pageScale.value).toFixed(2)}px)`
             : 'none';
 
       /* The art must sink at most `slip`, or the figure's painted hole shows. */
@@ -456,11 +458,11 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
         const ay = v0 + hh - ey;
         const settle =
           cz !== 1
-            ? `translate(${(ccx - ex).toFixed(1)}px,${(ccy - ey).toFixed(1)}px) scale(${cz.toFixed(4)}) translate(${(ex - ccx).toFixed(1)}px,${(ey - ccy).toFixed(1)}px) `
+            ? `translate(${((ccx - ex) * pageScale.value).toFixed(1)}px,${((ccy - ey) * pageScale.value).toFixed(1)}px) scale(${cz.toFixed(4)}) translate(${((ex - ccx) * pageScale.value).toFixed(1)}px,${((ey - ccy) * pageScale.value).toFixed(1)}px) `
             : '';
         const sink =
           artY || ka !== 1
-            ? `translate3d(0,${artY.toFixed(2)}px,0) translate(${ax.toFixed(1)}px,${ay.toFixed(1)}px) scale(${ka.toFixed(4)}) translate(${(-ax).toFixed(1)}px,${(-ay).toFixed(1)}px)`
+            ? `translate3d(0,${(artY * pageScale.value).toFixed(2)}px,0) translate(${(ax * pageScale.value).toFixed(1)}px,${(ay * pageScale.value).toFixed(1)}px) scale(${ka.toFixed(4)}) translate(${(-ax * pageScale.value).toFixed(1)}px,${(-ay * pageScale.value).toFixed(1)}px)`
             : '';
         art.style.transform = (settle + sink).trim() || 'none';
       }
@@ -469,14 +471,14 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       if (fig) {
         const grow =
           kf !== 1
-            ? ` translate(${hw.toFixed(1)}px,${hh.toFixed(1)}px) scale(${kf.toFixed(4)}) translate(${(-hw).toFixed(1)}px,${(-hh).toFixed(1)}px)`
+            ? ` translate(${(hw * pageScale.value).toFixed(1)}px,${(hh * pageScale.value).toFixed(1)}px) scale(${kf.toFixed(4)}) translate(${(-hw * pageScale.value).toFixed(1)}px,${(-hh * pageScale.value).toFixed(1)}px)`
             : '';
         const settle =
           cz !== 1
-            ? ` translate(${ccx.toFixed(1)}px,${ccy.toFixed(1)}px) scale(${cz.toFixed(4)}) translate(${(-ccx).toFixed(1)}px,${(-ccy).toFixed(1)}px)`
+            ? ` translate(${(ccx * pageScale.value).toFixed(1)}px,${(ccy * pageScale.value).toFixed(1)}px) scale(${cz.toFixed(4)}) translate(${(-ccx * pageScale.value).toFixed(1)}px,${(-ccy * pageScale.value).toFixed(1)}px)`
             : '';
         spans[i] = [hr.top + ty + introY + oy + (v0 - oy) * sc, hr.top + ty + introY + oy + (v0 + size.h - oy) * sc];
-        fig.style.transform = `translate3d(${(i * pw).toFixed(2)}px,${(ty + introY).toFixed(2)}px,0) translate(${ox.toFixed(1)}px,${oy.toFixed(1)}px) ${scale} translate(${(-ox).toFixed(1)}px,${(-oy).toFixed(1)}px)${settle} translate(${u0.toFixed(2)}px,${v0.toFixed(2)}px)${grow}`;
+        fig.style.transform = `translate3d(${(i * pw * pageScale.value).toFixed(2)}px,${((ty + introY) * pageScale.value).toFixed(2)}px,0) translate(${(ox * pageScale.value).toFixed(1)}px,${(oy * pageScale.value).toFixed(1)}px) ${scale} translate(${(-ox * pageScale.value).toFixed(1)}px,${(-oy * pageScale.value).toFixed(1)}px)${settle} translate(${(u0 * pageScale.value).toFixed(2)}px,${(v0 * pageScale.value).toFixed(2)}px)${grow}`;
         /* Top and foot only: a figure may cross its seam. */
         const cTop = Math.max(0, hh - (v0 + hh) / kf);
         const cBot = Math.max(0, size.h - (hh + (H - v0 - hh) / kf));
@@ -504,7 +506,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
                 ext: pw,
                 map: ([x, y]) => [hw + (x - u0 - hw) / kf, y < -far / 2 ? cTop : hh + (y - v0 - hh) / kf],
               })
-            : `inset(${cTop.toFixed(1)}px -${FIGURE_SPILL} ${cBot.toFixed(1)}px -${FIGURE_SPILL})`;
+            : `inset(${(cTop * pageScale.value).toFixed(1)}px -${FIGURE_SPILL} ${(cBot * pageScale.value).toFixed(1)}px -${FIGURE_SPILL})`;
       }
       cur[i] = { x: i * pw + ox * (1 - sc), y: ty + oy * (1 - sc) + introY, w: pw * sc, h: H * sc, ei, travel, inL: iL * sc, inR: iR * sc };
     });
@@ -540,7 +542,7 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       if (frozenMarkY !== null && free <= frozenMarkY) frozenMarkY = null;
       const markY = frozenMarkY ?? free;
       lastMarkY = markY;
-      mark.style.transform = `translate3d(-50%,${(-camY * MARK_PAN + markY * MARK_PARALLAX * moving).toFixed(2)}px,0)`;
+      mark.style.transform = `translate3d(-50%,${((-camY * MARK_PAN + markY * MARK_PARALLAX * moving) * pageScale.value).toFixed(2)}px,0)`;
     }
     return true;
   }
@@ -568,8 +570,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
       wake();
       return;
     }
-    const r = box.getBoundingClientRect();
-    const i = stripAt(event.clientX, r);
+    const r = layoutRect(box);
+    const i = stripAt(event.clientX / pageScale.value, r);
     tapped = i === tapped ? -1 : i;
     wake();
   }
@@ -595,8 +597,8 @@ export function useLidSplitScene(els: LidSceneEls, opts: LidSceneOpts) {
 
   function onPointer(event: PointerEvent): void {
     if (event.pointerType === 'touch') return;
-    px = event.clientX;
-    py = event.clientY;
+    px = event.clientX / pageScale.value;
+    py = event.clientY / pageScale.value;
     wake();
   }
 

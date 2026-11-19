@@ -6,8 +6,8 @@ import { useMediaQuery } from '@/composables/useMediaQuery';
 import { pad } from '@/site/format';
 import type { SectionEntry } from '@/site/sections';
 
-// 1488px = --width-content + 2 * (--rail-width + --rail-gap) from tokens.css; below it the rail overlaps the content column.
-const FITS_QUERY = '(min-width: 1488px)';
+// 94.5em (1512px at the default font) is where (--width-content + 2 * (--rail-width + --rail-gap)) from tokens.css, times the page scale at that width (pageScale.ts), first fits; below it the rail overlaps the content column.
+const FITS_QUERY = '(min-width: 94.5em)';
 
 const props = defineProps<{ sections: SectionEntry[] }>();
 
@@ -84,7 +84,7 @@ const heading = (i: number) =>
 }
  
 .c-rail--index {
-  max-height: 78vh;
+  max-height: calc(78vh);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;

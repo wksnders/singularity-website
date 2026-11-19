@@ -51,7 +51,7 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
       :placeholder="t('incursion.hero.artPlaceholder')"
       :pending-note="t('incursion.hero.pending')"
       glow="100% 80% at 24% 6%"
-      min-height="min(72dvh, 640px)"
+      min-height="min(72dvh, 40rem)"
     >
       <Breadcrumbs
         :crumbs="[
@@ -70,7 +70,7 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
       <p class="inc1__facts">
         <span>{{ t('ia.universe.incursions.label') }}</span>
         <span>{{ game.incursionsPlayers }} {{ t('home.incursions.players') }}</span>
-        <span>{{ game.playTime }}</span>
+        <span>{{ t('incursion.hero.playTime', { minutes: game.minutesPerPlayer }) }}</span>
         <span>
           {{ t('incursion.hero.position') }} {{ pad(position) }}
           {{ t('brand.of') }} {{ pad(rogueAIs.length) }}

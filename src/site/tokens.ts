@@ -8,7 +8,13 @@ export const LABEL_CAPS_ADVANCE = 0.53;
 
 export const tokenMs = (name: string): number => parseFloat(token(name));
 
-/** Px, for a px, rem or unitless token. */
+/** Design px (rem × 16), for a px, rem or unitless token. */
+export function tokenDesignPx(name: string): number {
+  const value = token(name);
+  return value.endsWith('rem') ? parseFloat(value) * 16 : parseFloat(value) || 0;
+}
+
+/** Real px, for a px, rem or unitless token. */
 export function tokenPx(name: string): number {
   const value = token(name);
   return value.endsWith('rem') ? parseFloat(value) * parseFloat(root().fontSize) : parseFloat(value) || 0;

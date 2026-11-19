@@ -86,7 +86,7 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 }
 
 .c-factions__head {
-  padding: clamp(48px, 9vw, 64px) var(--gutter) 20px;
+  padding: clamp(3rem, 9vw, 4rem) var(--gutter) 1.25rem;
 }
 
 .c-factions__title {
@@ -99,23 +99,23 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 .c-factions__list {
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
+  padding-top: 1.25rem;
 }
 
 .c-factions__item {
-  margin-top: -20px;
+  margin-top: -1.25rem;
 }
 
-/* The slice's own background is the faction colour; the art is inset over it, so the 4px left uncovered is the lit edge. */
+/* The slice's own background is the faction colour; the art is inset over it, so the 0.25rem left uncovered is the lit edge. */
 .c-factions__slice {
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: flex-end;
-  min-height: 170px;
-  padding: 44px 96px 32px var(--gutter);
+  min-height: 10.625rem;
+  padding: 2.75rem 6rem 2rem var(--gutter);
   overflow: hidden;
-  clip-path: polygon(0 0, 100% 20px, 100% 100%, 0 calc(100% - 20px));
+  clip-path: polygon(0 0, 100% 1.25rem, 100% 100%, 0 calc(100% - 1.25rem));
   background: var(--faction);
   color: var(--color-ink);
   text-decoration: none;
@@ -133,16 +133,16 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 }
 
 .c-factions__slice:focus-visible .c-factions__text {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 6px;
-  border-radius: 2px;
+  outline: 0.125rem solid var(--color-accent);
+  outline-offset: 0.375rem;
+  border-radius: 0.125rem;
 }
 
 .c-factions__art {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  clip-path: polygon(0 4px, 100% 24px, 100% 100%, 0 100%);
+  clip-path: polygon(0 0.25rem, 100% 1.5rem, 100% 100%, 0 100%);
   background: var(--color-bg);
 }
 
@@ -185,7 +185,7 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 .c-factions__name {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   font-family: var(--font-faction);
   font-size: 1.125rem;
   font-weight: 400;
@@ -206,16 +206,16 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 }
 
 .c-factions__foot {
-  padding-bottom: 56px;
+  padding-bottom: 3.5rem;
 }
 
-/* Hangs from the last row's bottom edge, which drops 20px across the band. */
+/* Hangs from the last row's bottom edge, which drops 1.25rem across the band. */
 .c-factions__rail {
   position: relative;
   z-index: 2;
-  height: 46px;
-  margin-top: -21px;
-  transform: rotate(atan2(20px, 100cqw));
+  height: 2.875rem;
+  margin-top: -1.3125rem;
+  transform: rotate(atan2(1.25rem, 100cqw));
   transform-origin: 0 0;
 }
 
@@ -227,17 +227,17 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
   pointer-events: none;
 }
 
-/* The fill sits 1.5px horizontally inside every edge of the line's shape, so the line reads as an outline. */
+/* The fill sits 0.0938rem horizontally inside every edge of the line's shape, so the line reads as an outline. */
 .c-factions__rail-line {
   inset: 0;
   background: rgba(var(--rgb-accent-text), 0.5);
-  clip-path: polygon(0 0, 100% 0, 100% 24px, 270px 24px, 248px 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 1.5rem, 16.875rem 1.5rem, 15.5rem 100%, 0 100%);
 }
 
 .c-factions__rail-plate {
-  inset: 2px 0 1.5px;
+  inset: 0.125rem 0 0.0938rem;
   background: var(--color-hardware);
-  clip-path: polygon(0 0, 100% 0, 100% 20.5px, 270px 20.5px, 248px 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 1.2812rem, 16.875rem 1.2812rem, 15.5rem 100%, 0 100%);
 }
 
 .c-factions__rail-step {
@@ -246,8 +246,8 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 
 /* Must follow the fills in the markup, so the lit edge covers the hardware too. */
 .c-factions__rail-lit {
-  inset: 2px 0 auto;
-  height: 30px;
+  inset: 0.125rem 0 auto;
+  height: 1.875rem;
   background: linear-gradient(to bottom, rgba(var(--rgb-accent-text), 0.12), rgba(var(--rgb-accent-text), 0));
 }
 
@@ -258,8 +258,8 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
   display: flex;
   align-items: center;
   column-gap: 0.25em;
-  width: 248px;
-  height: 44px;
+  width: 15.5rem;
+  height: 2.75rem;
   padding-left: var(--gutter);
   font-size: var(--size-body);
   font-weight: 600;
@@ -274,10 +274,10 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
 /* Inset: an outer ring is cut off by the band's overflow and the screen edge. */
 .c-factions__more:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px var(--color-accent);
+  box-shadow: inset 0 0 0 0.125rem var(--color-accent);
 }
 
-@media (min-width: 960px) {
+@media (min-width: 60em) {
   /* --tilt-d is how far the band's edges rise across its width: one slope shared by the clip, the tab and the foot. */
   .c-factions {
     --tilt: 3.4deg;
@@ -286,11 +286,11 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
   .c-factions > * {
     --tilt-d: calc(100cqw * tan(var(--tilt)));
     --edge: max(var(--gutter), (100cqw - var(--width-content)) / 2 + var(--gutter));
-    --band-h: 620px;
+    --band-h: 38.75rem;
   }
 
   .c-factions__head {
-    padding: calc(56px + var(--tilt-d)) 0 0;
+    padding: calc(3.5rem + var(--tilt-d)) 0 0;
   }
 
   .c-factions__tab {
@@ -301,9 +301,9 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding: 20px 72px 18px var(--edge);
+    padding: 1.25rem 4.5rem 1.125rem var(--edge);
     background: var(--color-bg);
-    clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, calc(100% - 2.5rem) 0, 100% 100%, 0 100%);
     transform: rotate(calc(-1 * var(--tilt)));
     transform-origin: 0 100%;
   }
@@ -318,17 +318,17 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
     z-index: 1;
     flex-direction: row;
     height: calc(var(--band-h) + var(--tilt-d));
-    margin-top: calc(-1 * var(--tilt-d) - 30px);
+    margin-top: calc(-1 * var(--tilt-d) - 1.875rem);
     padding-top: 0;
     clip-path: polygon(0 var(--tilt-d), 100% 0, 100% var(--band-h), 0 100%);
   }
 
-  /* Each slice overlaps the one before by its 40px slant less a 3px seam; the end slices start 20px narrower so the visible art is equal. */
+  /* Each slice overlaps the one before by its 2.5rem slant less a 0.1875rem seam; the end slices start 1.25rem narrower so the visible art is equal. */
   .c-factions__item {
-    flex: 1 1 20px;
+    flex: 1 1 1.25rem;
     min-width: 0;
     margin-top: 0;
-    margin-left: -37px;
+    margin-left: -2.3125rem;
   }
 
   .c-factions__item:first-child {
@@ -345,27 +345,27 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
     height: 100%;
     min-height: 0;
     padding: 0;
-    clip-path: polygon(40px 0, 100% 0, calc(100% - 40px) 100%, 0 100%);
+    clip-path: polygon(2.5rem 0, 100% 0, calc(100% - 2.5rem) 100%, 0 100%);
   }
 
   .c-factions__item:first-child .c-factions__slice {
-    clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 2.5rem) 100%, 0 100%);
   }
 
   .c-factions__item:last-child .c-factions__slice {
-    clip-path: polygon(40px 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(2.5rem 0, 100% 0, 100% 100%, 0 100%);
   }
 
   .c-factions__art {
-    clip-path: polygon(44px 0, 100% 0, calc(100% - 40px) 100%, 4px 100%);
+    clip-path: polygon(2.75rem 0, 100% 0, calc(100% - 2.5rem) 100%, 0.25rem 100%);
   }
 
   .c-factions__item:first-child .c-factions__art {
-    clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 2.5rem) 100%, 0 100%);
   }
 
   .c-factions__item:last-child .c-factions__art {
-    clip-path: polygon(44px 0, 100% 0, 100% 100%, 4px 100%);
+    clip-path: polygon(2.75rem 0, 100% 0, 100% 100%, 0.25rem 100%);
   }
 
   .c-factions__glow {
@@ -377,14 +377,14 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
   /* The text climbs with the band's bottom edge, so every slice keeps the same air under its name. */
   .c-factions__text {
     position: absolute;
-    left: 24px;
-    right: 52px;
-    bottom: calc(28px + var(--tilt-d) * (var(--i) / var(--n) + 0.22));
-    gap: 6px;
+    left: 1.5rem;
+    right: 3.25rem;
+    bottom: calc(1.75rem + var(--tilt-d) * (var(--i) / var(--n) + 0.22));
+    gap: 0.375rem;
   }
 
   .c-factions__item:last-child .c-factions__text {
-    right: 24px;
+    right: 1.5rem;
   }
 
   .c-factions__num {
@@ -404,100 +404,100 @@ const sizes = '(min-width: 960px) 1950px, 100vw';
   }
 
   .c-factions__foot {
-    padding-bottom: 72px;
+    padding-bottom: 4.5rem;
   }
 
   /* Pivots on the band's bottom-right corner, so its top edge is the band's bottom edge. */
   .c-factions__rail {
-    height: 68px;
+    height: 4.25rem;
     margin-top: calc(-1 * var(--tilt-d) - 1px);
     transform: rotate(calc(-1 * var(--tilt)));
     transform-origin: 100% 0;
   }
 
-  /* Left of IncursionsBand's spine column (--edge + 480px to + 552px) the pieces are placed from the left edge; the link's tab from the right. */
+  /* Left of IncursionsBand's spine column (--edge + 30rem to + 34.5rem) the pieces are placed from the left edge; the link's tab from the right. */
   .c-factions__rail-line {
     clip-path: polygon(
       0 0,
       100% 0,
-      100% 24px,
-      calc(100% - var(--edge)) 24px,
-      calc(100% - var(--edge) - 44px) 100%,
-      calc(100% - var(--edge) - 288px) 100%,
-      calc(100% - var(--edge) - 332px) 24px,
-      calc(var(--edge) + 552px) 24px,
-      calc(var(--edge) + 552px) 2px,
-      0 2px
+      100% 1.5rem,
+      calc(100% - var(--edge)) 1.5rem,
+      calc(100% - var(--edge) - 2.75rem) 100%,
+      calc(100% - var(--edge) - 18rem) 100%,
+      calc(100% - var(--edge) - 20.75rem) 1.5rem,
+      calc(var(--edge) + 34.5rem) 1.5rem,
+      calc(var(--edge) + 34.5rem) 0.125rem,
+      0 0.125rem
     );
   }
 
   .c-factions__rail-plate {
     clip-path: polygon(
-      calc(var(--edge) + 553.5px) 0,
+      calc(var(--edge) + 34.5938rem) 0,
       100% 0,
-      100% 21px,
-      calc(100% - var(--edge) - 1.5px) 21px,
-      calc(100% - var(--edge) - 45.5px) 100%,
-      calc(100% - var(--edge) - 286.5px) 100%,
-      calc(100% - var(--edge) - 330.5px) 21px,
-      calc(var(--edge) + 553.5px) 21px
+      100% 1.3125rem,
+      calc(100% - var(--edge) - 0.0938rem) 1.3125rem,
+      calc(100% - var(--edge) - 2.8438rem) 100%,
+      calc(100% - var(--edge) - 17.9062rem) 100%,
+      calc(100% - var(--edge) - 20.6562rem) 1.3125rem,
+      calc(var(--edge) + 34.5938rem) 1.3125rem
     );
   }
 
   .c-factions__more {
-    right: calc(var(--edge) + 44px);
+    right: calc(var(--edge) + 2.75rem);
     left: auto;
     justify-content: center;
-    width: 244px;
+    width: 15.25rem;
     padding-left: 0;
   }
 }
 
 /* Room for the stepped tab left of the spine; narrower, the plate starts flush at the spine instead. */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .c-factions__rail-line {
     clip-path: polygon(
       0 0,
       100% 0,
-      100% 24px,
-      calc(100% - var(--edge)) 24px,
-      calc(100% - var(--edge) - 44px) 100%,
-      calc(100% - var(--edge) - 288px) 100%,
-      calc(100% - var(--edge) - 332px) 24px,
-      calc(var(--edge) + 594px) 24px,
-      calc(var(--edge) + 572px) 2px,
-      calc(var(--edge) + 460px) 2px,
-      calc(var(--edge) + 433px) 26px,
-      calc(var(--edge) + 317.5px) 26px,
-      calc(var(--edge) + 306.75px) 14px,
-      calc(var(--edge) + 218.75px) 14px,
-      calc(var(--edge) + 208px) 2px,
-      0 2px
+      100% 1.5rem,
+      calc(100% - var(--edge)) 1.5rem,
+      calc(100% - var(--edge) - 2.75rem) 100%,
+      calc(100% - var(--edge) - 18rem) 100%,
+      calc(100% - var(--edge) - 20.75rem) 1.5rem,
+      calc(var(--edge) + 37.125rem) 1.5rem,
+      calc(var(--edge) + 35.75rem) 0.125rem,
+      calc(var(--edge) + 28.75rem) 0.125rem,
+      calc(var(--edge) + 27.0625rem) 1.625rem,
+      calc(var(--edge) + 19.8438rem) 1.625rem,
+      calc(var(--edge) + 19.1719rem) 0.875rem,
+      calc(var(--edge) + 13.6719rem) 0.875rem,
+      calc(var(--edge) + 13rem) 0.125rem,
+      0 0.125rem
     );
   }
 
   .c-factions__rail-plate {
     clip-path: polygon(
-      calc(var(--edge) + 574px) 0,
+      calc(var(--edge) + 35.875rem) 0,
       100% 0,
-      100% 21px,
-      calc(100% - var(--edge) - 1.5px) 21px,
-      calc(100% - var(--edge) - 45.5px) 100%,
-      calc(100% - var(--edge) - 286.5px) 100%,
-      calc(100% - var(--edge) - 330.5px) 21px,
-      calc(var(--edge) + 595px) 21px
+      100% 1.3125rem,
+      calc(100% - var(--edge) - 0.0938rem) 1.3125rem,
+      calc(100% - var(--edge) - 2.8438rem) 100%,
+      calc(100% - var(--edge) - 17.9062rem) 100%,
+      calc(100% - var(--edge) - 20.6562rem) 1.3125rem,
+      calc(var(--edge) + 37.1875rem) 1.3125rem
     );
   }
 
   /* The 45° cuts are pre-skewed for --tilt; recompute them if --tilt changes. */
   .c-factions__rail-step {
     display: block;
-    top: 2px;
-    left: calc(var(--edge) + 209.5px);
-    width: 249px;
-    height: 22.5px;
+    top: 0.125rem;
+    left: calc(var(--edge) + 13.0938rem);
+    width: 15.5625rem;
+    height: 1.4062rem;
     background: var(--color-hardware);
-    clip-path: polygon(0 0, 249px 0, 223.7px 22.5px, 108.2px 22.5px, 97.4px 10.5px, 9.4px 10.5px);
+    clip-path: polygon(0 0, 15.5625rem 0, 13.9812rem 1.4062rem, 6.7625rem 1.4062rem, 6.0875rem 0.6562rem, 0.5875rem 0.6562rem);
   }
 }
 </style>

@@ -1,5 +1,6 @@
 /* Web Animations on elements HomeTrailerCast renders, all cancelled at the end so the wires fall back to their rendered state; under reduced motion it runs nothing. */
 
+import { pageScale } from '@/site/pageScale';
 import { token, tokenMs } from '@/site/tokens';
 
 export interface SparkWire {
@@ -15,12 +16,15 @@ export interface SparkWire {
   card: HTMLElement | null;
 }
 
+/* Speeds and the head are design px and route lengths drawn px, so every use scales them by the page. */
 const SPARK = { trunk: 0.5, branch: 1.2, head: 18, overlap: 60, settle: 80, hold: 600, glow: 1000 };
 /* HomeTrailerCast's .c-home-cast__character rests on this list: keep the two in step. */
 const REST = 'brightness(1) drop-shadow(0 0 0 transparent)';
 
-function light(w: SparkWire, at: number, speed: number, fromEnd: boolean, off: number, out: Animation[]): number {
+function light(w: SparkWire, at: number, pace: number, fromEnd: boolean, off: number, out: Animation[]): number {
   const fade = tokenMs('--dur-3');
+  const speed = pace * pageScale.value;
+  const head = SPARK.head * pageScale.value;
   const len = w.path.getTotalLength();
   const dur = len / speed;
   const from = fromEnd ? -len : len;
@@ -39,10 +43,10 @@ function light(w: SparkWire, at: number, speed: number, fromEnd: boolean, off: n
   out.push(
     w.charge.animate([{ opacity: 1 }, { opacity: 1, offset: fadeAt / total }, { opacity: 0 }], { duration: total, fill: 'forwards' }),
   );
-  const headDash = `${SPARK.head} ${len + SPARK.head}`;
-  const h0 = fromEnd ? -len : SPARK.head;
-  const h1 = fromEnd ? SPARK.head : -len;
-  const run = (len + SPARK.head) / speed;
+  const headDash = `${head} ${len + head}`;
+  const h0 = fromEnd ? -len : head;
+  const h1 = fromEnd ? head : -len;
+  const run = (len + head) / speed;
   out.push(
     w.head.animate(
       [
@@ -61,12 +65,13 @@ export function runSpark(trunks: SparkWire[], branches: SparkWire[]): { done: Pr
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return { done: Promise.resolve(), stop: () => undefined };
   const fade = tokenMs('--dur-3');
   const blink = tokenMs('--dur-1');
-  const tA = Math.max(0, ...trunks.map((w) => w.path.getTotalLength() / SPARK.trunk)) + SPARK.settle;
+  const u = pageScale.value;
+  const tA = Math.max(0, ...trunks.map((w) => w.path.getTotalLength() / (SPARK.trunk * u))) + SPARK.settle;
   const starts: number[] = [];
   const arrivals: number[] = [];
   let t = tA;
   for (const w of branches) {
-    const run = w.path.getTotalLength() / SPARK.branch;
+    const run = w.path.getTotalLength() / (SPARK.branch * u);
     starts.push(t);
     arrivals.push(t + run);
     t += run - SPARK.overlap;
@@ -91,7 +96,7 @@ export function runSpark(trunks: SparkWire[], branches: SparkWire[]): { done: Pr
       lit.add(w.card);
       out.push(
         w.card.animate(
-          [{ filter: REST }, { filter: `brightness(1.08) drop-shadow(0 0 12px ${w.color})`, offset: 0.3 }, { filter: REST }],
+          [{ filter: REST }, { filter: `brightness(1.08) drop-shadow(0 0 0.75rem ${w.color})`, offset: 0.3 }, { filter: REST }],
           { duration: SPARK.glow, delay: starts[n] + blink / SPARK.branch, easing: token('--ease-out') },
         ),
       );

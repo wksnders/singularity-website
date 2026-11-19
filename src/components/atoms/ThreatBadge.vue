@@ -11,7 +11,7 @@ import MonoLabel from '@/components/atoms/MonoLabel.vue';
 /* Two classes, so the colour beats MonoLabel's tone whichever stylesheet loads first. */
 .c-mono.c-threat {
   display: inline-block;
-  padding: 6px var(--space-3);
+  padding: 0.375rem var(--space-3);
   border: 1px solid rgba(var(--rgb-threat), 0.65);
   border-radius: var(--radius-pill);
   color: var(--color-threat-text);

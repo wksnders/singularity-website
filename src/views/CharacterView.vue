@@ -58,8 +58,8 @@ import { chapterHash, isHidden, pictureSources, outbound, to } from '@/site/link
 
 const props = defineProps<{ characterId: string }>();
 
-/* The 320px panel and the pool's 420px flex basis stop fitting side by side near 820px, and this clears that with room to spare because a media query counts the scrollbar on some engines and not others. */
-const roomy = useMediaQuery('(min-width: 880px)');
+/* The 20rem panel and the pool's 26.25rem flex basis stop fitting side by side near 51.25rem, and this clears that with room to spare because a media query counts the scrollbar on some engines and not others. */
+const roomy = useMediaQuery('(min-width: 55em)');
 
 const zoomed = useZoomUpgrade();
 
@@ -112,7 +112,7 @@ function fitName(): void {
   const el = nameEl.value;
   if (!el) return;
   el.style.fontSize = '';
-  if (!window.matchMedia('(min-width: 900px)').matches) return;
+  if (!window.matchMedia('(min-width: 56.25em)').matches) return;
   const over = el.scrollWidth / el.clientWidth;
   if (over > 1) el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) / over) * 0.98}px`;
 }
@@ -709,7 +709,7 @@ provideSections(() =>
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-m);
@@ -733,12 +733,12 @@ provideSections(() =>
 .char__brand-marks > * {
   background: var(--color-bg);
   border-radius: 50%;
-  padding: 3px;
+  padding: 0.1875rem;
   box-sizing: content-box;
 }
 
 .char__brand-marks > * + * {
-  margin-left: -8px;
+  margin-left: -0.5rem;
 }
 
 .char__hero-foot {
@@ -761,10 +761,10 @@ provideSections(() =>
 .char__lore-link {
   position: absolute;
   left: 0;
-  bottom: -6px;
+  bottom: -0.375rem;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-right: var(--space-4);
   font-size: var(--size-body-s);
   font-weight: 500;
@@ -777,9 +777,9 @@ provideSections(() =>
 }
 
 .char__factions {
-  margin-top: clamp(28px, 4vw, 40px);
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16.25rem, 1fr));
   gap: var(--space-3);
 }
 
@@ -807,7 +807,7 @@ provideSections(() =>
 
 .char__face {
   margin-top: var(--space-4);
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .char__filling-label {
@@ -825,7 +825,7 @@ provideSections(() =>
 .char__filling-slot {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding-inline: var(--space-2);
   border: 0;
   border-left: 1px solid var(--color-line-strong);
@@ -854,7 +854,7 @@ provideSections(() =>
 }
 
 .char__copy {
-  flex: 1.1 1 440px;
+  flex: 1.1 1 27.5rem;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -869,12 +869,12 @@ provideSections(() =>
 }
 
 .char__art {
-  flex: 1 1 400px;
+  flex: 1 1 25rem;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  border-left: 2px solid var(--faction);
+  border-left: 0.125rem solid var(--faction);
 }
 
 .char__art-frame {
@@ -888,10 +888,10 @@ provideSections(() =>
   min-height: 0;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .char__art {
     border-left: 0;
-    border-bottom: 2px solid var(--faction);
+    border-bottom: 0.125rem solid var(--faction);
   }
 
  
@@ -937,7 +937,7 @@ provideSections(() =>
   line-height: var(--char-name-size);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 56.25em) {
   /* Holds a name line and two quote lines, so the facts below stay put when the next character's name or quote is shorter. */
   .char__intro {
     min-height: calc(var(--char-name-size) + var(--space-6) + 2 * 1.55 * var(--char-quote-size));
@@ -972,7 +972,7 @@ provideSections(() =>
 
 
 .char__facts-ability {
-  flex: 1 1 280px;
+  flex: 1 1 17.5rem;
   min-width: 0;
 }
 
@@ -1005,7 +1005,7 @@ provideSections(() =>
   min-width: 2.25em;
   aspect-ratio: 1;
   padding: 0 0.3em;
-  border: 2px solid var(--color-ink);
+  border: 0.125rem solid var(--color-ink);
   border-radius: var(--radius-pill);
   font-size: 1.125rem;
   font-weight: 500;
@@ -1035,7 +1035,7 @@ provideSections(() =>
 
 .char__own-card {
   margin-top: var(--space-6);
-  max-width: 210px;
+  max-width: 13.125rem;
 }
 
 /* On CardFace's root, so the border frames the button inside it; focus lands on that button, hence -within. */

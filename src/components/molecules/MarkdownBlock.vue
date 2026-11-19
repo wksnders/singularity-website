@@ -40,7 +40,7 @@ const html = computed(() => docHtml(getDoc(props.slug)));
 .c-prose blockquote {
   margin: var(--space-6) 0;
   padding-left: var(--space-4);
-  border-left: 2px solid var(--color-accent-wash);
+  border-left: 0.125rem solid var(--color-accent-wash);
   font-style: italic;
 }
 
