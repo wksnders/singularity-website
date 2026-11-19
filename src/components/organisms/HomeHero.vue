@@ -881,6 +881,7 @@ watch([boxW, boxH, vh, side, footH], async () => {
 /* One set of rules draws both sides: the right margin is the left one mirrored. */
 .c-lid__margin {
   position: absolute;
+  isolation: isolate;
   top: 0;
   bottom: calc(-1 * var(--frame-foot));
   left: 0;
@@ -913,11 +914,12 @@ watch([boxW, boxH, vh, side, footH], async () => {
   -webkit-mask-size: 24.375rem;
 }
 
-/* The upright rail, its level run (::before) and the corner between them (::after): each laps the corner by 1px, so no seam opens at a fractional size. */
+/* The upright rail, its level run (::before) and the corner between them (::after), lifted over the ground span, which would otherwise cover the ::before: each laps the corner by 1px, so no seam opens at a fractional size. */
 .c-lid__rail,
 .c-lid__margin::before,
 .c-lid__margin::after {
   position: absolute;
+  z-index: 1;
 }
 
 .c-lid__rail {
