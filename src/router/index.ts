@@ -102,6 +102,12 @@ const routes: RouteRecordRaw[] = [
     meta: { titleKey: 'meta.rules' },
   },
   {
+    path: path('learn/modes'),
+    name: 'modes',
+    component: () => import('@/views/ModesView.vue'),
+    meta: { titleKey: 'meta.modes' },
+  },
+  {
     path: path('learn/faq'),
     name: 'faq',
     component: () => import('@/views/FaqView.vue'),

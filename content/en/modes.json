@@ -1,0 +1,269 @@
+[
+  {
+    "id": "ffa",
+    "intro": [
+      "Singularity supports free-for-all games for three or more players. This mode works best with three players; with more players, expect longer, more chaotic games. Free-for-All uses the base rules with the following adjustments:"
+    ],
+    "parts": [
+      {
+        "title": "Determining Turn Order",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "All players reveal a character and compare health values as in a two-player match. The player with the lowest revealed health gains the runtime priority token and goes first. Play proceeds clockwise from them. Resolve ties by continuing to reveal characters or comparing player ages."
+          }
+        ]
+      },
+      {
+        "title": "Battery Tokens",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Every player, including the one who goes first, starts with a battery token."
+          }
+        ]
+      },
+      {
+        "title": "Victory Points",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Victory in free-for-all is earned by gaining victory points or by eliminating every opponent. You gain 1 victory point each time an effect you control causes an opponent’s character to crash. The first player to accumulate 3 victory points wins. Use any token or marker to track victory points."
+          }
+        ]
+      },
+      {
+        "title": "Elimination",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Players are eliminated when three of their characters have crashed."
+          }
+        ]
+      },
+      {
+        "title": "Draw",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "If a crash would result in all players being eliminated and no player would win the game as a result, the game ends in a draw."
+          }
+        ]
+      },
+      {
+        "title": "Overload",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Crashes caused by overload award no victory points."
+          }
+        ]
+      },
+      {
+        "blocks": [
+          {
+            "kind": "strategy",
+            "title": "Effects Scale in Multiplayer",
+            "text": "More players mean more targets and more strategic opportunities. Effects that hit all players become much more powerful when they strike multiple opponents. Read your programs carefully and keep an eye out for new approaches that can create outsized impact in larger games."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "teams",
+    "intro": [
+      "Singularity can be played with four players split into two teams of two. In most respects, this plays the same as a standard two-player match with the following adjustments:"
+    ],
+    "parts": [
+      {
+        "title": "Determining First Side",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "All four players reveal characters simultaneously. Each team adds the health of their revealed characters. The team with the lower total gains the runtime priority token and goes first. If there are three ties, compare player ages."
+          }
+        ]
+      },
+      {
+        "title": "Battery Tokens",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "The two players on the team going second each gain one battery token."
+          }
+        ]
+      },
+      {
+        "title": "Simultaneous Turns",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "You and your teammate take your turns together. Coordinate freely, resolving initialize effects, activations, and update effects in any order between your characters. Your opponents will do the same. Both teammates must advance from Start-Up to Activation to Refresh at the same time. Player RAM is not shared."
+          }
+        ]
+      },
+      {
+        "title": "Targeting Terms",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Cards that refer to friendly or enemy characters include both players on that side. “Friendly” and “Patch: Ally” include your and your teammate’s characters. “Enemy” includes all opposing characters."
+          }
+        ]
+      },
+      {
+        "title": "Victory",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "The game ends when a team has six total characters in the crash zone. Players are only eliminated individually if all their characters are crashed. You can keep fighting with two or even one character in play, as long as your side hasn’t hit six crashes."
+          }
+        ]
+      },
+      {
+        "blocks": [
+          {
+            "kind": "strategy",
+            "title": "Effects Scale in Multiplayer",
+            "text": "More players mean more targets and more strategic opportunities. Effects that hit all players become much more powerful when they strike multiple opponents or benefit multiple allies. Read your programs carefully and communicate with your teammate to create a larger impact."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "draft",
+    "intro": [
+      "Draft is a competitive mode where players build their squads by selecting cards in turn before play begins. Draft supports 2–4 players and typically takes 60–90 minutes per player, including games."
+    ],
+    "parts": [
+      {
+        "title": "Draft Setup",
+        "blocks": [
+          {
+            "kind": "steps",
+            "items": [
+              {
+                "text": "Choose a competitive format (Free-for-All, 1v1, etc.). For your first draft, we recommend Free-for-All."
+              },
+              {
+                "text": "Shuffle all character cards into a single deck and place it face down near the edge of the play area."
+              },
+              {
+                "text": "Shuffle program cards by faction into separate decks. Shuffle common programs into their own deck. Place them face down near the character deck."
+              },
+              {
+                "text": "Draw and reveal draft cards into the center of the play area:",
+                "items": [
+                  "Characters: Players + 2",
+                  "Each Faction’s Programs: Players + 1",
+                  "Common Programs: 2"
+                ]
+              },
+              {
+                "text": "Choose a first player and give them the runtime priority token."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Draft Rounds",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "There are 8 draft Rounds. In each round, every player drafts 1 character and 3 programs. During each round:"
+          },
+          {
+            "kind": "steps",
+            "items": [
+              {
+                "text": "In draft order, each player selects 1 card from the face-up draft pool."
+              },
+              {
+                "text": "In reverse draft order, each player selects a second card."
+              },
+              {
+                "text": "In draft order again, each player selects a third card."
+              },
+              {
+                "text": "In reverse draft order, each player selects their fourth and final card."
+              },
+              {
+                "text": "Once all players have drafted 4 cards, this round of the draft ends."
+              },
+              {
+                "text": "If all players have 8 characters and 24 programs, proceed to Draft Deck Construction."
+              },
+              {
+                "text": "Otherwise, pass the runtime priority token clockwise to the next player."
+              },
+              {
+                "text": "Clear the draft pool and place undrafted cards at the bottom of their respective decks. Then, deal a fresh draft pool as per Setup and continue from step 1."
+              }
+            ]
+          },
+          {
+            "kind": "note",
+            "text": "Players must draft exactly 1 character and 3 programs per round. If you’ve already selected a character, you may not draft another until the next round."
+          },
+          {
+            "kind": "strategy",
+            "text": "You are aiming to draft cards that will form a cohesive deck together. Choose cards that work together. Look for new interactions between cards you have drafted and those available in the draft pool. Table talk during the draft is encouraged."
+          }
+        ]
+      },
+      {
+        "title": "Draft Deck Construction",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Each player builds a legal deck using only their drafted cards. Deck construction rules are identical to standard play:"
+          },
+          {
+            "kind": "points",
+            "items": [
+              {
+                "text": "All characters must share a faction."
+              },
+              {
+                "text": "Each character may only bring programs from their usable program brands."
+              }
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Once decks are built, play begins in the format chosen at the start of the draft."
+          }
+        ]
+      },
+      {
+        "title": "What if a player cannot build a legal deck?",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "In rare cases when a player cannot build a legal deck, follow these fallback rules:"
+          },
+          {
+            "kind": "steps",
+            "items": [
+              {
+                "text": "Use all drafted cards possible before drafting from extras."
+              },
+              {
+                "text": "If the player has five legal characters, they may fill remaining program slots using unclaimed Common programs, only after using all legal drafted programs first."
+              },
+              {
+                "text": "If they do not have five legal characters, they may first draft Universal characters (if available) to fill the remaining slots."
+              },
+              {
+                "text": "If multiple players need fallback cards, they take turns drafting one card at a time until all can build legal decks."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

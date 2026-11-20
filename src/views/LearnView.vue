@@ -15,6 +15,7 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
 import { modes, TRY_TIERS, tryRoutesOfTier, videos } from '@/data/universe';
 import { isHidden, outbound, soon, to } from '@/site/links';
+import { guideLinks } from '@/site/modes';
 import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
 import type { TryTier } from '@/data/types';
@@ -35,6 +36,8 @@ const route = useRoute();
 const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
 
 const routesToTry = (tier: TryTier) => tryRoutesOfTier(tier).filter((r) => !r.alsoOnLearn);
+
+const guides = computed(() => guideLinks());
 
 const rulesHub = [
   { key: 'reference', to: to('rules') },
@@ -77,18 +80,24 @@ const rulesHub = [
 
   <SectionBand id="modes" class="l-band--alt l-band--line-top" :heading="t('learn.sections.modes')">
     <div class="l-grid">
-      <div
+      <component
+        :is="guides.get(mode.id) ? BaseLink : 'div'"
         v-for="mode in modes"
         :key="mode.id"
+        :to="guides.get(mode.id)"
         class="l-surface learn__mode"
-        :class="{ 'learn__mode--coop': mode.id === 'incursions' }"
+        :class="{
+          'learn__mode--coop': mode.id === 'incursions',
+          'learn__mode--link': guides.get(mode.id),
+        }"
       >
         <h3 class="learn__mode-name">{{ mode.name }}</h3>
         <MonoLabel tone="faint">
           {{ mode.players || t(`learn.modes.${mode.id}.players`) }}
         </MonoLabel>
         <p class="learn__mode-body">{{ t(`learn.modes.${mode.id}.blurb`) }}</p>
-      </div>
+        <p v-if="guides.get(mode.id)" class="learn__mode-more">{{ t('learn.modes.rules') }}</p>
+      </component>
     </div>
     <BandFoot :to="to('incursions')" :label="t('learn.modes.exit')" />
   </SectionBand>
@@ -213,6 +222,26 @@ const rulesHub = [
   font-size: var(--size-m);
   line-height: 1.55;
   color: var(--color-ink-soft);
+}
+
+.learn__mode--link {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-ink);
+  transition: border-color var(--dur-2) var(--ease-out);
+}
+
+.learn__mode--link:hover {
+  border-color: rgba(var(--rgb-accent), 0.5);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.learn__mode-more {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  font-size: var(--size-m);
+  color: var(--color-accent-text);
 }
 
 .learn__video {

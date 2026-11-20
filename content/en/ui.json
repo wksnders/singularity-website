@@ -16,7 +16,8 @@
     "suffix": " — Singularity.exe",
     "fallback": "Singularity.exe",
     "faq": "FAQ — Singularity.exe",
-    "rules": "Rules reference — Singularity.exe"
+    "rules": "Rules reference — Singularity.exe",
+    "modes": "Game modes — Singularity.exe"
   },
   "chrome": {
     "skip": "Skip to content",
@@ -994,25 +995,26 @@
     },
     "modes": {
       "ffa": {
-        "players": "3–4 players",
-        "blurb": "[PLACEHOLDER] Last stack running wins."
+        "players": "3+ players",
+        "blurb": "Every player for themselves. First to 3 victory points wins."
       },
       "duel": {
         "players": "2 players",
-        "blurb": "[PLACEHOLDER] The tournament format."
+        "blurb": "The base game, head to head. Crash three of your opponent’s characters to win."
       },
       "teams": {
         "players": "4 players",
-        "blurb": "[PLACEHOLDER] Shared board, split priorities."
+        "blurb": "Two teams of two, taking their turns together. Six crashes on one side ends it."
       },
       "draft": {
         "players": "2–4 players",
-        "blurb": "[PLACEHOLDER] Build from a shared pool — still zero luck."
+        "blurb": "Build your squad pick by pick from a shared pool, then play it out."
       },
       "incursions": {
         "players": "1–4 players · co-op & solo",
         "blurb": "The rogue AI acts entirely from its own cards. No human runs the boss."
       },
+      "rules": "Full rules →",
       "exit": "Read up on Incursions →"
     },
     "videos": {
@@ -1109,6 +1111,16 @@
       "body": "Holding a printed booklet? This page is the current fully updated rules, check the errata for lists of what changed against print.",
       "link": "Errata & rulings"
     }
+  },
+  "modes": {
+    "hero": {
+      "crumb": "Game modes",
+      "title": "Game modes",
+      "lede": "The rules for free-for-all, 2v2 and Draft. Each one builds on the two-player game, so this page covers only what changes."
+    },
+    "note": "Note",
+    "strategy": "Strategy",
+    "exit": "Look up a term in the rules reference →"
   },
   "faq": {
     "hero": {

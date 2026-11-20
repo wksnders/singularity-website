@@ -1,13 +1,18 @@
 <script setup lang="ts">
 /* The co-op pattern is allowed only while neither half carries artwork: add art to either and the pattern comes out. */
+import { computed } from 'vue';
+import BaseLink from '@/components/atoms/BaseLink.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import { game, modes } from '@/data/universe';
 import { to } from '@/site/links';
+import { guideLinks } from '@/site/modes';
 import { patternUrl } from '@/site/patterns';
 
 const formats = modes.filter((mode) => mode.id !== 'incursions');
+
+const guides = computed(() => guideLinks());
 
 const PIPS = 4;
 function filledPips(range: string): number {
@@ -50,8 +55,15 @@ const patternStyle = {
           <p class="c-ways__lead">{{ t('home.waysToPlay.competitive.lead') }}</p>
           <p class="c-ways__support">{{ t('home.waysToPlay.competitive.support') }}</p>
           <ul class="c-ways__formats">
-            <li v-for="format in formats" :key="format.id" class="c-ways__format">
-              {{ format.name }}
+            <li v-for="format in formats" :key="format.id">
+              <component
+                :is="guides.get(format.id) ? BaseLink : 'span'"
+                :to="guides.get(format.id)"
+                class="c-ways__format"
+                :class="{ 'c-ways__format--link': guides.get(format.id) }"
+              >
+                {{ format.name }}
+              </component>
             </li>
           </ul>
           <UiButton
@@ -304,13 +316,19 @@ const patternStyle = {
 .c-ways__format {
   display: inline-flex;
   align-items: center;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   padding-inline: var(--space-4);
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-s);
   font-size: var(--size-m);
   color: var(--color-ink-muted);
   white-space: nowrap;
+}
+
+.c-ways__format--link:hover {
+  background: rgba(var(--rgb-ink), 0.07);
+  color: var(--color-ink);
+  text-decoration: none;
 }
 
 .c-ways__cta {

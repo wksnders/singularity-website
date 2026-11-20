@@ -51,6 +51,10 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://wksnders.github.io/singularity-website/learn/modes</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://wksnders.github.io/singularity-website/learn/faq</loc>
     <priority>0.7</priority>
   </url>
