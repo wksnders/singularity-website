@@ -9,12 +9,15 @@ import type { SectionEntry } from '@/site/sections';
 // 94.5em (1512px at the default font) is where (--width-content + 2 * (--rail-width + --rail-gap)) from tokens.css, times the page scale at that width (pageScale.ts), first fits; below it the rail overlaps the content column.
 const FITS_QUERY = '(min-width: 94.5em)';
 
-const props = defineProps<{ sections: SectionEntry[] }>();
+const props = defineProps<{ sections: SectionEntry[]; hideOverId?: string }>();
 
 const active = ref<string>(props.sections[0]?.id ?? '');
 const shown = useMediaQuery(FITS_QUERY);
 
 let observer: IntersectionObserver | null = null;
+
+const over = ref(false);
+let overObserver: IntersectionObserver | null = null;
 
 onMounted(() => {
   observer = new IntersectionObserver(
@@ -28,6 +31,16 @@ onMounted(() => {
   );
 
   observe();
+
+  const cover = props.hideOverId ? document.getElementById(props.hideOverId) : null;
+  if (cover) {
+    over.value = true;
+    /* The middle fifth of the window is where the rail sits (`top: 50%` below); change with it. */
+    overObserver = new IntersectionObserver(([entry]) => (over.value = entry.isIntersecting), {
+      rootMargin: '-40% 0px -40% 0px',
+    });
+    overObserver.observe(cover);
+  }
 });
 
 function observe(): void {
@@ -45,7 +58,10 @@ function observe(): void {
 /* A filter that changes the list also changes which bands exist: re-observe once they have rendered. */
 watch(() => props.sections.map((section) => section.id).join(','), observe, { flush: 'post' });
 
-onBeforeUnmount(() => observer?.disconnect());
+onBeforeUnmount(() => {
+  observer?.disconnect();
+  overObserver?.disconnect();
+});
 
 const grouped = computed(() => props.sections.some((section) => section.group));
 
@@ -54,7 +70,7 @@ const heading = (i: number) =>
 </script>
 
 <template>
-  <nav v-if="shown" class="c-rail" :class="{ 'c-rail--index': grouped }" :aria-label="t('wayfinding.sectionRail')">
+  <nav v-if="shown" class="c-rail" :class="{ 'c-rail--index': grouped, 'c-rail--away': over }" :aria-label="t('wayfinding.sectionRail')">
     <template v-for="(section, i) in sections" :key="section.key ?? section.id">
       <p v-if="heading(i)" class="c-rail__group">{{ heading(i) }}</p>
       <a
@@ -81,6 +97,15 @@ const heading = (i: number) =>
   flex-direction: column;
   gap: var(--space-2);
   width: var(--rail-width);
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    visibility var(--dur-2);
+}
+
+/* `visibility` also takes the hidden links out of the tab order. */
+.c-rail--away {
+  opacity: 0;
+  visibility: hidden;
 }
  
 .c-rail--index {

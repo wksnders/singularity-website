@@ -15,6 +15,8 @@ withDefaults(
     minHeight?: string;
     sources?: ArtSource[];
     focal?: { x: number; y: number };
+    sizes?: string;
+    bright?: boolean;
   }>(),
   {
     placeholder: '[ key art ]',
@@ -25,7 +27,7 @@ withDefaults(
 </script>
 
 <template>
-  <section class="c-hero" :style="{ minHeight }">
+  <section class="c-hero" :class="{ 'c-hero--bright': bright }" :style="{ minHeight }">
     <div class="c-hero__art">
       <ArtFrame
         :art="art"
@@ -33,6 +35,7 @@ withDefaults(
         :placeholder="placeholder"
         :sources="sources"
         :focal="focal"
+        :sizes="sizes"
         eager
       />
     </div>
@@ -86,6 +89,33 @@ withDefaults(
     rgba(var(--rgb-bg), 0.35) 68%,
     rgba(var(--rgb-bg), 0.55) 100%
   );
+}
+
+/* Only the foot is darkened, so the copy must stay low enough to sit inside the scrim's dark band. */
+.c-hero--bright .c-hero__glow {
+  display: none;
+}
+
+.c-hero--bright .c-hero__scrim {
+  background: linear-gradient(
+    to top,
+    var(--color-bg) 0%,
+    rgba(var(--rgb-bg), 0.9) 30%,
+    rgba(var(--rgb-bg), 0.3) 55%,
+    transparent 70%
+  );
+}
+
+@media (min-width: 45em) {
+  .c-hero--bright .c-hero__scrim {
+    background: linear-gradient(
+      to top,
+      var(--color-bg) 0%,
+      rgba(var(--rgb-bg), 0.86) 20%,
+      rgba(var(--rgb-bg), 0.25) 44%,
+      transparent 62%
+    );
+  }
 }
 
 .c-hero__pending {

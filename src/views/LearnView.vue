@@ -9,12 +9,12 @@ import ContentCard from '@/components/molecules/ContentCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import PageHero from '@/components/organisms/PageHero.vue';
 import TryFreeCard from '@/components/molecules/TryFreeCard.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
-import { modes, videos } from '@/data/universe';
-import { isHidden, outbound, soon, to } from '@/site/links';
+import { learnHeroArt, modes, videos } from '@/data/universe';
+import { isHidden, outbound, pictureSources, soon, to } from '@/site/links';
 import { guideLinks } from '@/site/modes';
 import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
@@ -31,6 +31,12 @@ provideSections(sections);
 
 const tracks = ['new', 'veteran', 'coop'] as const;
 
+const heroSources = pictureSources(learnHeroArt.src);
+/* Capped at the art's full-width height (64.3vw is 9/14), so landscape screens crop little and phones, at 72% of the screen, crop the sides. */
+const HERO_MIN_HEIGHT = 'max(min(100svh, 64.3vw), min(72svh, 155vw))';
+/* The cover-cropped art's drawn width: wider than the window wherever the hero is taller than the art's 14:9 allows; change with HERO_MIN_HEIGHT. */
+const HERO_SIZES = '(orientation: portrait) 241vw, 100vw';
+
 const route = useRoute();
 const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
 
@@ -46,13 +52,19 @@ const rulesHub = [
 </script>
 
 <template>
-  <SecondaryHero glow="85% 70% at 40% 0%" :note="t('learn.hero.pending')">
+  <PageHero
+    id="learn-hero"
+    :art="learnHeroArt"
+    :sources="heroSources"
+    :sizes="HERO_SIZES"
+    :min-height="HERO_MIN_HEIGHT"
+    bright
+  >
     <h1 class="l-page-title">{{ t('learn.hero.title') }}</h1>
-    <p class="l-lede l-lede--wide learn__lede">{{ t('learn.hero.lede') }}</p>
     <SectionIndex :sections="sections" />
-  </SecondaryHero>
+  </PageHero>
 
-  <ScrollSpyRail :sections="sections" />
+  <ScrollSpyRail :sections="sections" hide-over-id="learn-hero" />
 
   <SectionBand id="paths" :heading="t('learn.paths.heading')">
     <div class="l-grid l-grid--wide">
@@ -163,10 +175,6 @@ const rulesHub = [
 </template>
 
 <style>
-.learn__lede {
-  margin-top: var(--space-4);
-}
-
 .learn__track {
   display: flex;
   scroll-margin-top: var(--scroll-offset);
@@ -201,7 +209,7 @@ const rulesHub = [
   padding: var(--space-5);
 }
 
-/* Co-op mode takes the threat edge, never a faction colour. */
+/* Co-op mode takes the threat edge, not a faction colour. */
 .learn__mode--coop {
   border-bottom: 0.125rem solid var(--color-threat);
 }

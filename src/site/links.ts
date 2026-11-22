@@ -54,7 +54,7 @@ export interface ResolvedLink {
   external: boolean;
 }
 
-/** A destination written in a data file: use an outbound key, never a literal URL and never a hand-written /soon link, so the link goes live the day `urls` gains an entry. */
+/** A destination written in a data file: use an outbound key, not a literal URL or a hand-written /soon link, so the link goes live the day `urls` gains an entry. */
 export interface LinkSpec {
   to?: RouteLocationRaw;
   outbound?: OutboundKey;
@@ -76,6 +76,8 @@ const COMMUNITY_WIDTHS = { avif: [480, 699], webp: [699] };
 const INCURSION_WIDTHS = { avif: [240, 480, 960, 1920], webp: [480, 960] };
 /** Rungs private/try-it-derive.py writes. */
 const TRY_WIDTHS = { avif: [480, 960, 1200], webp: [480, 1200] };
+/** Rungs private/learn-hero-derive.py writes. */
+const LEARN_WIDTHS = { avif: [640, 1280, 1920, 2560, 3200], webp: [1280, 2560] };
 
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
@@ -87,6 +89,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/community/', COMMUNITY_WIDTHS],
   ['/incursions/', INCURSION_WIDTHS],
   ['/try-it/', TRY_WIDTHS],
+  ['/learn/', LEARN_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {
@@ -120,7 +123,7 @@ export function outbound(key: OutboundKey): ResolvedLink {
   const href = urls[key];
   if (!href) return { to: to('soon', {}, { hash: SOON_HASH[key] }), external: false };
 
-  /* Files we serve ourselves stay `external` so BaseLink opens them in a new tab and a large download never navigates the page away. */
+  /* Files we serve ourselves stay `external` so BaseLink opens them in a new tab and a large download doesn't navigate the page away. */
   return { href: asset(href), external: true };
 }
 

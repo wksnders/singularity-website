@@ -2,19 +2,18 @@
 
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
 import IncursionsHero from '@/components/organisms/IncursionsHero.vue';
-import { provideSections } from '@/composables/useSections';
 import { getDoc, metaString, t } from '@/content';
 import { firstParagraph } from '@/content/excerpt';
 import { architechDesigns } from '@/data/programs';
-import { bossGroups, bosses, rogueAIs } from '@/data/universe';
+import { bossGroups, bosses, dominationPack, rogueAIs } from '@/data/universe';
 import { pad } from '@/site/format';
-import { isHidden, outbound, pictureSources, to } from '@/site/links';
+import { isHidden, pictureSources, to } from '@/site/links';
 import { scaledSizes } from '@/site/pageScale';
 import type { SectionEntry } from '@/site/sections';
 
@@ -28,6 +27,7 @@ const encounters = computed(() =>
     return {
       id: ai.id,
       name: ai.name,
+      brand: ai.brand,
       challenge: metaString(doc, 'challenge'),
       lore: firstParagraph(doc?.body ?? ''),
       bosses: ids.flatMap((id) => bosses.filter((boss) => boss.id === id)),
@@ -41,12 +41,6 @@ const sections = computed<SectionEntry[]>(() => [
   { id: 'unlocks', label: t('incursions.sections.unlocks') },
   { id: 'next', label: t('incursions.sections.next') },
 ]);
-
-provideSections(sections);
-
-const ritual = computed(() =>
-  ['run', 'win', 'cut', 'play'].map((key) => t(`incursions.ritual.${key}`)),
-);
 
 const dials = computed(() =>
   ['base', 'stack', 'max'].map((key, index) => ({
@@ -118,7 +112,6 @@ const exits = computed(() =>
       class="l-band--alt l-band--line-top"
       :heading="t('incursions.sections.mutations')"
     >
-      <MonoLabel tone="faint">{{ t('incursions.mutations.note') }}</MonoLabel>
       <p class="l-lede inc__body">{{ t('incursions.mutations.body') }}</p>
 
       <ol class="inc__steps">
@@ -143,32 +136,33 @@ const exits = computed(() =>
 
     <SectionBand
       id="unlocks"
-      class="l-band--line-top"
+      class="l-band--line-top inc__prize-band"
       :heading="t('incursions.sections.unlocks')"
     >
-      <MonoLabel tone="faint">{{ t('incursions.unlocks.note') }}</MonoLabel>
-
-      <div class="l-split">
-        <div class="l-split__main">
-          <p class="l-lede l-lede--narrow inc__prose-line">{{ t('incursions.unlocks.body1') }}</p>
-          <p class="l-lede l-lede--narrow inc__prose-line">{{ t('incursions.unlocks.body2') }}</p>
-          <div class="l-row inc__gap">
-            <UiButton :link="outbound('buy')">
-              {{ t('incursions.unlocks.ctaBuy') }}
-            </UiButton>
-          </div>
+      <div class="inc__prize">
+        <MonoLabel tone="faint">{{ t('incursions.unlocks.note') }}</MonoLabel>
+        <div class="inc__prize-stage">
+          <ArtFrame
+            class="inc__pack"
+            :art="{ ...dominationPack, alt: t('incursions.unlocks.packAlt') }"
+            ratio="63 / 88"
+            radius="m"
+            :placeholder="t('incursions.unlocks.packPlaceholder')"
+          />
         </div>
-
-        <div class="l-split__aside l-surface l-surface--pad">
-          <MonoLabel tone="faint">{{ t('incursions.ritual.title') }}</MonoLabel>
-          <ol class="inc__ritual-list">
-            <li v-for="(step, i) in ritual" :key="i">{{ step }}</li>
-          </ol>
-          <MonoLabel tone="faint">{{ t('incursions.ritual.note') }}</MonoLabel>
-        </div>
+        <h3 class="inc__prize-title">{{ t('incursions.unlocks.packTitle') }}</h3>
+        <p class="inc__prize-lede">{{ t('incursions.unlocks.body1') }}</p>
+        <ol class="inc__trials">
+          <li v-for="encounter in encounters" :key="encounter.id">
+            <RouterLink :to="{ hash: `#${encounter.id}` }" class="inc__trial">
+              <BrandMark :icon="encounter.brand" :name="encounter.name" :size="44" />
+              <span><span class="inc__trial-kicker">{{ t('incursions.unlocks.defeat') }}</span> {{ encounter.name }}</span>
+              <span class="inc__trial-go" aria-hidden="true">↑</span>
+            </RouterLink>
+          </li>
+        </ol>
+        <p class="inc__prize-small">{{ t('incursions.unlocks.body2') }}</p>
       </div>
-
-      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" :up="false" />
     </SectionBand>
 
     <SectionBand id="next" class="l-band--alt l-band--line-top" :heading="t('incursions.sections.next')">
@@ -215,20 +209,6 @@ const exits = computed(() =>
 
 .inc__gap {
   margin-top: var(--space-6);
-}
-
-.inc__ritual-list {
-  margin-top: var(--space-6);
-  display: grid;
-  gap: var(--space-4);
-  max-width: var(--width-reading);
-  font-size: var(--size-body-l);
-  line-height: 1.65;
-  color: var(--color-ink-soft);
-}
-
-.inc__prose-line {
-  margin-top: var(--space-4);
 }
 
 .inc__steps {
@@ -307,9 +287,104 @@ const exits = computed(() =>
   }
 }
 
-.inc__ritual-list {
-  padding-left: 1.2em;
-  font-size: var(--size-body);
-  list-style: decimal;
+/* The glow behind the pack spills past the column; clipped at the band, not the page, or phones scroll sideways. */
+.inc__prize-band {
+  overflow-x: clip;
+}
+
+.inc__prize {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.inc__prize-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-block: var(--space-6);
+}
+
+.inc__prize-stage::before {
+  content: '';
+  position: absolute;
+  inset: -10% -60%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--rgb-threat), 0.5), rgba(var(--rgb-threat), 0.12) 60%, transparent);
+  filter: blur(1.5rem);
+  pointer-events: none;
+}
+
+.inc__pack {
+  position: relative;
+  width: min(62vw, 15rem);
+  rotate: -4deg;
+  box-shadow: var(--elevation-2), 0 0 2rem rgba(var(--rgb-threat), 0.55), 0 0 0 1px rgba(var(--rgb-threat), 0.6);
+}
+
+.inc__prize-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-weight: 700;
+  line-height: 0.95;
+  color: var(--color-threat-text);
+}
+
+.inc__prize-lede {
+  max-width: 34rem;
+  font-size: var(--size-body-l);
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.inc__trials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.inc__trial {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5) var(--space-2) var(--space-2);
+  border: 1px solid rgba(var(--rgb-threat), 0.5);
+  border-radius: var(--radius-pill);
+  background: rgba(var(--rgb-threat), 0.08);
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out);
+}
+
+.inc__trial:hover {
+  border-color: var(--color-threat);
+  background: rgba(var(--rgb-threat), 0.2);
+}
+
+.inc__trial-go {
+  color: var(--color-threat-text);
+}
+
+.inc__trial-kicker {
+  margin-right: var(--space-1);
+  font-family: var(--font-label);
+  font-size: var(--size-label-xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.inc__prize-small {
+  font-size: var(--size-s);
+  color: var(--color-ink-muted);
 }
 </style>

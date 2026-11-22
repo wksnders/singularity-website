@@ -778,7 +778,7 @@
     },
     "sections": {
       "mutations": "How you turn it up",
-      "unlocks": "What you win",
+      "unlocks": "Take their power",
       "next": "Where next"
     },
     "roster": {
@@ -786,15 +786,16 @@
     },
     "encounterMore": "See the full encounter →",
     "unlocks": {
-      "note": "Sealed in the box",
-      "body1": "Defeat all three Terminal Incursions and you can open the Domination Pack: an envelope full of repurposed designs that let you harness pieces of their awesome power.",
+      "note": "Sealed in the box · Wait to open",
+      "packTitle": "The Domination Pack",
+      "body1": "Defeat all three Terminal Incursions, and only then break the seal. Inside: repurposed designs that let you harness pieces of their awesome power.",
+      "defeat": "Defeat",
       "body2": "Nothing stops you opening it early. We would rather you earned it.",
-      "ctaBuy": "Get the expansion →",
-      "packPlaceholder": "[ Domination Pack art ]"
+      "packPlaceholder": "[ Domination Pack art ]",
+      "packAlt": "The Domination Pack: a mechanical hand with an eye in its palm, ringed in light over pink circuit traces."
     },
     "mutations": {
-      "note": "Difficulty",
-      "body": "The base battles of Paths of Terminus, Invader and Calebrena are only the beginning. Beat one, and there is a dial you have not touched yet.",
+      "body": "The base battles of Paths of Terminus, Calebrena and Invader are only the beginning. Beat one, and there is a dial you have not touched yet.",
       "base": {
         "kicker": "Base battle",
         "title": "The encounter at base",
@@ -836,13 +837,6 @@
         "title": "The chapter they arrive in",
         "body": "Where Incursions sits in the story of the server."
       }
-    },
-    "ritual": {
-      "title": "The ritual",
-      "run": "Run each Incursion, one to four players.",
-      "win": "Beat all three.",
-      "open": "Open the Domination Pack.",
-      "note": "No accounts, no tracking. The box remembers, not the site."
     },
     "exitHow": "See how a boss takes its turn →"
   },
@@ -932,8 +926,7 @@
   },
   "learn": {
     "hero": {
-      "title": "Learn to play",
-      "pending": "[ TABLE / PLAY KEY ART — WIDE — PENDING ]"
+      "title": "Learn to play"
     },
     "sections": {
       "paths": "Pick your path",

@@ -175,6 +175,12 @@ assertTryRoutes();
 /** Null shows the placeholder frame. */
 export const ttsShot: string | null = '/try-it/tabletop-simulator-1200.webp';
 
+export const learnHeroArt: Art = {
+  src: '/learn/celestial-bodies-2560.webp',
+  alt: '',
+  focal: { x: 0.52, y: 0.3 },
+};
+
 /** Five formats, not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
   { id: 'ffa', name: 'Free-for-all' },
@@ -230,7 +236,7 @@ export const factions: Faction[] = [
   },
 ];
 
-/** Derived from the id rather than stored, so a mark can never point at the wrong brand and an unbuilt one 404s; null opts a brand out and renders the faction dot instead. */
+/** Derived from the id rather than stored, so a mark can't point at the wrong brand and an unbuilt one 404s; null opts a brand out and renders the faction dot instead. */
 const mark = (id: string) => `/brands/${id}.png`;
 const rogueBrand = (id: string) => `/rogue-ai/${id}.png`;
 
@@ -293,7 +299,7 @@ export const brands: Brand[] = [
 export const programs: Program[] = [...allPrograms];
 
 
-/* Scene-only alternates. `art` is skipped, never faked from the composite. */
+/* Scene-only alternates. `art` is skipped, not faked from the composite. */
 const ALT_WITHOUT_CUTOUT = new Set(['SC-037A-EN', 'SC-014A-EN', 'MQ-002A-EN']);
 
 /* A guest `name` is what makes resolvePrinting() report isReflavour. */
@@ -1336,14 +1342,14 @@ assertCharacterShape();
 
 /* Incursions sit outside the faction system and use their own colour. */
 export const rogueAIs: RogueAI[] = [
-  { id: 'calebrena', name: 'Calebrena', art: { ...noArt }, brand: rogueBrand('calebrena') },
-  { id: 'invader', name: 'Invader', art: { ...noArt }, brand: rogueBrand('invader') },
   {
     id: 'paths-of-terminus',
     name: 'Paths of Terminus',
     art: { ...noArt },
     brand: rogueBrand('paths-of-terminus'),
   },
+  { id: 'calebrena', name: 'Calebrena', art: { ...noArt }, brand: rogueBrand('calebrena') },
+  { id: 'invader', name: 'Invader', art: { ...noArt }, brand: rogueBrand('invader') },
 ];
 
 /* Painting files are named for the printed id without its locale suffix, as character art is; widths must match PAINTINGS in private/incursions-derive.py. */
@@ -1484,6 +1490,9 @@ export const incursionsHeroCards = {
   designs: ['TI-127D-EN', 'TI-122D-EN', 'TI-125D-EN'],
   mutationBack: 'calebrena-mutation-EN',
 };
+
+/** Its alt text is `incursions.unlocks.packAlt` in ui.json. */
+export const dominationPack: Art = { ...noArt };
 
 /** Display order; the first boss is shown on load. */
 export const bossGroups: BossGroup[] = [
@@ -1811,7 +1820,7 @@ export const factionsOf = (character: Character): Faction[] =>
         .map((id) => factionById(id))
         .filter((f): f is Faction => Boolean(f));
 
-/** Every brand a character plays: `brandIds` in printed order, then `personalBrandId`, concatenated and never one in place of the other. */
+/** Every brand a character plays: `brandIds` in printed order, then `personalBrandId`, concatenated, not one in place of the other. */
 export const brandsOf = (character: Character): Brand[] =>
   [...character.brandIds, ...(character.personalBrandId ? [character.personalBrandId] : [])]
     .map((id) => brandById(id))

@@ -7,8 +7,10 @@ import type { LinkSpec } from '@/site/links';
 export interface IaItem extends LinkSpec {
   /** i18n key root: resolves to ia.<key>.label and ia.<key>.note in content/<locale>/ui.json. */
   key: string;
-  /** Show the second line in mega panels. */
+  /** Show ia.<key>.note: a second line in mega panels, a trailing note in the mobile menu. */
   note?: boolean;
+  /** The mobile menu reads ia.<key>.mobileLabel instead of ia.<key>.label. */
+  mobileLabel?: boolean;
 }
 
 export interface IaGroup {
@@ -25,8 +27,16 @@ export interface IaSection {
   mega?: IaGroup[];
   /** Right-hand art column in the mega panel. */
   featuredCharacter?: boolean;
-  /** Label jump chips under the entry in the mobile sheet. */
-  jumps?: IaItem[];
+  /** Rows under this section in the mobile menu; absent means one link straight to `to`. */
+  mobile?: IaItem[];
+  /** Mobile menu: list the factions above `mobile`. */
+  mobileFactions?: boolean;
+}
+
+export type ShortcutIcon = 'learn' | 'cards' | 'print' | 'chat';
+
+export interface IaShortcut extends IaItem {
+  icon: ShortcutIcon;
 }
 
 const universe: IaSection = {
@@ -51,12 +61,12 @@ const universe: IaSection = {
       items: [{ key: 'universe.primer', to: to('universe', {}, { hash: '#world' }), note: true }],
     },
   ],
-  jumps: [
-    { key: 'universe.world', to: to('universe', {}, { hash: '#world' }) },
-    { key: 'universe.characters', to: to('characters') },
-    { key: 'universe.cards', to: to('cards') },
-    { key: 'universe.incursions', to: to('incursions') },
-    { key: 'universe.universal', to: to('universal') },
+  mobileFactions: true,
+  mobile: [
+    { key: 'universe.characters', to: to('characters'), mobileLabel: true },
+    { key: 'universe.cards', to: to('cards'), note: true },
+    { key: 'universe.incursions', to: to('incursions'), mobileLabel: true, note: true },
+    { key: 'universe.universal', to: to('universal'), note: true },
   ],
 };
 
@@ -89,11 +99,11 @@ const story: IaSection = {
       ],
     },
   ],
-  jumps: [
-    { key: 'story.chapters', to: to('story', {}, { hash: '#chapters' }) },
-    { key: 'story.soFar', to: to('story', {}, { hash: '#story-so-far' }) },
-    { key: 'story.graph', to: to('story', {}, { hash: '#story-graph' }) },
-    { key: 'story.convergence', to: to('story', {}, { hash: '#convergence' }) },
+  mobile: [
+    { key: 'story.chapters', to: to('story', {}, { hash: '#chapters' }), note: true },
+    { key: 'story.soFar', to: to('story', {}, { hash: '#story-so-far' }), note: true },
+    { key: 'story.graph', to: to('story', {}, { hash: '#story-graph' }), note: true },
+    { key: 'story.convergence', to: to('story', {}, { hash: '#convergence' }), note: true },
   ],
 };
 
@@ -129,11 +139,12 @@ const learn: IaSection = {
       ],
     },
   ],
-  jumps: [
-    { key: 'learn.paths', to: to('learn', {}, { hash: '#paths' }) },
-    { key: 'learn.modes', to: to('learn', {}, { hash: '#modes' }) },
-    { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }) },
-    { key: 'learn.rules', to: to('learn', {}, { hash: '#rules' }) },
+  /* The #paths track and Print & Play are mobileShortcuts, so they are not repeated here. */
+  mobile: [
+    { key: 'learn.modes', to: to('modes'), mobileLabel: true, note: true },
+    { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }), mobileLabel: true, note: true },
+    { key: 'learn.reference', to: to('rules'), note: true },
+    { key: 'learn.faq', to: to('faq') },
   ],
 };
 
@@ -165,14 +176,23 @@ const community: IaSection = {
       ],
     },
   ],
-  jumps: [
-    { key: 'community.discord', to: to('community', {}, { hash: '#discord' }) },
+  /* Discord is a menu shortcut, so it is not repeated here. */
+  mobile: [
     { key: 'community.wallpapers', to: to('community', {}, { hash: '#wallpapers' }) },
+    { key: 'community.support', to: to('community', {}, { hash: '#support' }), mobileLabel: true, note: true },
     { key: 'community.press', to: to('community', {}, { hash: '#press' }) },
-    { key: 'community.support', to: to('community', {}, { hash: '#support' }) },
-    { key: 'community.team', to: to('community', {}, { hash: '#team' }) },
+    { key: 'community.team', to: to('community', {}, { hash: '#team' }), mobileLabel: true },
   ],
 };
+
+const shortcuts: IaShortcut[] = [
+  { key: 'shortcut.learn', icon: 'learn', to: to('learn', {}, { hash: '#paths' }) },
+  { key: 'shortcut.cards', icon: 'cards', to: to('cards') },
+  { key: 'shortcut.printAndPlay', icon: 'print', outbound: 'printAndPlay' },
+  { key: 'shortcut.discord', icon: 'chat', outbound: 'discord' },
+];
+
+export const mobileShortcuts = shortcuts.filter((item) => !isHidden(item.to));
 
 export const primaryNav: IaSection[] = [universe, story, learn, news, community].filter(
   (section) => !isHidden(section.to),
