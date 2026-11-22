@@ -4,7 +4,7 @@
     "universe": "The universe — Singularity.exe",
     "characters": "Characters — Singularity.exe",
     "brands": "Brands — Singularity.exe",
-    "cards": "Card gallery — Singularity.exe",
+    "cards": "Card database — Singularity.exe",
     "incursions": "Incursions — Singularity.exe",
     "universal": "Universal — Singularity.exe",
     "story": "Story — Singularity.exe",
@@ -38,7 +38,11 @@
     "buy": "Buy the Box",
     "buyShort": "Buy",
     "backToTop": "Back to top",
-    "logoAlt": "Singularity.exe"
+    "logoAlt": "Singularity.exe",
+    "menuShortcuts": "Jump straight in",
+    "menuExplore": "Explore",
+    "overview": "{section} overview",
+    "youAreHere": "You are here"
   },
   "footer": {
     "publishedBy": "Published by"
@@ -102,7 +106,7 @@
       "characters": "Characters",
       "universal": "Universal",
       "incursions": "Incursions",
-      "cards": "Card gallery",
+      "cards": "Card database",
       "lexicon": "Lexicon"
     },
     "factions": {
@@ -496,7 +500,7 @@
       "storyBody": "Where this faction appears in the story, in order.",
       "cardsKicker": "Cards",
       "cardsUnit": "cards",
-      "cardsBody": "Card gallery, filtered to this faction. Full rules text included."
+      "cardsBody": "Card database, filtered to this faction. Full rules text included."
     },
     "missingTitle": "No faction at that address",
     "missingBody": "The four factions are on the Universe page."
@@ -566,8 +570,8 @@
     "sayCleared": "Stack cleared. 0 of {total} chosen.",
     "commonNote": "Every character can play Common.",
     "aboutBrand": "About",
-    "galleryExit": "These brands in the gallery",
-    "openInGallery": "Open in the card gallery",
+    "galleryExit": "These brands in the card database",
+    "openInGallery": "Open in the card database",
     "backToCard": "Back to {name}'s card",
     "faceCard": "The card",
     "faceArt": "Art only",
@@ -631,7 +635,7 @@
     "of": "of",
     "revealed": "revealed",
     "exitPrograms": "See the programs →",
-    "exitGallery": "Every program in the gallery →",
+    "exitGallery": "Every program in the card database →",
     "exitFaction": "Back to",
     "noCastTitle": "No characters revealed for this brand yet",
     "noCastBody": "The characters arrive with the chapters. Watch News, or the story pages.",
@@ -783,9 +787,10 @@
     "encounterMore": "See the full encounter →",
     "unlocks": {
       "note": "Sealed in the box",
-      "body1": "Every Incursion ships with a pack sealed shut beside it. Beat that Incursion and you have earned the right to cut it open. What is inside is yours to use in ordinary games afterwards — that is all we are saying for now.",
+      "body1": "Defeat all three Terminal Incursions and you can open the Domination Pack: an envelope full of repurposed designs that let you harness pieces of their awesome power.",
       "body2": "Nothing stops you opening it early. We would rather you earned it.",
-      "ctaBuy": "Get the expansion →"
+      "ctaBuy": "Get the expansion →",
+      "packPlaceholder": "[ Domination Pack art ]"
     },
     "mutations": {
       "note": "Difficulty",
@@ -810,7 +815,7 @@
         "setNote": "Set INC",
         "designs": "designs",
         "body": "Ghost traces of Old Code, flashing into being in times of dire circumstance. Ephemeral as shooting stars, and worth one small boon when you need it. You find them during an incursion, or draw them at the start for an optional edge.",
-        "exit": "Every Architech Design in the gallery →"
+        "exit": "Every Architech Design in the card database →"
       }
     },
     "next": {
@@ -822,7 +827,7 @@
         "body": "How to run an Incursion, once you know how a skirmish works."
       },
       "cards": {
-        "kicker": "Card gallery",
+        "kicker": "Card database",
         "title": "The INC cards",
         "body": "Every Architech Design, with its real rules text."
       },
@@ -834,10 +839,9 @@
     },
     "ritual": {
       "title": "The ritual",
-      "run": "Run the Incursion, one to four players.",
-      "win": "Win.",
-      "cut": "Cut the seal on the pack with that boss's mark.",
-      "play": "Play what is inside anywhere — any faction, any format.",
+      "run": "Run each Incursion, one to four players.",
+      "win": "Beat all three.",
+      "open": "Open the Domination Pack.",
       "note": "No accounts, no tracking. The box remembers, not the site."
     },
     "exitHow": "See how a boss takes its turn →"
@@ -929,7 +933,6 @@
   "learn": {
     "hero": {
       "title": "Learn to play",
-      "lede": "Twenty minutes to your first game, whether you have played a hundred card games or none. Everything you need is on this page — and the full rules are here too, for the moment a game comes down to one word.",
       "pending": "[ TABLE / PLAY KEY ART — WIDE — PENDING ]"
     },
     "sections": {
@@ -1329,16 +1332,21 @@
         "label": "Explore"
       },
       "characters": {
-        "label": "All characters"
+        "label": "All characters",
+        "mobileLabel": "Characters"
       },
       "cards": {
-        "label": "Card gallery"
+        "label": "Card database",
+        "note": "Every printed card"
       },
       "incursions": {
-        "label": "Terminal Incursions"
+        "label": "Terminal Incursions",
+        "mobileLabel": "Incursions",
+        "note": "Co-op boss fights"
       },
       "universal": {
-        "label": "Universal"
+        "label": "Universal",
+        "note": "LuX & any-faction cards"
       },
       "world": {
         "label": "The world"
@@ -1352,7 +1360,8 @@
       "primer": {
         "label": "Read the world primer →",
         "note": "The 40-second version of where all this happens, at the top of the hub."
-      }
+      },
+      "blurb": "Lore, factions, characters & cards"
     },
     "story": {
       "label": "Story",
@@ -1400,7 +1409,8 @@
       "pastVotes": {
         "label": "Past Convergences",
         "note": "How earlier votes landed"
-      }
+      },
+      "blurb": "Chapters, recap & the Convergence vote"
     },
     "learn": {
       "label": "Learn",
@@ -1447,11 +1457,13 @@
       },
       "modes": {
         "label": "Modes of play",
-        "note": "Five formats"
+        "note": "Five formats",
+        "mobileLabel": "Game modes"
       },
       "videos": {
         "label": "How-to-play videos",
-        "note": "Captioned"
+        "note": "Captioned",
+        "mobileLabel": "Videos"
       },
       "printAndPlay": {
         "label": "Print & Play",
@@ -1462,7 +1474,8 @@
       },
       "rules": {
         "label": "Rules hub"
-      }
+      },
+      "blurb": "Learn the game, rules, modes & videos"
     },
     "news": {
       "label": "News",
@@ -1474,7 +1487,8 @@
       },
       "events": {
         "label": "Events"
-      }
+      },
+      "blurb": "Announcements, products & events"
     },
     "community": {
       "label": "Community",
@@ -1497,7 +1511,8 @@
       },
       "support": {
         "label": "Support",
-        "note": "Orders, refunds, missing pieces"
+        "note": "Orders, refunds, missing pieces",
+        "mobileLabel": "Help with an order"
       },
       "faq": {
         "label": "FAQ",
@@ -1509,8 +1524,10 @@
       },
       "team": {
         "label": "The team",
-        "note": "Who makes the game"
-      }
+        "note": "Who makes the game",
+        "mobileLabel": "Meet the team"
+      },
+      "blurb": "Downloads, help, press & the team"
     },
     "footer": {
       "universe": {
@@ -1527,6 +1544,24 @@
       },
       "community": {
         "label": "Community"
+      }
+    },
+    "shortcut": {
+      "learn": {
+        "label": "How to play",
+        "note": "About 20 minutes"
+      },
+      "cards": {
+        "label": "Search the cards",
+        "note": "Every printed card"
+      },
+      "printAndPlay": {
+        "label": "Free Print & Play",
+        "note": "Try before you buy"
+      },
+      "discord": {
+        "label": "Join the Discord",
+        "note": "Rules help & games"
       }
     }
   },
