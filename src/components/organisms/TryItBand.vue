@@ -1,68 +1,12 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
-import { useCopy } from '@/composables/useCopy';
-import { FINE_HOVER, useMediaQuery } from '@/composables/useMediaQuery';
+import TryFreeCard from '@/components/molecules/TryFreeCard.vue';
 import { t } from '@/content';
-import { starterDecks } from '@/data/starterStacks';
-import { characters, coreProduct, tryRoutes, ttsShot } from '@/data/universe';
-import { outbound, pictureSources, to, tryRouteLink } from '@/site/links';
+import { coreProduct } from '@/data/universe';
+import { outbound, to } from '@/site/links';
 import { patternUrl } from '@/site/patterns';
-import type { ResolvedLink } from '@/site/links';
-import type { Art } from '@/data/types';
-
-/** The print sheet's faces, in reading order. */
-const SHEET_CARDS = [
-  'SC-008C-EN',
-  'SC-015C-EN',
-  'SC-040C-EN',
-  'SC-001C-EN',
-  'SC-022C-EN',
-  'SC-014C-EN',
-  'SC-017C-EN',
-  'SC-033C-EN',
-  'SC-025C-EN',
-];
-
-const sheet = SHEET_CARDS.map((id) => characters.find((c) => c.cardId === id)?.cardArt).filter(
-  (art): art is Art => Boolean(art?.src),
-);
-
-const routeLink = (id: string): ResolvedLink => {
-  const route = tryRoutes.find((r) => r.id === id);
-  if (!route) {
-    if (import.meta.env.DEV) console.warn(`[TryItBand] no try route "${id}": linking to Learn.`);
-    return { to: to('learn'), external: false };
-  }
-  return tryRouteLink(route);
-};
-const ttsLink = routeLink('tts');
-const ttsArt: Art = { src: ttsShot, alt: '' };
-/* The cover-cropped picture's drawn width at each .c-try__pic size; change with that CSS. */
-const TTS_SIZES = '(min-width: 1024px) 510px, (min-width: 720px) 46vw, 210px';
-const pnpLink = routeLink('printAndPlay');
-
-const [deckA, deckB] = starterDecks.filter((deck) => deck.kind === 'starter');
-
-/* A phone cannot run either free route: touch gets a copy-for-your-computer button, not the link. */
-const pointer = useMediaQuery(FINE_HOVER);
-const canCopy = typeof navigator !== 'undefined' && Boolean(navigator.clipboard?.writeText);
-const router = useRouter();
-const { copied, copy } = useCopy({ resetMs: 2400 });
-
-function hrefOf(link: ResolvedLink): string {
-  const href = link.href ?? (link.to ? router.resolve(link.to).href : location.href);
-  return new URL(href, location.href).href;
-}
-
-function copyLink(key: string, link: ResolvedLink): void {
-  const href = hrefOf(link);
-  void copy(href, key, () => location.assign(href));
-}
-
-const copyLabel = (key: string) => t(copied.value === key ? 'home.tryIt.copied' : 'home.tryIt.copy');
 
 const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 </script>
@@ -74,51 +18,8 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
       <h2 id="try-it-title" class="c-try__h">{{ t('home.tryIt.title') }}</h2>
 
       <div class="c-try__grid">
-        <div class="c-try__free c-try__free--tts">
-          <div class="c-try__pic c-try__pic--tts" aria-hidden="true">
-            <ArtFrame :art="ttsArt" ratio="auto" :placeholder="t('home.tryIt.tts.placeholder')" :sources="pictureSources(ttsShot)" :sizes="TTS_SIZES" />
-          </div>
-          <div class="c-try__text">
-            <h3 class="c-try__title">{{ t('home.tryIt.tts.title') }}</h3>
-            <p class="c-try__body">
-              {{ t('home.tryIt.tts.body', { a: deckA?.name ?? '', b: deckB?.name ?? '' }) }}
-            </p>
-            <BaseLink v-if="pointer || !canCopy" :link="ttsLink" class="c-try__link">
-              {{ t('home.tryIt.tts.link') }}
-            </BaseLink>
-            <button v-else type="button" class="c-try__link" aria-live="polite" @click="copyLink('tts', ttsLink)">
-              {{ copyLabel('tts') }}
-            </button>
-          </div>
-        </div>
-
-        <div class="c-try__free c-try__free--pnp">
-          <div class="c-try__pic c-try__pic--pnp" aria-hidden="true">
-            <div class="c-try__sheet c-try__sheet--back"></div>
-            <div class="c-try__sheet">
-              <div class="c-try__sheet-grid">
-                <ArtFrame
-                  v-for="art in sheet"
-                  :key="art.src ?? ''"
-                  :art="art"
-                  ratio="var(--ratio-card)"
-                  :sources="pictureSources(art.src)"
-                  sizes="96px"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="c-try__text">
-            <h3 class="c-try__title">{{ t('home.tryIt.pnp.title') }}</h3>
-            <p class="c-try__body">{{ t('home.tryIt.pnp.body') }}</p>
-            <BaseLink v-if="pointer || !canCopy" :link="pnpLink" class="c-try__link">
-              {{ t('home.tryIt.pnp.link') }}
-            </BaseLink>
-            <button v-else type="button" class="c-try__link" aria-live="polite" @click="copyLink('pnp', pnpLink)">
-              {{ copyLabel('pnp') }}
-            </button>
-          </div>
-        </div>
+        <TryFreeCard route="tts" row class="c-try__tts" />
+        <TryFreeCard route="printAndPlay" row class="c-try__pnp" />
 
         <div class="c-try__box">
           <div class="c-try__render">
@@ -202,117 +103,12 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
   margin-top: clamp(1.25rem, 3vw, 1.75rem);
 }
 
-.c-try__free--tts {
+.c-try__tts {
   grid-area: tts;
 }
 
-.c-try__free--pnp {
+.c-try__pnp {
   grid-area: pnp;
-}
-
-.c-try__free {
-  display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
-  gap: 0.875rem;
-  align-items: center;
-  padding: var(--space-3);
-  overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: 1rem;
-  background: var(--color-surface-raised);
-}
-
-.c-try__pic {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1 / 1;
-  border-radius: 0.625rem;
-}
-
-.c-try__pic > .c-art {
-  position: absolute;
-  inset: 0;
-}
-
-.c-try__pic--pnp {
-  background:
-    radial-gradient(ellipse 70% 80% at 50% 70%, rgba(var(--rgb-accent), 0.13), transparent 70%),
-    #0e0e1a;
-}
-
-.c-try__sheet {
-  position: absolute;
-  left: 50%;
-  top: 12%;
-  height: 96%;
-  aspect-ratio: 8.5 / 11;
-  padding: 5.5%;
-  overflow: hidden;
-  border-radius: 0.125rem;
-  background: #f4f4f8;
-  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.6);
-  transform: translateX(-50%) rotate(-4deg);
-}
-
-/* Two classes: the 45em rule below moves the front sheet and must not move this one. */
-.c-try__sheet.c-try__sheet--back {
-  display: none;
-  top: 14%;
-  height: 104%;
-  background: #dcdce6;
-  box-shadow: 0 1.125rem 2.5rem rgba(0, 0, 0, 0.5);
-  transform: translateX(-36%) rotate(6deg);
-}
-
-.c-try__sheet-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3%;
-}
-
-.c-try__sheet-grid .c-art {
-  background: transparent;
-}
-
-.c-try__text {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.c-try__title {
-  font-family: var(--font-display);
-  font-size: var(--size-body-l);
-  font-weight: 700;
-}
-
-.c-try__body {
-  margin-top: 0.375rem;
-  font-size: var(--size-m);
-  line-height: 1.5;
-  color: var(--color-ink-muted);
-}
-
-.c-try__link {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  min-height: 2.75rem;
-  margin-top: 0.625rem;
-  padding: 0.375rem 0 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: var(--size-body-s);
-  font-weight: 500;
-  color: var(--color-accent);
-  text-align: left;
-  cursor: pointer;
-}
-
-.c-try__link:hover {
-  color: var(--color-ink-bright);
-  text-decoration: none;
 }
 
 .c-try__box {
@@ -420,41 +216,6 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
     gap: var(--space-4);
   }
 
-  .c-try__free {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    align-items: stretch;
-    padding: 0;
-    border-radius: var(--radius-l);
-  }
-
-  .c-try__pic {
-    aspect-ratio: 16 / 9;
-    border-radius: 0;
-  }
-
-  .c-try__sheet {
-    top: 9%;
-    height: 104%;
-    transform: translateX(-58%) rotate(-4deg);
-  }
-
-  .c-try__sheet.c-try__sheet--back {
-    display: block;
-  }
-
-  .c-try__text {
-    padding: 1rem 1.25rem 1.125rem;
-  }
-
-  .c-try__title {
-    font-size: 1.378rem;
-  }
-
-  .c-try__link {
-    margin-top: auto;
-  }
-
   .c-try__box {
     --try-glow: 22% 50%;
 
@@ -476,24 +237,6 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
     grid-template-areas:
       'tts box'
       'pnp box';
-  }
-
-  .c-try__free {
-    grid-template-columns: 16.25rem minmax(0, 1fr);
-  }
-
-  .c-try__pic {
-    aspect-ratio: auto;
-    min-height: 12.5rem;
-  }
-
-  .c-try__text {
-    justify-content: center;
-    padding: 1.25rem 1.5rem;
-  }
-
-  .c-try__link {
-    margin-top: 0.625rem;
   }
 
   .c-try__box {

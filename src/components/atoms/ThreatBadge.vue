@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** The Incursions marker. Threat colour, never a faction's: the rogue AIs sit outside the faction system. Sets no margin. */
+/** The Incursions marker. Threat colour, never a faction's: Incursions sit outside the faction system. Sets no margin. */
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 </script>
 

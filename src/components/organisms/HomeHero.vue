@@ -914,7 +914,7 @@ watch([boxW, boxH, vh, side, footH], async () => {
   -webkit-mask-size: 24.375rem;
 }
 
-/* The upright rail, its level run (::before) and the corner between them (::after), lifted over the ground span, which would otherwise cover the ::before: each laps the corner by 1px, so no seam opens at a fractional size. */
+/* Rail, run (::before) and corner (::after) sit over the ground span, which would otherwise cover the run, and each laps the corner by 1px so no seam opens at a fractional size. */
 .c-lid__rail,
 .c-lid__margin::before,
 .c-lid__margin::after {

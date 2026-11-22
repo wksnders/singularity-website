@@ -1,11 +1,11 @@
 <script setup lang="ts">
-/* The mobile-only up-link targets the #on-this-page anchor rendered by the view's section index. */
+/* The mobile up-link targets the section index's #on-this-page, so a view without an index passes `:up="false"`. */
 import UiButton from '@/components/atoms/UiButton.vue';
 import { t } from '@/content';
 import type { RouteLocationRaw } from 'vue-router';
 import type { ResolvedLink } from '@/site/links';
 
-defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
+withDefaults(defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string; up?: boolean }>(), { up: true });
 </script>
 
 <template>
@@ -14,7 +14,7 @@ defineProps<{ to?: RouteLocationRaw; link?: ResolvedLink; label: string }>();
       <UiButton variant="quiet" :to="to" :link="link">{{ label }}</UiButton>
       <slot />
     </div>
-    <a class="c-mono c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
+    <a v-if="up" class="c-mono c-bandfoot__up" href="#on-this-page">↑ {{ t('wayfinding.sections') }}</a>
   </div>
 </template>
 

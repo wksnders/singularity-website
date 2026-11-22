@@ -6,19 +6,18 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import ContentCard from '@/components/molecules/ContentCard.vue';
-import TryRouteCard from '@/components/molecules/TryRouteCard.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
 import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import TryFreeCard from '@/components/molecules/TryFreeCard.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import { t } from '@/content';
-import { modes, TRY_TIERS, tryRoutesOfTier, videos } from '@/data/universe';
+import { modes, videos } from '@/data/universe';
 import { isHidden, outbound, soon, to } from '@/site/links';
 import { guideLinks } from '@/site/modes';
 import { provideSections } from '@/composables/useSections';
 import type { SectionEntry } from '@/site/sections';
-import type { TryTier } from '@/data/types';
 
 const sections = computed<SectionEntry[]>(() => [
   { id: 'paths', label: t('learn.sections.paths') },
@@ -34,8 +33,6 @@ const tracks = ['new', 'veteran', 'coop'] as const;
 
 const route = useRoute();
 const currentTrack = computed(() => route.hash.replace(/^#path-/, ''));
-
-const routesToTry = (tier: TryTier) => tryRoutesOfTier(tier).filter((r) => !r.alsoOnLearn);
 
 const guides = computed(() => guideLinks());
 
@@ -156,17 +153,12 @@ const rulesHub = [
   </SectionBand>
 
   <SectionBand id="try" class="l-band--line-top" :heading="t('learn.try.heading')">
-    <div v-for="tier in TRY_TIERS" :key="tier" class="learn__tier">
-      <MonoLabel tone="muted">{{ t(`try.tiers.${tier}`) }}</MonoLabel>
-      <div class="l-grid l-grid--wide">
-        <TryRouteCard
-          v-for="tryRoute in routesToTry(tier)"
-          :key="tryRoute.id"
-          :route="tryRoute"
-        />
-      </div>
+    <div class="learn__try">
+      <TryFreeCard route="tts" />
+      <TryFreeCard route="printAndPlay" />
     </div>
     <BandFoot v-if="!isHidden(to('story'))" :to="to('story', {}, { hash: '#chapters' })" :label="t('learn.try.exit')" />
+    <BandFoot v-else :to="to('cards')" :label="t('learn.try.cardsExit')" />
   </SectionBand>
 </template>
 
@@ -184,13 +176,17 @@ const rulesHub = [
   flex: 1 1 auto;
 }
 
-.learn__tier + .learn__tier {
-  margin-top: var(--space-9);
+.learn__try {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.625rem;
 }
 
-/* A tier is not a direct child of the band, so the band's rhythm does not reach inside it. */
-.learn__tier > * + * {
-  margin-top: var(--space-6);
+@media (min-width: 45em) {
+  .learn__try {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-4);
+  }
 }
 
 .learn__note {

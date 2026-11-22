@@ -126,7 +126,7 @@
       "exit": "How Incursions work →"
     },
     "incursions": {
-      "title": "The rogue AIs answer to no faction",
+      "title": "The Incursions answer to no faction",
       "body": "Each boss plays itself from its own deck and rules, and your whole table is on the same side.",
       "cta": "Enter the Incursions",
       "exit": "Every card in the game →",
@@ -729,9 +729,9 @@
     "hero": {
       "position": "Encounter",
       "playTime": "{minutes} min per player",
-      "kind": "Rogue AI",
-      "artPlaceholder": "[ rogue AI art — 21:9 ]",
-      "pending": "[ ROGUE AI ART — PENDING ]",
+      "kind": "Incursion",
+      "artPlaceholder": "[ encounter art — 21:9 ]",
+      "pending": "[ ENCOUNTER ART — PENDING ]",
       "taglinePlaceholder": "[PLACEHOLDER — one line on what this encounter is, in the player's words.]"
     },
     "sections": {
@@ -756,7 +756,7 @@
     "modeBody": "How an Incursion works, how you turn it up, and what you win by beating all three.",
     "exitLearn": "Run your first Incursion, in Learn →",
     "missingTitle": "No encounter at that address",
-    "missingBody": "The rogue AIs that are published sit on the Incursions page."
+    "missingBody": "Every published Incursion is on the Incursions page."
   },
   "incursions": {
     "hero": {
@@ -765,6 +765,7 @@
         "body": "Bring a full squad to face the server's biggest threats."
       },
       "stakes": "Get assistance from the server, or force the Incursion to reveal more of its true threat with mutations.",
+      "stakesMore": "How difficulty works",
       "answer": {
         "title": "The Incursion answers",
         "body": "After each player turn, it strikes back at whoever just moved."
@@ -772,51 +773,14 @@
       "encounters": "Scroll down for details on each encounter"
     },
     "sections": {
-      "threat": "The threat",
-      "how": "How a boss plays",
-      "roster": "The encounters",
       "mutations": "How you turn it up",
       "unlocks": "What you win",
       "next": "Where next"
     },
-    "loreNote": "Lore",
-    "playTime": "{minutes} min",
-    "perPlayer": "per player",
-    "noGm": "No GM",
-    "bossPlaysItself": "The boss plays itself",
-    "threat": {
-      "body1": "[PLACEHOLDER — where the rogue AIs came from, and why they answer to no faction. This is the lore page, readable by anyone who has not bought the expansion.]",
-      "body2": "[PLACEHOLDER — what an incursion looks like from inside the world: what it takes, what it leaves behind.]"
-    },
-    "how": {
-      "note": "No human runs it",
-      "body": "Nobody plays the villain. The rogue AI acts entirely from its own deck and its own rules, so every player at the table is on the same side — and, as everywhere else in this game, nothing is random.",
-      "prereq": "Learn the base game first. An Incursion assumes you already know how a skirmish works — the co-op track in Learn starts from there.",
-      "setup": {
-        "title": "Set up the Incursion",
-        "body": "Each boss brings its own setup — a board state you would never build for a skirmish."
-      },
-      "reveal": {
-        "title": "The boss decides for itself",
-        "body": "Its next action is already determined. You can read it, and plan against it."
-      },
-      "answer": {
-        "title": "You answer together",
-        "body": "One to four players, playing their own characters, against one shared threat."
-      },
-      "escalate": {
-        "title": "It escalates on a schedule",
-        "body": "No dice decide when the pressure rises. The boss's own cards do."
-      }
-    },
     "roster": {
-      "note": "Roster",
-      "body": "Each is a separate Incursion with its own setup, its own deck, and its own way of losing patience.",
-      "artPlaceholder": "[ rogue AI art 3:4 ]",
-      "linePlaceholder": "[PLACEHOLDER — one line on how this one fights.]",
-      "moreKicker": "More Incursions",
-      "moreCount": "[ count — TBD ]"
+      "artPlaceholder": "[ boss painting — 5:7 ]"
     },
+    "encounterMore": "See the full encounter →",
     "unlocks": {
       "note": "Sealed in the box",
       "body1": "Every Incursion ships with a pack sealed shut beside it. Beat that Incursion and you have earned the right to cut it open. What is inside is yours to use in ordinary games afterwards — that is all we are saying for now.",
@@ -841,8 +805,6 @@
         "title": "Every twist at once",
         "body": "Meant to be beyond a table that has already won. Clearing it is the thing worth saying out loud."
       },
-      "countsLabel": "Mutations",
-      "countsNote": "[PLACEHOLDER — per-encounter mutation counts, once the owner confirms them.]",
       "designs": {
         "title": "Architech Designs",
         "setNote": "Set INC",
@@ -853,6 +815,7 @@
     },
     "next": {
       "note": "Exits",
+      "prereq": "Learn the base game first. An Incursion assumes you already know how a skirmish works — the co-op track in Learn starts from there.",
       "learn": {
         "kicker": "Learn",
         "title": "The co-op track",
@@ -877,9 +840,7 @@
       "play": "Play what is inside anywhere — any faction, any format.",
       "note": "No accounts, no tracking. The box remembers, not the site."
     },
-    "exitHow": "See how a boss takes its turn →",
-    "exitTrack": "The co-op learning track →",
-    "exitChapter": "The chapter they arrive in →"
+    "exitHow": "See how a boss takes its turn →"
   },
   "universal": {
     "hero": {
@@ -1018,7 +979,7 @@
       },
       "incursions": {
         "players": "1–4 players · co-op & solo",
-        "blurb": "The rogue AI acts entirely from its own cards. No human runs the boss."
+        "blurb": "The boss acts entirely from its own cards. No human runs it."
       },
       "rules": "Full rules →",
       "exit": "Read up on Incursions →"
@@ -1060,7 +1021,8 @@
     },
     "try": {
       "heading": "Ways to try it",
-      "exit": "See what is in each box →"
+      "exit": "See what is in each box →",
+      "cardsExit": "Browse every card →"
     }
   },
   "rules": {

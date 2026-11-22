@@ -1334,7 +1334,7 @@ function assertCharacterShape(): void {
 }
 assertCharacterShape();
 
-/* Rogue AIs sit outside the faction system and use their own color, reserved for incursions. */
+/* Incursions sit outside the faction system and use their own colour. */
 export const rogueAIs: RogueAI[] = [
   { id: 'calebrena', name: 'Calebrena', art: { ...noArt }, brand: rogueBrand('calebrena') },
   { id: 'invader', name: 'Invader', art: { ...noArt }, brand: rogueBrand('invader') },
@@ -1475,7 +1475,7 @@ export const bossWall: string[] = [
   'calebrena-world-breaker',
 ].map((id) => bossPainting(bosses.find((b) => b.id === id)?.cardId ?? id, 480));
 
-/** The Incursions page hero's cards: hand paintings named as bossPainting names a painting (height at 960 wide), and the design faces and mutation back by their localised file names. */
+/** Hand paintings are keyed as bossPainting keys a painting (height at 960 wide); the design faces and mutation back keep the locale suffix their files carry. */
 export const incursionsHeroCards = {
   hands: [
     { painting: 'TI-074X', height: 895 },

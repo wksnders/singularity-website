@@ -453,7 +453,7 @@
     "id": "what-incursions",
     "group": "solo",
     "question": "What are Incursions?",
-    "answer": "Co-op/Solo missions against a rogue AI. One to four players share a table against a boss that acts entirely from its own deck and its own rules. Nobody plays the villain, it has a scripted set of moves it makes on it's turns against you.",
+    "answer": "Co-op/Solo missions against the server's biggest threats. One to four players share a table against a boss that acts entirely from its own deck and its own rules. Nobody plays the villain, it has a scripted set of moves it makes on it's turns against you.",
     "link": {
       "key": "incursions",
       "label": "How Incursions work"

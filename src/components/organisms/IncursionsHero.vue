@@ -85,6 +85,9 @@ const mutation = picture(`/incursions/back-${incursionsHeroCards.mutationBack}-4
             </span>
           </div>
           <p class="c-inc-hero__stakes-line">{{ t('incursions.hero.stakes') }}</p>
+          <p class="c-inc-hero__stakes-more">
+            <BaseLink :to="{ hash: '#mutations' }">{{ t('incursions.hero.stakesMore') }} <span aria-hidden="true">↓</span></BaseLink>
+          </p>
         </div>
       </div>
     </div>
@@ -312,8 +315,10 @@ const mutation = picture(`/incursions/back-${incursionsHeroCards.mutationBack}-4
   margin-top: var(--space-2);
 }
 
-.c-inc-hero__next a {
+.c-inc-hero__next a,
+.c-inc-hero__stakes-more a {
   display: inline-flex;
+  gap: 0.35em;
   align-items: center;
   min-height: 2.75rem;
   font-weight: 500;
@@ -575,11 +580,13 @@ const mutation = picture(`/incursions/back-${incursionsHeroCards.mutationBack}-4
     opacity: var(--inc-lead-ink);
   }
 
-  .c-inc-hero__next:focus-within {
+  .c-inc-hero__next:focus-within,
+  .c-inc-hero__stakes:focus-within {
     opacity: 1;
   }
 
-  .c-inc-hero__next a {
+  .c-inc-hero__next a,
+  .c-inc-hero__stakes-more a {
     min-height: calc(var(--u) * 2.75);
   }
 
@@ -594,6 +601,14 @@ const mutation = picture(`/incursions/back-${incursionsHeroCards.mutationBack}-4
 
   .c-inc-hero__stakes-line {
     margin-top: calc(var(--u) * 1.25);
+    font-size: max(var(--size-s), calc(var(--u) * 0.9375));
+  }
+
+  .c-inc-hero__stakes-more {
+    margin-top: calc(var(--u) * 0.25);
+  }
+
+  .c-inc-hero__stakes-more a {
     font-size: max(var(--size-s), calc(var(--u) * 0.9375));
   }
 

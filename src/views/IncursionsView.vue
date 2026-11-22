@@ -2,46 +2,47 @@
 
 import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
-import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
-import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import IncursionsHero from '@/components/organisms/IncursionsHero.vue';
-import { useEntityDoc } from '@/composables/useEntityDoc';
 import { provideSections } from '@/composables/useSections';
-import { t } from '@/content';
+import { getDoc, metaString, t } from '@/content';
+import { firstParagraph } from '@/content/excerpt';
 import { architechDesigns } from '@/data/programs';
-import { game, rogueAIs } from '@/data/universe';
-import { expandIcons } from '@/site/cardText';
+import { bossGroups, bosses, rogueAIs } from '@/data/universe';
 import { pad } from '@/site/format';
-import { isHidden, outbound, to } from '@/site/links';
+import { isHidden, outbound, pictureSources, to } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 import type { SectionEntry } from '@/site/sections';
 
+/* Matches .inc__bosses: two columns, four from 47.5em, inside the 70rem content column. */
+const BOSS_SIZES = '(min-width: 70em) 266px, (min-width: 47.5em) 23vw, 45vw';
+
+const encounters = computed(() =>
+  rogueAIs.map((ai) => {
+    const doc = getDoc(`universe/incursions/${ai.id}`);
+    const ids = bossGroups.find((group) => group.encounterId === ai.id)?.bossIds ?? [];
+    return {
+      id: ai.id,
+      name: ai.name,
+      challenge: metaString(doc, 'challenge'),
+      lore: firstParagraph(doc?.body ?? ''),
+      bosses: ids.flatMap((id) => bosses.filter((boss) => boss.id === id)),
+    };
+  }),
+);
+
 const sections = computed<SectionEntry[]>(() => [
-  { id: 'threat', label: t('incursions.sections.threat') },
-  { id: 'how', label: t('incursions.sections.how') },
-  { id: 'roster', label: t('incursions.sections.roster') },
+  ...encounters.value.map((encounter) => ({ id: encounter.id, label: encounter.name })),
   { id: 'mutations', label: t('incursions.sections.mutations') },
   { id: 'unlocks', label: t('incursions.sections.unlocks') },
   { id: 'next', label: t('incursions.sections.next') },
 ]);
 
 provideSections(sections);
-
-const { has: hasLore } = useEntityDoc(() => 'universe/incursions');
-
-const steps = computed(() =>
-  ['setup', 'reveal', 'answer', 'escalate'].map((key, index) => ({
-    index: pad(index + 1),
-    title: t(`incursions.how.${key}.title`),
-    body: t(`incursions.how.${key}.body`),
-  })),
-);
 
 const ritual = computed(() =>
   ['run', 'win', 'cut', 'play'].map((key) => t(`incursions.ritual.${key}`)),
@@ -55,8 +56,6 @@ const dials = computed(() =>
     body: t(`incursions.mutations.${key}.body`),
   })),
 );
-
-const designs = computed(() => architechDesigns.slice(0, 4));
 
 const exits = computed(() =>
   [
@@ -78,99 +77,45 @@ const exits = computed(() =>
   <div class="inc">
     <IncursionsHero />
 
-    <div class="l-wrap inc__index">
-      <SectionIndex :sections="sections" />
-    </div>
-
     <ScrollSpyRail :sections="sections" />
 
-    <SectionBand id="threat" class="l-band--line-top" :heading="t('incursions.sections.threat')">
-      <MonoLabel tone="faint">{{ t('incursions.loreNote') }}</MonoLabel>
+    <!-- #roster is a public anchor: the hero and outside links land on the first encounter through it. -->
+    <div id="roster" tabindex="-1">
+      <SectionBand
+        v-for="(encounter, index) in encounters"
+        :id="encounter.id"
+        :key="encounter.id"
+        class="l-band--line-top"
+        :class="{ 'l-band--alt': index % 2 }"
+        :heading="encounter.name"
+      >
+        <p v-if="encounter.challenge" class="l-lede inc__body">{{ encounter.challenge }}</p>
+        <p v-if="encounter.lore" class="inc__lore">{{ encounter.lore }}</p>
 
-      <MarkdownBlock v-if="hasLore" slug="universe/incursions" measure />
-      <div v-else class="l-lede inc__prose">
-        <p>{{ t('incursions.threat.body1') }}</p>
-        <p>{{ t('incursions.threat.body2') }}</p>
-      </div>
-
-      <div class="inc__stats">
-        <div>
-          <p class="inc__stat-value">{{ game.incursionsPlayers }}</p>
-          <MonoLabel tone="faint">{{ t('home.incursions.players') }}</MonoLabel>
-        </div>
-        <div>
-          <p class="inc__stat-value">{{ t('incursions.playTime', { minutes: game.minutesPerPlayer }) }}</p>
-          <MonoLabel tone="faint">{{ t('incursions.perPlayer') }}</MonoLabel>
-        </div>
-        <div>
-          <p class="inc__stat-value">{{ t('incursions.noGm') }}</p>
-          <MonoLabel tone="faint">{{ t('incursions.bossPlaysItself') }}</MonoLabel>
-        </div>
-      </div>
-
-      <BandFoot :to="{ hash: '#how' }" :label="t('incursions.exitHow')" />
-    </SectionBand>
-
-    <SectionBand
-      id="how"
-      class="l-band--alt l-band--line-top"
-      :heading="t('incursions.sections.how')"
-    >
-      <MonoLabel tone="faint">{{ t('incursions.how.note') }}</MonoLabel>
-      <p class="l-lede inc__body">{{ t('incursions.how.body') }}</p>
-
-      <ol class="inc__steps">
-        <li v-for="step in steps" :key="step.index" class="l-surface">
-          <MonoLabel tone="faint">{{ step.index }}</MonoLabel>
-          <h3 class="inc__step-title">{{ step.title }}</h3>
-          <p class="inc__step-body">{{ step.body }}</p>
-        </li>
-      </ol>
-
-      <p class="inc__aside">{{ t('incursions.how.prereq') }}</p>
-
-      <BandFoot :to="to('learn', {}, { hash: '#paths' })" :label="t('incursions.exitTrack')" />
-    </SectionBand>
-
-    <SectionBand id="roster" class="l-band--line-top" :heading="t('incursions.sections.roster')">
-      <MonoLabel tone="faint">{{ t('incursions.roster.note') }}</MonoLabel>
-      <p class="l-lede inc__body">{{ t('incursions.roster.body') }}</p>
-
-      <div class="l-grid">
-        <article v-for="(ai, index) in rogueAIs" :key="ai.id" class="l-surface inc__boss">
-          <ArtFrame
-            :art="ai.art"
-            ratio="3 / 4"
-            radius="m"
-            :placeholder="t('incursions.roster.artPlaceholder')"
-          />
-          <div class="inc__boss-body">
-            <MonoLabel tone="faint">
-              {{ t('characters.incursion') }} {{ pad(index + 1) }}
-            </MonoLabel>
+        <ul class="inc__bosses">
+          <li v-for="boss in encounter.bosses" :key="boss.id" class="inc__boss">
+            <ArtFrame
+              :art="boss.art"
+              ratio="5 / 7"
+              radius="m"
+              :placeholder="t('incursions.roster.artPlaceholder')"
+              :sources="pictureSources(boss.art.src)"
+              :sizes="scaledSizes(BOSS_SIZES)"
+            />
             <h3 class="inc__boss-name">
-              <BrandMark :icon="ai.brand" :name="ai.name" :size="34" />
-              <RouterLink :to="to('incursion', { aiId: ai.id })">{{ ai.name }}</RouterLink>
+              {{ boss.name }}
+              <span class="inc__boss-epithet">{{ boss.epithet }}</span>
             </h3>
-            <p class="inc__step-body">{{ t('incursions.roster.linePlaceholder') }}</p>
-          </div>
-        </article>
-        <div class="inc__more">
-          <MonoLabel tone="faint">{{ t('incursions.roster.moreKicker') }}</MonoLabel>
-          <p class="inc__more-count">{{ t('incursions.roster.moreCount') }}</p>
-        </div>
-      </div>
+          </li>
+        </ul>
 
-      <BandFoot
-        v-if="!isHidden(to('story'))"
-        :to="to('story', {}, { hash: '#ch-02' })"
-        :label="t('incursions.exitChapter')"
-      />
-    </SectionBand>
+        <BandFoot :to="to('incursion', { aiId: encounter.id })" :label="t('incursions.encounterMore')" :up="false" />
+      </SectionBand>
+    </div>
 
     <SectionBand
       id="mutations"
-      class="l-band--line-top"
+      class="l-band--alt l-band--line-top"
       :heading="t('incursions.sections.mutations')"
     >
       <MonoLabel tone="faint">{{ t('incursions.mutations.note') }}</MonoLabel>
@@ -184,16 +129,6 @@ const exits = computed(() =>
         </li>
       </ol>
 
-      <ul class="inc__counts">
-        <li v-for="ai in rogueAIs" :key="ai.id">
-          <TbdValue />
-          <MonoLabel tone="faint">
-            {{ t('incursions.mutations.countsLabel') }} · {{ ai.name }}
-          </MonoLabel>
-        </li>
-      </ul>
-      <p class="inc__aside">{{ t('incursions.mutations.countsNote') }}</p>
-
       <div class="inc__designs">
         <MonoLabel tone="faint">
           {{ architechDesigns.length }} {{ t('incursions.mutations.designs.designs') }} ·
@@ -201,29 +136,14 @@ const exits = computed(() =>
         </MonoLabel>
         <h3 class="inc__step-title">{{ t('incursions.mutations.designs.title') }}</h3>
         <p class="l-lede inc__body">{{ t('incursions.mutations.designs.body') }}</p>
-
-        <ul class="l-grid inc__gap">
-          <li v-for="card in designs" :key="card.name" class="inc__design">
-            <MonoLabel tone="faint">
-              {{ card.type }}<template v-if="card.subType"> · {{ card.subType }}</template>
-            </MonoLabel>
-            <h4 class="inc__design-name">
-              {{ card.name }}
-              <span class="inc__design-cost">{{ card.cost }}</span>
-            </h4>
-            <p v-for="(line, i) in card.rules" :key="i" class="inc__step-body">
-              {{ expandIcons(line) }}
-            </p>
-          </li>
-        </ul>
       </div>
 
-      <BandFoot :to="to('cards')" :label="t('incursions.mutations.designs.exit')" />
+      <BandFoot :to="to('cards')" :label="t('incursions.mutations.designs.exit')" :up="false" />
     </SectionBand>
 
     <SectionBand
       id="unlocks"
-      class="l-band--alt l-band--line-top"
+      class="l-band--line-top"
       :heading="t('incursions.sections.unlocks')"
     >
       <MonoLabel tone="faint">{{ t('incursions.unlocks.note') }}</MonoLabel>
@@ -248,13 +168,14 @@ const exits = computed(() =>
         </div>
       </div>
 
-      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
+      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" :up="false" />
     </SectionBand>
 
-    <SectionBand id="next" class="l-band--line-top" :heading="t('incursions.sections.next')">
+    <SectionBand id="next" class="l-band--alt l-band--line-top" :heading="t('incursions.sections.next')">
       <MonoLabel tone="faint">{{ t('incursions.next.note') }}</MonoLabel>
+      <p class="inc__aside">{{ t('incursions.next.prereq') }}</p>
 
-      <ul class="l-grid">
+      <ul class="l-grid inc__gap">
         <li v-for="exit in exits" :key="exit.key" class="inc__exit">
           <MonoLabel tone="faint">{{ exit.kicker }}</MonoLabel>
           <h3 class="inc__step-title">
@@ -264,34 +185,18 @@ const exits = computed(() =>
         </li>
       </ul>
 
-      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
+      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" :up="false" />
     </SectionBand>
   </div>
 </template>
 
 <style>
-.inc__counts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  margin-top: var(--space-6);
-  padding: 0;
-  list-style: none;
-}
-
-.inc__counts li {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
 .inc__designs {
   margin-top: var(--space-8);
   padding-top: var(--space-6);
   border-top: 1px solid var(--color-line);
 }
 
-.inc__design,
 .inc__exit {
   display: flex;
   flex-direction: column;
@@ -299,28 +204,9 @@ const exits = computed(() =>
   min-width: 0;
 }
 
-.inc__design-name {
-  display: flex;
-  gap: var(--space-3);
-  align-items: baseline;
-  justify-content: space-between;
-  font-size: var(--size-body-l);
-}
-
-.inc__design-cost {
-  flex: 0 0 auto;
-  font-family: var(--font-label);
-  font-weight: 500;
-  color: var(--faction-text);
-}
-
 .inc {
   --faction: var(--color-threat);
   --faction-text: var(--color-threat-text);
-}
-
-.inc__index {
-  padding-bottom: var(--space-8);
 }
 
 .inc__body {
@@ -329,13 +215,6 @@ const exits = computed(() =>
 
 .inc__gap {
   margin-top: var(--space-6);
-}
-
-.inc__prose {
-  margin-top: var(--space-6);
-  display: grid;
-  gap: var(--space-4);
-  max-width: var(--width-reading);
 }
 
 .inc__ritual-list {
@@ -350,26 +229,6 @@ const exits = computed(() =>
 
 .inc__prose-line {
   margin-top: var(--space-4);
-}
-
-.inc__stats {
-  margin-top: var(--space-8);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: var(--space-4);
-}
-
-.inc__stats > div {
-  padding: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-m);
-  border-bottom: 0.125rem solid var(--faction);
-}
-
-.inc__stat-value {
-  font-family: var(--font-display);
-  font-size: 1.575rem;
-  font-weight: 700;
 }
 
 .inc__steps {
@@ -409,39 +268,43 @@ const exits = computed(() =>
   color: var(--color-ink-muted);
 }
 
-.inc__boss {
-  overflow: hidden;
-  border-bottom: 0.125rem solid var(--faction);
+.inc__lore {
+  margin-top: var(--space-4);
+  max-width: var(--width-reading);
+  font-size: var(--size-body);
+  line-height: 1.65;
+  color: var(--color-ink-soft);
 }
 
-.inc__boss-body {
-  padding: var(--space-5);
+.inc__bosses {
+  margin-top: var(--space-8);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
+  padding: 0;
+  list-style: none;
 }
 
 .inc__boss-name {
-  margin-top: var(--space-2);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  margin-top: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--size-h3);
   font-weight: 700;
 }
 
-.inc__more {
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: var(--space-2);
-  min-height: 12.5rem;
-  border: 1px dashed var(--color-line-strong);
-  border-radius: var(--radius-l);
-  text-align: center;
+.inc__boss-epithet {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--size-m);
+  font-weight: 400;
+  color: var(--faction-text);
 }
 
-.inc__more-count {
-  font-size: var(--size-s);
-  color: var(--color-ink-faint);
+@media (min-width: 47.5em) {
+  .inc__bosses {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .inc__ritual-list {

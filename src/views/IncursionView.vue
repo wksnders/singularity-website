@@ -87,7 +87,7 @@ useDocumentTitle(() => ai.value?.name ?? t('incursion.missingTitle'));
       <MarkdownBlock v-if="hasLore" :slug="slug" measure class="inc1__lore" />
       <p v-else class="inc1__body">{{ t('incursion.lorePlaceholder') }}</p>
 
-      <BandFoot :to="to('incursions', {}, { hash: '#threat' })" :label="t('incursions.exitHow')" />
+      <BandFoot :to="to('learn', {}, { hash: '#paths' })" :label="t('incursions.exitHow')" />
     </SectionBand>
 
     <SectionBand
