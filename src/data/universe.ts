@@ -1475,6 +1475,16 @@ export const bossWall: string[] = [
   'calebrena-world-breaker',
 ].map((id) => bossPainting(bosses.find((b) => b.id === id)?.cardId ?? id, 480));
 
+/** The Incursions page hero's cards: hand paintings named as bossPainting names a painting (height at 960 wide), and the design faces and mutation back by their localised file names. */
+export const incursionsHeroCards = {
+  hands: [
+    { painting: 'TI-074X', height: 895 },
+    { painting: 'TI-069X', height: 889 },
+  ],
+  designs: ['TI-127D-EN', 'TI-122D-EN', 'TI-125D-EN'],
+  mutationBack: 'calebrena-mutation-EN',
+};
+
 /** Display order; the first boss is shown on load. */
 export const bossGroups: BossGroup[] = [
   { encounterId: 'paths-of-terminus', bossIds: ['xr-81', 'ender-blossom', 'devolver', 'moo-mua'] },

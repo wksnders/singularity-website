@@ -73,7 +73,7 @@ const TRAILER_WIDTHS = { avif: [640, 960, 1280], webp: [640, 1280] };
 /** Rungs private/community-derive.py writes; capped at the photo's own width. */
 const COMMUNITY_WIDTHS = { avif: [480, 699], webp: [699] };
 /** Rungs private/incursions-derive.py writes. */
-const INCURSION_WIDTHS = { avif: [240, 480, 960], webp: [480, 960] };
+const INCURSION_WIDTHS = { avif: [240, 480, 960, 1920], webp: [480, 960] };
 /** Rungs private/try-it-derive.py writes. */
 const TRY_WIDTHS = { avif: [480, 960, 1200], webp: [480, 1200] };
 

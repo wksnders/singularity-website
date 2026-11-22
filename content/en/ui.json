@@ -760,10 +760,16 @@
   },
   "incursions": {
     "hero": {
-      "title": "Something in here was never anyone's",
-      "lede": "[PLACEHOLDER — the one-paragraph pitch for the rogue AIs: what they are, why the four powers stopped fighting each other long enough to notice.]",
-      "artPlaceholder": "[ rogue AI key art — wide ]",
-      "pending": "[ ROGUE AI KEY ART — PENDING ]"
+      "allies": {
+        "title": "Gather your allies",
+        "body": "Bring a full squad to face the server's biggest threats."
+      },
+      "stakes": "Get assistance from the server, or force the Incursion to reveal more of its true threat with mutations.",
+      "answer": {
+        "title": "The Incursion answers",
+        "body": "After each player turn, it strikes back at whoever just moved."
+      },
+      "encounters": "Scroll down for details on each encounter"
     },
     "sections": {
       "threat": "The threat",
@@ -1608,7 +1614,7 @@
       "cards": {
         "kicker": "Browse",
         "title": "Browse every card",
-        "body": "Rules text in full, as real text — searchable and screen-readable."
+        "body": "Rules text in full, as real text both searchable and screen-readable."
       },
       "printAndPlay": {
         "kicker": "Free to download",

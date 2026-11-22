@@ -4,16 +4,14 @@ import { computed } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
 import TbdValue from '@/components/atoms/TbdValue.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import BandFoot from '@/components/molecules/BandFoot.vue';
-import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
-import PageHero from '@/components/organisms/PageHero.vue';
+import IncursionsHero from '@/components/organisms/IncursionsHero.vue';
 import { useEntityDoc } from '@/composables/useEntityDoc';
 import { provideSections } from '@/composables/useSections';
 import { t } from '@/content';
@@ -78,26 +76,11 @@ const exits = computed(() =>
 
 <template>
   <div class="inc">
-    <PageHero
-      :placeholder="t('incursions.hero.artPlaceholder')"
-      :pending-note="t('incursions.hero.pending')"
-      glow="100% 80% at 24% 6%"
-      min-height="min(78dvh, 43.75rem)"
-    >
-      <Breadcrumbs
-        :crumbs="[
-          { label: t('ia.universe.label'), to: to('universe') },
-          { label: t('ia.universe.incursions.label') },
-        ]"
-      />
-      <ThreatBadge class="inc__badge">
-        {{ t('ia.universe.incursions.label') }} · {{ game.incursionsPlayers }}
-        {{ t('home.incursions.players') }} · {{ t('home.incursions.badge') }}
-      </ThreatBadge>
-      <h1 class="l-page-title inc__title">{{ t('incursions.hero.title') }}</h1>
-      <p class="l-lede inc__lede">{{ t('incursions.hero.lede') }}</p>
+    <IncursionsHero />
+
+    <div class="l-wrap inc__index">
       <SectionIndex :sections="sections" />
-    </PageHero>
+    </div>
 
     <ScrollSpyRail :sections="sections" />
 
@@ -336,15 +319,10 @@ const exits = computed(() =>
   --faction-text: var(--color-threat-text);
 }
 
-.inc__badge {
-  margin-top: var(--space-6);
+.inc__index {
+  padding-bottom: var(--space-8);
 }
 
-.inc__title {
-  max-width: 26ch;
-}
-
-.inc__lede,
 .inc__body {
   margin-top: var(--space-5);
 }
