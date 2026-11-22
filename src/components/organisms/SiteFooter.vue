@@ -17,6 +17,15 @@ const router = useRouter();
 const home = computed(() => to('home'));
 const atHome = computed(() => router.resolve(home.value).path === route.path);
 
+const thisYear = new Date().getFullYear();
+const rights = computed(() =>
+  t('footer.rights', {
+    years: thisYear > game.copyrightFrom ? `${game.copyrightFrom}–${thisYear}` : `${game.copyrightFrom}`,
+    owner: game.studioLegalName,
+    game: game.name,
+  }),
+);
+
 function toTop(event: MouseEvent): void {
   if (!atHome.value) return;
   event.preventDefault();
@@ -74,7 +83,7 @@ function toTop(event: MouseEvent): void {
       </RouterLink>
 
       <div class="c-footer__legal">
-        <span>© {{ game.copyrightYear }} {{ game.studio }} · {{ game.studioCity }}</span>
+        <p class="c-footer__rights">{{ rights }}</p>
         <span>{{ t('footer.publishedBy') }} {{ game.publisher }}</span>
       </div>
     </div>
@@ -131,6 +140,12 @@ function toTop(event: MouseEvent): void {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.c-footer__rights {
+  flex-basis: 100%;
+  max-width: 60rem;
+  line-height: 1.6;
 }
 
 .c-footer__legal {

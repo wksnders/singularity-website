@@ -17,6 +17,10 @@ import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
 import {
+  avatarZip,
+  avatars,
+  bosses,
+  characterById,
   coreBox,
   game,
   pressGroups,
@@ -31,11 +35,13 @@ import { useQueryFilter } from '@/composables/useQueryFilter';
 import { provideSections } from '@/composables/useSections';
 import { pad } from '@/site/format';
 import { asset, outbound, pictureSources, to } from '@/site/links';
+import { scaledSizes } from '@/site/pageScale';
 import type { PressGroup } from '@/data/types';
 import type { FilterOption } from '@/site/filters';
 import type { SectionEntry } from '@/site/sections';
 
 const mb = (bytes: number) => `${(bytes / 1048576).toFixed(1)} MB`;
+const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
 
 const pressSources = (src: string | null) => pictureSources(src);
 
@@ -73,6 +79,20 @@ const kindOptions = computed<FilterOption[]>(() =>
 
 const shownWallpapers = computed(() =>
   kind.value.value ? wallpapers.filter((w) => w.kind === kind.value.value) : wallpapers,
+);
+
+const showAvatars = computed(() => !kind.value.value || kind.value.value === 'avatar');
+
+/* Matches .comm__avatar-grid's columns: two on phones, up to seven inside the 70rem content column. */
+const AVATAR_SIZES = '(min-width: 70em) 150px, (min-width: 40em) 22vw, 45vw';
+
+const avatarTiles = computed(() =>
+  avatars.map((avatar) => ({
+    ...avatar,
+    name: (avatar.characterId ? characterById(avatar.characterId)?.name : bosses.find((boss) => boss.id === avatar.bossId)?.name) ?? avatar.id,
+    preview: avatar.framed ? `/community/avatars-framed/${avatar.id}-184.webp` : `/community/avatars/${avatar.id}-512.webp`,
+    file: `/downloads/avatars/singularity-avatar-${avatar.id}.png`,
+  })),
 );
 
 const kindName = (id: string) => wallpaperKinds.find((k) => k.id === id)?.name ?? id;
@@ -153,14 +173,48 @@ const factSheet = computed(() => [
     <FilterBar
       :options="kindOptions"
       :active="kind.value.value"
-      :count="shownWallpapers.length"
+      :count="shownWallpapers.length + (showAvatars ? avatars.length : 0)"
       :count-label="t('community.wallpapers.count')"
       :all-label="t('filters.all')"
       @toggle="kind.toggle($event)"
       @clear="kind.set(null)"
     />
 
-    <div class="l-grid">
+    <div v-if="showAvatars" class="comm__avatars">
+      <div class="comm__avatars-head">
+        <h3 class="comm__avatars-title">{{ t('community.wallpapers.avatars') }}</h3>
+        <UiButton variant="quiet" :href="asset(avatarZip.href)" download>{{ t('community.wallpapers.allAvatars') }}</UiButton>
+        <MonoLabel tone="faint">ZIP · {{ avatarZip.files }} {{ t('community.wallpapers.count') }} · {{ mb(avatarZip.zipBytes) }}</MonoLabel>
+      </div>
+      <div class="comm__avatar-terms">
+        <p>{{ t('community.wallpapers.usageWelcome') }}</p>
+        <p>
+          {{ t('community.wallpapers.usageLimits') }}
+          <RouterLink :to="{ hash: '#support' }">{{ t('community.wallpapers.usageAsk') }}</RouterLink>
+        </p>
+      </div>
+      <ul class="l-grid comm__avatar-grid">
+        <li v-for="avatar in avatarTiles" :key="avatar.id" class="comm__wall">
+          <ArtFrame
+            :art="{ src: avatar.preview, alt: t('community.wallpapers.avatarAlt', { name: avatar.name }) }"
+            ratio="1 / 1"
+            radius="m"
+            placeholder=""
+            :sources="pictureSources(avatar.preview)"
+            :sizes="scaledSizes(AVATAR_SIZES)"
+          />
+          <p class="comm__avatar-name">
+            {{ avatar.name }}<template v-if="avatar.framed"> · {{ t('community.wallpapers.framed') }}</template>
+          </p>
+          <MonoLabel tone="faint">PNG · {{ avatar.px }} × {{ avatar.px }} · {{ kb(avatar.bytes) }}</MonoLabel>
+          <UiButton variant="quiet" :href="asset(avatar.file)" download>
+            {{ t('community.wallpapers.download') }}<span class="l-sr-only"> {{ avatar.name }}</span>
+          </UiButton>
+        </li>
+      </ul>
+    </div>
+
+    <div v-if="shownWallpapers.length" class="l-grid">
       <div v-for="wallpaper in shownWallpapers" :key="wallpaper.id" class="comm__wall">
         <ArtFrame
           :art="null"
@@ -664,6 +718,48 @@ const factSheet = computed(() => [
 .comm__wall {
   display: grid;
   gap: var(--space-2);
+}
+
+.comm__wall > .c-btn {
+  justify-self: start;
+}
+
+.comm__avatars {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+.comm__avatars-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.comm__avatars-title {
+  margin-right: auto;
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 700;
+}
+
+.comm__avatar-terms {
+  margin-bottom: var(--space-5);
+  max-width: var(--width-reading);
+  font-size: var(--size-s);
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}
+
+.comm__avatar-grid {
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  padding: 0;
+  list-style: none;
+}
+
+.comm__avatar-name {
+  font-weight: 600;
 }
 
 .comm__member-name {

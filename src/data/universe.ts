@@ -41,6 +41,7 @@ const CHARACTER_ARTIST = 'Héctor Sevilla Luján';
 export const game = {
   name: 'Singularity.exe',
   studio: 'Octothorpe',
+  studioLegalName: 'Octothorpe, LLC',
   studioCity: 'Salt Lake City',
   publisher: 'Panda',
   crossoverGame: 'Middara',
@@ -63,7 +64,7 @@ export const game = {
 
   trailerPoster: '/trailer/poster-1280.webp',
   rulesUpdated: '2026-08-16' as string | null,
-  copyrightYear: 2026,
+  copyrightFrom: 2025,
 };
 
 /** Null keeps these forms rendered disabled and saying why; opening one means putting the endpoint here AND making the component POST it and report the real result, which `SupportForm` already does provided its `url` answers with CORS headers. */
@@ -179,6 +180,18 @@ export const learnHeroArt: Art = {
   src: '/learn/celestial-bodies-2560.webp',
   alt: '',
   focal: { x: 0.52, y: 0.3 },
+};
+
+export const rulesHeroArt: Art = {
+  src: '/rules/subnet-operations-2560.webp',
+  alt: '',
+  focal: { x: 0.6, y: 0.4 },
+};
+
+export const faqHeroArt: Art = {
+  src: '/faq/night-at-the-club-2560.webp',
+  alt: '',
+  focal: { x: 0.65, y: 0.4 },
 };
 
 /** Five formats, not a competitive/co-op pair. */
@@ -1735,8 +1748,28 @@ export const wallpapers = [
   { id: 'wall-01', kind: 'desktop', file: null as string | null },
   { id: 'wall-02', kind: 'desktop', file: null as string | null },
   { id: 'wall-03', kind: 'mobile', file: null as string | null },
-  { id: 'wall-04', kind: 'avatar', file: null as string | null },
 ];
+
+export const avatars: { id: string; characterId?: string; bossId?: string; px: number; bytes: number; framed?: boolean }[] = [
+  { id: 'joi', characterId: 'joi', px: 512, bytes: 329789 },
+  { id: 'kagemusha', characterId: 'kagemusha', px: 512, bytes: 353589 },
+  { id: 'mi-ko-1', characterId: 'mi-ko', px: 512, bytes: 364771 },
+  { id: 'mi-ko-2', characterId: 'mi-ko', px: 512, bytes: 328290 },
+  { id: 'moka', characterId: 'moka', px: 512, bytes: 283195 },
+  { id: 'moo-mua', bossId: 'moo-mua', px: 512, bytes: 332840 },
+  { id: 'zakhi-1', characterId: 'zakhi', px: 512, bytes: 328945 },
+  { id: 'zakhi-2', characterId: 'zakhi', px: 512, bytes: 345537 },
+  { id: 'zakhi-3', characterId: 'zakhi', px: 512, bytes: 392215 },
+  { id: 'zaximus-defender', characterId: 'zaximus-defender', px: 256, bytes: 118907 },
+  { id: 'mi-ko-framed', characterId: 'mi-ko', px: 184, bytes: 58753, framed: true },
+  { id: 'naix-framed', characterId: 'naix', px: 184, bytes: 69231, framed: true },
+  { id: 'scrapper-framed', characterId: 'scrapper', px: 184, bytes: 60891, framed: true },
+  { id: 'scrapper-framed-alt', characterId: 'scrapper', px: 184, bytes: 67493, framed: true },
+  { id: 'scrapper-framed-bright', characterId: 'scrapper', px: 184, bytes: 67102, framed: true },
+  { id: 'sector-probe-framed', characterId: 'sector-probe', px: 184, bytes: 60836, framed: true },
+];
+
+export const avatarZip = { files: 16, zipBytes: 3564702, href: '/downloads/avatars/singularity-avatars.zip' };
 
 /* Studio credit lives in one band on Community; per-artwork credit is `art.artist`, filled by the two art factories. */
 /* The printed campaign credits in printed order: names, diacritics and artefact-style roles like "Box Server Illustration" are set as printed and are not typos to fix, and the two people credited twice are joined into one row each so the grid shows fifteen people not seventeen. */

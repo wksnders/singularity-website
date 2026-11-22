@@ -72,13 +72,17 @@ const BOX_WIDTHS = { avif: [360, 480, 720, 960, 1200], webp: [480, 960] };
 const TRAILER_WIDTHS = { avif: [640, 960, 1280], webp: [640, 1280] };
 /** Rungs private/community-derive.py writes; capped at the photo's own width. */
 const COMMUNITY_WIDTHS = { avif: [480, 699], webp: [699] };
+/** Rungs private/avatars-derive.py writes for the gallery previews. */
+const AVATAR_WIDTHS = { avif: [256, 512], webp: [512] };
+const FRAMED_AVATAR_WIDTHS = { avif: [184], webp: [184] };
 /** Rungs private/incursions-derive.py writes. */
 const INCURSION_WIDTHS = { avif: [240, 480, 960, 1920], webp: [480, 960] };
 /** Rungs private/try-it-derive.py writes. */
 const TRY_WIDTHS = { avif: [480, 960, 1200], webp: [480, 1200] };
-/** Rungs private/learn-hero-derive.py writes. */
-const LEARN_WIDTHS = { avif: [640, 1280, 1920, 2560, 3200], webp: [1280, 2560] };
+/** Rungs private/hero-art-derive.py writes. */
+const HERO_ART_WIDTHS = { avif: [640, 1280, 1920, 2560, 3200], webp: [1280, 2560] };
 
+/* find() takes the first match, so a nested prefix must sit above its parent. */
 const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/cards/', CARD_WIDTHS],
   ['/programs/', CARD_WIDTHS],
@@ -86,10 +90,14 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/press/covers/', PRESS_WIDTHS],
   ['/box-core/', BOX_WIDTHS],
   ['/trailer/', TRAILER_WIDTHS],
+  ['/community/avatars/', AVATAR_WIDTHS],
+  ['/community/avatars-framed/', FRAMED_AVATAR_WIDTHS],
   ['/community/', COMMUNITY_WIDTHS],
   ['/incursions/', INCURSION_WIDTHS],
   ['/try-it/', TRY_WIDTHS],
-  ['/learn/', LEARN_WIDTHS],
+  ['/learn/', HERO_ART_WIDTHS],
+  ['/rules/', HERO_ART_WIDTHS],
+  ['/faq/', HERO_ART_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {

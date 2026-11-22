@@ -45,7 +45,8 @@
     "youAreHere": "You are here"
   },
   "footer": {
-    "publishedBy": "Published by"
+    "publishedBy": "Published by",
+    "rights": "™ and © {years} {owner}. {game} and all related logos, characters, names and distinctive likenesses thereof are exclusive property of {owner}. All Rights Reserved."
   },
   "wayfinding": {
     "onThisPage": "On this page",
@@ -1090,8 +1091,7 @@
     "hero": {
       "crumb": "FAQ",
       "title": "Questions, answered",
-      "lede": "Buying, the box, how it plays, and how to reach a human.",
-      "pending": "[ FAQ — NO ART SLOT BY DESIGN — THIS PAGE IS READ, NOT BROWSED ]"
+      "lede": "Buying, the box, how it plays, and how to reach a human."
     },
     "search": {
       "label": "Search the FAQ",
@@ -1199,7 +1199,7 @@
     },
     "sections": {
       "discord": "Discord",
-      "wallpapers": "Wallpapers",
+      "wallpapers": "Wallpapers & avatars",
       "press": "Press kit",
       "support": "Support",
       "team": "The team"
@@ -1219,7 +1219,15 @@
     "wallpapers": {
       "sizesTbd": "[ output sizes — TBD ]",
       "count": "files",
-      "exit": "Writing about the game? Press kit →"
+      "exit": "Writing about the game? Press kit →",
+      "avatars": "Avatars",
+      "avatarAlt": "{name} avatar",
+      "framed": "Framed",
+      "download": "Download",
+      "allAvatars": "Download all avatars",
+      "usageWelcome": "Free to use as your profile picture, server icon, stream overlay or in fan posts.",
+      "usageLimits": "Please don't sell them, print them on merchandise, or present them as your own art.",
+      "usageAsk": "Questions? Ask us."
     },
     "press": {
       "whatTitle": "What is in it",

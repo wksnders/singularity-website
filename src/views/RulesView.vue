@@ -15,7 +15,7 @@ import RuleEntryView from '@/components/molecules/RuleEntry.vue';
 import RuleText from '@/components/molecules/RuleText.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SearchField from '@/components/molecules/SearchField.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import PageHero from '@/components/organisms/PageHero.vue';
 import CardDetail from '@/components/organisms/CardDetail.vue';
 import { t } from '@/content';
 import { useChrome } from '@/composables/useChrome';
@@ -26,7 +26,7 @@ import { useSearchQuery } from '@/composables/useSearchQuery';
 import { useSlashFocus } from '@/composables/useSlashFocus';
 import { cardBySlug } from '@/site/cards';
 import { siteScrolling } from '@/site/glide';
-import { outbound, to } from '@/site/links';
+import { outbound, pictureSources, to } from '@/site/links';
 import {
   assertRulesShape,
   CLASS_ORDER,
@@ -35,11 +35,13 @@ import {
   rulesEntries,
   rulesLetters,
 } from '@/site/rules';
-import { game } from '@/data/universe';
+import { game, rulesHeroArt } from '@/data/universe';
 import type { RuleClass } from '@/site/rules';
 import type { SectionEntry } from '@/site/sections';
 
 const route = useRoute();
+
+const heroSources = pictureSources(rulesHeroArt.src);
 const { navHidden } = useChrome();
 
 const { draft, searching, search, clear, field: searchField } = useSearchQuery('q');
@@ -184,7 +186,13 @@ watch(() => route.hash, applyHash);
 </script>
 
 <template>
-  <SecondaryHero glow="80% 60% at 20% 0%">
+  <PageHero
+    id="rules-hero"
+    :art="rulesHeroArt"
+    :sources="heroSources"
+    min-height="auto"
+    tone="washed"
+  >
     <Breadcrumbs
       :crumbs="[{ label: t('ia.learn.label'), to: to('learn') }, { label: t('rules.hero.crumb') }]"
     />
@@ -265,7 +273,7 @@ watch(() => route.hash, applyHash);
         {{ row.letter }}
       </JumpChip>
     </nav>
-  </SecondaryHero>
+  </PageHero>
  
   <div v-if="navHidden" class="rules__sticky">
     <div class="l-wrap rules__sticky-row">
@@ -296,7 +304,7 @@ watch(() => route.hash, applyHash);
     </div>
   </section>
 
-  <ScrollSpyRail :sections="sections" />
+  <ScrollSpyRail :sections="sections" hide-over-id="rules-hero" />
 
   <section v-if="noResults" class="l-band">
     <div class="l-wrap"> 

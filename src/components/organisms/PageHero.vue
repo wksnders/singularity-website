@@ -4,6 +4,9 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import type { ArtSource } from '@/components/atoms/ArtFrame.vue';
 import type { Art } from '@/data/types';
 
+/* The washed art's drawn width: a 120vw-tall box below 64em, the full hero above; change with CSS. */
+const WASHED_SIZES = '(max-width: 1023px) 187vw, (max-width: 1439px) 160vw, 105vw';
+
 withDefaults(
   defineProps<{
     art?: Art | null;
@@ -16,7 +19,7 @@ withDefaults(
     sources?: ArtSource[];
     focal?: { x: number; y: number };
     sizes?: string;
-    bright?: boolean;
+    tone?: 'bright' | 'washed';
   }>(),
   {
     placeholder: '[ key art ]',
@@ -27,7 +30,7 @@ withDefaults(
 </script>
 
 <template>
-  <section class="c-hero" :class="{ 'c-hero--bright': bright }" :style="{ minHeight }">
+  <section class="c-hero" :class="tone && `c-hero--${tone}`" :style="{ minHeight }">
     <div class="c-hero__art">
       <ArtFrame
         :art="art"
@@ -35,7 +38,7 @@ withDefaults(
         :placeholder="placeholder"
         :sources="sources"
         :focal="focal"
-        :sizes="sizes"
+        :sizes="sizes ?? (tone === 'washed' ? WASHED_SIZES : undefined)"
         eager
       />
     </div>
@@ -91,11 +94,12 @@ withDefaults(
   );
 }
 
-/* Only the foot is darkened, so the copy must stay low enough to sit inside the scrim's dark band. */
-.c-hero--bright .c-hero__glow {
+.c-hero--bright .c-hero__glow,
+.c-hero--washed .c-hero__glow {
   display: none;
 }
 
+/* Only the foot is darkened, so the copy must stay low enough to sit inside the scrim's dark band. */
 .c-hero--bright .c-hero__scrim {
   background: linear-gradient(
     to top,
@@ -115,6 +119,42 @@ withDefaults(
       rgba(var(--rgb-bg), 0.25) 44%,
       transparent 62%
     );
+  }
+}
+
+/* Below 64em the copy spans the width, so the art is darkened evenly and capped at 120vw tall, which WASHED_SIZES assumes. */
+.c-hero--washed .c-hero__art {
+  bottom: auto;
+  height: min(100%, 120vw);
+  filter: saturate(0.45);
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+}
+
+.c-hero--washed .c-hero__scrim {
+  background:
+    linear-gradient(to top, var(--color-bg) 0%, transparent 16%),
+    rgba(var(--rgb-bg), 0.86);
+}
+
+@media (min-width: 64em) {
+  .c-hero--washed .c-hero__art {
+    bottom: 0;
+    height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .c-hero--washed .c-hero__scrim {
+    background:
+      linear-gradient(to top, var(--color-bg) 0%, transparent 16%),
+      linear-gradient(
+        to right,
+        rgba(var(--rgb-bg), 0.93) 0%,
+        rgba(var(--rgb-bg), 0.88) 50%,
+        rgba(var(--rgb-bg), var(--wash-mid, 0.6)) 78%,
+        rgba(var(--rgb-bg), var(--wash-edge, 0.4)) 100%
+      );
   }
 }
 

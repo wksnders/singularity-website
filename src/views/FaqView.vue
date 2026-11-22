@@ -12,7 +12,7 @@ import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SearchField from '@/components/molecules/SearchField.vue';
 import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
 import { useCopy } from '@/composables/useCopy';
 import { useSearchQuery } from '@/composables/useSearchQuery';
@@ -20,7 +20,8 @@ import { provideSections } from '@/composables/useSections';
 import { useSlashFocus } from '@/composables/useSlashFocus';
 import { assertFaqShape, faqEntries, faqGroups } from '@/site/faq';
 import { markHtml, matcher, segments } from '@/site/highlight';
-import { resolveLink, to } from '@/site/links';
+import { pictureSources, resolveLink, to } from '@/site/links';
+import { faqHeroArt } from '@/data/universe';
 import type { FaqEntry } from '@/site/faq';
 import type { SectionEntry } from '@/site/sections';
 
@@ -85,7 +86,7 @@ const countLabel = computed(() => {
 
 const opened = ref(new Set<string>());
 const closed = ref(new Set<string>());
-const expandAll = ref(false);
+const expandedBands = ref(new Set<string>());
 const linked = ref<string | null>(null);
 
 const firstId = computed(() => bands.value[0]?.items[0]?.id ?? null);
@@ -95,7 +96,7 @@ function isOpen(entry: FaqEntry): boolean {
   if (searching.value) return true;
   if (closed.value.has(entry.id)) return false;
   if (opened.value.has(entry.id)) return true;
-  if (expandAll.value) return true;
+  if (expandedBands.value.has(entry.group)) return true;
   if (linked.value === entry.id) return true;
   return linked.value === null && entry.id === firstId.value;
 }
@@ -113,11 +114,18 @@ function onToggle(entry: FaqEntry, event: Event): void {
   }
 }
 
-function toggleAll(): void {
-  expandAll.value = !expandAll.value;
-  opened.value = new Set();
-  closed.value = new Set();
-  linked.value = null;
+/* Collapsing marks every row closed rather than just clearing state, or the default-open first row and a linked row would stay open. */
+function toggleBand(id: string): void {
+  const ids = entries.value.filter((entry) => entry.group === id).map((entry) => entry.id);
+  const expanding = !expandedBands.value.has(id);
+  const bandsNext = new Set(expandedBands.value);
+  if (expanding) bandsNext.add(id);
+  else bandsNext.delete(id);
+  expandedBands.value = bandsNext;
+  opened.value = new Set([...opened.value].filter((other) => !ids.includes(other)));
+  closed.value = expanding
+    ? new Set([...closed.value].filter((other) => !ids.includes(other)))
+    : new Set([...closed.value, ...ids]);
 }
 
 /* A pasted #faq-<id> opens its row and takes focus; focus is what scrolls, because base.css sets scroll-margin-top on every [id]. */
@@ -171,7 +179,14 @@ const routing = [
 </script>
 
 <template>
-  <SecondaryHero glow="80% 60% at 25% 0%" :note="t('faq.hero.pending')">
+  <PageHero
+    id="faq-hero"
+    class="faq__hero"
+    :art="faqHeroArt"
+    :sources="pictureSources(faqHeroArt.src)"
+    min-height="auto"
+    tone="washed"
+  >
     <Breadcrumbs
       :crumbs="[{ label: t('ia.learn.label'), to: to('learn') }, { label: t('faq.hero.crumb') }]"
     />
@@ -188,18 +203,7 @@ const routing = [
         :can-clear="searching"
         @clear="clearSearch()"
       />
-      <div class="faq__meter">
-        <MonoLabel tone="faint" aria-live="polite">{{ countLabel }}</MonoLabel>
-        <UiButton
-          v-if="!searching"
-          variant="text"
-          class="faq__expand"
-          :aria-pressed="expandAll"
-          @click="toggleAll()"
-        >
-          {{ expandAll ? t('faq.collapseAll') : t('faq.expandAll') }}
-        </UiButton>
-      </div>
+      <MonoLabel tone="faint" aria-live="polite">{{ countLabel }}</MonoLabel>
     </div>
 
     <SectionIndex v-if="sections.length" :sections="sections" />
@@ -215,9 +219,9 @@ const routing = [
         </div>
       </div>
     </div>
-  </SecondaryHero>
+  </PageHero>
 
-  <ScrollSpyRail :sections="sections" />
+  <ScrollSpyRail :sections="sections" hide-over-id="faq-hero" />
 
   <section v-if="noResults" class="l-band">
     <div class="l-wrap">
@@ -251,6 +255,18 @@ const routing = [
     :class="{ 'l-band--alt': i % 2 === 1, 'l-band--line-top': i > 0 }"
     :heading="band.label"
   >
+    <template v-if="!searching" #actions>
+      <UiButton
+        variant="text"
+        class="faq__expand"
+        :aria-pressed="expandedBands.has(band.id)"
+        :aria-label="`${expandedBands.has(band.id) ? t('faq.collapseAll') : t('faq.expandAll')}: ${band.label}`"
+        @click="toggleBand(band.id)"
+      >
+        {{ expandedBands.has(band.id) ? t('faq.collapseAll') : t('faq.expandAll') }}
+      </UiButton>
+    </template>
+
     <div class="faq__bandhead">
       <MonoLabel tone="faint">{{ bandCount(band.items.length) }}</MonoLabel>
       <p v-if="band.standfirst && !searching" class="l-lede faq__standfirst">{{ band.standfirst }}</p>
@@ -321,6 +337,12 @@ const routing = [
 </template>
 
 <style>
+/* The copy here spans the full width, so the washed art's right side stays darker than PageHero's default to keep it at 4.5:1. */
+.faq__hero {
+  --wash-mid: 0.82;
+  --wash-edge: 0.62;
+}
+
 .faq__lede {
   margin-top: var(--space-5);
 }
@@ -329,14 +351,6 @@ const routing = [
   margin-top: var(--space-8);
   display: grid;
   gap: var(--space-3);
-}
-
-.faq__meter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-6);
-  align-items: baseline;
-  justify-content: space-between;
 }
 
 /* Two classes, so this holds whichever of the two components' CSS loads first. */

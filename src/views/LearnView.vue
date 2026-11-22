@@ -58,7 +58,7 @@ const rulesHub = [
     :sources="heroSources"
     :sizes="HERO_SIZES"
     :min-height="HERO_MIN_HEIGHT"
-    bright
+    tone="bright"
   >
     <h1 class="l-page-title">{{ t('learn.hero.title') }}</h1>
     <SectionIndex :sections="sections" />
