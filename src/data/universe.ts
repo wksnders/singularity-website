@@ -194,6 +194,12 @@ export const faqHeroArt: Art = {
   focal: { x: 0.65, y: 0.4 },
 };
 
+export const universalHeroArt: Art = {
+  src: '/universal/evolving-forest-2560.webp',
+  alt: '',
+  focal: { x: 0.55, y: 0.4 },
+};
+
 /** Five formats, not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
   { id: 'ffa', name: 'Free-for-all' },

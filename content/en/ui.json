@@ -109,9 +109,6 @@
       "cards": "Card database",
       "lexicon": "Lexicon"
     },
-    "factions": {
-      "note": "Brands and programs per faction"
-    },
     "characters": {
       "note": "Every character",
       "count": "characters",
@@ -452,7 +449,7 @@
     "hero": {
       "crumb": "Characters",
       "title": "Every character",
-      "lede": "The characters spread across four powers — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
+      "lede": "The characters spread across four factions — plus the few who answer to none of them. Filter by faction, or search for a name you half-remember.",
       "pending": "[ CHARACTER LINE-UP ART — PENDING ]"
     },
     "sections": {
@@ -836,29 +833,14 @@
   },
   "universal": {
     "hero": {
-      "title": "Some of them belong to nobody",
-      "lede": "LuX sits outside the four powers entirely. She can be played in any faction, and brings a small brand of programs nobody else can run.",
-      "artPlaceholder": "[ universal key art — wide ]",
-      "pending": "[ UNIVERSAL KEY ART — PENDING ]"
+      "title": "They work with anyone",
+      "lede": "Universal characters join any faction's squad."
     },
-    "sections": {
-      "brands": "Personal brands"
-    },
-    "areaName": "Universal",
     "luxArtPlaceholder": "[ LuX art 3:4 ]",
     "lux": {
-      "body": "[PLACEHOLDER — who LuX is. She slots into any faction's line-up without changing it, which is either a gift or a warning depending on who you ask.]",
-      "brandLine": "programs in her personal brand, each opened by clearing a specific challenge.",
-      "ctaPage": "LuX's page",
-      "ctaPrograms": "Her programs →"
-    },
-    "brands": {
-      "note": "Smaller than a faction brand",
-      "body": "A faction brand is shared across its characters. A personal brand belongs to one character alone.",
-      "luxTitle": "Opened one challenge at a time",
-      "luxBody": "Ten programs, ten separate challenges. [PLACEHOLDER — what the challenges ask of you.]"
-    },
-    "exitBrands": "Her personal brand →"
+      "hook": "A relic-hunter who'll jump factions to secure a prized prototype.",
+      "ctaPage": "LuX's page"
+    }
   },
   "story": {
     "hero": {

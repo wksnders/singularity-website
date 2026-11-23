@@ -207,7 +207,6 @@ function clearAll(): void {
     class="l-band--alt l-band--line-top"
     :heading="t('universe.sections.factions')"
   >
-    <MonoLabel tone="faint">{{ t('universe.factions.note') }}</MonoLabel>
     <div class="l-grid">
       <FactionTile
         v-for="f in factions"

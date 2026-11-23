@@ -98,6 +98,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/learn/', HERO_ART_WIDTHS],
   ['/rules/', HERO_ART_WIDTHS],
   ['/faq/', HERO_ART_WIDTHS],
+  ['/universal/', HERO_ART_WIDTHS],
 ];
 
 export function pictureSources(src: string | null): ArtSource[] {
