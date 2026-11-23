@@ -2,6 +2,7 @@
 
 import { computed, ref } from 'vue';
 import ArtFrame from '@/components/atoms/ArtFrame.vue';
+import BrandMark from '@/components/atoms/BrandMark.vue';
 import CardImage from '@/components/atoms/CardImage.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
@@ -18,10 +19,12 @@ import { t } from '@/content';
 import {
   bossGroups,
   bosses,
+  brandById,
   characters,
   factions,
   game,
   matchesFactionFilter,
+  programsOfBrand,
   rogueAIs,
   universalCharacters,
 } from '@/data/universe';
@@ -31,7 +34,7 @@ import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
 import { cardRows } from '@/site/cards';
 import { characterFactionOptions, factionTags } from '@/site/characters';
 import { pictureSources, to } from '@/site/links';
-import type { Character } from '@/data/types';
+import type { Art, Character } from '@/data/types';
 import type { CardRow } from '@/site/cards';
 import type { SectionEntry } from '@/site/sections';
 
@@ -88,6 +91,24 @@ const shownCast = computed(() =>
 const castPreview = computed(() => shownCast.value.slice(0, 9));
 
 const universal = computed(() => universalCharacters().slice(0, 3));
+
+/* A universal character's seat fans out their own personal brand's programs; most universal characters have none. */
+const universalSeats = computed(() =>
+  universal.value.map((character) => {
+    const brand = character.personalBrandId ? brandById(character.personalBrandId) : null;
+    const programs = brand
+      ? programsOfBrand(brand.id)
+          .filter((card) => card.revealed && card.cardArt.src)
+          .slice(0, 2)
+      : [];
+    return { character, brand, programs };
+  }),
+);
+
+const cardBack: Art = { src: '/box-core/card-back-960.webp', alt: '' };
+const backSources = pictureSources(cardBack.src);
+
+const spectrum = [...factions, factions[0]].map((f) => f.color).join(', ');
 
 /* Enough faces per row to run past a 3440px window's right edge; change with the wall's card width and row offsets. */
 const WALL_ROW = 18;
@@ -251,22 +272,41 @@ function clearAll(): void {
 
   <SectionBand
     id="universal"
-    class="l-band--alt l-band--line-top"
+    class="l-band--alt l-band--line-top universe__universal"
     :heading="t('universe.sections.universal')"
+    :style="{ '--spectrum': spectrum }"
   >
     <p class="l-lede universe__body">{{ t('universe.universal.body') }}</p>
 
-    <div class="l-grid l-grid--tiles">
-      <EntityTile
-        v-for="character in universal"
-        :key="character.id"
-        :to="to('character', { characterId: character.id })"
-        :art="character.cardArt"
-        :epithet="character.epithet"
-        :name="character.name"
-        :tags="factionTags(character)"
-        :placeholder="t('character.cardArtPlaceholder')"
-      />
+    <div class="universe__seats">
+      <span class="universe__dots" aria-hidden="true" />
+      <RouterLink
+        v-for="seat in universalSeats"
+        :key="seat.character.id"
+        :to="to('character', { characterId: seat.character.id })"
+        class="universe__seat"
+        :class="{ 'universe__seat--fanned': seat.programs.length }"
+        :aria-label="seat.character.name"
+      >
+        <span class="universe__seat-stack" aria-hidden="true">
+          <span v-for="card in seat.programs" :key="card.slug" class="universe__seat-program">
+            <CardImage :art="card.cardArt" :placeholder="t('cards.artPlaceholder')" sizes="200px" />
+          </span>
+          <span class="universe__ring">
+            <CardImage :art="seat.character.cardArt" :placeholder="t('character.cardArtPlaceholder')" sizes="200px" />
+          </span>
+        </span>
+        <span class="universe__seat-name">
+          <BrandMark v-if="seat.brand" :icon="seat.brand.icon" :name="seat.brand.name" :size="28" />
+          <b>{{ seat.character.name }}</b>
+          <span v-if="seat.brand">{{ seat.brand.name }}</span>
+        </span>
+      </RouterLink>
+      <div class="universe__unrevealed" aria-hidden="true">
+        <span v-for="n in 6" :key="n" class="universe__ring universe__ring--back">
+          <ArtFrame :art="cardBack" ratio="var(--ratio-card)" :sources="backSources" sizes="200px" />
+        </span>
+      </div>
     </div>
 
     <div class="universe__reveal">
@@ -537,6 +577,129 @@ function clearAll(): void {
   justify-content: space-between;
 }
 
+/* --spectrum is set from the factions' data, so a new faction colour reaches this band without a CSS edit. */
+.universe__universal {
+  --seat-w: 8rem;
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.universe__universal::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--spectrum));
+}
+
+.universe__seats {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--space-4);
+}
+
+.universe__dots {
+  position: absolute;
+  inset: -1rem -10% 0;
+  z-index: -1;
+  background: conic-gradient(from 200deg, var(--spectrum));
+  opacity: 0.45;
+  -webkit-mask:
+    radial-gradient(circle, #000 0 2px, transparent 2.6px) 0 0 / 11px 11px,
+    radial-gradient(closest-side, #000 15%, transparent);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle, #000 0 2px, transparent 2.6px) 0 0 / 11px 11px,
+    radial-gradient(closest-side, #000 15%, transparent);
+  mask-composite: intersect;
+}
+
+.universe__seat {
+  flex: none;
+  margin-right: var(--space-4);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.universe__seat--fanned {
+  margin-right: 2.5rem;
+}
+
+.universe__seat-stack {
+  position: relative;
+  display: block;
+  width: var(--seat-w);
+  aspect-ratio: var(--ratio-card);
+  transition: transform 0.2s ease;
+}
+
+.universe__seat:hover .universe__seat-stack {
+  transform: translateY(-0.25rem);
+}
+
+.universe__seat-program {
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.5);
+}
+
+.universe__seat-program:nth-child(1) {
+  transform: translate(34%, -5%) rotate(9deg);
+}
+
+.universe__seat-program:nth-child(2) {
+  transform: translate(18%, -2.5%) rotate(4.5deg);
+}
+
+.universe__ring {
+  display: block;
+  padding: 3px;
+  border-radius: calc(var(--radius-s) + 3px);
+  background: conic-gradient(from 200deg, var(--spectrum));
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.55);
+}
+
+.universe__seat-stack > .universe__ring {
+  position: absolute;
+  inset: 0;
+}
+
+.universe__seat-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--size-s);
+  color: var(--color-ink-soft);
+}
+
+.universe__seat-name b {
+  font-family: var(--font-display);
+  font-size: var(--size-body-l);
+  color: var(--color-ink);
+}
+
+/* The fade, not a count, says more are coming: the number of unrevealed universal characters is not public. */
+.universe__unrevealed {
+  display: flex;
+  gap: var(--space-4);
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 10rem, transparent 26rem);
+  mask-image: linear-gradient(to right, #000 0, #000 10rem, transparent 26rem);
+}
+
+.universe__ring--back {
+  flex: none;
+  width: var(--seat-w);
+}
+
+.universe__ring--back .c-art {
+  filter: brightness(0.55) saturate(0.6);
+}
+
 .universe__threat {
   --faction: var(--color-threat);
 }
@@ -668,6 +831,24 @@ function clearAll(): void {
 }
 
 @media (min-width: 45em) {
+  .universe__universal {
+    --seat-w: 12.5rem;
+  }
+
+  .universe__seat {
+    margin-right: var(--space-8);
+  }
+
+  .universe__seat--fanned {
+    margin-right: 4.5rem;
+  }
+
+  .universe__unrevealed {
+    gap: var(--space-8);
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 12rem, transparent 44rem);
+    mask-image: linear-gradient(to right, #000 0, #000 12rem, transparent 44rem);
+  }
+
   .universe__bosses .c-boss-backdrop {
     display: block;
   }
