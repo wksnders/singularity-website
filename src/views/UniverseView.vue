@@ -586,14 +586,6 @@ function clearAll(): void {
   isolation: isolate;
 }
 
-.universe__universal::before {
-  content: '';
-  position: absolute;
-  inset: -1px 0 auto;
-  height: 2px;
-  background: linear-gradient(90deg, var(--spectrum));
-}
-
 .universe__seats {
   position: relative;
   isolation: isolate;
