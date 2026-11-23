@@ -25,9 +25,11 @@ import {
 import { useQueryFilter } from '@/composables/useQueryFilter';
 import { provideSections } from '@/composables/useSections';
 import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
+import { cardRows } from '@/site/cards';
 import { characterFactionOptions, factionTags } from '@/site/characters';
 import { to } from '@/site/links';
 import type { Character } from '@/data/types';
+import type { CardRow } from '@/site/cards';
 import type { SectionEntry } from '@/site/sections';
 
 const sections = computed<SectionEntry[]>(() => [
@@ -83,6 +85,30 @@ const shownCast = computed(() =>
 const castPreview = computed(() => shownCast.value.slice(0, 9));
 
 const universal = computed(() => universalCharacters().slice(0, 3));
+
+/* Enough faces per row to run past a 3440px window's right edge; change with the wall's card width and row offsets. */
+const WALL_ROW = 18;
+
+/* Core-set program faces dealt one faction at a time, so neither row clumps into one faction's colour. */
+const wallRows = (() => {
+  const lanes = new Map<string, CardRow[]>();
+  for (const row of cardRows) {
+    if (row.kind !== 'programs' || row.set !== 'CORE' || !row.program.revealed || !row.cardArt.src) continue;
+    const lane = row.factionIds[0] ?? '';
+    lanes.set(lane, [...(lanes.get(lane) ?? []), row]);
+  }
+  const longest = Math.max(0, ...[...lanes.values()].map((lane) => lane.length));
+  const dealt = Array.from({ length: longest }, (_, i) => [...lanes.values()].map((lane) => lane[i]))
+    .flat()
+    .filter((row): row is CardRow => Boolean(row));
+  return [dealt.slice(0, WALL_ROW), dealt.slice(WALL_ROW, WALL_ROW * 2)];
+})();
+
+const dbCounts = [
+  { label: 'cardsPage.countMany', n: cardRows.length },
+  { label: 'faction.stats.programs', n: cardRows.filter((row) => row.kind === 'programs').length },
+  { label: 'faction.stats.characters', n: cardRows.filter((row) => row.kind === 'characters').length },
+];
 
 function clearAll(): void {
   faction.set(null);
@@ -264,17 +290,33 @@ function clearAll(): void {
 
   <SectionBand
     id="cards"
-    class="l-band--alt l-band--line-top"
+    class="l-band--alt l-band--line-top universe__db"
     :heading="t('universe.sections.cards')"
   >
-    <div class="l-split">
-      <div class="l-split__main">
-        <p class="l-lede universe__body">{{ t('universe.cards.body') }}</p>
-        <UiButton :to="to('cards')" class="universe__gap">{{ t('universe.cards.cta') }}</UiButton>
+    <template #before>
+      <div class="universe__wall" aria-hidden="true">
+        <div v-for="(row, r) in wallRows" :key="r" class="universe__wall-row">
+          <CardImage
+            v-for="card in row"
+            :key="card.slug"
+            :art="card.cardArt"
+            :placeholder="t('cards.artPlaceholder')"
+            sizes="184px"
+          />
+        </div>
       </div>
-      <div class="l-split__aside universe__cards">
-        <CardImage v-for="n in 3" :key="n" :art="null" :placeholder="t('cards.artPlaceholder')" />
-      </div>
+      <div class="universe__wall-shade" aria-hidden="true" />
+    </template>
+
+    <div class="universe__db-copy">
+      <p class="l-lede universe__body">{{ t('universe.cards.body') }}</p>
+      <p class="universe__db-stats">
+        <template v-for="(stat, i) in dbCounts" :key="stat.label">
+          <span v-if="i" aria-hidden="true"> · </span>
+          <span><b>{{ stat.n }}</b> {{ t(stat.label) }}</span>
+        </template>
+      </p>
+      <UiButton variant="primary" :to="to('cards')" class="universe__gap">{{ t('universe.cards.cta') }}</UiButton>
     </div>
   </SectionBand>
 
@@ -469,11 +511,92 @@ function clearAll(): void {
   --faction: var(--color-threat);
 }
 
-.universe__cards {
+.universe__db {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.universe__wall {
+  position: absolute;
+  inset: -2rem -4rem;
+  z-index: -2;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-  align-content: start;
+  align-content: center;
+  gap: 1rem;
+  transform: rotate(-4deg);
+}
+
+.universe__wall-row {
+  display: flex;
+  gap: 1rem;
+  margin-left: -4%;
+}
+
+.universe__wall-row + .universe__wall-row {
+  margin-left: -14%;
+}
+
+.universe__wall-row > .c-art {
+  flex: none;
+  width: clamp(9rem, 12vw, 11.5rem);
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.5);
+}
+
+/* The shade holds the copy at 4.5:1 over the brightest card face; widen .universe__db-copy only with it. */
+.universe__wall-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--rgb-bg), 0.9) 0%,
+    rgba(var(--rgb-bg), 0.82) 55%,
+    rgba(var(--rgb-bg), 0.35) 100%
+  );
+}
+
+.universe__db-copy {
+  max-width: 30rem;
+}
+
+.universe__db-stats {
+  margin-top: var(--space-5);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--size-label-s);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.universe__db-stats b {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+@media (min-width: 45em) {
+  .universe__db {
+    min-height: clamp(30rem, 44vw, 38rem);
+  }
+
+  .universe__wall-shade {
+    background:
+      linear-gradient(
+        to right,
+        rgba(var(--rgb-bg), 0.96) 0%,
+        rgba(var(--rgb-bg), 0.92) 44%,
+        rgba(var(--rgb-bg), 0.4) 66%,
+        rgba(var(--rgb-bg), 0.15) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(var(--rgb-bg), 0.5),
+        transparent 25%,
+        transparent 75%,
+        rgba(var(--rgb-bg), 0.6)
+      );
+  }
 }
 
 .universe__term {

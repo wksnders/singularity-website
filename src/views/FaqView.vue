@@ -18,14 +18,16 @@ import { useCopy } from '@/composables/useCopy';
 import { useSearchQuery } from '@/composables/useSearchQuery';
 import { provideSections } from '@/composables/useSections';
 import { useSlashFocus } from '@/composables/useSlashFocus';
+import { faqHeroArt } from '@/data/universe';
 import { assertFaqShape, faqEntries, faqGroups } from '@/site/faq';
 import { markHtml, matcher, segments } from '@/site/highlight';
 import { pictureSources, resolveLink, to } from '@/site/links';
-import { faqHeroArt } from '@/data/universe';
 import type { FaqEntry } from '@/site/faq';
 import type { SectionEntry } from '@/site/sections';
 
 const route = useRoute();
+
+const heroSources = pictureSources(faqHeroArt.src);
 
 const { draft, searching, search, clear: clearSearch, field: searchField } = useSearchQuery('q');
 
@@ -183,7 +185,7 @@ const routing = [
     id="faq-hero"
     class="faq__hero"
     :art="faqHeroArt"
-    :sources="pictureSources(faqHeroArt.src)"
+    :sources="heroSources"
     min-height="auto"
     tone="washed"
   >
