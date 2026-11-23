@@ -6,7 +6,7 @@ import CardImage from '@/components/atoms/CardImage.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
 import ThreatBadge from '@/components/atoms/ThreatBadge.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
-import BandFoot from '@/components/molecules/BandFoot.vue';
+import BossBackdrop from '@/components/molecules/BossBackdrop.vue';
 import EmptyState from '@/components/molecules/EmptyState.vue';
 import EntityTile from '@/components/molecules/EntityTile.vue';
 import FactionTile from '@/components/molecules/FactionTile.vue';
@@ -16,10 +16,13 @@ import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
 import { t } from '@/content';
 import {
+  bossGroups,
+  bosses,
   characters,
   factions,
   game,
   matchesFactionFilter,
+  rogueAIs,
   universalCharacters,
 } from '@/data/universe';
 import { useQueryFilter } from '@/composables/useQueryFilter';
@@ -27,7 +30,7 @@ import { provideSections } from '@/composables/useSections';
 import { matchesQuery, nameHaystack, searchHaystack } from '@/site/cardText';
 import { cardRows } from '@/site/cards';
 import { characterFactionOptions, factionTags } from '@/site/characters';
-import { to } from '@/site/links';
+import { pictureSources, to } from '@/site/links';
 import type { Character } from '@/data/types';
 import type { CardRow } from '@/site/cards';
 import type { SectionEntry } from '@/site/sections';
@@ -89,7 +92,7 @@ const universal = computed(() => universalCharacters().slice(0, 3));
 /* Enough faces per row to run past a 3440px window's right edge; change with the wall's card width and row offsets. */
 const WALL_ROW = 18;
 
-/* Core-set program faces dealt one faction at a time, so neither row clumps into one faction's colour. */
+/* Core-set program faces dealt one faction at a time, so no row, nor the phone hand cut from the first, clumps into one faction's colour. */
 const wallRows = (() => {
   const lanes = new Map<string, CardRow[]>();
   for (const row of cardRows) {
@@ -103,6 +106,14 @@ const wallRows = (() => {
     .filter((row): row is CardRow => Boolean(row));
   return [dealt.slice(0, WALL_ROW), dealt.slice(WALL_ROW, WALL_ROW * 2)];
 })();
+
+const encounterFaces = rogueAIs.map((ai) => {
+  const first = bossGroups.find((group) => group.encounterId === ai.id)?.bossIds[0];
+  const face = bosses.find((boss) => boss.id === first);
+  return { id: ai.id, name: ai.name, art: face?.art ?? null };
+});
+
+const hand = wallRows[0].slice(0, 4);
 
 const dbCounts = [
   { label: 'cardsPage.countMany', n: cardRows.length },
@@ -167,8 +178,6 @@ function clearAll(): void {
           </article>
         </div>
       </div>
-
-      <BandFoot :to="{ hash: '#factions' }" :label="t('universe.world.exit')" />
     </div>
   </section>
 
@@ -186,7 +195,6 @@ function clearAll(): void {
         :placeholder="t('universe.factionArtPlaceholder')"
       />
     </div>
-    <BandFoot :to="{ hash: '#characters' }" :label="t('universe.factions.exit')" />
   </SectionBand>
 
   <SectionBand
@@ -239,8 +247,6 @@ function clearAll(): void {
         {{ t('universe.characters.exitIndex') }}
       </UiButton>
     </div>
-
-    <BandFoot :to="{ hash: '#universal' }" :label="t('universe.characters.exit')" />
   </SectionBand>
 
   <SectionBand
@@ -248,7 +254,6 @@ function clearAll(): void {
     class="l-band--alt l-band--line-top"
     :heading="t('universe.sections.universal')"
   >
-    <MonoLabel tone="faint">{{ t('universal.areaName') }}</MonoLabel>
     <p class="l-lede universe__body">{{ t('universe.universal.body') }}</p>
 
     <div class="l-grid l-grid--tiles">
@@ -267,25 +272,40 @@ function clearAll(): void {
     <div class="universe__reveal">
       <UiButton variant="quiet" :to="to('universal')">{{ t('universe.universal.exitPage') }}</UiButton>
     </div>
-
-    <BandFoot :to="{ hash: '#incursions' }" :label="t('universe.universal.exit')" />
   </SectionBand>
 
   <SectionBand
     id="incursions"
-    class="l-band--line-top universe__threat"
+    class="l-band--line-top universe__threat universe__bosses"
     :heading="t('universe.incursions.heading')"
   >
-    <ThreatBadge>
-      {{ t('universe.incursions.coop') }} · {{ game.incursionsPlayers }}
-      {{ t('home.incursions.players') }}
-    </ThreatBadge>
-    <h3 class="universe__h3">{{ t('universe.incursions.title') }}</h3>
+    <template #before>
+      <BossBackdrop />
+    </template>
+
+    <div class="universe__threat-head">
+      <ul class="universe__trio">
+        <li v-for="face in encounterFaces" :key="face.id">
+          <RouterLink :to="to('incursion', { aiId: face.id })" class="universe__trio-face" :aria-label="face.name">
+            <ArtFrame
+              :art="face.art"
+              ratio="1 / 1"
+              :sources="pictureSources(face.art?.src ?? null)"
+              sizes="80px"
+              :focal="{ x: 0.5, y: 0.2 }"
+            />
+          </RouterLink>
+        </li>
+      </ul>
+      <ThreatBadge>
+        {{ t('universe.incursions.coop') }} · {{ game.incursionsPlayers }}
+        {{ t('home.incursions.players') }}
+      </ThreatBadge>
+    </div>
     <p class="l-lede universe__body">{{ t('universe.incursions.body') }}</p>
     <UiButton :to="to('incursions')">
       {{ t('universe.incursions.cta') }}
     </UiButton>
-    <BandFoot :to="{ hash: '#cards' }" :label="t('universe.incursions.exit')" />
   </SectionBand>
 
   <SectionBand
@@ -317,6 +337,16 @@ function clearAll(): void {
         </template>
       </p>
       <UiButton variant="primary" :to="to('cards')" class="universe__gap">{{ t('universe.cards.cta') }}</UiButton>
+    </div>
+    <div class="universe__hand" aria-hidden="true">
+      <CardImage
+        v-for="(card, i) in hand"
+        :key="card.slug"
+        :art="card.cardArt"
+        :placeholder="t('cards.artPlaceholder')"
+        sizes="136px"
+        :style="{ '--i': i }"
+      />
     </div>
   </SectionBand>
 
@@ -511,17 +541,84 @@ function clearAll(): void {
   --faction: var(--color-threat);
 }
 
+/* This band's lede runs wider than BossBackdrop's scrim assumes, so the lift keeps that line at 4.5:1. */
+.universe__bosses {
+  --boss-scrim-lift: 0.1;
+
+  position: relative;
+  isolation: isolate;
+}
+
+.universe__bosses .c-boss-backdrop {
+  display: none;
+}
+
+.universe__threat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.universe__trio {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.universe__trio > li + li {
+  margin-left: -0.9rem;
+}
+
+.universe__trio-face {
+  display: block;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 2px solid var(--color-threat);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 3px var(--color-bg);
+}
+
+.universe__threat-head + .universe__body {
+  margin-top: var(--space-5);
+}
+
 .universe__db {
   position: relative;
   overflow: hidden;
   isolation: isolate;
 }
 
+/* Four cards at these steps and overlap span about 2.86 times --hand-w, which is why it caps at 33vw. */
+.universe__hand {
+  --hand-w: min(8rem, 33vw);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: calc(var(--gutter) * -1);
+}
+
+.universe__hand > .c-art {
+  --w: calc(var(--hand-w) * (0.62 + var(--i) * 0.127));
+
+  flex: none;
+  width: var(--w);
+  transform: rotate(-1.5deg);
+  box-shadow: -0.5rem 0.75rem 1.5rem rgba(0, 0, 0, 0.6);
+}
+
+.universe__hand > .c-art + .c-art {
+  margin-left: calc(var(--w) * -0.14);
+}
+
 .universe__wall {
+  display: none;
   position: absolute;
   inset: -2rem -4rem;
   z-index: -2;
-  display: grid;
   align-content: center;
   gap: 1rem;
   transform: rotate(-4deg);
@@ -545,15 +642,10 @@ function clearAll(): void {
 
 /* The shade holds the copy at 4.5:1 over the brightest card face; widen .universe__db-copy only with it. */
 .universe__wall-shade {
+  display: none;
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    to bottom,
-    rgba(var(--rgb-bg), 0.9) 0%,
-    rgba(var(--rgb-bg), 0.82) 55%,
-    rgba(var(--rgb-bg), 0.35) 100%
-  );
 }
 
 .universe__db-copy {
@@ -576,11 +668,31 @@ function clearAll(): void {
 }
 
 @media (min-width: 45em) {
+  .universe__bosses .c-boss-backdrop {
+    display: block;
+  }
+
+  .universe__trio,
+  .universe__hand {
+    display: none;
+  }
+
+  /* A marker's rule never runs across art. */
+  .universe__bosses .c-marker__rule,
+  .universe__db .c-marker__rule {
+    display: none;
+  }
+
   .universe__db {
     min-height: clamp(30rem, 44vw, 38rem);
   }
 
+  .universe__wall {
+    display: grid;
+  }
+
   .universe__wall-shade {
+    display: block;
     background:
       linear-gradient(
         to right,

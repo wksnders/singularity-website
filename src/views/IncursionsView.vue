@@ -103,7 +103,7 @@ const exits = computed(() =>
           </li>
         </ul>
 
-        <BandFoot :to="to('incursion', { aiId: encounter.id })" :label="t('incursions.encounterMore')" :up="false" />
+        <BandFoot :to="to('incursion', { aiId: encounter.id })" :label="t('incursions.encounterMore')" />
       </SectionBand>
     </div>
 
@@ -131,7 +131,7 @@ const exits = computed(() =>
         <p class="l-lede inc__body">{{ t('incursions.mutations.designs.body') }}</p>
       </div>
 
-      <BandFoot :to="to('cards')" :label="t('incursions.mutations.designs.exit')" :up="false" />
+      <BandFoot :to="to('cards')" :label="t('incursions.mutations.designs.exit')" />
     </SectionBand>
 
     <SectionBand
@@ -179,7 +179,7 @@ const exits = computed(() =>
         </li>
       </ul>
 
-      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" :up="false" />
+      <BandFoot :to="to('universe')" :label="t('characters.exitUniverse')" />
     </SectionBand>
   </div>
 </template>

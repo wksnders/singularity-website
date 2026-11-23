@@ -51,7 +51,6 @@
   "wayfinding": {
     "onThisPage": "On this page",
     "sectionRail": "Sections",
-    "sections": "Sections",
     "copied": "COPIED",
     "breadcrumb": "Breadcrumb",
     "previous": "Previous:",
@@ -111,8 +110,7 @@
       "lexicon": "Lexicon"
     },
     "factions": {
-      "note": "Brands and programs per faction",
-      "exit": "Meet the characters →"
+      "note": "Brands and programs per faction"
     },
     "characters": {
       "note": "Every character",
@@ -122,24 +120,20 @@
       "emptyTitle": "Nobody here by that name",
       "emptyBody": "Check the spelling, try another faction, or clear the search.",
       "revealNote": "More revealed with every set",
-      "exitIndex": "The full character index →",
-      "exit": "The characters who're happy to work with anyone to achieve their goals →"
+      "exitIndex": "The full character index →"
     },
     "universal": {
       "body": "Some characters are willing to work with any faction to get what they want. LuX is the one you can meet today, and she brings a small set of programs only she can use.",
-      "exitPage": "The universal characters →",
-      "exit": "How Incursions work →"
+      "exitPage": "The universal characters →"
     },
     "incursions": {
-      "title": "The Incursions answer to no faction",
       "body": "Each boss plays itself from its own deck and rules, and your whole table is on the same side.",
       "cta": "Enter the Incursions",
-      "exit": "Every card in the game →",
       "heading": "Terminal Incursions",
       "coop": "Co-op"
     },
     "cards": {
-      "body": "Every program, with its rules text in full — searchable, and always the current wording.",
+      "body": "Search every card by name, keyword or rules text, always in its current wording.",
       "cta": "Browse every program"
     },
     "world": {
@@ -151,7 +145,6 @@
       "closer": "Gather your allies, because your quest for power will summon enemies of its own. A new protocol is coming online. The Singularity is awakening, and when it does, the Network will never be the same.",
       "relicPlaceholder": "[ a Fragment of the Singularity ]",
       "relicPending": "[ FRAGMENT — ART PENDING ]",
-      "exit": "The four powers →",
       "bridge": {
         "kicker": "What you're holding",
         "worldLabel": "In the world",

@@ -1482,7 +1482,7 @@ export const bosses: Boss[] = [
   }),
 ];
 
-/** BossWallBand's drifting backdrop, left to right; phones show only the first five (its nth-child rule). */
+/** BossBackdrop's drifting wall, left to right; phones show only the first five (its nth-child rule). */
 export const bossWall: string[] = [
   'invader',
   'calebrena-world-builder',
