@@ -84,7 +84,6 @@ const rulesHub = [
         />
       </div>
     </div>
-    <BandFoot :to="{ hash: '#modes' }" :label="t('learn.paths.exit')" />
   </SectionBand>
 
   <SectionBand id="modes" class="l-band--alt l-band--line-top" :heading="t('learn.sections.modes')">
@@ -135,7 +134,6 @@ const rulesHub = [
     </div>
 
     <p class="learn__note">{{ t('learn.videos.captionNote') }}</p>
-    <BandFoot :to="{ hash: '#rules' }" :label="t('learn.videos.exit')" />
   </SectionBand>
 
   <SectionBand id="rules" class="l-band--alt l-band--line-top" :heading="t('learn.sections.rules')">
@@ -160,8 +158,6 @@ const rulesHub = [
         {{ t('learn.rules.referenceLink') }}
       </BaseLink>
     </p>
-
-    <BandFoot :to="{ hash: '#try' }" :label="t('learn.rules.exit')" />
   </SectionBand>
 
   <SectionBand id="try" class="l-band--line-top" :heading="t('learn.try.heading')">

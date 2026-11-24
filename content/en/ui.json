@@ -912,8 +912,7 @@
       "try": "Ways to try"
     },
     "paths": {
-      "heading": "Where are you starting?",
-      "exit": "See how the five modes differ →"
+      "heading": "Where are you starting?"
     },
     "tracks": {
       "new": {
@@ -961,8 +960,7 @@
       "note": "Watch before you read",
       "posterPlaceholder": "[ video poster 16:9 ]",
       "idTbd": "[ YouTube ID — TBD ]",
-      "captionNote": "All captioned, and scannable from the rulebook when you would rather be shown than told.",
-      "exit": "When a video is not enough, the rules hub →"
+      "captionNote": "All captioned, and scannable from the rulebook when you would rather be shown than told."
     },
     "rules": {
       "lede": "When a game hinges on exactly how a card works, the answer is here — searchable, current, and linkable, so you can settle it and get back to playing.",
@@ -988,8 +986,7 @@
       },
       "booklet": "Both are free downloads: the rulebook teaches the game from scratch, the reference settles it mid-game.",
       "bookletLink": "Rulebook (PDF)",
-      "referenceLink": "Rules reference (PDF)",
-      "exit": "Play a game before you buy one →"
+      "referenceLink": "Rules reference (PDF)"
     },
     "try": {
       "heading": "Ways to try it",
