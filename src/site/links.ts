@@ -46,6 +46,7 @@ const SOON_HASH: Record<OutboundKey, string> = {
   instagram: '#instagram',
   twitter: '#twitter',
   boardgamegeek: '#bgg',
+  architech: '#architech',
 };
 
 export interface ResolvedLink {

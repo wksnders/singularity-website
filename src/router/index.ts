@@ -10,11 +10,17 @@ import { t } from '@/content';
 import { endHeroIntro } from '@/composables/useChrome';
 import { prefersReducedMotion } from '@/composables/useMediaQuery';
 import { glideToElement, jumpTo } from '@/site/glide';
+import { urls } from '@/data/universe';
 import { isHidden, to } from '@/site/links';
 
 /* Locale prefix appears only once a code is added to LOCALES; public anchors and query params never change either way. */
 const prefix = LOCALE_ROUTE_PATTERN ? `/:locale(${LOCALE_ROUTE_PATTERN})?` : '';
 const path = (segment: string) => (segment ? `${prefix}/${segment}` : `${prefix}/`);
+
+/* The printed QR codes' paths are fixed by the print run: never rename or drop one (.ai/printed-qr-codes.reference.md). */
+const PRINTED_BOSSES: Record<string, string> = { invader: 'invader', calebrena: 'calebrena', paths: 'paths-of-terminus' };
+const FROM_QR = { from: 'qr' };
+const localeOf = (params: Record<string, unknown>) => (params.locale ? { locale: params.locale as string } : {});
 
 const routes: RouteRecordRaw[] = [
   {
@@ -124,6 +130,31 @@ const routes: RouteRecordRaw[] = [
     name: 'community',
     component: () => import('@/views/CommunityView.vue'),
     meta: { titleKey: 'meta.community' },
+  },
+  {
+    path: path('start'),
+    redirect: (r) => ({ name: 'learn', params: localeOf(r.params), query: FROM_QR }),
+  },
+  {
+    path: path('rules'),
+    redirect: (r) => ({ name: 'rules', params: localeOf(r.params), query: FROM_QR }),
+  },
+  {
+    path: path(`start/incursions/:boss(${Object.keys(PRINTED_BOSSES).join('|')})`),
+    redirect: (r) => ({
+      name: 'incursion',
+      params: { ...localeOf(r.params), aiId: PRINTED_BOSSES[r.params.boss as string] },
+      query: FROM_QR,
+    }),
+  },
+  {
+    path: path('architech'),
+    component: () => import('@/views/SoonView.vue'),
+    beforeEnter: () => {
+      if (!urls.architech) return to('soon');
+      window.location.replace(urls.architech);
+      return false;
+    },
   },
   {
     path: path('soon'),

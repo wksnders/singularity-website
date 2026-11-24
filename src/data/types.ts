@@ -285,6 +285,8 @@ export interface OutboundUrls {
   instagram: string | null;
   twitter: string | null;
   boardgamegeek: string | null;
+  /** Where the printed /architech QR code sends a scan, until the Architech Box has its own page. */
+  architech: string | null;
 }
 
 export type OutboundKey = keyof OutboundUrls;

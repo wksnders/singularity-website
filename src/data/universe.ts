@@ -93,6 +93,7 @@ export const urls: OutboundUrls = {
   instagram: 'https://www.instagram.com/octothorpegames/',
   twitter: 'https://twitter.com/PlaySingularity',
   boardgamegeek: 'https://boardgamegeek.com/boardgame/379846/singularityexe',
+  architech: 'https://gamefound.com/en/projects/octothorpe/singularityexe#/section/architechs-edition-37452',
 };
 
 /* Every way to meet the game short of buying it, ordered by what it costs. */
