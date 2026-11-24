@@ -69,7 +69,6 @@ export const game = {
 
 /** Null keeps these forms rendered disabled and saying why; opening one means putting the endpoint here AND making the component POST it and report the real result, which `SupportForm` already does provided its `url` answers with CORS headers. */
 export const formEndpoints = {
-  newsletter: null as string | null,
   support: null as FormEndpoint | null,
 };
 
@@ -198,6 +197,12 @@ export const universalHeroArt: Art = {
   src: '/universal/evolving-forest-2560.webp',
   alt: '',
   focal: { x: 0.55, y: 0.4 },
+};
+
+export const communityHeroArt: Art = {
+  src: '/community/obelisk-2560.webp',
+  alt: '',
+  focal: { x: 0.5, y: 0.33 },
 };
 
 /** Five formats, not a competitive/co-op pair. */

@@ -13,7 +13,7 @@ import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
 import SectionMarker from '@/components/molecules/SectionMarker.vue';
-import SecondaryHero from '@/components/organisms/SecondaryHero.vue';
+import PageHero from '@/components/organisms/PageHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
 import {
@@ -21,6 +21,7 @@ import {
   avatars,
   bosses,
   characterById,
+  communityHeroArt,
   coreBox,
   game,
   pressGroups,
@@ -44,6 +45,11 @@ const mb = (bytes: number) => `${(bytes / 1048576).toFixed(1)} MB`;
 const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
 
 const pressSources = (src: string | null) => pictureSources(src);
+
+const heroSources = pictureSources(communityHeroArt.src);
+const HERO_MIN_HEIGHT = 'max(min(100svh, 70.8vw), min(72svh, 155vw))';
+/* The cover-cropped art's drawn width: wider than the window wherever the hero is taller than the art's 1.41:1 allows; change with HERO_MIN_HEIGHT. */
+const HERO_SIZES = '(orientation: portrait) 219vw, 100vw';
 
 const groupMeta = (group: PressGroup) => {
   if (group.state === 'pending') return t('community.press.pending');
@@ -116,35 +122,46 @@ const factSheet = computed(() => [
 </script>
 
 <template>
-  <SecondaryHero glow="70% 60% at 84% 0%" :note="t('community.hero.pending')">
+  <PageHero
+    id="community-hero"
+    :art="communityHeroArt"
+    :sources="heroSources"
+    :sizes="HERO_SIZES"
+    :min-height="HERO_MIN_HEIGHT"
+    tone="bright"
+  >
     <h1 class="l-page-title">{{ t('community.hero.title') }}</h1>
     <p class="l-lede l-lede--wide comm__lede">{{ t('community.hero.lede') }}</p>
+  </PageHero>
 
-    <nav id="on-this-page" class="comm__hub" :aria-label="t('wayfinding.onThisPage')">
-      <a href="#discord" class="comm__hub-card comm__hub-card--wide">
-        <MonoLabel tone="faint">01 {{ t('community.sections.discord') }}</MonoLabel>
-        <span class="comm__hub-body">{{ t('community.hub.discord') }}</span>
-      </a>
-      <div class="comm__hub-row">
-        <a href="#wallpapers" class="comm__hub-card">
-          <MonoLabel tone="faint">02 {{ t('community.sections.wallpapers') }}</MonoLabel>
-          <MonoLabel tone="faint">{{ t('community.hub.wallpapers') }}</MonoLabel>
+  <section class="l-band">
+    <div class="l-wrap">
+      <nav id="on-this-page" class="comm__hub" :aria-label="t('wayfinding.onThisPage')">
+        <a href="#discord" class="comm__hub-card comm__hub-card--wide">
+          <MonoLabel tone="faint">01 {{ t('community.sections.discord') }}</MonoLabel>
+          <span class="comm__hub-body">{{ t('community.hub.discord') }}</span>
         </a>
-        <a href="#press" class="comm__hub-card">
-          <MonoLabel tone="faint">03 {{ t('community.sections.press') }}</MonoLabel>
-          <MonoLabel tone="faint">{{ t('community.hub.press') }}</MonoLabel>
-        </a>
-        <a href="#support" class="comm__hub-card">
-          <MonoLabel tone="faint">04 {{ t('community.sections.support') }}</MonoLabel>
-          <MonoLabel tone="faint">{{ t('community.hub.support') }}</MonoLabel>
-        </a>
-        <a href="#team" class="comm__hub-card">
-          <MonoLabel tone="faint">05 {{ t('community.sections.team') }}</MonoLabel>
-          <MonoLabel tone="faint">{{ t('community.hub.team') }}</MonoLabel>
-        </a>
-      </div>
-    </nav>
-  </SecondaryHero>
+        <div class="comm__hub-row">
+          <a href="#wallpapers" class="comm__hub-card">
+            <MonoLabel tone="faint">02 {{ t('community.sections.wallpapers') }}</MonoLabel>
+            <MonoLabel tone="faint">{{ t('community.hub.wallpapers') }}</MonoLabel>
+          </a>
+          <a href="#press" class="comm__hub-card">
+            <MonoLabel tone="faint">03 {{ t('community.sections.press') }}</MonoLabel>
+            <MonoLabel tone="faint">{{ t('community.hub.press') }}</MonoLabel>
+          </a>
+          <a href="#support" class="comm__hub-card">
+            <MonoLabel tone="faint">04 {{ t('community.sections.support') }}</MonoLabel>
+            <MonoLabel tone="faint">{{ t('community.hub.support') }}</MonoLabel>
+          </a>
+          <a href="#team" class="comm__hub-card">
+            <MonoLabel tone="faint">05 {{ t('community.sections.team') }}</MonoLabel>
+            <MonoLabel tone="faint">{{ t('community.hub.team') }}</MonoLabel>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </section>
 
   <ScrollSpyRail :sections="sections" />
 
@@ -559,7 +576,6 @@ const factSheet = computed(() => [
 }
 
 .comm__hub {
-  margin-top: var(--space-8);
   display: grid;
   gap: var(--space-3);
 }

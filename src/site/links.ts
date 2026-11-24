@@ -92,6 +92,7 @@ const WIDTHS_BY_PREFIX: [string, { avif: number[]; webp: number[] }][] = [
   ['/trailer/', TRAILER_WIDTHS],
   ['/community/avatars/', AVATAR_WIDTHS],
   ['/community/avatars-framed/', FRAMED_AVATAR_WIDTHS],
+  ['/community/obelisk-', HERO_ART_WIDTHS],
   ['/community/', COMMUNITY_WIDTHS],
   ['/incursions/', INCURSION_WIDTHS],
   ['/try-it/', TRY_WIDTHS],

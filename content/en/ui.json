@@ -200,18 +200,6 @@
       }
     }
   },
-  "newsletter": {
-    "kicker": "Straight to your inbox",
-    "title": "Know when a vote opens.",
-    "lede": "New sets, chapter releases, and Convergence votes. A few emails a month.",
-    "label": "Email address",
-    "placeholder": "you@somewhere.net",
-    "submit": "Sign up",
-    "fine": "Votes happen on Discord; the email links straight to the poll. One click to leave. [PLACEHOLDER — privacy line]",
-    "done": "You're on the list — a confirmation is on its way.",
-    "closed": "Sign-ups are not open yet. There is nowhere for this to send, so the form stays shut rather than pretending.",
-    "error": "That didn't send, your address never left this page, so you are not on the list yet. Try again in a few minutes."
-  },
   "support": {
     "name": "Your name",
     "email": "Email address",
@@ -391,7 +379,8 @@
       "cta": "Join the Discord",
       "photoAlt": "Players mid-game at the Singularity tables, Gen Con 2026",
       "photoPlaceholder": "[ Gen Con 2026 photo ]",
-      "photoCaption": "Gen Con 2026"
+      "photoCaption": "Gen Con 2026",
+      "downloads": "Free downloads"
     }
   },
   "soon": {
@@ -1166,8 +1155,7 @@
   "community": {
     "hero": {
       "title": "Community",
-      "lede": "The Discord is where rules questions get answered, Incursion runs get their post-mortem, and half-built decks get taken apart kindly.",
-      "pending": "[ COMMUNITY KEY ART — WIDE — PENDING ]"
+      "lede": "The Discord is where rules questions get answered, Incursion runs get their post-mortem, and half-built decks get taken apart kindly."
     },
     "sections": {
       "discord": "Discord",

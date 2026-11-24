@@ -4,10 +4,10 @@ import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BaseLink from '@/components/atoms/BaseLink.vue';
 import DiscordMark from '@/components/atoms/DiscordMark.vue';
 import MonoLabel from '@/components/atoms/MonoLabel.vue';
-import NewsletterForm from '@/components/organisms/NewsletterForm.vue';
 import { t } from '@/content';
 import { communityPhoto, creators, type Creator } from '@/data/community';
-import { isHidden, outbound, pictureSources, to } from '@/site/links';
+import { avatars } from '@/data/universe';
+import { asset, isHidden, outbound, pictureSources, to } from '@/site/links';
 import type { ResolvedLink } from '@/site/links';
 
 const creatorLink = (c: Creator): ResolvedLink => (c.href ? { href: c.href, external: true } : outbound('youtube'));
@@ -22,6 +22,12 @@ function initials(name: string): string {
 const creditsId = useId();
 
 const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.photoAlt') }));
+
+const DOWNLOAD_FACES = ['zakhi-1', 'mi-ko-1', 'joi', 'moo-mua', 'kagemusha'];
+const faces = DOWNLOAD_FACES.filter((id) => avatars.some((a) => a.id === id)).map((id) => ({
+  id,
+  src: `/community/avatars/${id}-512.webp`,
+}));
 </script>
 
 <template>
@@ -67,7 +73,19 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
               </BaseLink>
             </div>
           </div>
-          <NewsletterForm class="c-community__inbox" />
+          <BaseLink :to="to('community', {}, { hash: '#wallpapers' })" class="c-community__inbox">
+            <MonoLabel tone="accent" class="c-community__inbox-tab">{{ t('home.community.downloads') }}</MonoLabel>
+            <span class="c-community__faces" aria-hidden="true">
+              <span v-for="face in faces" :key="face.id" class="c-community__face">
+                <picture>
+                  <source v-for="s in pictureSources(face.src)" :key="s.type" :type="s.type" :srcset="s.srcset" sizes="68px" />
+                  <img :src="asset(face.src)" alt="" width="512" height="512" loading="lazy" decoding="async" />
+                </picture>
+              </span>
+            </span>
+            <span class="c-community__inbox-title">{{ t('community.sections.wallpapers') }} <span aria-hidden="true">→</span></span>
+            <span class="c-community__inbox-body">{{ t('community.wallpapers.usageWelcome') }}</span>
+          </BaseLink>
         </div>
       </div>
     </div>
@@ -349,7 +367,100 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
 }
 
 .c-community__inbox {
+  /* `--shape` cuts the kicker's tab: change it with --tab-w and --tab-h, which stay in rem so the tab grows with its text. */
+  --tab-w: min(13.375rem, 100% - 2.5rem);
+  --tab-h: 1.875rem;
+  --shape: polygon(0 0, var(--tab-w) 0, calc(var(--tab-w) + var(--tab-h)) var(--tab-h), 100% var(--tab-h), 100% calc(100% - 1.125rem), calc(100% - 1.125rem) 100%, 0 100%);
+  --glow-at: 100% 100%;
+
+  position: relative;
+  isolation: isolate;
+  display: block;
   margin-top: var(--space-7);
+  padding: calc(var(--tab-h) + 0.875rem) 1.375rem 1.375rem;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.c-community__inbox::before,
+.c-community__inbox::after {
+  content: '';
+  position: absolute;
+  clip-path: var(--shape);
+  pointer-events: none;
+}
+
+.c-community__inbox::before {
+  inset: 0;
+  z-index: -2;
+  background: rgba(var(--rgb-accent-text), 0.5);
+}
+
+.c-community__inbox::after {
+  inset: 0.0938rem;
+  z-index: -1;
+  background:
+    radial-gradient(110% 80% at var(--glow-at), rgba(var(--rgb-uv-glow), 0.34), rgba(var(--rgb-uv-glow), 0) 60%),
+    rgba(var(--rgb-plate), 0.94);
+}
+
+.c-community__inbox:hover {
+  color: var(--color-ink-bright);
+}
+
+.c-community__inbox-tab {
+  position: absolute;
+  left: var(--space-5);
+  top: 0;
+  max-width: calc(var(--tab-w) - var(--space-6));
+  height: var(--tab-h);
+  display: flex;
+  align-items: center;
+  line-height: 1.15;
+}
+
+.c-community__faces {
+  display: flex;
+  margin-top: var(--space-1);
+}
+
+/* The plate-coloured padding is the gap between overlapping faces, so it must match the plate. */
+.c-community__face {
+  --chamfer: polygon(0.5rem 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% calc(100% - 0.5rem), calc(100% - 0.5rem) 100%, 0.5rem 100%, 0 calc(100% - 0.5rem), 0 0.5rem);
+
+  flex: 0 0 4.25rem;
+  margin-right: -0.75rem;
+  padding: 0.1875rem;
+  background: rgb(var(--rgb-plate));
+  clip-path: var(--chamfer);
+}
+
+.c-community__face img {
+  display: block;
+  width: 100%;
+  height: auto;
+  clip-path: var(--chamfer);
+}
+
+.c-community__inbox-title {
+  display: block;
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.312rem;
+  line-height: 1.15;
+}
+
+.c-community__inbox-title span {
+  color: var(--color-accent-text);
+}
+
+.c-community__inbox-body {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--size-m);
+  line-height: 1.5;
+  color: rgba(var(--rgb-ink), 0.82);
 }
 
 @media (min-width: 60em) {
@@ -453,7 +564,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
     width: auto;
   }
 
-  .c-community__inbox.c-newsletter {
+  .c-community__inbox {
     --shape: polygon(0 var(--tab-h), calc(100% - var(--tab-w) - var(--tab-h)) var(--tab-h), calc(100% - var(--tab-w)) 0, 100% 0, 100% calc(100% - 1.125rem), calc(100% - 1.125rem) 100%, 0 100%);
     --glow-at: 0% 100%;
 
@@ -462,7 +573,7 @@ const photo = computed(() => ({ src: communityPhoto, alt: t('home.community.phot
     margin-bottom: calc(var(--space-10) - var(--space-16));
   }
 
-  .c-community__inbox .c-newsletter__tab {
+  .c-community__inbox-tab {
     left: auto;
     right: var(--space-5);
   }
