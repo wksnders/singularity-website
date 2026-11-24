@@ -10,8 +10,7 @@ const PROGRAM_ARTIST = 'Josh Bruce';
 /** Rungs card-art.py writes. Changing this without rerunning it ships 404s. */
 export const CARD_WIDTHS = { avif: [420, 840, 1260, 1680], webp: [420, 840] };
 
-/* These four LuX Vault cards are printed and carry ids, but no art master was ever exported, so they have no face. */
-const WITHOUT_FACE = new Set(['SC-181P-EN', 'SC-182P-EN', 'SC-183P-EN', 'SC-184P-EN']);
+const WITHOUT_FACE = new Set<string>();
 
 export const hasCardFace = (cardId: string): boolean => !WITHOUT_FACE.has(cardId);
 
@@ -20,14 +19,7 @@ export const cardFace = (cardId: string): string | null =>
 
 const WITHOUT_ART = new Set<string>();
 
-const WITHOUT_SCENE = new Set([
-  'SC-181P-EN',
-  'SC-182P-EN',
-  'SC-183P-EN',
-  'SC-184P-EN',
-  'SC-185P-EN',
-  'SC-186P-EN',
-]);
+const WITHOUT_SCENE = new Set<string>();
 
 const illustration = (kind: 'art' | 'scene', cardId: string, absent: Set<string>): string | null =>
   absent.has(cardId) ? null : `/programs/${kind}/${cardId.replace(/-[A-Z]{2}$/, '')}-840.webp`;
@@ -1798,6 +1790,45 @@ const commonEx1: CardedText[] = [
 /* Printed set code is LUX. Recorded as CORE, the box these ship in. */
 
 const luxVault: CardedText[] = [
+  {
+    name: 'Cat Nap',
+    cardId: 'SC-177P-EN',
+    type: 'Patch: Any',
+    cost: 3,
+    rules: ['[EXE]: This character may heal itself by 3 [H].'],
+    flavour: '',
+    unlock: 'Endian Key: Crash two characters during one Update step.',
+  },
+  {
+    name: 'Swipe',
+    cardId: 'SC-178P-EN',
+    type: 'Command',
+    cost: 3,
+    rules: ['Deal 3 [P].'],
+    flavour: '',
+    unlock: "Endian Key: Win on a turn in which any squad's active characters began that turn undamaged.",
+  },
+  {
+    name: 'Declawed',
+    cardId: 'SC-179P-EN',
+    type: 'Command',
+    cost: 3,
+    rules: ['Unattach target patch or patches with a sum of cost 3 or less. You may treat this as cost 1 when using it to reset.'],
+    flavour: '',
+    unlock: 'Endian Key: End a game where six or more patches with unique costs were unattached.',
+  },
+  {
+    name: 'Paw of Preservation',
+    cardId: 'SC-180P-EN',
+    type: 'Patch: Any',
+    cost: 2,
+    rules: [
+      'Commands this character activates or that target this character get -1 [A], -1 [C], and -1 [H].',
+      'When this character takes damage, reduce that damage by one, then unattach this.',
+    ],
+    flavour: '',
+    unlock: 'Endian Key: During one Activation phase, modify [P], [A], [C], and [H].',
+  },
   {
     name: 'Fur L0W',
     cardId: 'SC-182P-EN',

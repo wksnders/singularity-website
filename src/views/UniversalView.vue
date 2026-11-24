@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ArtFrame from '@/components/atoms/ArtFrame.vue';
 import BrandMark from '@/components/atoms/BrandMark.vue';
 import CardImage from '@/components/atoms/CardImage.vue';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs.vue';
@@ -7,6 +6,7 @@ import SectionBand from '@/components/molecules/SectionBand.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import { t } from '@/content';
 import { brandById, characters, factions, programsOfBrand, universalHeroArt } from '@/data/universe';
+import { CARD_PARAM } from '@/composables/useCardParam';
 import { pictureSources, to } from '@/site/links';
 import { scaledSizes } from '@/site/pageScale';
 import type { Program } from '@/data/types';
@@ -21,12 +21,13 @@ const vault = lux?.personalBrandId ? brandById(lux.personalBrandId) : null;
 const vaultCards = vault ? programsOfBrand(vault.id).filter((card) => card.revealed) : [];
 
 const spectrum = [...factions, factions[0]].map((f) => f.color).join(', ');
+const spectrumText = [...factions, factions[0]].map((f) => f.colorText).join(', ');
 
 const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subType}` : card.type);
 </script>
 
 <template>
-  <div class="una" :style="{ '--spectrum': spectrum }">
+  <div class="una" :style="{ '--spectrum': spectrum, '--spectrum-text': spectrumText }">
     <PageHero
       id="universal-hero"
       class="unv__hero"
@@ -47,49 +48,56 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
     </PageHero>
 
     <SectionBand v-if="lux" id="lux" class="l-band--line-top" :heading="lux.name">
-      <div class="unv__feature">
+      <p class="l-lede unv__band-lede">{{ t('universal.lux.hook') }}</p>
+
+      <div class="unv__split">
         <RouterLink
           :to="to('character', { characterId: lux.id })"
-          class="unv__feature-art"
+          class="unv__tile unv__tile--lux"
           :aria-label="t('universal.lux.ctaPage')"
         >
-          <ArtFrame
-            :art="lux.sceneArt"
-            ratio="auto"
-            radius="l"
-            :focal="{ x: 0.45, y: 0.55 }"
-            :placeholder="t('universal.luxArtPlaceholder')"
-            :sources="pictureSources(lux.sceneArt.src)"
-            :sizes="scaledSizes('(min-width: 720px) 420px, 100vw')"
-          />
+          <span class="unv__ring">
+            <CardImage
+              :art="lux.cardArt"
+              :placeholder="t('character.cardArtPlaceholder')"
+              radius="m"
+              :sizes="scaledSizes('(min-width: 760px) 300px, 320px')"
+            />
+          </span>
+          <span class="unv__tile-name">{{ lux.name }} <span class="unv__go" aria-hidden="true">→</span></span>
+          <span class="unv__tile-sub unv__tile-sub--spectrum">{{ lux.epithet }}</span>
         </RouterLink>
 
-        <div class="unv__feature-body">
-          <p class="unv__hook">{{ t('universal.lux.hook') }}</p>
+        <div v-if="vault" id="personal-brands" tabindex="-1">
+          <RouterLink :to="to('brand', { brandId: vault.id })" class="unv__vault-link">
+            <BrandMark :icon="vault.icon" :name="vault.name" :size="40" />
+            <span>{{ vault.name }}</span>
+            <span aria-hidden="true">→</span>
+          </RouterLink>
 
-          <div v-if="vault" id="personal-brands" tabindex="-1" class="unv__vault">
-            <RouterLink :to="to('brand', { brandId: vault.id })" class="unv__vault-link">
-              <BrandMark :icon="vault.icon" :name="vault.name" :size="40" />
-              <span>{{ vault.name }}</span>
-              <span aria-hidden="true">→</span>
-            </RouterLink>
-
-            <ul class="unv__cards">
-              <li v-for="card in vaultCards" :key="card.slug">
+          <ul class="unv__cards">
+            <li v-for="card in vaultCards" :key="card.slug">
+              <RouterLink
+                :to="to('brand', { brandId: vault.id }, { query: { [CARD_PARAM]: card.slug } })"
+                class="unv__tile"
+              >
                 <CardImage
                   v-if="card.cardArt.src"
                   :art="card.cardArt"
                   :placeholder="t('cards.artPlaceholder')"
-                  :sizes="scaledSizes('(min-width: 720px) 120px, 33vw')"
+                  radius="m"
+                  :sizes="scaledSizes('(min-width: 1024px) 150px, (min-width: 760px) 20vw, 50vw')"
                 />
-                <div v-else class="unv__faceless">
+                <span v-else class="unv__faceless" aria-hidden="true">
                   <span class="unv__cost">{{ card.cost }}</span>
                   <span class="unv__faceless-name">{{ card.name }}</span>
                   <span>{{ typeLine(card) }}</span>
-                </div>
-              </li>
-            </ul>
-          </div>
+                </span>
+                <span class="unv__tile-name unv__tile-name--card">{{ card.name }}</span>
+                <span class="unv__tile-sub">{{ typeLine(card) }}</span>
+              </RouterLink>
+            </li>
+          </ul>
         </div>
       </div>
     </SectionBand>
@@ -118,33 +126,86 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
   max-width: 36rem;
 }
 
-.unv__feature {
+.unv__band-lede {
+  margin-top: var(--space-5);
+  max-width: 36rem;
+}
+
+.unv__split {
   display: grid;
-  gap: var(--space-8);
-}
-
-.unv__feature-art {
-  display: block;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-l);
-  overflow: hidden;
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
-}
-
-.unv__feature-art > .c-art {
-  height: 100%;
-}
-
-.unv__hook {
-  max-width: 24ch;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2.1rem);
-  line-height: 1.15;
-}
-
-.unv__vault {
+  gap: var(--space-10);
   margin-top: var(--space-8);
+}
+
+.unv__tile {
+  display: block;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.unv__tile > .c-art,
+.unv__tile > .unv__ring,
+.unv__tile > .unv__faceless {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease;
+}
+
+.unv__tile:hover > .c-art,
+.unv__tile:hover > .unv__ring,
+.unv__tile:hover > .unv__faceless {
+  transform: translateY(-0.25rem);
+}
+
+.unv__tile--lux {
+  max-width: 20rem;
+}
+
+.unv__ring {
+  display: block;
+  padding: 3px;
+  border-radius: calc(var(--radius-m) + 3px);
+  background: conic-gradient(from 200deg, var(--spectrum));
+}
+
+.unv__tile-name {
+  display: block;
+  margin-top: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 700;
+}
+
+.unv__tile-name--card {
+  font-size: var(--size-body-l);
+}
+
+.unv__go {
+  display: inline-block;
+  margin-left: 0.25rem;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-accent);
+  transition: transform 0.2s ease;
+}
+
+.unv__tile:hover .unv__go {
+  transform: translateX(0.25rem);
+}
+
+.unv__tile-sub {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--size-s);
+  color: var(--color-ink-soft);
+}
+
+/* The text tints, not the brand colours: the purple alone falls under 4.5:1 at this size. */
+.unv__tile-sub--spectrum {
+  font-size: var(--size-m);
+  background: linear-gradient(90deg, var(--spectrum-text));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .unv__vault-link {
@@ -165,21 +226,21 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
 .unv__cards {
   margin-top: var(--space-5);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
   list-style: none;
 }
 
 .unv__faceless {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
   aspect-ratio: var(--ratio-card);
-  padding: 0.6rem;
+  padding: 0.85rem;
   border: 1px solid var(--color-line);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   background: var(--color-surface-raised);
-  font-size: var(--size-label-xs);
+  font-size: var(--size-s);
   line-height: 1.3;
   color: var(--color-ink-soft);
 }
@@ -187,7 +248,7 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
 .unv__faceless-name {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--size-s);
+  font-size: var(--size-body-l);
   line-height: 1.15;
   color: var(--color-ink);
 }
@@ -195,8 +256,8 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
 .unv__cost {
   display: grid;
   place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border: 2px solid transparent;
   border-radius: 50%;
   background:
@@ -207,17 +268,29 @@ const typeLine = (card: Program) => (card.subType ? `${card.type} · ${card.subT
   color: var(--color-ink);
 }
 
-@media (min-width: 45em) {
-  .unv__feature {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: center;
-    gap: var(--space-12);
+@media (prefers-reduced-motion: reduce) {
+  .unv__tile > *,
+  .unv__go {
+    transition: none;
+  }
+}
+
+@media (min-width: 47.5em) {
+  .unv__split {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 9fr);
+    align-items: start;
   }
 
-  .unv__feature-art {
-    aspect-ratio: 4 / 5;
+  .unv__tile--lux {
+    max-width: none;
   }
 
+  .unv__cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
   .unv__cards {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }

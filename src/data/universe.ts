@@ -309,7 +309,6 @@ export const brands: Brand[] = [
     icon: mark('lux-vault'),
     kind: 'personal',
     unlock: 'challenges',
-    /* Ten printed; the four not transcribed yet are held back deliberately. */
     announcedCount: 10,
   },
 ];

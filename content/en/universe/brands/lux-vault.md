@@ -5,6 +5,8 @@ quote: '“I’m in the market for rare acquisitions. You wouldn’t happen to h
 quoteBy: 'LuX'
 ---
 
-**Endian Key:** These challenges represent some of the most difficult feats in
-Singularity. If you are up to following her journey, complete the challenge listed on
-each of her programs to unlock them for standard play.
+A set of ten rare, archival prototypes adapted from well-known programs across the network, each locked behind an Endian Key.
+
+While Singularity Fragments are challenges designed to help you explore the content Singularity has to offer, Endian Keys are designed for you to demonstrate true mastery. Each is an extreme feat of gameplay and deck construction, and taking them on is optional. Complete the challenge listed on a program to unlock it for standard play.
+
+Gather the Keys to unlock LuX's lost truth.
