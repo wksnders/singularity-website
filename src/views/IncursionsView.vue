@@ -19,6 +19,7 @@ import type { SectionEntry } from '@/site/sections';
 
 /* Matches .inc__bosses: two columns, four from 47.5em, inside the 70rem content column. */
 const BOSS_SIZES = '(min-width: 70em) 266px, (min-width: 47.5em) 23vw, 45vw';
+const PACK_SIZES = '(min-width: 387px) 240px, 62vw';
 
 const encounters = computed(() =>
   rogueAIs.map((ai) => {
@@ -144,10 +145,13 @@ const exits = computed(() =>
         <div class="inc__prize-stage">
           <ArtFrame
             class="inc__pack"
+            :class="{ 'inc__pack--render': dominationPack.src }"
             :art="{ ...dominationPack, alt: t('incursions.unlocks.packAlt') }"
             ratio="63 / 88"
-            radius="m"
+            :radius="dominationPack.src ? 'none' : 'm'"
             :placeholder="t('incursions.unlocks.packPlaceholder')"
+            :sources="pictureSources(dominationPack.src)"
+            :sizes="PACK_SIZES"
           />
         </div>
         <h3 class="inc__prize-title">{{ t('incursions.unlocks.packTitle') }}</h3>
@@ -321,6 +325,13 @@ const exits = computed(() =>
   width: min(62vw, 15rem);
   rotate: -4deg;
   box-shadow: var(--elevation-2), 0 0 2rem rgba(var(--rgb-threat), 0.55), 0 0 0 1px rgba(var(--rgb-threat), 0.6);
+}
+
+.inc__pack.inc__pack--render {
+  rotate: none;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 1rem 1.25rem rgba(0, 0, 0, 0.55));
 }
 
 .inc__prize-title {

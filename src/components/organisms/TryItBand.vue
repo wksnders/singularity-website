@@ -4,11 +4,13 @@ import BaseLink from '@/components/atoms/BaseLink.vue';
 import UiButton from '@/components/atoms/UiButton.vue';
 import TryFreeCard from '@/components/molecules/TryFreeCard.vue';
 import { t } from '@/content';
-import { coreProduct } from '@/data/universe';
-import { outbound, to } from '@/site/links';
+import { coreBoxRender, coreProduct } from '@/data/universe';
+import { outbound, pictureSources, to } from '@/site/links';
 import { patternUrl } from '@/site/patterns';
 
 const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
+const boxArt = coreBoxRender ? { src: coreBoxRender, alt: t('home.tryIt.box.alt') } : null;
+const BOX_SIZES = '(min-width: 64em) 290px, (min-width: 45em) 260px, 65vw';
 </script>
 
 <template>
@@ -23,7 +25,14 @@ const texture = { '--try-pattern': `url(${patternUrl('common-texture')})` };
 
         <div class="c-try__box">
           <div class="c-try__render">
-            <ArtFrame :art="null" ratio="1 / 1" radius="m" :placeholder="t('home.tryIt.box.placeholder')" />
+            <ArtFrame
+              :art="boxArt"
+              ratio="1 / 1"
+              radius="m"
+              :placeholder="t('home.tryIt.box.placeholder')"
+              :sources="pictureSources(coreBoxRender)"
+              :sizes="BOX_SIZES"
+            />
           </div>
           <div class="c-try__box-text">
             <h3 class="c-try__box-title">{{ t('home.tryIt.box.title') }}</h3>

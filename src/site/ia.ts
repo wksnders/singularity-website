@@ -7,7 +7,7 @@ import type { LinkSpec } from '@/site/links';
 export interface IaItem extends LinkSpec {
   /** i18n key root: resolves to ia.<key>.label and ia.<key>.note in content/<locale>/ui.json. */
   key: string;
-  /** Show ia.<key>.note: a second line in mega panels, a trailing note in the mobile menu. */
+  /** Show the second line in mega panels. */
   note?: boolean;
   /** The mobile menu reads ia.<key>.mobileLabel instead of ia.<key>.label. */
   mobileLabel?: boolean;
@@ -29,7 +29,6 @@ export interface IaSection {
   featuredCharacter?: boolean;
   /** Rows under this section in the mobile menu; absent means one link straight to `to`. */
   mobile?: IaItem[];
-  /** Mobile menu: list the factions above `mobile`. */
   mobileFactions?: boolean;
 }
 
@@ -139,7 +138,6 @@ const learn: IaSection = {
       ],
     },
   ],
-  /* The #paths track and Print & Play are mobileShortcuts, so they are not repeated here. */
   mobile: [
     { key: 'learn.modes', to: to('modes'), mobileLabel: true, note: true },
     { key: 'learn.videos', to: to('learn', {}, { hash: '#videos' }), mobileLabel: true, note: true },
@@ -176,7 +174,6 @@ const community: IaSection = {
       ],
     },
   ],
-  /* Discord is a menu shortcut, so it is not repeated here. */
   mobile: [
     { key: 'community.wallpapers', to: to('community', {}, { hash: '#wallpapers' }) },
     { key: 'community.support', to: to('community', {}, { hash: '#support' }), mobileLabel: true, note: true },

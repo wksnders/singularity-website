@@ -176,6 +176,8 @@ assertTryRoutes();
 /** Null shows the placeholder frame. */
 export const ttsShot: string | null = '/try-it/tabletop-simulator-1200.webp';
 
+export const coreBoxRender: string | null = '/try-it/core-box-1200.webp';
+
 export const learnHeroArt: Art = {
   src: '/learn/celestial-bodies-2560.webp',
   alt: '',
@@ -1516,7 +1518,7 @@ export const incursionsHeroCards = {
 };
 
 /** Its alt text is `incursions.unlocks.packAlt` in ui.json. */
-export const dominationPack: Art = { ...noArt };
+export const dominationPack: Art = { ...noArt, src: '/incursions/domination-pack-960.webp' };
 
 /** Display order; the first boss is shown on load. */
 export const bossGroups: BossGroup[] = [

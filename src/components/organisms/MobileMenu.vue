@@ -39,7 +39,6 @@ watch(
   },
 );
 
-/* Discord is a shortcut tile, so the social row leaves it out. */
 const socials = socialKeys.filter((key) => key !== 'discord');
 
 const ICONS: Record<ShortcutIcon, string[]> = {
