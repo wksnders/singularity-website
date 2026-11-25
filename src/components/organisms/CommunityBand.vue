@@ -12,6 +12,9 @@ import type { ResolvedLink } from '@/site/links';
 
 const creatorLink = (c: Creator): ResolvedLink => (c.href ? { href: c.href, external: true } : outbound('youtube'));
 
+const newsHidden = isHidden(to('news'));
+const coverageLink: ResolvedLink = newsHidden ? outbound('youtube') : { to: to('news'), external: false };
+
 /* Array.from, not word[0], so a character outside the BMP is never split in half. */
 function initials(name: string): string {
   const words = name.normalize('NFC').replace(/[^\p{L}\p{M}\s]/gu, '').split(/\s+/).filter(Boolean);
@@ -39,17 +42,20 @@ const faces = DOWNLOAD_FACES.filter((id) => avatars.some((a) => a.id === id)).ma
         <ul role="list" class="c-community__creators" :aria-labelledby="creditsId">
           <li v-for="c in creators" :key="c.id" role="listitem" class="c-community__credit">
             <BaseLink :link="creatorLink(c)" class="c-community__creator">
-              <span class="c-community__ini" aria-hidden="true">{{ initials(c.name) }}</span>
+              <span class="c-community__ini" aria-hidden="true">
+                <img v-if="c.logo" class="c-community__logo" :src="asset(c.logo)" alt="" width="96" height="96" loading="lazy" decoding="async" />
+                <template v-else>{{ initials(c.name) }}</template>
+              </span>
               <span class="c-community__who">
                 <span class="c-community__name">{{ c.name }}</span>
-                <span class="c-community__kind">{{ t(`home.community.kind.${c.kind}`) }}</span>
+                <span class="c-community__kind">{{ c.kinds.map((kind) => t(`home.community.kind.${kind}`)).join(' · ') }}</span>
               </span>
             </BaseLink>
           </li>
         </ul>
       </div>
-      <BaseLink v-if="!isHidden(to('news'))" :to="to('news')" class="c-community__coverage">
-        {{ t('home.community.coverage') }} <span aria-hidden="true">→</span>
+      <BaseLink :link="coverageLink" class="c-community__coverage">
+        {{ newsHidden ? t('home.community.youtube') : t('home.community.coverage') }} <span aria-hidden="true">→</span>
       </BaseLink>
     </div>
 
@@ -192,6 +198,15 @@ const faces = DOWNLOAD_FACES.filter((id) => avatars.some((a) => a.id === id)).ma
 .c-community__ini::after {
   inset: 1px;
   background: var(--color-surface-sunk);
+}
+
+.c-community__logo {
+  position: absolute;
+  inset: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  object-fit: cover;
+  clip-path: var(--chamfer);
 }
 
 .c-community__who {

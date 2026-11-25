@@ -372,9 +372,13 @@
         "playthrough": "Playthrough",
         "review": "Review",
         "teach": "How to play",
-        "stream": "Stream"
+        "stream": "Stream",
+        "unboxing": "Unboxing",
+        "overview": "Overview",
+        "preview": "Preview"
       },
       "coverage": "All coverage",
+      "youtube": "More on YouTube",
       "title": "Join the Singularity network.",
       "body": "Players share decks, settle rules questions and set up games on the official Discord.",
       "cta": "Join the Discord",
