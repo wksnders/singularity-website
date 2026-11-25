@@ -24,11 +24,12 @@ const BOX_SIZES = '(min-width: 64em) 290px, (min-width: 45em) 260px, 65vw';
         <TryFreeCard route="printAndPlay" row class="c-try__pnp" />
 
         <div class="c-try__box">
-          <div class="c-try__render">
+          <div class="c-try__render" :class="{ 'c-try__render--cutout': boxArt }">
             <ArtFrame
               :art="boxArt"
               ratio="1 / 1"
-              radius="m"
+              natural
+              :radius="boxArt ? 'none' : 'm'"
               :placeholder="t('home.tryIt.box.placeholder')"
               :sources="pictureSources(coreBoxRender)"
               :sizes="BOX_SIZES"
@@ -138,6 +139,10 @@ const BOX_SIZES = '(min-width: 64em) 290px, (min-width: 45em) 260px, 65vw';
 .c-try__render {
   width: 82%;
   margin: var(--space-5) auto 0;
+}
+
+.c-try__render--cutout .c-art {
+  background: transparent;
 }
 
 .c-try__box-text {

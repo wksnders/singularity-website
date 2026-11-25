@@ -176,7 +176,7 @@ assertTryRoutes();
 /** Null shows the placeholder frame. */
 export const ttsShot: string | null = '/try-it/tabletop-simulator-1200.webp';
 
-export const coreBoxRender: string | null = '/try-it/core-box-1200.webp';
+export const coreBoxRender: string | null = '/try-it/core-box-cutout-1200.webp';
 
 export const learnHeroArt: Art = {
   src: '/learn/celestial-bodies-2560.webp',
