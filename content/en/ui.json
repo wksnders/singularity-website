@@ -1200,7 +1200,7 @@
       "cta": "Download the kit",
       "contact": "Interviews, review copies and anything the kit does not answer:",
       "boilerplate": "Boilerplate",
-      "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. About 30 minutes per player. Zero randomness. Solo and co-op play ship in the Incursions box.",
+      "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. Humanity has abandoned physical reality, and four factions now fight for control of one legendary program: the Singularity. There are no dice, no shuffling and no luck, so every game is decided by how players build and play their decks. Choose from {count} characters for competitive games of about 30 minutes per player, or take on self-running bosses solo or co-op in the Incursions box.",
       "crossover": "Crossover content with",
       "factSheet": "Fact sheet",
       "exit": "Something else? Talk to support →",
@@ -1210,7 +1210,7 @@
       "allFiles": "Every file, with sizes",
       "copy": "Copy",
       "copied": "Copied",
-      "pending": "[ pending — sixth card is the cap ]",
+      "pending": "Coming soon",
       "groups": {
         "product-images": {
           "name": "Product images",
@@ -1234,7 +1234,7 @@
         },
         "logos": {
           "name": "Logos & wordmark",
-          "body": "Not in this kit. The lockups exist — they came from the designer separately, so they still have to be folded in."
+          "body": "Not in the kit yet. If you need a logo now, write to the press address below."
         }
       }
     },

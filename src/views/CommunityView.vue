@@ -22,6 +22,7 @@ import {
   bosses,
   buyStoreName,
   characterById,
+  characters,
   communityHeroArt,
   coreBox,
   game,
@@ -62,7 +63,7 @@ const groupMeta = (group: PressGroup) => {
 
 /* One source, so the page and the clipboard cannot disagree. */
 const boilerplate = computed(
-  () => `${game.name} ${t('community.press.boilerplateBody')}`,
+  () => `${game.name} ${t('community.press.boilerplateBody', { count: characters.length })}`,
 );
 
 const { copied, copy } = useCopy();
