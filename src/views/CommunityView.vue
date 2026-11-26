@@ -20,6 +20,7 @@ import {
   avatarZip,
   avatars,
   bosses,
+  buyStoreName,
   characterById,
   communityHeroArt,
   coreBox,
@@ -92,14 +93,25 @@ const showAvatars = computed(() => !kind.value.value || kind.value.value === 'av
 /* Matches .comm__avatar-grid's columns: two on phones, up to seven inside the 70rem content column. */
 const AVATAR_SIZES = '(min-width: 70em) 150px, (min-width: 40em) 22vw, 45vw';
 
-const avatarTiles = computed(() =>
-  avatars.map((avatar) => ({
-    ...avatar,
-    name: (avatar.characterId ? characterById(avatar.characterId)?.name : bosses.find((boss) => boss.id === avatar.bossId)?.name) ?? avatar.id,
-    preview: avatar.framed ? `/community/avatars-framed/${avatar.id}-184.webp` : `/community/avatars/${avatar.id}-512.webp`,
-    file: `/downloads/avatars/singularity-avatar-${avatar.id}.png`,
-  })),
-);
+/* One label per tile, read by the visible name, the alt text and the download button: several avatars share a character, so a label that still repeats gets a number. */
+const avatarTiles = computed(() => {
+  const labelled = avatars.map((avatar) => {
+    const name = (avatar.characterId ? characterById(avatar.characterId)?.name : bosses.find((boss) => boss.id === avatar.bossId)?.name) ?? avatar.id;
+    return { avatar, base: avatar.framed ? `${name} · ${t('community.wallpapers.framed')}` : name };
+  });
+  const seen = new Map<string, number>();
+  return labelled.map(({ avatar, base }) => {
+    const repeats = labelled.filter((other) => other.base === base).length > 1;
+    const number = (seen.get(base) ?? 0) + 1;
+    seen.set(base, number);
+    return {
+      ...avatar,
+      label: repeats ? `${base} ${number}` : base,
+      preview: avatar.framed ? `/community/avatars-framed/${avatar.id}-184.webp` : `/community/avatars/${avatar.id}-512.webp`,
+      file: `/downloads/avatars/singularity-avatar-${avatar.id}.png`,
+    };
+  });
+});
 
 const kindName = (id: string) => wallpaperKinds.find((k) => k.id === id)?.name ?? id;
 const kindSize = (id: string) => wallpaperKinds.find((k) => k.id === id)?.size ?? '';
@@ -110,9 +122,8 @@ const factSheet = computed(() => [
   { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: t('community.facts.lengthValue', { minutes: game.minutesPerPlayer }), reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
-  { label: t('community.facts.release'), value: game.releaseDate, reserved: true },
   { label: t('community.facts.box'), value: coreBox.summary, reserved: true },
-  { label: t('community.facts.ships'), value: game.shipsTo, reserved: true },
+  { label: t('community.facts.available'), value: buyStoreName, reserved: false, link: outbound('buy') },
   {
     label: t('community.facts.publisher'),
     value: `${game.studio} · ${t('footer.publishedBy').toLowerCase()} ${game.publisher}`,
@@ -213,19 +224,17 @@ const factSheet = computed(() => [
       <ul class="l-grid comm__avatar-grid">
         <li v-for="avatar in avatarTiles" :key="avatar.id" class="comm__wall">
           <ArtFrame
-            :art="{ src: avatar.preview, alt: t('community.wallpapers.avatarAlt', { name: avatar.name }) }"
+            :art="{ src: avatar.preview, alt: t('community.wallpapers.avatarAlt', { name: avatar.label }) }"
             ratio="1 / 1"
             radius="m"
             placeholder=""
             :sources="pictureSources(avatar.preview)"
             :sizes="scaledSizes(AVATAR_SIZES)"
           />
-          <p class="comm__avatar-name">
-            {{ avatar.name }}<template v-if="avatar.framed"> · {{ t('community.wallpapers.framed') }}</template>
-          </p>
+          <p class="comm__avatar-name">{{ avatar.label }}</p>
           <MonoLabel tone="faint">PNG · {{ avatar.px }} × {{ avatar.px }} · {{ kb(avatar.bytes) }}</MonoLabel>
           <UiButton variant="quiet" :href="asset(avatar.file)" download>
-            {{ t('community.wallpapers.download') }}<span class="l-sr-only"> {{ avatar.name }}</span>
+            {{ t('community.wallpapers.download') }}<span class="l-sr-only"> {{ avatar.label }}</span>
           </UiButton>
         </li>
       </ul>
@@ -318,6 +327,7 @@ const factSheet = computed(() => [
             <MonoLabel as="dt" size="xs" tone="faint">{{ fact.label }}</MonoLabel>
             <dd>
               <TbdValue v-if="fact.reserved" :value="fact.value" />
+              <BaseLink v-else-if="fact.link" :link="fact.link">{{ fact.value }}</BaseLink>
               <template v-else>{{ fact.value }}</template>
             </dd>
           </div>
@@ -349,7 +359,6 @@ const factSheet = computed(() => [
 
   <SectionBand id="team" class="l-band--line-top" :heading="t('community.sections.team')">
     <p class="l-lede l-lede--wide comm__body">{{ t('community.team.body') }}</p>
-    <MonoLabel tone="faint" class="comm__pending">{{ t('community.team.pending') }}</MonoLabel>
 
     <nav :aria-label="t('community.team.groupNav')" class="l-row comm__team-nav">
       <JumpChip
@@ -380,18 +389,10 @@ const factSheet = computed(() => [
 
       <div class="comm__roster">
         <div v-for="member in teamOf(group)" :key="member.id" class="comm__member">
-          <ArtFrame
-            v-if="group !== 'friends'"
-            class="comm__portrait"
-            :art="null"
-            ratio="1 / 1"
-            radius="m"
-            :placeholder="t('community.team.portrait')"
-          />
           <div class="comm__member-text">
             <h4 class="comm__member-name">{{ member.name }}</h4>
             <p class="comm__member-role">{{ member.role }}</p>
-            <BaseLink v-if="'artTo' in member" :to="to(member.artTo)" class="c-mono c-mono--xs comm__member-art">
+            <BaseLink v-if="'artTo' in member" :to="to(member.artTo, {}, { query: member.artQuery })" class="c-mono c-mono--xs comm__member-art">
               {{ t('community.team.seeTheArt') }}
             </BaseLink>
           </div>
@@ -463,16 +464,6 @@ const factSheet = computed(() => [
   align-items: flex-start;
   gap: var(--space-4);
   min-width: 0;
-}
-
-.comm__portrait {
-  flex: 0 0 5.5rem;
-  width: 5.5rem;
-}
-
-.comm__team-group--artists .comm__portrait {
-  flex-basis: 6.5rem;
-  width: 6.5rem;
 }
 
 .comm__member-text {
@@ -568,11 +559,6 @@ const factSheet = computed(() => [
 
 .comm__gap {
   margin-top: var(--space-6);
-}
-
-/* Sits straight under the paragraph it qualifies, not a band step below it. */
-.comm__pending {
-  margin-top: 0;
 }
 
 .comm__hub {

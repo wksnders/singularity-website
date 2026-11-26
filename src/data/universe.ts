@@ -1797,8 +1797,8 @@ export const team = [
   { id: 'team-alexander-falk', group: 'studio', name: 'Alexander Falk', role: 'Associate Game Designer' },
   { id: 'team-parker-hoot', group: 'studio', name: 'Parker Hoot', role: 'Associate Game Designer' },
 
-  { id: 'team-hector-sevilla-lujan', group: 'artists', name: 'Héctor Sevilla Luján', role: 'Character, Environment, and Rulebook Illustrator', artTo: 'characters' },
-  { id: 'team-josh-bruce', group: 'artists', name: 'Josh Bruce', role: 'Program & Token Illustrator', artTo: 'cards' },
+  { id: 'team-hector-sevilla-lujan', group: 'artists', name: 'Héctor Sevilla Luján', role: 'Character, Environment, and Rulebook Illustrator', artTo: 'cards', artQuery: { type: 'characters', face: 'art' } },
+  { id: 'team-josh-bruce', group: 'artists', name: 'Josh Bruce', role: 'Program & Token Illustrator', artTo: 'cards', artQuery: { type: 'programs', face: 'art' } },
   { id: 'team-cameron-brotzman', group: 'artists', name: 'Cameron Brotzman', role: 'Box Server Illustration' },//TODO artTo product images shown somewhere
 
   { id: 'team-casey-blandford', group: 'friends', name: 'Casey Blandford', role: 'Singularity Logo' },

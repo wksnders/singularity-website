@@ -1242,9 +1242,8 @@
       "players": "Players",
       "length": "Length",
       "ages": "Ages",
-      "release": "Release",
       "box": "In the box",
-      "ships": "Ships to",
+      "available": "Available on",
       "publisher": "Publisher",
       "lengthValue": "{minutes} min per player"
     },
@@ -1256,20 +1255,18 @@
     },
     "team": {
       "body": "Founded in 2015 in Salt Lake City, UT, we are a lean team of avid, dedicated gamers with a passion for creating compelling new gameplay experiences that push the boundaries of genre convention. Our projects are shaped by decades of professional videogame and tabletop development experience, and we enjoy exploring the intersection of digital and physical games.",
-      "pending": "[ portraits — PENDING ]",
-      "portrait": "[ portrait ]",
       "seeTheArt": "See the art →",
       "groupNav": "Team groups",
       "groups": {
         "studio": {
           "title": "The studio",
           "kicker": "Octothorpe",
-          "body": "We're the core team and are also the people who answer you in the Discord, socials and support."
+          "body": "We're the core team, and we're the people who answer you in the Discord, on socials and in support."
         },
         "artists": {
           "title": "The artists",
           "kicker": "Independent",
-          "body": "It has been our pleasure to work with amazing artists that give the Autumn network its face and visual flair. Where possible on this site, artist names are listed with their work."
+          "body": "It has been our pleasure to work with amazing artists who give the Autumn network its face and visual flair. Where possible on this site, artist names are listed with their work."
         },
         "friends": {
           "title": "Friends of the studio",
@@ -1278,10 +1275,10 @@
         }
       },
       "aiKicker": "AI art statement",
-      "aiSummary": "Singularity has NO AI art. Every image in this game was hand made by the talented individuals listed.",
+      "aiSummary": "Singularity has NO AI art. Every image in this game was handmade by the talented individuals listed.",
       "aiFaq": "Also in the FAQ →",
       "creditKicker": "How we credit",
-      "credits": "This page names the people who built the game and the artists who drew it, including those who have since moved onto other things.",
+      "credits": "This page names the people who built the game and the artists who drew it, including those who have since moved on to other things.",
       "exit": "Come say hello in the Discord →"
     }
   },
