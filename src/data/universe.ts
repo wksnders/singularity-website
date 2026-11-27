@@ -208,6 +208,14 @@ export const communityHeroArt: Art = {
   focal: { x: 0.5, y: 0.33 },
 };
 
+/** The Discord band's backdrop: the city from 101's scene, without 101. The focal point keeps the moon in every crop. */
+export const communityDiscordArt: Art = {
+  src: '/community/101-city-2560.webp',
+  alt: '',
+  focal: { x: 0.5, y: 0 },
+  artist: CHARACTER_ARTIST,
+};
+
 /** Five formats, not a competitive/co-op pair. */
 export const modes: PlayMode[] = [
   { id: 'ffa', name: 'Free-for-all' },

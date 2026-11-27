@@ -12,7 +12,7 @@ import FilterBar from '@/components/molecules/FilterBar.vue';
 import MarkdownBlock from '@/components/molecules/MarkdownBlock.vue';
 import ScrollSpyRail from '@/components/molecules/ScrollSpyRail.vue';
 import SectionBand from '@/components/molecules/SectionBand.vue';
-import SectionMarker from '@/components/molecules/SectionMarker.vue';
+import SectionIndex from '@/components/molecules/SectionIndex.vue';
 import PageHero from '@/components/organisms/PageHero.vue';
 import SupportForm from '@/components/organisms/SupportForm.vue';
 import { t } from '@/content';
@@ -23,8 +23,8 @@ import {
   buyStoreName,
   characterById,
   characters,
+  communityDiscordArt,
   communityHeroArt,
-  coreBox,
   game,
   pressGroups,
   pressKit,
@@ -70,9 +70,9 @@ const { copied, copy } = useCopy();
 const copyBoilerplate = () => void copy(boilerplate.value);
 
 const sections = computed<SectionEntry[]>(() => [
-  { id: 'discord', label: t('community.sections.discord') },
   { id: 'wallpapers', label: t('community.sections.wallpapers') },
   { id: 'press', label: t('community.sections.press') },
+  { id: 'discord', label: t('community.sections.discord'), accent: true },
   { id: 'support', label: t('community.sections.support') },
   { id: 'team', label: t('community.sections.team') },
 ]);
@@ -117,13 +117,13 @@ const avatarTiles = computed(() => {
 const kindName = (id: string) => wallpaperKinds.find((k) => k.id === id)?.name ?? id;
 const kindSize = (id: string) => wallpaperKinds.find((k) => k.id === id)?.size ?? '';
 
-const channels = ['rules-desk', 'incursion-logs', 'deck-lab', 'convergence'];
+/* The Discord band sits on 101's city; the credit line names whose world it is. */
+const discordGuest = characterById('101');
 
 const factSheet = computed(() => [
   { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: t('community.facts.lengthValue', { minutes: game.minutesPerPlayer }), reserved: false },
   { label: t('community.facts.ages'), value: game.ageRating, reserved: true },
-  { label: t('community.facts.box'), value: coreBox.summary, reserved: true },
   { label: t('community.facts.available'), value: buyStoreName, reserved: false, link: outbound('buy') },
   {
     label: t('community.facts.publisher'),
@@ -143,62 +143,17 @@ const factSheet = computed(() => [
     tone="bright"
   >
     <h1 class="l-page-title">{{ t('community.hero.title') }}</h1>
-    <p class="l-lede l-lede--wide comm__lede">{{ t('community.hero.lede') }}</p>
+    <SectionIndex :sections="sections" />
   </PageHero>
 
-  <section class="l-band">
-    <div class="l-wrap">
-      <nav id="on-this-page" class="comm__hub" :aria-label="t('wayfinding.onThisPage')">
-        <a href="#discord" class="comm__hub-card comm__hub-card--wide">
-          <MonoLabel tone="faint">01 {{ t('community.sections.discord') }}</MonoLabel>
-          <span class="comm__hub-body">{{ t('community.hub.discord') }}</span>
-        </a>
-        <div class="comm__hub-row">
-          <a href="#wallpapers" class="comm__hub-card">
-            <MonoLabel tone="faint">02 {{ t('community.sections.wallpapers') }}</MonoLabel>
-            <MonoLabel tone="faint">{{ t('community.hub.wallpapers') }}</MonoLabel>
-          </a>
-          <a href="#press" class="comm__hub-card">
-            <MonoLabel tone="faint">03 {{ t('community.sections.press') }}</MonoLabel>
-            <MonoLabel tone="faint">{{ t('community.hub.press') }}</MonoLabel>
-          </a>
-          <a href="#support" class="comm__hub-card">
-            <MonoLabel tone="faint">04 {{ t('community.sections.support') }}</MonoLabel>
-            <MonoLabel tone="faint">{{ t('community.hub.support') }}</MonoLabel>
-          </a>
-          <a href="#team" class="comm__hub-card">
-            <MonoLabel tone="faint">05 {{ t('community.sections.team') }}</MonoLabel>
-            <MonoLabel tone="faint">{{ t('community.hub.team') }}</MonoLabel>
-          </a>
-        </div>
-      </nav>
-    </div>
-  </section>
-
-  <ScrollSpyRail :sections="sections" />
-
-  <section id="discord" tabindex="-1" class="l-band">
-    <div class="l-wrap l-split">
-      <div class="l-split__main">
-        <SectionMarker section-id="discord" :heading="t('community.discord.heading')" />
-        <p class="l-lede l-lede--wide comm__body">{{ t('community.discord.body') }}</p>
-        <UiButton :link="outbound('discord')" class="comm__gap">
-          {{ t('community.discord.cta') }}
-        </UiButton>
-      </div>
-      <div class="l-split__aside comm__channels">
-        <span v-for="channel in channels" :key="channel"># {{ channel }}</span>
-      </div>
-    </div>
-  </section>
+  <!-- The rail would sit on the Discord band's art, so it hides while that band is on screen. -->
+  <ScrollSpyRail :sections="sections" hide-over-id="discord" />
 
   <SectionBand
     id="wallpapers"
     class="l-band--alt l-band--line-top"
     :heading="t('community.sections.wallpapers')"
   >
-    <MonoLabel tone="faint">{{ t('community.wallpapers.sizesTbd') }}</MonoLabel>
-
     <FilterBar
       :options="kindOptions"
       :active="kind.value.value"
@@ -254,8 +209,6 @@ const factSheet = computed(() => [
         </MonoLabel>
       </div>
     </div>
-
-    <BandFoot :to="{ hash: '#press' }" :label="t('community.wallpapers.exit')" />
   </SectionBand>
 
   <SectionBand id="press" class="l-band--line-top" :heading="t('community.sections.press')">
@@ -335,9 +288,25 @@ const factSheet = computed(() => [
         </dl>
       </div>
     </div>
-
-    <BandFoot :to="{ hash: '#support' }" :label="t('community.press.exit')" />
   </SectionBand>
+
+  <!-- Mid-page on purpose: the hero already carries one painting, and Support, next, sends rules questions here. -->
+  <section id="discord" tabindex="-1" class="comm__discord">
+    <div class="comm__discord-art" aria-hidden="true">
+      <ArtFrame :art="communityDiscordArt" ratio="auto" :sources="pictureSources(communityDiscordArt.src)" />
+    </div>
+    <div class="l-wrap comm__discord-in">
+      <h2 class="comm__discord-title">{{ t('community.discord.heading') }}</h2>
+      <p class="l-lede comm__body">{{ t('community.discord.body') }}</p>
+      <UiButton variant="primary" :link="outbound('discord')" class="comm__gap">
+        {{ t('community.discord.cta') }}
+      </UiButton>
+    </div>
+    <MonoLabel v-if="discordGuest" size="xs" tone="faint" class="comm__discord-credit">
+      <BaseLink :to="to('character', { characterId: discordGuest.id })">{{ discordGuest.name }}</BaseLink>
+      · {{ t('character.artBy') }} {{ communityDiscordArt.artist }}
+    </MonoLabel>
+  </section>
 
   <SectionBand
     id="support"
@@ -553,7 +522,6 @@ const factSheet = computed(() => [
   padding: var(--space-5);
 }
 
-.comm__lede,
 .comm__body {
   margin-top: var(--space-4);
 }
@@ -562,60 +530,60 @@ const factSheet = computed(() => [
   margin-top: var(--space-6);
 }
 
-.comm__hub {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.comm__hub-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
-  gap: var(--space-3);
-}
-
-.comm__hub-card {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-m);
-  color: var(--color-ink);
-}
-
-.comm__hub-card:hover {
-  background: rgba(var(--rgb-ink), 0.06);
-  color: var(--color-ink);
-  text-decoration: none;
-}
-
-.comm__hub-card--wide {
-  border-color: rgba(var(--rgb-accent), 0.45);
-  background: var(--color-accent-wash);
-}
-
-.comm__hub-body {
-  font-size: var(--size-m);
-  line-height: 1.5;
-  color: var(--color-ink-soft);
-}
-
-.comm__channels {
+/* The moon over 101's city, with the copy centred under it. No section count here: the band is its own statement, and the hero's chips and the rail still number it. */
+.comm__discord {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-content: start;
-  align-items: flex-start;
+  align-items: flex-end;
+  min-height: clamp(30rem, 44vw, 36rem);
 }
 
-.comm__channels span {
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid rgba(var(--rgb-ink), 0.14);
-  border-radius: var(--radius-s);
-  font-family: var(--font-label);
-  font-weight: 500;
-  font-size: var(--size-label-m);
-  color: var(--color-ink-faint);
-  white-space: nowrap;
+.comm__discord-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.comm__discord-art > .c-art {
+  height: 100%;
+}
+
+/* Dark enough at the foot for the copy to hold 4.5:1 over the city's brightest pink; change with the copy's position. */
+.comm__discord::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--color-bg) 0%,
+    rgba(var(--rgb-bg), 0.88) 28%,
+    rgba(var(--rgb-bg), 0.35) 55%,
+    transparent 75%
+  );
+}
+
+.comm__discord-in {
+  padding-bottom: clamp(3rem, 6vw, 4rem);
+  text-align: center;
+}
+
+.comm__discord-title {
+  font-size: clamp(1.875rem, 5.2vw, 3.25rem);
+  text-shadow: var(--shadow-on-art);
+}
+
+.comm__discord-in .comm__body {
+  margin-inline: auto;
+}
+
+.comm__discord-credit {
+  position: absolute;
+  right: var(--gutter);
+  bottom: var(--space-3);
 }
 
 .comm__press-head {
