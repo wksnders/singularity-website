@@ -1753,10 +1753,19 @@ export const pressGroups: PressGroup[] = [
     fit: 'cover',
   },
   { id: 'event-materials', state: 'empty', files: 0, size: null, formats: null, zipBytes: null, cover: null, fit: 'cover' },
-  { id: 'logos', state: 'pending', files: 0, size: null, formats: null, zipBytes: null, cover: null, fit: 'cover' },
+  {
+    id: 'logos',
+    state: 'ready',
+    files: 10,
+    size: null,
+    formats: 'PNG / SVG',
+    zipBytes: 1506984,
+    cover: pressCover('logos', 'The chrome Singularity.exe wordmark on a dark background.'),
+    fit: 'cover',
+  },
 ];
 
-export const pressKit = { files: 15, zipBytes: 36484373, href: '/press/singularity-exe-press-kit.zip' };
+export const pressKit = { files: 25, zipBytes: 37991455, href: '/press/singularity-exe-press-kit.zip' };
 
 export const wallpaperKinds: WallpaperKind[] = [
   { id: 'desktop', name: 'Desktop', size: '2560 × 1440' },

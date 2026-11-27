@@ -1193,7 +1193,7 @@
       "boilerplateBody": "is a deterministic card game for 1–4 players from Octothorpe. Humanity has abandoned physical reality, and four factions now fight for control of one legendary program: the Singularity. There are no dice, no shuffling and no luck, so every game is decided by how players build and play their decks. Choose from {count} characters for competitive games of about 30 minutes per player, or take on self-running bosses solo or co-op in the Incursions box.",
       "crossover": "Crossover content with",
       "factSheet": "Fact sheet",
-      "intro": "Box renders and social templates, free to use in coverage. No email, no form, no approval step — credit Octothorpe.",
+      "intro": "Box renders, social templates and logos, free to use in coverage. No email, no form, no approval step — credit Octothorpe.",
       "kitMeta": "files · zip",
       "zipVerb": "Download .zip",
       "allFiles": "Every file, with sizes",
@@ -1223,7 +1223,7 @@
         },
         "logos": {
           "name": "Logos & wordmark",
-          "body": "Not in the kit yet. If you need a logo now, write to the press address below."
+          "body": "The wordmark in chrome, flat black and flat white, plus the .exe badge. PNG and vector SVG, with a short usage note."
         }
       }
     },
