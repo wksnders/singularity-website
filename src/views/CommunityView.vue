@@ -117,9 +117,6 @@ const avatarTiles = computed(() => {
 const kindName = (id: string) => wallpaperKinds.find((k) => k.id === id)?.name ?? id;
 const kindSize = (id: string) => wallpaperKinds.find((k) => k.id === id)?.size ?? '';
 
-/* The Discord band sits on 101's city; the credit line names whose world it is. */
-const discordGuest = characterById('101');
-
 const factSheet = computed(() => [
   { label: t('community.facts.players'), value: game.players, reserved: false },
   { label: t('community.facts.length'), value: t('community.facts.lengthValue', { minutes: game.minutesPerPlayer }), reserved: false },
@@ -302,9 +299,8 @@ const factSheet = computed(() => [
         {{ t('community.discord.cta') }}
       </UiButton>
     </div>
-    <MonoLabel v-if="discordGuest" size="xs" tone="faint" class="comm__discord-credit">
-      <BaseLink :to="to('character', { characterId: discordGuest.id })">{{ discordGuest.name }}</BaseLink>
-      · {{ t('character.artBy') }} {{ communityDiscordArt.artist }}
+    <MonoLabel v-if="communityDiscordArt.artist" size="xs" tone="faint" class="comm__discord-credit">
+      {{ communityDiscordArt.artist }}
     </MonoLabel>
   </section>
 
